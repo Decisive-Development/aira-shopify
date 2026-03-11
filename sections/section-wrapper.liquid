@@ -1,0 +1,133 @@
+{% liquid
+  case section.settings.padding_vertical
+    when 'none'
+      assign py = ''
+    when 'sm'
+      assign py = 'py-8 md:py-12'
+    when 'md'
+      assign py = 'py-16 md:py-20'
+    when 'lg'
+      assign py = 'py-24 md:py-32'
+    when 'xl'
+      assign py = 'py-32 md:py-48'
+  endcase
+
+  case section.settings.container_width
+    when 'contained'
+      assign container_class = 'container-contained'
+    when 'wide'
+      assign container_class = 'container-wide'
+    when 'full'
+      assign container_class = 'container-full'
+  endcase
+
+  assign has_image = false
+  if section.settings.background_image != blank
+    assign has_image = true
+  endif
+%}
+
+<section
+  class="relative overflow-hidden w-full {% if section.settings.full_height %}min-h-screen{% endif %}"
+  style="{% unless has_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
+>
+  {%- if has_image -%}
+    <div class="absolute inset-0 w-full h-full -z-10">
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', widths: '375, 768, 1280, 1920, 2400'
+      }}
+      {%- if section.settings.overlay_opacity > 0 -%}
+        <div
+          class="absolute inset-0"
+          style="background-color: {{ section.settings.overlay_color }}; opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"
+        ></div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+  F
+  <div class="{{ container_class }} {{ py }}">
+    {% content_for 'blocks' %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Section Wrapper",
+  "blocks": [{ "type": "@theme" }],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_height",
+      "label": "Full viewport height",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container width",
+      "options": [
+        { "value": "contained", "label": "Contained (1280px)" },
+        { "value": "wide", "label": "Wide (1536px)" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "contained"
+    },
+    {
+      "type": "select",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "xl", "label": "Extra large" }
+      ],
+      "default": "md"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Section Wrapper",
+      "category": "Layout"
+    }
+  ]
+}
+{% endschema %}

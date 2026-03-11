@@ -11,3 +11,10 @@
 #
 # Ignore templates and sections with a regular expression:
 #   /(templates|sections)/.*\.json/
+
+# Ignore CLI temp files (Windows hot-reload artefacts)
+*.tmp.*
+claudeinfo.txt
+assets/critical.source.css
+package.json
+package-lock.json

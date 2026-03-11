@@ -1,0 +1,60 @@
+Aira
+- A wellness / sleep focused ecommerce brand, selling in the GCC. Our first product is a magnetic nasal strip. Design aesthetic will be minimalistic, calming, luxury. 
+
+Palette
+Main-0A1A34
+Secondary-F1EBE1
+Tertiary-44092E-9BB7D4
+Highlight-FF4000-#28965A-#087CA7
+titles-#212121
+copy- #40464F
+backgrounds-#FFFFFF-#FAFAFA-#F2F2F2
+extras niche use case-#50A2A7-FF4000
+heading/title font- SATOSHI (Semibold/bold)
+Body and copy font- Nunito Sans (Regular)
+
+Context
+- I am a first time shopify / liquid dev with experience coding static websites
+- Use tailwind always unless specific styles require css
+- Design code to work with shopify CMS 
+- Hardcode as much as possible and leave flexibility for reusable components
+- Make site modular, use imports (index.js, image.js, asset.js) if useful
+
+Do:
+- Read and follow rules for each new task
+- Updated log
+
+---
+Session Log
+
+[Session 1] Brand & Tailwind setup
+- Tailwind v4 installed locally (not CDN). Build: `npm run build:css`, Watch: `npm run watch:css`
+- Source: assets/critical.source.css → compiled to assets/critical.css → loaded in layout/theme.liquid
+- No tailwind.config.js needed (v4 uses @theme in CSS)
+- Registered all brand colors as @theme tokens (bg-main, text-copy, etc.) and font families (--font-heading: Satoshi, --font-body: Nunito Sans)
+- Fonts self-hosted in assets/: satoshi-variable.woff2 (variable, 300–900), nunito-sans-variable.ttf (variable, 100–900)
+- @font-face uses font-weight ranges for variable font support; no external font requests
+- Base styles set: body → font-body + text-copy, headings → font-heading + text-title + semibold
+
+[Session 2] Section Wrapper & Container system
+- Added 3 container component classes to critical.source.css: container-contained (1280px), container-wide (1536px), container-full — all with responsive horizontal padding (mobile/tablet/desktop)
+- Created sections/section-wrapper.liquid: reusable outer section with CMS controls for bg color, bg image (cover fit), overlay color+opacity, full viewport height toggle, container width select, vertical padding select (none/sm/md/lg/xl)
+- Pattern: section-wrapper handles the outer shell; all other sections should use container-* classes on their inner div for consistent layout
+
+[Session 3] Hero section + cleanup
+- Deleted sections/hello-world.liquid and assets/shoppy-x-ray.svg (default skeleton files)
+- Created sections/hero.liquid: full hero with eyebrow, heading, subheading, primary + secondary CTA buttons
+- Hero has same bg/layout controls as section-wrapper (bg color, bg image, overlay, full-height, container width, vertical padding)
+- Defaults: bg-main (#0A1A34), text-secondary (#F1EBE1), full-height on, highlight button (#FF4000)
+- Updated templates/index.json to reference "hero" instead of "hello-world"
+
+[Session 4] Fonts, dev workflow & hero polish
+- Fonts self-hosted: Satoshi variable (woff2) + Nunito Sans variable (ttf) copied to assets/, source folders deleted
+- @font-face uses font-weight ranges (variable font support); no external requests
+- Fixed Tailwind not scanning liquid files: added @source directives for layout/sections/snippets/templates in critical.source.css
+- Added `npm run dev` script using concurrently — runs watch:css + shopify theme dev together (single command)
+- .shopifyignore: excludes *.tmp.* (Windows CLI artefact), claudeinfo.txt, critical.source.css, package files
+- Hero redesign: split layout (copy left, image right), 50/50 md:flex-row, Unsplash placeholder with theme-check-disable
+- Hero background: gradient applied directly to <section> inline style (not a child div — avoids override bug)
+- Gradient toggle: CMS checkbox "Use night sky gradient" (default on); off falls back to solid background_color
+- Gradient: linear-gradient(160deg, #0d2247 → #0A1A34 → #150d2a → #2e0c1e)

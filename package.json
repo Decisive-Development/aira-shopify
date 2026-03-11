@@ -1,0 +1,16 @@
+{
+  "name": "aira-shopify",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css",
+    "watch:css": "npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css --watch",
+    "dev": "concurrently \"npm run watch:css\" \"shopify theme dev\""
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.17",
+    "tailwindcss": "^4.1.17"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

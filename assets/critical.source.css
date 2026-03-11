@@ -1,0 +1,105 @@
+@import "tailwindcss";
+@source "../layout/**/*.liquid";
+@source "../sections/**/*.liquid";
+@source "../snippets/**/*.liquid";
+@source "../templates/**/*.liquid";
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("satoshi-variable.woff2") format("woff2 supports variations"),
+       url("satoshi-variable.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Nunito Sans";
+  src: url("nunito-sans-variable.ttf") format("truetype supports variations"),
+       url("nunito-sans-variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Colors */
+  --color-main: #0A1A34;
+  --color-secondary: #F1EBE1;
+  --color-tertiary: #44092E;
+  --color-tertiary-light: #9BB7D4;
+  --color-highlight: #FF4000;
+  --color-highlight-green: #28965A;
+  --color-highlight-blue: #087CA7;
+  --color-title: #212121;
+  --color-copy: #40464F;
+  --color-bg: #FFFFFF;
+  --color-bg-soft: #FAFAFA;
+  --color-bg-muted: #F2F2F2;
+  --color-teal: #50A2A7;
+
+  /* Fonts */
+  --font-heading: "Satoshi", sans-serif;
+  --font-body: "Nunito Sans", sans-serif;
+
+  /* Font weights */
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+@layer components {
+  .container-contained {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .container-wide {
+    width: 100%;
+    max-width: 1536px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .container-full {
+    width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-contained,
+    .container-wide,
+    .container-full {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-contained,
+    .container-wide {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    color: var(--color-copy);
+    background-color: var(--color-bg);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-title);
+    font-weight: 600;
+  }
+}
