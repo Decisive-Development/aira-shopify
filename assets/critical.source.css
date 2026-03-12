@@ -102,4 +102,12 @@
     color: var(--color-title);
     font-weight: 600;
   }
+
+  /* Strip Shopify's header section group wrapper so it doesn't create a white bar */
+  .shopify-section-group-header-group {
+    position: static;
+    background: transparent;
+    height: 0;
+    overflow: visible;
+  }
 }

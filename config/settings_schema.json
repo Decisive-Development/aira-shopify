@@ -54,19 +54,51 @@
     ]
   },
   {
-    "name": "t:general.colors",
+    "name": "Brand colours",
     "settings": [
+      {
+        "type": "header",
+        "content": "Brand colours"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "info": "Deep navy — headings, buttons, backgrounds",
+        "default": "#0A1A34"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary",
+        "info": "Warm cream — nav background, light surfaces",
+        "default": "#F1EBE1"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent",
+        "info": "Orange — CTAs, highlights",
+        "default": "#FF4500"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Body text",
+        "default": "#0A1A34"
+      },
+      {
+        "type": "color",
+        "id": "color_text_inverse",
+        "label": "Inverse text",
+        "info": "Text on dark backgrounds",
+        "default": "#F1EBE1"
+      },
       {
         "type": "color",
         "id": "background_color",
         "default": "#FFFFFF",
-        "label": "t:labels.background"
-      },
-      {
-        "type": "color",
-        "id": "foreground_color",
-        "default": "#333333",
-        "label": "t:labels.foreground"
+        "label": "Page background"
       },
       {
         "type": "range",

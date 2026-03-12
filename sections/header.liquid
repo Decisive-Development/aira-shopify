@@ -1,66 +1,182 @@
-<header>
-  <h2 class="header__title">
-    {{ shop.name | link_to: routes.root_url }}
-  </h2>
+<header class="fixed top-4 inset-x-0 z-50 flex justify-center px-4 md:px-8">
+	<div
+		class="w-full rounded-2xl flex items-center gap-10 px-6 py-3"
+		style="max-width: 1280px; background-color: var(--color-secondary); box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.5);"
+	>
+		{%- comment -%} Logo {%- endcomment -%}
+		<a href="{{ routes.root_url }}" class="flex items-center shrink-0">
+			<img
+				src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
+				alt="{{ shop.name }}"
+				class="h-7 w-auto -translate-y-0.5"
+				width="120"
+				height="28"
+				loading="eager"
+			>
+		</a>
 
-  <div class="header__menu">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+		{%- comment -%} Nav links — hidden on mobile {%- endcomment -%}
+		{%- if section.settings.menu != blank -%}
+			<nav class="hidden md:flex items-center justify-center gap-8 flex-1">
+				{%- for link in section.settings.menu.links -%}
+					<a
+						href="{{ link.url }}"
+						class="text-base font-bold tracking-wide transition-opacity hover:opacity-60 {% if link.active %}opacity-100{% else %}opacity-75{% endif %}"
+						style="color: var(--color-primary);"
+					>
+						{{ link.title }}
+					</a>
+				{%- endfor -%}
+			</nav>
+		{%- endif -%}
 
-  <div class="header__icons">
-    {% if shop.customer_accounts_enabled %}
-      {{ 'icon-account.svg' | inline_asset_content | link_to: routes.account_url }}
-    {% endif %}
+		{%- comment -%} Right — CTA + icons {%- endcomment -%}
+		<div class="flex items-center gap-4 ml-auto">
 
-    <a href="{{ routes.cart_url }}">
-      {% if cart.item_count > 0 %}
-        <sup>{{ cart.item_count }}</sup>
-      {% endif %}
+			{%- comment -%} CTA button {%- endcomment -%}
+			{%- if section.settings.cta_label != blank -%}
+				{%- render 'cta-button',
+					label: section.settings.cta_label,
+					url: section.settings.cta_url,
+					variant: 'primary',
+					extra_classes: 'hidden md:inline-block'
+				-%}
+			{%- endif -%}
 
-      {{ 'icon-cart.svg' | inline_asset_content }}
-    </a>
-  </div>
+			{%- comment -%} Cart {%- endcomment -%}
+			<a
+				href="{{ routes.cart_url }}"
+				class="relative flex items-center transition-opacity hover:opacity-60"
+				style="color: var(--color-primary);"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="22"
+					height="22"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="1.75"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+				</svg>
+				{%- if cart.item_count > 0 -%}
+					<span
+						class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none"
+						style="background-color: var(--color-accent); color: #fff;"
+					>
+						{{ cart.item_count }}
+					</span>
+				{%- endif -%}
+			</a>
+
+			{%- comment -%} Account {%- endcomment -%}
+			{%- if shop.customer_accounts_enabled -%}
+				<a
+					href="{{ routes.account_url }}"
+					class="hidden md:flex items-center transition-opacity hover:opacity-60"
+					style="color: var(--color-primary);"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="22"
+						height="22"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="1.75"
+					>
+						<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+					</svg>
+				</a>
+			{%- endif -%}
+
+			{%- comment -%} Mobile menu toggle {%- endcomment -%}
+			<button
+				class="md:hidden flex items-center transition-opacity hover:opacity-60"
+				style="color: var(--color-primary);"
+				aria-label="Open menu"
+				onclick="this.closest('header').querySelector('[data-mobile-menu]').classList.toggle('hidden')"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="22"
+					height="22"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="1.75"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+				</svg>
+			</button>
+
+		</div>
+	</div>
+
+	{%- comment -%} Mobile menu dropdown {%- endcomment -%}
+	{%- if section.settings.menu != blank -%}
+		<div
+			data-mobile-menu
+			class="hidden absolute top-full left-4 right-4 mt-2 rounded-2xl px-6 py-4 flex-col gap-4 shadow-lg md:hidden"
+			style="max-width: 1280px; background-color: var(--color-secondary);"
+		>
+			{%- for link in section.settings.menu.links -%}
+				<a
+					href="{{ link.url }}"
+					class="block text-sm font-medium py-1 transition-opacity hover:opacity-60"
+					style="color: var(--color-primary);"
+				>
+					{{ link.title }}
+				</a>
+			{%- endfor -%}
+			{%- if section.settings.cta_label != blank -%}
+				{%- render 'cta-button',
+					label: section.settings.cta_label,
+					url: section.settings.cta_url,
+					variant: 'accent',
+					extra_classes: 'mt-2 w-full text-center'
+				-%}
+			{%- endif -%}
+		</div>
+	{%- endif -%}
 </header>
-
-{% stylesheet %}
-  header {
-    height: 5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header a {
-    position: relative;
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  header a sup {
-    position: absolute;
-    left: 100%;
-    overflow: hidden;
-    max-width: var(--page-margin);
-  }
-  header svg {
-    width: 2rem;
-  }
-  header .header__menu,
-  header .header__icons {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.header",
-  "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    }
-  ]
+	"name": "Header",
+	"settings": [
+		{
+			"type": "image_picker",
+			"id": "logo",
+			"label": "Logo",
+			"info": "Displays shop name as text if left blank."
+		},
+		{
+			"type": "link_list",
+			"id": "menu",
+			"label": "Navigation menu",
+			"default": "main-menu"
+		},
+		{
+			"type": "header",
+			"content": "CTA button"
+		},
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "Button label",
+			"default": "Shop now"
+		},
+		{
+			"type": "url",
+			"id": "cta_url",
+			"label": "Button URL"
+		},
+		{
+			"type": "paragraph",
+			"content": "Colours are controlled in Theme settings → Brand colours."
+		}
+	]
 }
 {% endschema %}

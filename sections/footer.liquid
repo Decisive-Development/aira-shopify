@@ -1,57 +1,150 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{%- comment -%} Footer {%- endcomment -%}
+<footer style="background: linear-gradient(to bottom, #0A1A34 50%, #0d1620 72%, #1a1208 86%, #3d1e04 95%, #6b2f00 100%);">
+	<div class="w-full px-4 md:px-8 pt-10 pb-24">
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+		{%- comment -%} Floating pill {%- endcomment -%}
+		<div
+			class="w-full max-w-7xl mx-auto bg-secondary rounded-2xl px-8 py-12 md:py-14"
+			style="box-shadow: 0 12px 40px rgba(10,26,52,0.35), 0 4px 16px rgba(255,255,255,0.15);"
+		>
+			<div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 md:gap-6">
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
-  </div>
+				{%- comment -%} Col 1: Brand — logo, newsletter, social {%- endcomment -%}
+				<div class="flex flex-col gap-6">
+
+					<a href="{{ routes.root_url }}" class="inline-block">
+						<img
+							src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
+							alt="{{ shop.name }}"
+							class="h-7 w-auto"
+							width="120"
+							height="28"
+							loading="lazy"
+						>
+					</a>
+
+					{%- comment -%} Newsletter form {%- endcomment -%}
+					{%- form 'customer', id: 'footer-newsletter' -%}
+						<input type="hidden" name="contact[tags]" value="newsletter">
+						<p class="text-sm font-semibold mb-2 text-main">Stay in the loop</p>
+						<div class="flex gap-2">
+							<input
+								type="email"
+								name="contact[email]"
+								placeholder="Your email"
+								required
+								class="w-70 rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-none"
+							>
+							{%- render 'cta-button',
+								label: 'Subscribe',
+								element: 'button',
+								button_type: 'submit',
+								variant: 'primary',
+								extra_classes: 'shrink-0'
+							-%}
+						</div>
+					{%- endform -%}
+
+					{%- comment -%} Social icons {%- endcomment -%}
+					<div class="flex items-center gap-4">
+						{%- if section.settings.social_instagram != blank -%}
+							<a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram" class="text-main transition-opacity hover:opacity-60">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+									<rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/>
+									<circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+									<circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+								</svg>
+							</a>
+						{%- endif -%}
+						{%- if section.settings.social_youtube != blank -%}
+							<a href="{{ section.settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube" class="text-main transition-opacity hover:opacity-60">
+								<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M21.5 7.5s-.24-1.65-.97-2.38c-.93-.97-1.97-.97-2.44-1.03C15.6 3.9 12 3.9 12 3.9s-3.6 0-6.09.2c-.48.06-1.51.06-2.44 1.03C2.74 5.85 2.5 7.5 2.5 7.5S2.25 9.43 2.25 11.35v1.79c0 1.93.25 3.85.25 3.85s.24 1.65.97 2.38c.93.97 2.15.94 2.69 1.04C7.71 20.63 12 20.6 12 20.6s3.6 0 6.09-.2c.48-.06 1.51-.06 2.44-1.03.73-.73.97-2.38.97-2.38s.25-1.93.25-3.85v-1.79C21.75 9.43 21.5 7.5 21.5 7.5z"/>
+									<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 15.02V9.02l6.5 3-6.5 3z"/>
+								</svg>
+							</a>
+						{%- endif -%}
+						{%- if section.settings.social_tiktok != blank -%}
+							<a href="{{ section.settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok" class="text-main transition-opacity hover:opacity-60">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.81 1.54V6.79a4.85 4.85 0 0 1-1.04-.1z"/>
+								</svg>
+							</a>
+						{%- endif -%}
+					</div>
+
+				</div>
+
+				{%- comment -%} Col 2: Shop {%- endcomment -%}
+				<div>
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Shop</h4>
+					<ul class="flex flex-col gap-2.5">
+						<li><a href="{{ routes.collections_url }}/starter-packs" class="text-sm text-main transition-colors">Starter Packs</a></li>
+						<li><a href="{{ routes.collections_url }}/refills" class="text-sm text-main transition-colors">Refills</a></li>
+					</ul>
+				</div>
+
+				{%- comment -%} Col 3: Resources {%- endcomment -%}
+				<div>
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Resources</h4>
+					<ul class="flex flex-col gap-2.5">
+						<li><a href="/pages/how-to-use" class="text-sm text-main transition-colors">How to use</a></li>
+						<li><a href="/blogs/news" class="text-sm text-main transition-colors">Blog</a></li>
+						<li><a href="/policies/refund-policy" class="text-sm text-main transition-colors">Return</a></li>
+						<li><a href="/pages/faq" class="text-sm text-main transition-colors">FAQ</a></li>
+					</ul>
+				</div>
+
+				{%- comment -%} Col 4: Company {%- endcomment -%}
+				<div>
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Company</h4>
+					<ul class="flex flex-col gap-2.5">
+						<li><a href="/pages/affiliate" class="text-sm text-main transition-colors">Affiliate Program</a></li>
+						<li><a href="/pages/our-story" class="text-sm text-main transition-colors">Our Story</a></li>
+						<li><a href="/pages/contact" class="text-sm text-main transition-colors">Contact Support</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+		{%- comment -%} Bottom copyright bar {%- endcomment -%}
+		<div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-1 mt-6 pb-2 text-sm text-white">
+			<span>&copy; 2026 Aira Wellness.</span>
+			<a href="/policies/privacy-policy" class="hover:text-white transition-colors">Privacy Policy</a>
+			<a href="/policies/terms-of-service" class="hover:text-white transition-colors">Terms of Service</a>
+		</div>
+
+	</div>
 </footer>
-
-{% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-  }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
-  }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
-  }
-{% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:general.footer",
-  "settings": [
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
-    }
-  ]
+	"name": "Footer",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Social media"
+		},
+		{
+			"type": "url",
+			"id": "social_instagram",
+			"label": "Instagram URL"
+		},
+		{
+			"type": "url",
+			"id": "social_youtube",
+			"label": "YouTube URL"
+		},
+		{
+			"type": "url",
+			"id": "social_tiktok",
+			"label": "TikTok URL"
+		},
+		{
+			"type": "paragraph",
+			"content": "Colours are controlled in Theme settings → Brand colours."
+		}
+	]
 }
 {% endschema %}

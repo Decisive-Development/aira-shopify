@@ -1,0 +1,56 @@
+{%- comment -%}
+	CTA Button component
+
+	Parameters:
+	  label         {String}  Button text (required)
+	  url           {String}  href — used when element is 'a' (default: '#')
+	  variant       {String}  'primary' | 'accent' | 'ghost'  (default: 'primary')
+	  size          {String}  'sm' | 'md' | 'lg'              (default: 'md')
+	  element       {String}  'a' | 'button'                  (default: 'a')
+	  button_type   {String}  'button' | 'submit' | 'reset'   (default: 'button')
+	  extra_classes {String}  Any additional Tailwind classes
+
+	Usage:
+	  {% render 'cta-button', label: 'Shop now', url: '/collections/all', variant: 'accent' %}
+	  {% render 'cta-button', label: 'Subscribe', element: 'button', button_type: 'submit', variant: 'primary', size: 'sm', extra_classes: 'shrink-0' %}
+{%- endcomment -%}
+
+{%- liquid
+	assign btn_variant = variant | default: 'primary'
+	assign btn_size    = size    | default: 'md'
+	assign btn_element = element | default: 'a'
+	assign btn_type    = button_type | default: 'button'
+
+	case btn_variant
+		when 'primary'
+			assign btn_colors = 'bg-main text-secondary'
+		when 'accent'
+			assign btn_colors = 'bg-highlight text-white'
+		when 'ghost'
+			assign btn_colors = 'border-2 border-main text-main'
+	endcase
+
+	case btn_size
+		when 'sm'
+			assign btn_padding = 'px-6 py-2.5'
+		when 'md'
+			assign btn_padding = 'px-8 py-3'
+		when 'lg'
+			assign btn_padding = 'px-10 py-4'
+	endcase
+
+	assign btn_classes = 'inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 ' | append: btn_colors | append: ' ' | append: btn_padding
+	if extra_classes != blank
+		assign btn_classes = btn_classes | append: ' ' | append: extra_classes
+	endif
+-%}
+
+{%- if btn_element == 'button' -%}
+	<button type="{{ btn_type }}" class="{{ btn_classes }}">
+		{{ label }}
+	</button>
+{%- else -%}
+	<a href="{{ url | default: '#' }}" class="{{ btn_classes }}">
+		{{ label }}
+	</a>
+{%- endif -%}

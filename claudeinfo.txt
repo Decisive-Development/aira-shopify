@@ -1,60 +1,170 @@
-Aira
-- A wellness / sleep focused ecommerce brand, selling in the GCC. Our first product is a magnetic nasal strip. Design aesthetic will be minimalistic, calming, luxury. 
+# Aira — Site Reference
 
-Palette
-Main-0A1A34
-Secondary-F1EBE1
-Tertiary-44092E-9BB7D4
-Highlight-FF4000-#28965A-#087CA7
-titles-#212121
-copy- #40464F
-backgrounds-#FFFFFF-#FAFAFA-#F2F2F2
-extras niche use case-#50A2A7-FF4000
-heading/title font- SATOSHI (Semibold/bold)
-Body and copy font- Nunito Sans (Regular)
-
-Context
-- I am a first time shopify / liquid dev with experience coding static websites
-- Use tailwind always unless specific styles require css
-- Design code to work with shopify CMS 
-- Hardcode as much as possible and leave flexibility for reusable components
-- Make site modular, use imports (index.js, image.js, asset.js) if useful
-
-Do:
-- Read and follow rules for each new task
-- Updated log
+## Brand
+A wellness / sleep-focused ecommerce brand selling in the GCC. First product: a magnetic nasal strip.
+Design aesthetic: minimalistic, calming, luxury.
 
 ---
-Session Log
+
+## Palette
+
+| Token        | Hex       | Use                                      |
+|--------------|-----------|------------------------------------------|
+| main         | #0A1A34   | Deep navy — headings, buttons, dark bg   |
+| secondary    | #F1EBE1   | Warm cream — nav/footer pill bg, surfaces|
+| tertiary     | #44092E   | Deep plum — accent (niche)               |
+| tertiary-light | #9BB7D4 | Sky blue — accent (niche)               |
+| highlight    | #FF4000   | Orange — primary CTA, highlights        |
+| highlight-green | #28965A| Green — niche                           |
+| highlight-blue | #087CA7 | Blue — niche                            |
+| title        | #212121   | Headings                                 |
+| copy         | #40464F   | Body text                                |
+| bg           | #FFFFFF   | Page background                          |
+| bg-soft      | #FAFAFA   | Soft background                          |
+| bg-muted     | #F2F2F2   | Muted background                         |
+| teal         | #50A2A7   | Niche use                                |
+
+Tailwind usage: `bg-main`, `text-main`, `bg-secondary`, `text-secondary`, `bg-highlight`, etc.
+CSS variables (set via theme settings): `var(--color-primary)`, `var(--color-secondary)`, `var(--color-accent)`, `var(--color-text-inverse)`
+
+---
+
+## Typography
+
+| Role    | Font         | Weight      |
+|---------|--------------|-------------|
+| Heading | Satoshi      | Semibold / Bold (600–700) |
+| Body    | Nunito Sans  | Regular (400) |
+
+Both fonts are self-hosted in assets/ as variable fonts (no external requests).
+Tailwind: `font-heading`, `font-body`
+
+---
+
+## Code Standards
+
+- **Tailwind v4** — use Tailwind classes for everything. Only use inline `style=` when Tailwind cannot express the value (e.g. custom gradients, box-shadow).
+- **No opacity modifiers** on text/colors unless explicitly requested (`text-main/65` etc.)
+- **No inline styles** for colors — use Tailwind tokens (`text-main`, `bg-secondary`) instead of `style="color: var(--color-primary)"`.
+- **Indentation** — tabs, 4-space width.
+- **Liquid formatting** — use `{%- -%}` (whitespace control) on Liquid tags inside HTML.
+- **Modular** — reusable UI elements go in `snippets/`. Sections use `{% render %}` to pull them in.
+- **CMS-first** — expose content/settings via `{% schema %}`. Hardcode structure, make content editable.
+- **No backwards-compat hacks** — delete unused code, don't comment it out.
+
+---
+
+## Tailwind Setup
+
+- Source: `assets/critical.source.css` → compiled to `assets/critical.css` → loaded in `layout/theme.liquid`
+- Build: `npm run build:css` | Watch: `npm run watch:css` | Dev (watch + Shopify CLI): `npm run dev`
+- `@source` directives scan `layout/`, `sections/`, `snippets/`, `templates/`
+- No `tailwind.config.js` — v4 uses `@theme {}` block in the CSS source file
+- `.shopifyignore` excludes: `*.tmp.*`, `claudeinfo.txt`, `critical.source.css`, package files
+
+---
+
+## Container System
+
+Defined as `@layer components` in `critical.source.css`:
+
+| Class               | Max Width | Use                    |
+|---------------------|-----------|------------------------|
+| `container-contained` | 1280px  | Standard sections      |
+| `container-wide`    | 1536px    | Wide/feature sections  |
+| `container-full`    | 100%      | Edge-to-edge           |
+
+All containers include responsive horizontal padding (mobile / tablet / desktop).
+
+---
+
+## Design Patterns
+
+### Floating pill
+Both the nav and footer use a floating pill aesthetic:
+- `rounded-2xl` corners (NOT `rounded-full`)
+- `bg-secondary` background
+- `box-shadow: 0 12px 40px rgba(10,26,52,0.35), 0 4px 16px rgba(255,255,255,0.15)`
+- Max width 1280px (`max-w-7xl`), centered
+
+### CTA Buttons
+Always use `snippets/cta-button.liquid` via `{% render 'cta-button', ... %}`.
+
+Parameters:
+| Param         | Values                            | Default    |
+|---------------|-----------------------------------|------------|
+| `label`       | String (required)                 | —          |
+| `url`         | String                            | `#`        |
+| `variant`     | `primary` / `accent` / `ghost`    | `primary`  |
+| `size`        | `sm` / `md` / `lg`               | `md`       |
+| `element`     | `a` / `button`                    | `a`        |
+| `button_type` | `button` / `submit` / `reset`     | `button`   |
+| `extra_classes` | String of Tailwind classes      | —          |
+
+Sizes: `sm` = `px-6 py-2.5`, `md` = `px-8 py-3`, `lg` = `px-10 py-4`
+Rounding: always `rounded-xl` (soft, not pill)
+Variants: `primary` = bg-main/text-secondary, `accent` = bg-highlight/text-white, `ghost` = border-2/border-main/text-main
+
+Default size is `md`. Only specify `size` when intentionally deviating.
+
+---
+
+## Sections Built
+
+### sections/header.liquid
+- Fixed floating nav pill, `top-4`, z-50
+- Logo left (SVG asset), nav links center (from `main-menu` linklist), CTA + cart + account right
+- CTA: `cta-button` snippet, `variant: primary`
+- Mobile: hamburger toggle → dropdown pill below nav
+- Mobile CTA: `variant: accent` (stands out on cream bg)
+- Spacer div (`h-20`) in `layout/theme.liquid` prevents content hiding behind fixed nav
+- Colors: all via `var(--color-*)` CSS variables (CMS-controlled in Theme Settings → Brand colours)
+
+### sections/hero.liquid
+- Full-width section, split layout: copy left (50%), image right (50%)
+- CMS controls: eyebrow, heading, subheading, primary + secondary CTA, foreground image, background image, overlay, full-height toggle, container width, vertical padding
+- Background: night-sky gradient toggle (default on) — `linear-gradient(160deg, #0d2247 → #0A1A34 → #150d2a → #2e0c1e)`
+- Primary CTA: `cta-button` snippet, `variant: accent`
+- Secondary CTA: plain text link (underline on hover)
+- Unsplash placeholder image (theme-check-disable applied)
+
+### sections/footer.liquid
+- Outer `<footer>` has blue→burnt-orange sunset gradient background: `linear-gradient(to bottom, #0A1A34 50%, ... #6b2f00 100%)`
+- Floating pill inside: `bg-secondary`, `rounded-2xl`, wide vertical padding (`py-12 md:py-14`)
+- Grid: `2fr 1fr 1fr 1fr` — left col wider (logo + newsletter + socials), 3 right cols equal (Shop / Resources / Company)
+- Newsletter form: Shopify `form 'customer'` with `contact[tags]: newsletter`. Input `rounded-xl`, fixed width. Subscribe uses `cta-button` snippet (`element: button`, `button_type: submit`, `variant: primary`)
+- Social icons: Instagram, YouTube, TikTok — CMS-controlled URLs via schema (hidden if blank)
+- Copyright bar: below the pill, `text-white`, `© 2026 Aira Wellness. · Privacy Policy · Terms of Service`
+- Links: hardcoded paths. Social URLs: CMS via schema.
+
+---
+
+## Session Log
 
 [Session 1] Brand & Tailwind setup
-- Tailwind v4 installed locally (not CDN). Build: `npm run build:css`, Watch: `npm run watch:css`
-- Source: assets/critical.source.css → compiled to assets/critical.css → loaded in layout/theme.liquid
-- No tailwind.config.js needed (v4 uses @theme in CSS)
-- Registered all brand colors as @theme tokens (bg-main, text-copy, etc.) and font families (--font-heading: Satoshi, --font-body: Nunito Sans)
-- Fonts self-hosted in assets/: satoshi-variable.woff2 (variable, 300–900), nunito-sans-variable.ttf (variable, 100–900)
-- @font-face uses font-weight ranges for variable font support; no external font requests
-- Base styles set: body → font-body + text-copy, headings → font-heading + text-title + semibold
+- Tailwind v4 installed locally. CSS pipeline: source → compiled → theme.liquid
+- @theme tokens for all brand colors and fonts. Variable fonts self-hosted.
 
-[Session 2] Section Wrapper & Container system
-- Added 3 container component classes to critical.source.css: container-contained (1280px), container-wide (1536px), container-full — all with responsive horizontal padding (mobile/tablet/desktop)
-- Created sections/section-wrapper.liquid: reusable outer section with CMS controls for bg color, bg image (cover fit), overlay color+opacity, full viewport height toggle, container width select, vertical padding select (none/sm/md/lg/xl)
-- Pattern: section-wrapper handles the outer shell; all other sections should use container-* classes on their inner div for consistent layout
+[Session 2] Section wrapper & container system
+- container-contained / container-wide / container-full classes
+- sections/section-wrapper.liquid: reusable shell with CMS bg/overlay/padding controls
 
 [Session 3] Hero section + cleanup
-- Deleted sections/hello-world.liquid and assets/shoppy-x-ray.svg (default skeleton files)
-- Created sections/hero.liquid: full hero with eyebrow, heading, subheading, primary + secondary CTA buttons
-- Hero has same bg/layout controls as section-wrapper (bg color, bg image, overlay, full-height, container width, vertical padding)
-- Defaults: bg-main (#0A1A34), text-secondary (#F1EBE1), full-height on, highlight button (#FF4000)
-- Updated templates/index.json to reference "hero" instead of "hello-world"
+- Removed default skeleton files. Created sections/hero.liquid.
+- templates/index.json updated to use "hero"
 
 [Session 4] Fonts, dev workflow & hero polish
-- Fonts self-hosted: Satoshi variable (woff2) + Nunito Sans variable (ttf) copied to assets/, source folders deleted
-- @font-face uses font-weight ranges (variable font support); no external requests
-- Fixed Tailwind not scanning liquid files: added @source directives for layout/sections/snippets/templates in critical.source.css
-- Added `npm run dev` script using concurrently — runs watch:css + shopify theme dev together (single command)
-- .shopifyignore: excludes *.tmp.* (Windows CLI artefact), claudeinfo.txt, critical.source.css, package files
-- Hero redesign: split layout (copy left, image right), 50/50 md:flex-row, Unsplash placeholder with theme-check-disable
-- Hero background: gradient applied directly to <section> inline style (not a child div — avoids override bug)
-- Gradient toggle: CMS checkbox "Use night sky gradient" (default on); off falls back to solid background_color
-- Gradient: linear-gradient(160deg, #0d2247 → #0A1A34 → #150d2a → #2e0c1e)
+- npm run dev (concurrently: watch:css + shopify theme dev)
+- Hero: split copy/image layout, gradient toggle, Unsplash placeholder
+
+[Session 5] Floating navbar
+- sections/header.liquid: floating pill, logo/nav/CTA/icons layout, mobile hamburger dropdown
+
+[Session 6] Footer
+- sections/footer.liquid: floating pill on sunset gradient bg, newsletter form, social icons, 4-col grid, copyright bar
+
+[Session 7] CTA button component + standards cleanup
+- Created snippets/cta-button.liquid: reusable button, supports a/button elements, 3 variants, 3 sizes, rounded-xl
+- Wired into header, hero, footer — all CTAs now use the snippet
+- Established code standards: no inline styles for colors, no opacity modifiers, tabs indentation, Tailwind-first
+- All section files reformatted to tab indentation
