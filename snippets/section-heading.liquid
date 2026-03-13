@@ -1,0 +1,63 @@
+{%- comment -%}
+	Snippet: section-heading
+
+	Parameters:
+	  eyebrow    {String}  Small label above heading             (optional)
+	  heading    {String}  Main heading                          (optional)
+	  subheading {String}  Supporting paragraph                  (optional)
+	  align      {String}  'left' | 'center' | 'right'          (default: 'center')
+	  size       {String}  'sm' | 'md' | 'lg'                   (default: 'md')
+
+	Usage:
+	  {%- render 'section-heading',
+	      eyebrow:    'See the difference',
+	      heading:    'Breathe freely.',
+	      subheading: 'Drag to compare.',
+	      align:      'center',
+	      size:       'md'
+	  -%}
+{%- endcomment -%}
+
+{%- liquid
+	assign _align = align | default: 'center'
+	assign _size  = size  | default: 'md'
+
+	case _align
+		when 'left'
+			assign align_class = 'text-left'
+			assign body_mx     = ''
+		when 'right'
+			assign align_class = 'text-right'
+			assign body_mx     = 'ml-auto'
+		else
+			assign align_class = 'text-center'
+			assign body_mx     = 'mx-auto'
+	endcase
+
+	case _size
+		when 'sm'
+			assign h_class = 'text-3xl md:text-4xl'
+		when 'lg'
+			assign h_class = 'text-5xl md:text-6xl lg:text-7xl'
+		else
+			assign h_class = 'text-4xl md:text-5xl'
+	endcase
+-%}
+
+{%- if eyebrow != blank or heading != blank or subheading != blank -%}
+	<div class="flex flex-col gap-4 {{ align_class }}">
+
+		{%- if eyebrow != blank -%}
+			<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ eyebrow }}</p>
+		{%- endif -%}
+
+		{%- if heading != blank -%}
+			<h2 class="font-heading font-bold {{ h_class }} leading-tight tracking-tight text-title">{{ heading }}</h2>
+		{%- endif -%}
+
+		{%- if subheading != blank -%}
+			<p class="text-base md:text-lg leading-relaxed text-copy max-w-2xl {{ body_mx }}">{{ subheading }}</p>
+		{%- endif -%}
+
+	</div>
+{%- endif -%}

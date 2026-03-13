@@ -12,9 +12,14 @@
     "hero": {
       "type": "hero",
       "settings": {}
+    },
+    "before_after_slider": {
+      "type": "before-after-slider",
+      "settings": {}
     }
   },
   "order": [
-    "hero"
+    "hero",
+    "before_after_slider"
   ]
 }

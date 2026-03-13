@@ -95,7 +95,7 @@ Parameters:
 |---------------|-----------------------------------|------------|
 | `label`       | String (required)                 | —          |
 | `url`         | String                            | `#`        |
-| `variant`     | `primary` / `accent` / `ghost`    | `primary`  |
+| `variant`     | `primary` / `accent` / `ghost` / `inverse` / `blue` | `primary`  |
 | `size`        | `sm` / `md` / `lg`               | `md`       |
 | `element`     | `a` / `button`                    | `a`        |
 | `button_type` | `button` / `submit` / `reset`     | `button`   |
@@ -103,7 +103,7 @@ Parameters:
 
 Sizes: `sm` = `px-6 py-2.5`, `md` = `px-8 py-3`, `lg` = `px-10 py-4`
 Rounding: always `rounded-xl` (soft, not pill)
-Variants: `primary` = bg-main/text-secondary, `accent` = bg-highlight/text-white, `ghost` = border-2/border-main/text-main
+Variants: `primary` = bg-main/text-secondary, `accent` = bg-highlight/text-white, `ghost` = border-2/border-main/text-main, `inverse` = bg-secondary/text-main, `blue` = bg-highlight-blue/text-white
 
 Default size is `md`. Only specify `size` when intentionally deviating.
 
@@ -137,6 +137,26 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - Copyright bar: below the pill, `text-white`, `© 2026 Aira Wellness. · Privacy Policy · Terms of Service`
 - Links: hardcoded paths. Social URLs: CMS via schema.
 
+### snippets/section-heading.liquid
+Reusable heading block. Pass via `{% render 'section-heading', eyebrow: ..., heading: ..., subheading: ..., align: 'center', size: 'md' %}`.
+| Param        | Values                       | Default   |
+|--------------|------------------------------|-----------|
+| `eyebrow`    | String                       | —         |
+| `heading`    | String                       | —         |
+| `subheading` | String                       | —         |
+| `align`      | `left` / `center` / `right`  | `center`  |
+| `size`       | `sm` / `md` / `lg`           | `md`      |
+
+Eyebrow: `text-highlight`, uppercase, tracking-widest. Heading: `font-heading text-title`. Subheading: `text-copy max-w-2xl`, auto-centered when align=center.
+
+### sections/before-after-slider.liquid
+Drag comparison slider. Section heading (via `section-heading` snippet) above a `max-w-3xl` comparison widget.
+- After image is the base layer (determines height). Before pane absolutely positioned, width% drives reveal.
+- Drag handle: 40px wide hit target, white circle with ←→ arrows icon, white 2px vertical line.
+- Labels: `bg-main text-secondary` pill in bottom corners.
+- JS: mouse + touch drag; `touchmove` uses `passive: false` to prevent scroll during drag.
+- CMS: eyebrow, heading, subheading, heading_align, heading_size, before_image, before_label, after_image, after_label, container_width, padding_vertical.
+
 ---
 
 ## Session Log
@@ -168,3 +188,8 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - Wired into header, hero, footer — all CTAs now use the snippet
 - Established code standards: no inline styles for colors, no opacity modifiers, tabs indentation, Tailwind-first
 - All section files reformatted to tab indentation
+
+[Session 8] Section heading snippet + before/after slider
+- Created snippets/section-heading.liquid: reusable eyebrow/heading/subheading block, align + size params
+- Created sections/before-after-slider.liquid: drag comparison slider using section-heading snippet
+- templates/index.json updated: before_after_slider added after hero

@@ -63,19 +63,19 @@
 			<div class="flex flex-col items-start text-left gap-6 w-full md:w-1/2">
 
 				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-sm font-semibold uppercase tracking-widest" style="color: var(--color-text-inverse); opacity: 0.6;">
+					<p class="text-sm font-semibold uppercase tracking-widest text-secondary opacity-60">
 						{{ section.settings.eyebrow }}
 					</p>
 				{%- endif -%}
 
 				{%- if section.settings.heading != blank -%}
-					<h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight" style="color: var(--color-text-inverse);">
+					<h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
 						{{ section.settings.heading }}
 					</h1>
 				{%- endif -%}
 
 				{%- if section.settings.subheading != blank -%}
-					<p class="text-base md:text-lg leading-relaxed max-w-md" style="color: var(--color-text-inverse); opacity: 0.65;">
+					<p class="text-base md:text-lg leading-relaxed max-w-md text-secondary opacity-65">
 						{{ section.settings.subheading }}
 					</p>
 				{%- endif -%}
@@ -85,15 +85,14 @@
 						{%- render 'cta-button',
 							label: section.settings.button_label,
 							url: section.settings.button_url,
-							variant: 'accent',
+							variant: 'blue',
 							size: 'md'
 						-%}
 
 						{%- if section.settings.secondary_button_label != blank -%}
 							<a
 								href="{{ section.settings.secondary_button_url }}"
-								class="inline-block text-sm font-semibold tracking-wide underline-offset-4 hover:underline transition-opacity hover:opacity-70"
-								style="color: var(--color-text-inverse); opacity: 0.8;"
+								class="inline-block text-sm font-semibold tracking-wide text-secondary opacity-80 underline-offset-4 hover:underline transition-opacity hover:opacity-70"
 							>
 								{{ section.settings.secondary_button_label }}
 							</a>
