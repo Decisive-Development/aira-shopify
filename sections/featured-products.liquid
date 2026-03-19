@@ -1,0 +1,233 @@
+{%- liquid
+	case section.settings.padding_vertical
+		when 'none'
+			assign py = ''
+		when 'sm'
+			assign py = 'py-8 md:py-12'
+		when 'md'
+			assign py = 'py-16 md:py-20'
+		when 'lg'
+			assign py = 'py-24 md:py-32'
+		when 'xl'
+			assign py = 'py-32 md:py-48'
+	endcase
+
+	case section.settings.container_width
+		when 'contained'
+			assign container_class = 'container-contained'
+		when 'wide'
+			assign container_class = 'container-wide'
+		when 'full'
+			assign container_class = 'container-full'
+	endcase
+-%}
+
+<section class="w-full bg-bg-soft">
+	<div class="{{ container_class }} {{ py }}">
+
+		{%- comment -%} Section heading {%- endcomment -%}
+		{%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
+			<div class="mb-12 md:mb-16">
+				{%- render 'section-heading',
+					eyebrow:    section.settings.eyebrow,
+					heading:    section.settings.heading,
+					subheading: section.settings.subheading,
+					align:      section.settings.heading_align,
+					size:       section.settings.heading_size
+				-%}
+			</div>
+		{%- endif -%}
+
+		{%- comment -%} Product grid {%- endcomment -%}
+		{%- if section.blocks.size > 0 -%}
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+				{%- for block in section.blocks -%}
+					{%- assign product = block.settings.product -%}
+					{%- if product != blank -%}
+						{%- render 'product-card',
+							product: product,
+							badge:   block.settings.badge
+						-%}
+					{%- endif -%}
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>
+
+<script>
+	(function () {
+		document.querySelectorAll('[data-product-card]').forEach(function (card) {
+			var variantInput = card.querySelector('[data-variant-id]');
+			var priceEl      = card.querySelector('[data-price]');
+			var addBtn       = card.querySelector('[data-add-to-cart]');
+			var imgEl        = card.querySelector('a img');
+			var variants     = JSON.parse(card.querySelector('[data-product-variants]').textContent);
+			var selectedOptions = variants[0].options.slice();
+
+			function findVariant() {
+				return variants.find(function (v) {
+					return v.options.every(function (opt, i) {
+						return opt === selectedOptions[i];
+					});
+				}) || null;
+			}
+
+			function updateCard(variant) {
+				if (!variant) return;
+				variantInput.value  = variant.id;
+				priceEl.textContent = variant.price_formatted;
+				addBtn.disabled     = !variant.available;
+				addBtn.textContent  = variant.available ? 'Add to Cart' : 'Sold Out';
+				if (variant.image && imgEl) {
+					imgEl.removeAttribute('srcset');
+					imgEl.removeAttribute('sizes');
+					imgEl.src = variant.image;
+				}
+			}
+
+			card.querySelectorAll('[data-option-btn]').forEach(function (btn) {
+				btn.addEventListener('click', function () {
+					var idx      = parseInt(this.dataset.optionIndex);
+					var value    = this.dataset.optionValue;
+					selectedOptions[idx] = value;
+
+					var group    = card.querySelector('[data-option-group="' + idx + '"]');
+					var isColour = group.dataset.type === 'colour';
+
+					group.querySelectorAll('[data-option-btn]').forEach(function (b) {
+						var active = b.dataset.optionValue === value;
+						if (isColour) {
+							if (active) {
+								b.classList.add('border-main', 'ring-2', 'ring-main', 'ring-offset-1');
+								b.classList.remove('border-transparent');
+							} else {
+								b.classList.remove('border-main', 'ring-2', 'ring-main', 'ring-offset-1');
+								b.classList.add('border-transparent');
+							}
+						} else {
+							if (active) {
+								b.classList.add('bg-main', 'text-secondary', 'border-main');
+								b.classList.remove('bg-bg', 'border-bg-muted', 'text-copy');
+							} else {
+								b.classList.remove('bg-main', 'text-secondary', 'border-main');
+								b.classList.add('bg-bg', 'border-bg-muted', 'text-copy');
+							}
+						}
+					});
+
+					updateCard(findVariant());
+				});
+			});
+		});
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Featured Products",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Heading"
+		},
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Our products"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Simple. Effective. Aira."
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Subheading",
+			"default": "Two products. Everything you need to breathe freely and sleep better."
+		},
+		{
+			"type": "select",
+			"id": "heading_align",
+			"label": "Heading alignment",
+			"options": [
+				{ "value": "left",   "label": "Left" },
+				{ "value": "center", "label": "Center" },
+				{ "value": "right",  "label": "Right" }
+			],
+			"default": "center"
+		},
+		{
+			"type": "select",
+			"id": "heading_size",
+			"label": "Heading size",
+			"options": [
+				{ "value": "sm", "label": "Small" },
+				{ "value": "md", "label": "Medium" },
+				{ "value": "lg", "label": "Large" }
+			],
+			"default": "md"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "container_width",
+			"label": "Container width",
+			"options": [
+				{ "value": "contained", "label": "Contained (1280px)" },
+				{ "value": "wide",      "label": "Wide (1536px)" },
+				{ "value": "full",      "label": "Full width" }
+			],
+			"default": "contained"
+		},
+		{
+			"type": "select",
+			"id": "padding_vertical",
+			"label": "Vertical padding",
+			"options": [
+				{ "value": "none", "label": "None" },
+				{ "value": "sm",   "label": "Small" },
+				{ "value": "md",   "label": "Medium" },
+				{ "value": "lg",   "label": "Large" },
+				{ "value": "xl",   "label": "Extra large" }
+			],
+			"default": "lg"
+		}
+	],
+	"blocks": [
+		{
+			"type": "product",
+			"name": "Product",
+			"settings": [
+				{
+					"type": "product",
+					"id": "product",
+					"label": "Product"
+				},
+				{
+					"type": "text",
+					"id": "badge",
+					"label": "Badge",
+					"info": "Optional label on the image, e.g. 'Best Seller' or 'New'"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Featured Products",
+			"blocks": [
+				{ "type": "product" },
+				{ "type": "product" }
+			]
+		}
+	]
+}
+{% endschema %}

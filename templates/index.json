@@ -16,10 +16,30 @@
     "before_after_slider": {
       "type": "before-after-slider",
       "settings": {}
+    },
+    "featured_products": {
+      "type": "featured-products",
+      "blocks": {
+        "starter_kit": {
+          "type": "product",
+          "settings": {
+            "badge": "Best Seller"
+          }
+        },
+        "refill_tabs": {
+          "type": "product",
+          "settings": {
+            "badge": ""
+          }
+        }
+      },
+      "block_order": ["starter_kit", "refill_tabs"],
+      "settings": {}
     }
   },
   "order": [
     "hero",
-    "before_after_slider"
+    "before_after_slider",
+    "featured_products"
   ]
 }

@@ -63,19 +63,19 @@
 						| image_tag:
 							loading: 'lazy',
 							class: 'w-full h-auto block',
-							widths: '400, 600, 800, 1200'
+							widths: '400, 600, 800, 1200',
+							draggable: 'false'
 					}}
 				{%- else -%}
-					{% # theme-check-disable RemoteAsset %}
 					<img
-						src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80&auto=format&fit=crop"
-						alt="{{ section.settings.after_label | default: 'After' }}"
+						src="{{ 'images/With_Compressed.webp' | asset_url }}"
+						alt="{{ section.settings.after_label | default: 'With Aira' }}"
 						class="w-full h-auto block"
-						width="1200"
-						height="800"
+						width="600"
+						height="654"
 						loading="lazy"
+						draggable="false"
 					>
-					{% # theme-check-enable RemoteAsset %}
 				{%- endif -%}
 			</div>
 
@@ -86,8 +86,8 @@
 				</span>
 			{%- endif -%}
 
-			{%- comment -%} Before pane — full size, clip-path drives the reveal {%- endcomment -%}
-			<div class="absolute inset-0" style="clip-path: inset(0 50% 0 0);" data-before-pane>
+			{%- comment -%} Before pane — clip-path on the pane drives the reveal (clips image + label together) {%- endcomment -%}
+			<div class="absolute inset-0" style="clip-path: inset(0 50% 0 0)" data-before-pane>
 
 				{%- if has_before_img -%}
 					{{
@@ -95,20 +95,20 @@
 						| image_url: width: 1200
 						| image_tag:
 							loading: 'lazy',
-							class: 'absolute inset-0 w-full h-full object-cover',
-							widths: '400, 600, 800, 1200'
+							class: 'w-full h-auto block',
+							widths: '400, 600, 800, 1200',
+							draggable: 'false'
 					}}
 				{%- else -%}
-					{% # theme-check-disable RemoteAsset %}
 					<img
-						src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&q=80&auto=format&fit=crop"
-						alt="{{ section.settings.before_label | default: 'Before' }}"
-						class="absolute inset-0 w-full h-full object-cover"
-						width="1200"
-						height="800"
+						src="{{ 'images/Without_Compressed.webp' | asset_url }}"
+						alt="{{ section.settings.before_label | default: 'Without Aira' }}"
+						class="w-full h-auto block"
+						width="600"
+						height="654"
 						loading="lazy"
+						draggable="false"
 					>
-					{% # theme-check-enable RemoteAsset %}
 				{%- endif -%}
 
 				{%- comment -%} Before label {%- endcomment -%}
@@ -120,16 +120,17 @@
 
 			</div>
 
-			{%- comment -%} Drag handle — 40px wide hit target centred on divider line {%- endcomment -%}
+			{%- comment -%} Drag handle — centred on divider line via margin-left, no transform {%- endcomment -%}
 			<div
-				class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-10 flex items-center justify-center cursor-col-resize z-10"
+				class="absolute inset-y-0 w-10 flex items-center justify-center cursor-grab z-10"
+				style="left: 50%; margin-left: -20px"
 				data-divider
 			>
 				{%- comment -%} Vertical line {%- endcomment -%}
-				<div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-white pointer-events-none"></div>
+				<div class="absolute inset-y-0 left-1/2 w-0.5 -translate-x-px bg-white pointer-events-none"></div>
 
 				{%- comment -%} Circle handle {%- endcomment -%}
-				<div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center relative pointer-events-none">
+				<div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center pointer-events-none">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="18"
@@ -162,12 +163,13 @@
 				var pct  = ((clientX - rect.left) / rect.width) * 100;
 				pct = Math.min(Math.max(pct, 2), 98);
 				beforePane.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
-				divider.style.left        = pct + '%';
-				divider.style.transform = 'translateX(-50%)';
+				divider.style.left       = pct + '%';
+				divider.style.marginLeft = '-20px';
 			}
 
 			divider.addEventListener('mousedown', function (e) {
 				dragging = true;
+				divider.style.cursor = 'grabbing';
 				e.preventDefault();
 			});
 
@@ -177,6 +179,7 @@
 
 			window.addEventListener('mouseup', function () {
 				dragging = false;
+				divider.style.cursor = '';
 			});
 
 			divider.addEventListener('touchstart', function (e) {

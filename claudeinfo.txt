@@ -149,12 +149,30 @@ Reusable heading block. Pass via `{% render 'section-heading', eyebrow: ..., hea
 
 Eyebrow: `text-highlight`, uppercase, tracking-widest. Heading: `font-heading text-title`. Subheading: `text-copy max-w-2xl`, auto-centered when align=center.
 
+### snippets/product-card.liquid
+Reusable product card. Pass via `{% render 'product-card', product: product, badge: 'Best Seller' %}`.
+- Portrait image `aspect-4/5` with hover scale-105. Optional badge pill top-left.
+- Colour option (name `Colour`/`Color`) → circle swatches with inline `style="background: #hex"`. Known colours: Black=`#1A1A1A`, Beige=`#C8B89A`.
+- All other options → pill buttons.
+- Price display with compare-at strikethrough. Add to Cart / Sold Out button.
+- Variant data embedded as `<script type="application/json" data-product-variants>` for JS consumption.
+- JS lives in `sections/featured-products.liquid` (where the cards are rendered).
+
+### sections/featured-products.liquid
+- 2-col responsive grid (`grid-cols-1 md:grid-cols-2`, `max-w-4xl mx-auto`)
+- Section heading via `section-heading` snippet (eyebrow, heading, subheading, align, size)
+- Blocks: `product` type with `product_picker` + `badge` text field
+- JS handles variant selection: swatch/pill active classes, variant ID, price, availability, image swap (clears `srcset`/`sizes` before setting `src`)
+
 ### sections/before-after-slider.liquid
 Drag comparison slider. Section heading (via `section-heading` snippet) above a `max-w-3xl` comparison widget.
-- After image is the base layer (determines height). Before pane absolutely positioned, width% drives reveal.
-- Drag handle: 40px wide hit target, white circle with ←→ arrows icon, white 2px vertical line.
-- Labels: `bg-main text-secondary` pill in bottom corners.
-- JS: mouse + touch drag; `touchmove` uses `passive: false` to prevent scroll during drag.
+- After image (`w-full h-auto block`) is the base layer, determines container height.
+- Before pane: `absolute inset-0`, `clip-path: inset(0 R% 0 0)` on the pane div — clips image + label together.
+- Drag handle: `w-10` container, centred via `left: pct%; margin-left: -20px` (no transform). White circle with ←→ arrows SVG, white 2px vertical line.
+- Cursor: `cursor-grab` at rest, `cursor-grabbing` while dragging.
+- Labels: `bg-main text-secondary` pill in bottom corners, clipped with the before pane.
+- Default images: `assets/images/With_Compressed.webp` (after, 600×654) and `assets/images/Without_Compressed.webp` (before, 600×654). CMS image_picker overrides these.
+- JS: mouse + touch drag; `touchmove` uses `passive: false` to prevent scroll during drag. No syncImageWidth needed.
 - CMS: eyebrow, heading, subheading, heading_align, heading_size, before_image, before_label, after_image, after_label, container_width, padding_vertical.
 
 ---
@@ -193,3 +211,18 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 - Created snippets/section-heading.liquid: reusable eyebrow/heading/subheading block, align + size params
 - Created sections/before-after-slider.liquid: drag comparison slider using section-heading snippet
 - templates/index.json updated: before_after_slider added after hero
+
+[Session 9] Before/after slider refinements
+- Fixed divider alignment: uses `left: pct%; margin-left: -20px` instead of transform (avoids Tailwind v4 transform conflicts)
+- Fixed reveal: clip-path applied to before pane div (not image), so label clips with image
+- Cursor: cursor-grab / cursor-grabbing
+- Default images swapped from Unsplash to local assets/images/With_Compressed.webp + Without_Compressed.webp (600×654)
+
+[Session 10] Product cards + featured products section
+- Created snippets/product-card.liquid: reusable card with image (aspect-4/5), badge, colour swatches, pill variant selectors, price, add-to-cart
+- Created sections/featured-products.liquid: 2-col grid, section-heading snippet, product blocks with product_picker + badge field
+- Variant JS: embedded JSON, swatch/pill active state toggling, price/availability/image updates on selection
+- Fixed variant image swap: clear srcset + sizes before setting src (browsers prioritise srcset over src attribute)
+- Variant images must be assigned to individual variants in Shopify admin (not just added to product media gallery) for variant.featured_image to return a value
+- Products: Aira Starter Kit (Colour: Black/Beige), Aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
+- templates/index.json wired with featured_products section after before_after_slider
