@@ -4,7 +4,8 @@
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css",
     "watch:css": "npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css --watch",
-    "dev": "concurrently \"npm run watch:css\" \"shopify theme dev\""
+    "dev": "shopify theme dev --theme Aira-theme --theme-editor-sync -s aira-breathing",
+    "dev:css": "npm run watch:css"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.17",

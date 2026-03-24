@@ -177,6 +177,39 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 
 ---
 
+### sections/health-effects.liquid
+Split layout section: image left, heading + expandable accordion list right.
+- Section image picker (left col). Fallback: placeholder `aspect-[4/5]` box.
+- Section heading via `section-heading` snippet (eyebrow, heading, subheading, align: left, size CMS).
+- Accordion items are CMS blocks (type: `effect`): icon (emoji text), title, richtext description, optional link label + URL.
+- Defaults: 5 blocks pre-populated (High blood pressure, Snoring, Dry mouth, Poor sleep quality, Facial development).
+- Scroll animation: IntersectionObserver watches `[data-animate]` elements; removes `opacity-0 translate-y-8/6` when 15% in view. Staggered `transition-delay` via inline style.
+- Accordion: max-height 0→scrollHeight animation, chevron `rotate-180` toggle, `aria-expanded` for accessibility.
+- CMS: image, eyebrow, heading, subheading, heading_size, container_width, padding_vertical, blocks.
+
+---
+
+### sections/benefits-slider.liquid
+Horizontally scrollable card slider for product benefits. Cards are `w-72 flex-shrink-0`, image top (`aspect-[3/4]`), title + description below.
+- Track left padding uses `max(1.5rem, calc((100vw - 1280px) / 2 + 3rem))` to align first card with container edge on all screen widths.
+- Prev/next arrow buttons auto-disable at scroll boundaries. JS scrolls by `cardWidth + 20px gap`.
+- Scrollbar hidden via inline `<style>` targeting `[data-benefits-track]`.
+- Scroll-in animations: IntersectionObserver, `data-benefits-animate`, removes `opacity-0 translate-y-6`.
+- Separate `padding_top` / `padding_bottom` controls (not a single padding_vertical).
+- CMS: eyebrow, heading, subheading, padding_top, padding_bottom. Blocks: `slide` type with image_picker, heading, description.
+
+### sections/social-proof.liquid
+Fullscreen image section with split layout: intro copy left, stat blocks right.
+- Background: CMS image_picker + overlay darkness (range 0–90, maps to bg-black/N). Fallback: deep navy gradient.
+- Left column: eyebrow, heading, tagline, body copy, optional trust badge pill (icon + text).
+- Right column: stats_heading + CMS blocks (type: `stat`) with `value`, `label`, `footnote`.
+- Stats layout: horizontal row per stat — large value (clamp 2.5–4rem) left, label + footnote right, separated by border-white/15 lines.
+- Scroll animation: IntersectionObserver, `data-sp-animate`, removes `opacity-0 translate-y-8/6`.
+- Dark gradient vignette (left+right edges) layered above overlay for readability on any image.
+- Defaults: 3 stat blocks (88% snoring, 92% sinus, 87% sleep).
+
+---
+
 ## Session Log
 
 [Session 1] Brand & Tailwind setup
@@ -226,3 +259,24 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 - Variant images must be assigned to individual variants in Shopify admin (not just added to product media gallery) for variant.featured_image to return a value
 - Products: Aira Starter Kit (Colour: Black/Beige), Aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
 - templates/index.json wired with featured_products section after before_after_slider
+
+[Session 11] Health effects section
+- Created sections/health-effects.liquid: split layout (image left, accordion right), scroll-in animations, expandable health effect blocks
+- 5 default blocks: High blood pressure, Snoring, Dry mouth, Poor sleep quality, Facial development
+- templates/index.json updated: health_effects added after featured_products
+
+[Session 13] Benefits slider
+- Created sections/benefits-slider.liquid: horizontally scrollable card slider, image + title + description per slide
+- Prev/Next arrow buttons (data-benefits-prev/next), auto-disable at track edges
+- Track uses CSS calc() left padding to align first card with container-contained edge
+- Scrollbar hidden via [data-benefits-track] CSS selector in inline <style>
+- Scroll-in animations via IntersectionObserver (data-benefits-animate)
+- 5 default slides: Instantly Expands, Sweat Resistant, Won't Collapse, Skin Safe, Reusable Band
+- Image placeholder: muted bg with SVG icon
+- templates/index.json updated: benefits_slider added after social_proof
+
+[Session 12] Social proof / stats banner
+- Created sections/social-proof.liquid: fullscreen image, split layout — intro copy left, stat blocks right
+- Scroll-in animations via IntersectionObserver (data-sp-animate)
+- 3 default stat blocks: 88% snoring reduction, 92% sinus relief, 87% deeper sleep
+- templates/index.json updated: social_proof added after health_effects_cards

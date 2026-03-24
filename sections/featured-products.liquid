@@ -22,7 +22,35 @@
 	endcase
 -%}
 
-<section class="w-full bg-bg-soft">
+{%- liquid
+	assign has_bg_image = false
+	if section.settings.background_image != blank
+		assign has_bg_image = true
+	endif
+-%}
+
+<section
+	class="relative overflow-hidden w-full"
+	style="{% unless has_bg_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
+>
+	{%- if has_bg_image -%}
+		<div class="absolute inset-0 w-full h-full -z-10">
+			{{
+				section.settings.background_image
+				| image_url: width: 2400
+				| image_tag:
+					loading: 'lazy',
+					class: 'w-full h-full object-cover',
+					widths: '375, 768, 1280, 1920, 2400'
+			}}
+			{%- if section.settings.overlay_opacity > 0 -%}
+				<div
+					class="absolute inset-0"
+					style="background-color: {{ section.settings.overlay_color }}; opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"
+				></div>
+			{%- endif -%}
+		</div>
+	{%- endif -%}
 	<div class="{{ container_class }} {{ py }}">
 
 		{%- comment -%} Section heading {%- endcomment -%}
@@ -171,6 +199,37 @@
 				{ "value": "lg", "label": "Large" }
 			],
 			"default": "md"
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background color",
+			"default": "#FAFAFA"
+		},
+		{
+			"type": "image_picker",
+			"id": "background_image",
+			"label": "Background image"
+		},
+		{
+			"type": "color",
+			"id": "overlay_color",
+			"label": "Overlay color",
+			"default": "#000000"
+		},
+		{
+			"type": "range",
+			"id": "overlay_opacity",
+			"label": "Overlay opacity",
+			"min": 0,
+			"max": 100,
+			"step": 5,
+			"default": 0,
+			"unit": "%"
 		},
 		{
 			"type": "header",

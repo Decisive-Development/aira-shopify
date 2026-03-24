@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npm uninstall:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(ls c:/code/aira-shopify/*.toml)"
     ]
   }
 }

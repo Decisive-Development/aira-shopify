@@ -1,0 +1,594 @@
+{%- liquid
+	case section.settings.padding_vertical
+		when 'none'
+			assign pt = ''
+			assign pb = ''
+		when 'sm'
+			assign pt = 'pt-8 md:pt-12'
+			assign pb = 'pb-8 md:pb-12'
+		when 'md'
+			assign pt = 'pt-16 md:pt-20'
+			assign pb = 'pb-16 md:pb-20'
+		when 'lg'
+			assign pt = 'pt-24 md:pt-32'
+			assign pb = 'pb-24 md:pb-32'
+	endcase
+
+	case section.settings.container_width
+		when 'contained'
+			assign container_class = 'container-contained'
+			assign container_max   = '1280'
+		when 'wide'
+			assign container_class = 'container-wide'
+			assign container_max   = '1536'
+		when 'full'
+			assign container_class = 'container-full'
+			assign container_max   = '0'
+	endcase
+
+	assign has_bg_image = false
+	if section.settings.background_image != blank
+		assign has_bg_image = true
+	endif
+-%}
+
+<style>
+	/* ─── Track — scrollbar hidden ─── */
+	#shopify-section-{{ section.id }} .bs-track::-webkit-scrollbar { display: none; }
+	#shopify-section-{{ section.id }} .bs-track { -ms-overflow-style: none; scrollbar-width: none; }
+
+	/* ─── Track ─── */
+	#shopify-section-{{ section.id }} .bs-track {
+		margin: 0; padding: 0; list-style: none;
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 88%;
+		gap: 16px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		cursor: grab;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+		padding-bottom: 0;
+	}
+	#shopify-section-{{ section.id }} .bs-track:active { cursor: grabbing; }
+
+	@media (min-width: 768px) {
+		#shopify-section-{{ section.id }} .bs-track {
+			padding-left: 2.5rem;
+			padding-right: 2.5rem;
+		}
+	}
+	@media (min-width: 1024px) {
+		#shopify-section-{{ section.id }} .bs-track {
+			grid-auto-columns: 390px;
+			gap: 20px;
+			padding-left: 3rem;
+			padding-right: 3rem;
+			padding-bottom: 4.5rem;
+		}
+	}
+	{%- if container_max != '0' -%}
+	@media (min-width: {{ container_max }}px) {
+		#shopify-section-{{ section.id }} .bs-track {
+			padding-left: calc((100vw - {{ container_max }}px) / 2 + 3rem);
+			padding-right: calc((100vw - {{ container_max }}px) / 2 + 3rem);
+		}
+	}
+	{%- endif -%}
+
+	/* ─── Cards ─── */
+	#shopify-section-{{ section.id }} .bs-card {
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		user-select: none;
+	}
+
+	/* ─── Square media ─── */
+	#shopify-section-{{ section.id }} .bs-media {
+		position: relative;
+		background: var(--color-bg-muted, #F2F2F2);
+		border-radius: 1rem;
+		overflow: hidden;
+		isolation: isolate;
+	}
+	#shopify-section-{{ section.id }} .bs-media::before {
+		content: '';
+		display: block;
+		padding-top: 100%;
+	}
+	#shopify-section-{{ section.id }} .bs-media > img,
+	#shopify-section-{{ section.id }} .bs-media > video {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	#shopify-section-{{ section.id }} .bs-placeholder {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+
+	/* ─── Text ─── */
+	#shopify-section-{{ section.id }} .bs-text { padding: 20px 2px 0; }
+	#shopify-section-{{ section.id }} .bs-heading {
+		font-family: var(--font-heading, sans-serif);
+		font-weight: 600;
+		font-size: 1rem;
+		color: var(--color-title, #212121);
+		line-height: 1.3;
+		margin: 0 0 8px;
+	}
+	#shopify-section-{{ section.id }} .bs-body,
+	#shopify-section-{{ section.id }} .bs-body p {
+		font-family: var(--font-body, sans-serif);
+		font-weight: 400;
+		font-size: 0.875rem;
+		color: var(--color-copy, #40464F);
+		line-height: 1.65;
+		margin: 0;
+	}
+	@media (min-width: 1024px) {
+		#shopify-section-{{ section.id }} .bs-heading  { font-size: 1.0625rem; }
+		#shopify-section-{{ section.id }} .bs-body,
+		#shopify-section-{{ section.id }} .bs-body p   { font-size: 0.9375rem; }
+	}
+
+	/* ─── Controls — centred below carousel, desktop only ─── */
+	#shopify-section-{{ section.id }} .bs-controls {
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		display: none;
+		gap: 8px;
+		z-index: 2;
+	}
+	@media (min-width: 1024px) { #shopify-section-{{ section.id }} .bs-controls { display: flex; } }
+
+	#shopify-section-{{ section.id }} .bs-btn {
+		width: 44px; height: 44px;
+		border-radius: 50%; border: none;
+		background-color: var(--color-main, #0A1A34);
+		color: var(--color-secondary, #F1EBE1);
+		display: inline-flex; align-items: center; justify-content: center;
+		cursor: pointer;
+		transition: opacity 0.2s;
+	}
+	#shopify-section-{{ section.id }} .bs-btn[disabled]          { opacity: 0.25; cursor: not-allowed; }
+	#shopify-section-{{ section.id }} .bs-btn:not([disabled]):hover { opacity: 0.8; }
+</style>
+
+<section
+	class="relative overflow-hidden w-full"
+	style="{% unless has_bg_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
+	data-bs-section="{{ section.id }}"
+>
+
+	{%- if has_bg_image -%}
+		<div class="absolute inset-0 w-full h-full -z-10">
+			{{
+				section.settings.background_image
+				| image_url: width: 2400
+				| image_tag:
+					loading: 'lazy',
+					class: 'w-full h-full object-cover',
+					widths: '375, 768, 1280, 1920, 2400'
+			}}
+			{%- if section.settings.overlay_opacity > 0 -%}
+				<div
+					class="absolute inset-0"
+					style="background-color: {{ section.settings.overlay_color }}; opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"
+				></div>
+			{%- endif -%}
+		</div>
+	{%- endif -%}
+
+	{%- comment -%} Heading {%- endcomment -%}
+	{%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
+		<div
+			class="{{ container_class }} {{ pt }} pb-10 md:pb-14 opacity-0 translate-y-6 transition-all duration-700 ease-out"
+			data-bs-animate
+		>
+			{%- render 'section-heading',
+				eyebrow:    section.settings.eyebrow,
+				heading:    section.settings.heading,
+				subheading: section.settings.subheading,
+				align:      'center',
+				size:       section.settings.heading_size
+			-%}
+		</div>
+	{%- endif -%}
+
+	{%- comment -%} Carousel — viewport is relative so controls can anchor to its bottom-right {%- endcomment -%}
+	<div
+		class="relative"
+		aria-roledescription="carousel"
+		aria-label="{{ section.settings.heading | escape }}"
+	>
+
+		<ul class="bs-track" data-bs-track role="list">
+			{%- for block in section.blocks -%}
+				<li
+					class="bs-card"
+					data-bs-card
+					role="group"
+					aria-roledescription="slide"
+					aria-label="{{ forloop.index }} of {{ section.blocks.size }}"
+					{{ block.shopify_attributes }}
+				>
+
+					<div class="bs-media">
+						{%- if block.settings.video != blank -%}
+							{%- assign video_poster = block.settings.video.preview_image | image_url: width: 800 -%}
+							{{
+								block.settings.video
+								| video_tag:
+									autoplay: true,
+									loop: true,
+									muted: true,
+									playsinline: true,
+									preload: 'none',
+									poster: video_poster
+							}}
+						{%- elsif block.settings.image != blank -%}
+							{{
+								block.settings.image
+								| image_url: width: 800
+								| image_tag:
+									loading: 'lazy',
+									widths: '400, 600, 800',
+									draggable: 'false'
+							}}
+						{%- else -%}
+							<div class="bs-placeholder">
+								<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="color: #d1d5db;">
+									<path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3 20.25h18A1.5 1.5 0 0 0 22.5 18.75v-15A1.5 1.5 0 0 0 21 2.25H3A1.5 1.5 0 0 0 1.5 3.75v15A1.5 1.5 0 0 0 3 20.25Z"/>
+								</svg>
+								<span style="font-size: 0.75rem; font-family: var(--font-body, sans-serif); color: #9ca3af;">Add image or video</span>
+							</div>
+						{%- endif -%}
+					</div>
+
+					<div class="bs-text">
+						{%- if block.settings.heading != blank -%}
+							<h3 class="bs-heading">{{- block.settings.heading -}}</h3>
+						{%- endif -%}
+						{%- if block.settings.description != blank -%}
+							<div class="bs-body"><p>{{- block.settings.description -}}</p></div>
+						{%- endif -%}
+					</div>
+
+				</li>
+			{%- endfor -%}
+		</ul>
+
+		<div class="bs-controls" aria-hidden="true">
+			<button class="bs-btn" type="button" aria-label="Previous" data-bs-prev disabled>
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M15 19l-7-7 7-7"/>
+				</svg>
+			</button>
+			<button class="bs-btn" type="button" aria-label="Next" data-bs-next>
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M9 5l7 7-7 7"/>
+				</svg>
+			</button>
+		</div>
+
+	</div>
+
+	{%- comment -%} Bottom padding spacer {%- endcomment -%}
+	<div class="{{ container_class }} {{ pb }}"></div>
+
+</section>
+
+<script>
+	(function () {
+
+		var sectionEl = document.querySelector('[data-bs-section="{{ section.id }}"]');
+		var track     = sectionEl && sectionEl.querySelector('[data-bs-track]');
+		if (!sectionEl || !track) return;
+
+		var prev    = sectionEl.querySelector('[data-bs-prev]');
+		var next    = sectionEl.querySelector('[data-bs-next]');
+		var animEls = sectionEl.querySelectorAll('[data-bs-animate]');
+
+		/* ─ Heading fade-in ─ */
+		if ('IntersectionObserver' in window) {
+			var io = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (!entry.isIntersecting) return;
+					entry.target.classList.remove('opacity-0', 'translate-y-6');
+					io.unobserve(entry.target);
+				});
+			}, { threshold: 0.1 });
+			animEls.forEach(function (el) { io.observe(el); });
+		} else {
+			animEls.forEach(function (el) { el.classList.remove('opacity-0', 'translate-y-6'); });
+		}
+
+		/* ─ Arrow helpers ─ */
+		function gapPx() {
+			var cs = getComputedStyle(track);
+			return parseFloat(cs.columnGap || cs.gap) || 0;
+		}
+		function cardStep() {
+			var card = track.querySelector('[data-bs-card]');
+			return card ? card.getBoundingClientRect().width + gapPx() : track.clientWidth;
+		}
+		function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+		var btnScrolling = false;
+		function go(dir) {
+			var max    = track.scrollWidth - track.clientWidth;
+			var step   = cardStep();
+			var idx    = Math.round(track.scrollLeft / step) + dir;
+			var target = clamp(idx * step, 0, max);
+			/* If this step would leave a tiny remainder to max (< 25% of step),
+			   absorb it — jump straight to max so there's no micro last-step. */
+			if (dir > 0 && max - target < step * 0.25) target = max;
+			if (Math.abs(target - track.scrollLeft) < 2) return;
+			btnScrolling = true;
+			track.scrollTo({ left: target, behavior: 'smooth' });
+		}
+		function updateArrows() {
+			if (!prev || !next) return;
+			var max  = track.scrollWidth - track.clientWidth;
+			var step = cardStep();
+			prev.disabled = track.scrollLeft <= 1;
+			/* Disable next when remaining scroll is a trivially small amount */
+			next.disabled = max - track.scrollLeft < step * 0.25;
+		}
+
+		if (prev) prev.addEventListener('click', function () { go(-1); });
+		if (next) next.addEventListener('click', function () { go(1); });
+		track.addEventListener('scroll', updateArrows, { passive: true });
+
+		/* ─ Touch / fling snap (JS-only, no CSS scroll-snap) ─ */
+		function snapSettle() {
+			if (btnScrolling) { btnScrolling = false; return; }
+			var max = track.scrollWidth - track.clientWidth;
+			if (track.scrollLeft <= 2 || track.scrollLeft >= max - 2) return;
+			var step    = cardStep();
+			var nearest = Math.min(Math.round(track.scrollLeft / step) * step, max);
+			if (Math.abs(track.scrollLeft - nearest) > 2)
+				track.scrollTo({ left: nearest, behavior: 'smooth' });
+		}
+		if ('onscrollend' in window) {
+			track.addEventListener('scrollend', snapSettle, { passive: true });
+		} else {
+			var snapTimer;
+			track.addEventListener('scroll', function () {
+				clearTimeout(snapTimer);
+				snapTimer = setTimeout(snapSettle, 120);
+			}, { passive: true });
+		}
+
+		/* ─ Mouse drag ─ */
+		var dragging = false, startX = 0, startLeft = 0, hasDragged = false;
+
+		track.addEventListener('mousedown', function (e) {
+			dragging  = true; hasDragged = false;
+			startX    = e.pageX - track.getBoundingClientRect().left;
+			startLeft = track.scrollLeft;
+		});
+		window.addEventListener('mousemove', function (e) {
+			if (!dragging) return;
+			var delta = startX - (e.pageX - track.getBoundingClientRect().left);
+			if (Math.abs(delta) > 4) hasDragged = true;
+			track.scrollLeft = startLeft + delta;
+		});
+		window.addEventListener('mouseup', function () {
+			if (!dragging) return;
+			dragging = false;
+			if (hasDragged) {
+				var max     = track.scrollWidth - track.clientWidth;
+				var nearest = Math.min(Math.round(track.scrollLeft / cardStep()) * cardStep(), max);
+				track.scrollTo({ left: nearest, behavior: 'smooth' });
+			}
+		});
+		track.addEventListener('click', function (e) {
+			if (hasDragged) e.stopPropagation();
+		}, true);
+
+		/* ─ Videos: pause when out of view, pause on hidden tab ─ */
+		if ('IntersectionObserver' in window) {
+			var vo = new IntersectionObserver(function (entries) {
+				entries.forEach(function (entry) {
+					if (!(entry.target instanceof HTMLVideoElement)) return;
+					if (entry.isIntersecting) { entry.target.play().catch(function () {}); }
+					else { entry.target.pause(); }
+				});
+			}, { threshold: 0.5 });
+			sectionEl.querySelectorAll('video').forEach(function (v) { vo.observe(v); });
+		}
+		document.addEventListener('visibilitychange', function () {
+			if (document.hidden) {
+				sectionEl.querySelectorAll('video').forEach(function (v) { v.pause(); });
+			}
+		});
+
+		updateArrows();
+
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Benefits Slider",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Heading"
+		},
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Why Aira"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Built for better breathing."
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Subheading",
+			"default": "Every feature of the Aira strip was designed with one goal — to keep your airway open, all night long."
+		},
+		{
+			"type": "select",
+			"id": "heading_size",
+			"label": "Heading size",
+			"options": [
+				{ "value": "sm", "label": "Small" },
+				{ "value": "md", "label": "Medium" },
+				{ "value": "lg", "label": "Large" }
+			],
+			"default": "md"
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background color",
+			"default": "#FAFAFA"
+		},
+		{
+			"type": "image_picker",
+			"id": "background_image",
+			"label": "Background image"
+		},
+		{
+			"type": "color",
+			"id": "overlay_color",
+			"label": "Overlay color",
+			"default": "#000000"
+		},
+		{
+			"type": "range",
+			"id": "overlay_opacity",
+			"label": "Overlay opacity",
+			"min": 0,
+			"max": 100,
+			"step": 5,
+			"default": 0,
+			"unit": "%"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "container_width",
+			"label": "Container width",
+			"options": [
+				{ "value": "contained", "label": "Contained (1280px)" },
+				{ "value": "wide",      "label": "Wide (1536px)" },
+				{ "value": "full",      "label": "Full width" }
+			],
+			"default": "contained"
+		},
+		{
+			"type": "select",
+			"id": "padding_vertical",
+			"label": "Vertical padding",
+			"options": [
+				{ "value": "none", "label": "None" },
+				{ "value": "sm",   "label": "Small" },
+				{ "value": "md",   "label": "Medium" },
+				{ "value": "lg",   "label": "Large" }
+			],
+			"default": "lg"
+		}
+	],
+	"blocks": [
+		{
+			"type": "slide",
+			"name": "Benefit slide",
+			"settings": [
+				{
+					"type": "video",
+					"id": "video",
+					"label": "Video (takes priority over image)"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image"
+				},
+				{
+					"type": "text",
+					"id": "heading",
+					"label": "Heading",
+					"default": "Benefit title"
+				},
+				{
+					"type": "textarea",
+					"id": "description",
+					"label": "Description",
+					"default": "A short description of this benefit."
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Benefits Slider",
+			"blocks": [
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Instantly Expands",
+						"description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Sweat Resistant. Stays On.",
+						"description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Won't Collapse",
+						"description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Skin Safe. Medical Grade.",
+						"description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Reusable Band",
+						"description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
+					}
+				}
+			]
+		}
+	]
+}
+{% endschema %}
