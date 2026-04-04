@@ -124,12 +124,14 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - JS: inline `<script>`, adds/removes `.scrolled` class on `[data-header]`
 
 ### sections/hero.liquid
-- Full-width section, split layout: copy left (50%), image right (50%)
-- CMS controls: eyebrow, heading, subheading, primary + secondary CTA, foreground image, background image, overlay, full-height toggle, container width, vertical padding
-- Background: night-sky gradient toggle (default on) — `linear-gradient(160deg, #0d2247 → #0A1A34 → #150d2a → #2e0c1e)`
-- Primary CTA: `cta-button` snippet, `variant: accent`
-- Secondary CTA: plain text link (underline on hover)
-- Unsplash placeholder image (theme-check-disable applied)
+- Full-width, full-cover image hero. Foreground image fills entire section as background (`absolute inset-0 object-cover`, 120% height for parallax headroom).
+- Three darken layers: uniform `bg-black/35`, bottom gradient `from-black/60` for copy contrast, top gradient `h-40 from-black/50` for navbar contrast.
+- Parallax: JS translates image layer on scroll (20% rate, rAF-driven, respects `prefers-reduced-motion`).
+- Copy positioned bottom-left (`justify-end`), capped at `max-w-2xl`.
+- CMS controls: eyebrow, heading, subheading, primary + secondary CTA, foreground image, background image, overlay, full-height toggle, container width, vertical padding.
+- Background: night-sky gradient toggle (default on) — fallback when no image set.
+- Primary CTA: `cta-button` snippet, `variant: accent`, `size: lg`.
+- Unsplash placeholder when no foreground image (theme-check-disable applied).
 
 ### sections/footer.liquid
 - Outer `<footer>` has blue→burnt-orange sunset gradient background: `linear-gradient(to bottom, #0A1A34 50%, ... #6b2f00 100%)`
@@ -218,6 +220,26 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - CMS `product` picker to select which product's reviews to display.
 - Renders Judge.me `jdgm-review-widget` div with product data attributes. Supports legacy widget fallback.
 - Injects `jdgm.data.reviewWidget` script block if metafield data available.
+- **CSS overrides** injected via JS (polling for `jm-` elements, then appending `<style>` to `<head>`). All widget selectors prefixed with `#judgeme_product_reviews` for specificity. Hardcoded hex values (not CSS vars) since injected via JS string concatenation.
+- **Key styling decisions:**
+  - Stars: blue `#087CA7` (not default green), via `.jm-star-rating__font-icon` + `--jm-review-widget-star-and-histogram-color` variable override.
+  - Review cards: `#FAFAFA` bg, `#F2F2F2` border, `rounded-2xl`, hover border darkens.
+  - Reviewer avatar (initial square): hidden via `display: none`. Just name + date shown.
+  - Review images: positioned on the right of the card (not below) via JS that forces `flex-direction: row` on `.jm-review-item > .jm-stack`. Thumbnails: 140px wide, 3:4 aspect ratio, rounded.
+  - Floating media gallery (`.jm-media-preview`): hidden — images only show in their review card.
+  - Empty `.jm-cluster` divs inside reviews: hidden via JS.
+  - CTA button (`.jm-action-buttons__button`): blue `#087CA7`, branded font, `inline-size: 60%` via `.jm-review-widget-minimal-header__action-buttons .jm-button`.
+  - Primary/secondary buttons: branded fonts, ghost/outline style, navy hover fill.
+  - Pagination: no borders on arrow buttons.
+- **Write-review modal** (uses `jdgm-` prefixed classes, not `jm-`):
+  - Product image: 160×290px tall (not square), `object-fit: cover`, rounded.
+  - Stars: blue `#087CA7`.
+  - Form inputs: rounded borders, blue focus ring.
+  - Nav buttons: Next/Close = blue `#087CA7`, Back = ghost/outline.
+  - Upload area: dashed border, blue hover highlight.
+  - GDPR text: subtle, links in blue.
+- **Important:** Judge.me v2 widget uses `jm-` prefixed classes for the review list, but `jdgm-` prefixed classes for the write-review modal. Both need separate CSS targeting.
+- **Important:** Judge.me's `.jm-cluster` layout uses CSS custom properties (`--cluster-wrap`) set inline. CSS `!important` alone can't override inline styles on variables — requires JS `el.style.setProperty()` to force overrides.
 - CMS: eyebrow, heading, subheading, heading_size, product, background_color, padding_vertical.
 
 ### sections/faq.liquid
@@ -309,3 +331,25 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - Created sections/judgeme-reviews.liquid: Judge.me review widget with section heading.
 - Created sections/faq.liquid: centered accordion FAQ, max-w-3xl, plus→× icon toggle, max-height animation.
 - templates/index.json: removed health_effects_cards, added faq after judgeme_reviews.
+
+[Session 15] Hero full-cover redesign
+- Hero refactored from 50/50 split to full-cover image background with overlaid copy.
+- Foreground image now renders as absolute full-cover layer (120% height for parallax room).
+- Three darken layers: uniform bg-black/35, bottom gradient from-black/60, top gradient h-40 from-black/50 for navbar.
+- Parallax scroll effect: JS translates image at 20% scroll rate, rAF-driven, respects prefers-reduced-motion.
+- Copy positioned bottom-left, max-w-2xl. CTA bumped to accent/lg.
+- Unsplash placeholder fallback restored for when no image is set.
+
+[Session 16] Judge.me review widget redesign
+- Full brand restyling of Judge.me widget via JS-injected CSS (polling + `<style>` append to `<head>`).
+- Discovered Judge.me v2 uses `jm-` classes (not old `jdgm-`), identified via console diagnostic dumping actual class names.
+- Stars changed from orange (#FF4000) to blue (#087CA7) across widget + write-review modal.
+- Review cards: FAFAFA bg, rounded corners, hover border effect.
+- Avatar initial squares hidden — just name + date displayed.
+- Review images moved to right side of card (not below) — required JS `style.setProperty()` to override Judge.me's inline `--cluster-wrap` CSS variable.
+- Floating media gallery (`.jm-media-preview`) above reviews hidden.
+- Empty `.jm-cluster` divs hidden via JS MutationObserver.
+- CTA button: blue #087CA7, sized via `inline-size: 60%` on action-buttons wrapper.
+- Write-review modal fully branded: product image made tall (160×290px, not square), Satoshi headings, Nunito Sans body, blue nav buttons, blue focus rings, branded upload area.
+- Pagination arrow borders removed.
+- Key learnings: Judge.me modal uses `jdgm-` classes while widget uses `jm-`. Inline CSS variable overrides require JS, not just CSS `!important`.

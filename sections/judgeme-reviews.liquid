@@ -17,6 +17,138 @@
 	assign review_product = section.settings.product
 -%}
 
+<script>
+(function () {
+	/* Inject overrides AFTER Judge.me loads its CSS — uses MutationObserver
+	   to detect when the widget renders, then appends a <style> tag at the
+	   end of <head> so it wins the cascade. All selectors are prefixed with
+	   the widget ID for maximum specificity. */
+
+	var W = '#judgeme_product_reviews';
+	var CSS = '\
+\
+/* ── Base widget ── */\
+' + W + ' { font-family: "Nunito Sans", sans-serif !important; color: #40464F !important; }\
+' + W + ' .jm-text { font-family: "Nunito Sans", sans-serif !important; }\
+\
+/* ── Header / summary ── */\
+' + W + ' .jm-review-widget__header { padding: 1.5rem 0 !important; }\
+' + W + ' .jm-review-widget-minimal-header__title { font-family: "Satoshi", sans-serif !important; font-weight: 700 !important; font-size: 1.1rem !important; color: #212121 !important; }\
+' + W + ' .jm-average-rating-display { font-family: "Satoshi", sans-serif !important; font-weight: 600 !important; color: #212121 !important; }\
+\
+/* ── Stars ── */\
+' + W + ' .jm-star-rating__font-icon { color: #087CA7 !important; }\
+' + W + ' { --jm-review-widget-star-and-histogram-color: #087CA7 !important; }\
+\
+/* ── Buttons ── */\
+' + W + ' .jm-button--primary { background: transparent !important; color: #0A1A34 !important; font-family: "Nunito Sans", sans-serif !important; font-size: 0.8rem !important; font-weight: 600 !important; letter-spacing: 0.025em !important; padding: 0.5rem 1.25rem !important; border-radius: 10px !important; border: 1.5px solid rgba(10,26,52,0.2) !important; transition: all 0.2s ease !important; }\
+' + W + ' .jm-button--primary:hover { background: #0A1A34 !important; color: #F1EBE1 !important; border-color: #0A1A34 !important; }\
+' + W + ' .jm-button--secondary { font-family: "Nunito Sans", sans-serif !important; font-size: 0.8rem !important; font-weight: 600 !important; color: #40464F !important; border-radius: 10px !important; border: 1.5px solid rgba(10,26,52,0.12) !important; background: white !important; padding: 0.5rem 1rem !important; transition: all 0.2s ease !important; }\
+' + W + ' .jm-button--secondary:hover { background: #FAFAFA !important; border-color: rgba(10,26,52,0.2) !important; }\
+' + W + ' .jm-action-buttons__button { background: #087CA7 !important; color: white !important; font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; font-size: 0.875rem !important; padding: 0.75rem 2rem !important; border-radius: 0.75rem !important; border: none !important; letter-spacing: 0.025em !important; transition: opacity 0.2s ease !important; }\
+' + W + ' .jm-action-buttons__button:hover { opacity: 0.9 !important; }\
+' + W + ' .jm-review-widget-minimal-header__action-buttons .jm-button { display: block !important; inline-size: 60% !important; min-inline-size: 9.5em !important; }\
+\
+/* ── Review cards ── */\
+' + W + ' .jm-review-item { background: #FAFAFA !important; border: 1px solid #F2F2F2 !important; border-radius: 16px !important; padding: 1.75rem 2rem !important; transition: border-color 0.2s ease !important; }\
+' + W + ' .jm-review-item:hover { border-color: rgba(10,26,52,0.15) !important; }\
+\
+/* ── Reviewer info ── */\
+' + W + ' .jm-reviewer-info__name { font-family: "Satoshi", sans-serif !important; font-weight: 700 !important; font-size: 0.95rem !important; color: #212121 !important; }\
+' + W + ' .jm-reviewer-avatar { display: none !important; }\
+\
+/* ── Review content ── */\
+' + W + ' .jm-review-content__title { font-family: "Satoshi", sans-serif !important; font-weight: 600 !important; font-size: 1.05rem !important; color: #212121 !important; }\
+' + W + ' .jm-review-content__body { font-family: "Nunito Sans", sans-serif !important; font-size: 0.9rem !important; line-height: 1.7 !important; color: #40464F !important; }\
+\
+\
+\
+/* ── Pagination ── */\
+' + W + ' .jm-pagination-controls { margin-top: 1.5rem !important; }\
+' + W + ' .jm-pagination-controls__button { font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; border-radius: 10px !important; border: none !important; }\
+\
+/* ── Review media — image on right ── */\
+' + W + ' .jm-review-item > .jm-stack { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; gap: 1.5rem !important; }\
+' + W + ' .jm-review-item > .jm-stack > .jm-review-item__body { flex: 1 !important; min-width: 0 !important; }\
+' + W + ' .jm-review-item > .jm-stack > .jm-cluster:empty { display: none !important; }\
+' + W + ' .jm-review-item .jm-media-thumbnail-list__thumbnail { aspect-ratio: 3/4 !important; width: 140px !important; min-width: 140px !important; border-radius: 12px !important; overflow: hidden !important; }\
+' + W + ' .jm-review-item .jm-media-thumbnail-list__thumbnail img { border-radius: 12px !important; object-fit: cover !important; width: 100% !important; height: 100% !important; }\
+' + W + ' .jm-review-item .jm-frame { aspect-ratio: 3/4 !important; }\
+' + W + ' .jm-review-item video { border-radius: 12px !important; }\
+\
+/* ── Hide floating media gallery above reviews ── */\
+' + W + ' .jm-media-preview { display: none !important; }\
+\
+\
+/* ── Review list spacing ── */\
+' + W + ' .jm-review-widget__body { border: none !important; }\
+\
+/* ── Write-review modal ── */\
+.jdgm-write-review-modal__content { font-family: "Nunito Sans", sans-serif !important; color: #40464F !important; border-radius: 20px !important; overflow: hidden !important; }\
+.jdgm-write-review-modal__title { font-family: "Satoshi", sans-serif !important; font-weight: 700 !important; color: #0A1A34 !important; }\
+.jdgm-write-review-modal__intro { font-family: "Nunito Sans", sans-serif !important; color: #40464F !important; line-height: 1.6 !important; }\
+.jdgm-write-review-modal__product-title { font-family: "Satoshi", sans-serif !important; font-weight: 700 !important; color: #0A1A34 !important; }\
+.jdgm-write-review-modal .jdgm-write-review-modal__product-image { width: 160px !important; height: 290px !important; overflow: hidden !important; border-radius: 8px !important; margin: 0 auto !important; }\
+.jdgm-write-review-modal .jdgm-write-review-modal__product-image img { width: 100% !important; height: 100% !important; object-fit: cover !important; }\
+.jdgm-write-review-modal__stars .jdgm-star { color: #087CA7 !important; font-size: 1.5rem !important; }\
+.jdgm-write-review-modal__field-label { font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; color: #0A1A34 !important; font-size: 0.85rem !important; }\
+.jdgm-write-review-modal__field-input { font-family: "Nunito Sans", sans-serif !important; border: 1.5px solid rgba(10,26,52,0.15) !important; border-radius: 10px !important; padding: 0.65rem 0.85rem !important; font-size: 0.875rem !important; color: #40464F !important; transition: border-color 0.2s ease !important; }\
+.jdgm-write-review-modal__field-input:focus { border-color: #087CA7 !important; outline: none !important; }\
+.jdgm-write-review-modal__field-help { font-family: "Nunito Sans", sans-serif !important; color: #40464F !important; opacity: 0.6 !important; font-size: 0.78rem !important; }\
+.jdgm-write-review-modal__nav-btn { font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; font-size: 0.875rem !important; border-radius: 0.75rem !important; letter-spacing: 0.025em !important; transition: opacity 0.2s ease !important; }\
+.jdgm-write-review-modal__nav-btn-next,\
+.jdgm-write-review-modal__nav-btn-close { background: #087CA7 !important; color: white !important; padding: 0.7rem 2rem !important; border: none !important; }\
+.jdgm-write-review-modal__nav-btn-next:hover,\
+.jdgm-write-review-modal__nav-btn-close:hover { opacity: 0.9 !important; }\
+.jdgm-write-review-modal__nav-btn-back { background: transparent !important; color: #0A1A34 !important; border: 1.5px solid rgba(10,26,52,0.2) !important; padding: 0.7rem 1.5rem !important; }\
+.jdgm-write-review-modal__nav-btn-back:hover { background: #0A1A34 !important; color: #F1EBE1 !important; }\
+.jdgm-write-review-modal__btn--contact-us { background: #0A1A34 !important; color: #F1EBE1 !important; font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; border-radius: 0.75rem !important; padding: 0.7rem 2rem !important; border: none !important; }\
+.jdgm-write-review-modal__btn--leave-review { background: transparent !important; color: #0A1A34 !important; font-family: "Nunito Sans", sans-serif !important; font-weight: 600 !important; border: 1.5px solid rgba(10,26,52,0.2) !important; border-radius: 0.75rem !important; padding: 0.7rem 1.5rem !important; }\
+.jdgm-write-review-modal__gdpr-statement { font-family: "Nunito Sans", sans-serif !important; font-size: 0.75rem !important; color: #40464F !important; opacity: 0.5 !important; }\
+.jdgm-write-review-modal__gdpr-statement a { color: #087CA7 !important; }\
+.jdgm-write-review-modal__media-upload { border: 2px dashed rgba(10,26,52,0.15) !important; border-radius: 14px !important; transition: border-color 0.2s ease !important; }\
+.jdgm-write-review-modal__media-upload:hover { border-color: #087CA7 !important; }\
+.jdgm-write-review-modal__media-upload-prompt { font-family: "Nunito Sans", sans-serif !important; color: #40464F !important; }\
+.jdgm-write-review-modal__media-upload-prompt b { color: #087CA7 !important; }\
+.jdgm-write-review-modal__checkbox-text { font-family: "Nunito Sans", sans-serif !important; font-size: 0.85rem !important; color: #40464F !important; }\
+';
+
+	function inject() {
+		if (document.querySelector('[data-aira-jdgm]')) return;
+		var tag = document.createElement('style');
+		tag.setAttribute('data-aira-jdgm', '');
+		tag.textContent = CSS;
+		document.head.appendChild(tag);
+
+		/* Force inline style overrides that CSS alone can't win */
+		function fixLayout() {
+			document.querySelectorAll('.jm-review-item > .jm-stack').forEach(function(el) {
+				el.style.setProperty('display', 'flex', 'important');
+				el.style.setProperty('flex-direction', 'row', 'important');
+				el.style.setProperty('justify-content', 'space-between', 'important');
+				el.style.setProperty('align-items', 'flex-start', 'important');
+			});
+			/* Hide empty cluster divs inside review items */
+			document.querySelectorAll('.jm-review-item .jm-cluster').forEach(function(el) {
+				if (!el.children.length && !el.textContent.trim()) el.style.display = 'none';
+			});
+		}
+		fixLayout();
+		var obs = new MutationObserver(fixLayout);
+		obs.observe(document.querySelector('#judgeme_product_reviews') || document.body, { childList: true, subtree: true });
+	}
+
+	var attempts = 0;
+	var poll = setInterval(function () {
+		attempts++;
+		if (document.querySelectorAll('[class*="jm-"]').length > 2 || attempts > 30) {
+			clearInterval(poll);
+			inject();
+		}
+	}, 500);
+})();
+</script>
+
 <section
 	style="background-color: {{ section.settings.background_color }};"
 >
@@ -40,18 +172,20 @@
 				{%- assign has_legacy = true -%}
 			{%- endif -%}
 
-			<div id='judgeme_product_reviews' class='jdgm-widget jdgm-review-widget'
-				data-product-title='{{ review_product.title | escape }}'
-				data-id='{{ review_product.id }}'
-				data-product-id='{{ review_product.id }}'
-				data-widget='review'
-				data-auto-install='false'
-				data-shop-reviews-count='{{ shop.metafields.judgeme.shop_reviews_count | default: 0 | escape }}'
-				data-entry-point='review_widget.js'
-				data-entry-key='review-widget/main.js'>
-				{%- if has_legacy -%}
-					<div class='jdgm-legacy-widget-content' style='display: none;'>{{ review_product.metafields.judgeme.widget }}</div>
-				{%- endif -%}
+			<div class="max-w-3xl mx-auto">
+				<div id='judgeme_product_reviews' class='jdgm-widget jdgm-review-widget'
+					data-product-title='{{ review_product.title | escape }}'
+					data-id='{{ review_product.id }}'
+					data-product-id='{{ review_product.id }}'
+					data-widget='review'
+					data-auto-install='false'
+					data-shop-reviews-count='{{ shop.metafields.judgeme.shop_reviews_count | default: 0 | escape }}'
+					data-entry-point='review_widget.js'
+					data-entry-key='review-widget/main.js'>
+					{%- if has_legacy -%}
+						<div class='jdgm-legacy-widget-content' style='display: none;'>{{ review_product.metafields.judgeme.widget }}</div>
+					{%- endif -%}
+				</div>
 			</div>
 
 			{%- if review_product.metafields.judgeme.review_widget_data -%}
