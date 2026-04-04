@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -28,7 +37,9 @@
         "heading_size": "md",
         "before_label": "Without Aira",
         "after_label": "With Aira",
-        "background_color": "#FFFFFF",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
       }
@@ -61,7 +72,9 @@
         "subheading": "Two products. Everything you need to breathe freely and sleep better.",
         "heading_align": "center",
         "heading_size": "md",
-        "background_color": "#FAFAFA",
+        "background_color": "#fafafa",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
       }
@@ -132,78 +145,9 @@
         "heading": "Health effects of poor airflow",
         "subheading": "Mouth breathing and restricted nasal airflow have been linked to a surprising range of health issues — many of which are reversible.",
         "heading_size": "md",
-        "background_color": "#FAFAFA",
-        "container_width": "contained",
-        "padding_vertical": "lg"
-      }
-    },
-    "health_effects_cards": {
-      "type": "health-effects-cards",
-      "blocks": {
-        "card_1": {
-          "type": "effect",
-          "settings": {
-            "icon": "🫀",
-            "title": "High blood pressure",
-            "description": "<p>Mouth breathing activates the sympathetic nervous system, raising cortisol and constricting blood vessels. Over time this can contribute to chronically elevated blood pressure — a major risk factor for heart disease.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "card_2": {
-          "type": "effect",
-          "settings": {
-            "icon": "😴",
-            "title": "Snoring",
-            "description": "<p>When the nose is bypassed, the soft tissue at the back of the throat is more likely to vibrate during sleep — producing the sound of snoring. Nasal breathing stabilises this tissue and reduces vibration significantly.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "card_3": {
-          "type": "effect",
-          "settings": {
-            "icon": "💧",
-            "title": "Dry mouth",
-            "description": "<p>Breathing through the mouth dries out saliva, which is your body's first line of defence against bacteria. Chronic dry mouth leads to bad breath, tooth decay, and gum disease.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "card_4": {
-          "type": "effect",
-          "settings": {
-            "icon": "🌙",
-            "title": "Poor sleep quality",
-            "description": "<p>Mouth breathing reduces oxygen uptake and disrupts sleep architecture — resulting in more time in lighter sleep stages. Switching to nasal breathing has been shown to improve deep sleep and morning energy levels.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "card_5": {
-          "type": "effect",
-          "settings": {
-            "icon": "🧒",
-            "title": "Facial development",
-            "description": "<p>In children, long-term mouth breathing can alter the development of facial bones — leading to a narrower palate, elongated face, and crowded teeth. Early nasal breathing habits help guide healthy craniofacial growth.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        }
-      },
-      "block_order": [
-        "card_1",
-        "card_2",
-        "card_3",
-        "card_4",
-        "card_5"
-      ],
-      "settings": {
-        "eyebrow": "Why it matters",
-        "heading": "Health effects of poor airflow",
-        "subheading": "Mouth breathing and restricted nasal airflow have been linked to a surprising range of health issues — many of which are reversible.",
-        "heading_size": "md",
-        "background_color": "#FAFAFA",
+        "background_color": "#fafafa",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
       }
@@ -236,16 +180,22 @@
           }
         }
       },
-      "block_order": ["stat_1", "stat_2", "stat_3"],
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3"
+      ],
       "settings": {
+        "background_color": "#0a1a34",
+        "overlay_color": "#000000",
+        "overlay_opacity": 50,
+        "container_width": "contained",
         "eyebrow": "Introducing Intake Breathing.",
         "heading": "Trusted by Millions. Backed by Research.",
         "tagline": "Trusted by Millions. Backed By Research.",
         "body": "SleepScore Labs confirms what our users experience every day — better breathing and better sleep.",
         "badge": "Clinically validated by SleepScore Labs",
-        "stats_heading": "Transform Your Breath",
-        "background_color": "#0A1A34",
-        "overlay_opacity": 50
+        "stats_heading": "Transform Your Breath"
       }
     },
     "benefits_slider": {
@@ -287,14 +237,99 @@
           }
         }
       },
-      "block_order": ["slide_1", "slide_2", "slide_3", "slide_4", "slide_5"],
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3",
+        "slide_4",
+        "slide_5"
+      ],
       "settings": {
         "eyebrow": "Why Aira",
         "heading": "Built for better breathing.",
         "subheading": "Every feature of the Aira strip was designed with one goal — to keep your airway open, all night long.",
         "heading_size": "md",
+        "background_color": "#fafafa",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
+      }
+    },
+    "judgeme_reviews": {
+      "type": "judgeme-reviews",
+      "settings": {
+        "eyebrow": "What our customers say",
+        "heading": "Real results. Real people.",
+        "subheading": "",
+        "heading_size": "md",
+        "product": "aira-starter-kit",
+        "background_color": "#ffffff",
+        "padding_vertical": "lg"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "faq_1": {
+          "type": "question",
+          "settings": {
+            "question": "How does the Aira nasal strip work?",
+            "answer": "<p>Aira uses a lightweight magnetic band that gently pulls open your nasal passages from the outside. The adhesive tabs stick to either side of your nose and the magnetic bridge connects them, creating a comfortable outward pull that instantly improves airflow.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "question",
+          "settings": {
+            "question": "Is it comfortable to sleep with?",
+            "answer": "<p>Yes. The strip weighs less than 2 grams and is made from medical-grade, hypoallergenic materials. Most users forget they're wearing it within a few minutes. The adhesive tabs are gentle on skin and leave no residue.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "question",
+          "settings": {
+            "question": "How long does the band last?",
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in packs of 30, 60, or 90 pairs. One tab lasts for a single use (one night).</p>"
+          }
+        },
+        "faq_4": {
+          "type": "question",
+          "settings": {
+            "question": "Will it help with my snoring?",
+            "answer": "<p>In our user survey, 88% of Aira users reported a noticeable reduction in snoring. By opening the nasal passages, Aira encourages nose breathing during sleep, which reduces the soft-tissue vibration that causes snoring.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "question",
+          "settings": {
+            "question": "Can I use it during exercise?",
+            "answer": "<p>Absolutely. Aira was originally designed for athletes. The adhesive tabs are sweat-resistant and the band stays securely in place during high-intensity workouts, running, cycling, and more.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship to the GCC?",
+            "answer": "<p>Yes, we ship across the GCC including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3-5 business days. Free shipping is available on orders over a certain threshold.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "settings": {
+        "eyebrow": "FAQ",
+        "heading": "Got questions? We've got answers.",
+        "subheading": "",
+        "heading_size": "md",
         "background_color": "#FAFAFA",
-        "container_width": "contained"
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     }
   },
@@ -303,8 +338,9 @@
     "before_after_slider",
     "featured_products",
     "health_effects",
-    "health_effects_cards",
     "social_proof",
-    "benefits_slider"
+    "benefits_slider",
+    "judgeme_reviews",
+    "faq"
   ]
 }

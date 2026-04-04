@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm uninstall:*)",
       "Bash(npm run:*)",
-      "Bash(ls c:/code/aira-shopify/*.toml)"
+      "Bash(ls c:/code/aira-shopify/*.toml)",
+      "Bash(grep -E '\\\\.\\(css|js\\)$')",
+      "Bash(ls -la c:/code/aira-shopify/sections/faq*)"
     ]
   }
 }

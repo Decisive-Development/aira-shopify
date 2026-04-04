@@ -15,6 +15,7 @@
 # Ignore CLI temp files (Windows hot-reload artefacts)
 *.tmp.*
 claudeinfo.txt
+commands.txt
 assets/critical.source.css
 package.json
 package-lock.json

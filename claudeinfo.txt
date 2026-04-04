@@ -112,13 +112,16 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 ## Sections Built
 
 ### sections/header.liquid
-- Fixed floating nav pill, `top-4`, z-50
-- Logo left (SVG asset), nav links center (from `main-menu` linklist), CTA + cart + account right
-- CTA: `cta-button` snippet, `variant: primary`
-- Mobile: hamburger toggle → dropdown pill below nav
-- Mobile CTA: `variant: accent` (stands out on cream bg)
+- Two-state fixed nav, `top-0`, z-50
+- **Transparent state** (at page top): white logo (`aira-logo-text-white.svg`), white nav text, white icons, no background — overlays hero content
+- **Solid state** (on scroll): floating pill with `bg-secondary`, rounded-2xl, shadow — blue logo (`aira-logo-text-blue.svg`), `text-main` nav/icons
+- Scroll threshold: 50px. Transparent fades out (opacity 0.3s), solid slides down (translateY 0.4s cubic-bezier). Reverse on scroll to top.
+- If page loads already scrolled, `no-transition` class prevents flash
+- CTA: `cta-button` snippet, `variant: accent` (both states)
+- Mobile: hamburger toggle → dropdown pill below nav. Menu auto-closes on state change.
+- Mobile CTA: `variant: accent`
 - Spacer div (`h-20`) in `layout/theme.liquid` prevents content hiding behind fixed nav
-- Colors: all via `var(--color-*)` CSS variables (CMS-controlled in Theme Settings → Brand colours)
+- JS: inline `<script>`, adds/removes `.scrolled` class on `[data-header]`
 
 ### sections/hero.liquid
 - Full-width section, split layout: copy left (50%), image right (50%)
@@ -178,14 +181,16 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 ---
 
 ### sections/health-effects.liquid
-Split layout section: image left, heading + expandable accordion list right.
-- Section image picker (left col). Fallback: placeholder `aspect-[4/5]` box.
-- Section heading via `section-heading` snippet (eyebrow, heading, subheading, align: left, size CMS).
-- Accordion items are CMS blocks (type: `effect`): icon (emoji text), title, richtext description, optional link label + URL.
-- Defaults: 5 blocks pre-populated (High blood pressure, Snoring, Dry mouth, Poor sleep quality, Facial development).
-- Scroll animation: IntersectionObserver watches `[data-animate]` elements; removes `opacity-0 translate-y-8/6` when 15% in view. Staggered `transition-delay` via inline style.
-- Accordion: max-height 0→scrollHeight animation, chevron `rotate-180` toggle, `aria-expanded` for accessibility.
-- CMS: image, eyebrow, heading, subheading, heading_size, container_width, padding_vertical, blocks.
+Grid layout (50/50 on lg): focus panel left, 2×2 card grid right.
+- **Focus panel** (left): image fills top portion, solid `bg-main` block at bottom with title + description + optional link. No icon. Stacked layers per block, crossfade via opacity (500ms).
+- **Card grid** (right): 2×2 `aspect-square` cards. Each card has outer/inner structure for conic-gradient border. Icon + title centered.
+- Active card hidden from grid. "Next" card gets `@property --border-progress` conic-gradient sweep animation (5s, clockwise from 12 o'clock, orange #FF4000).
+- **Hover** = preview (shows content in focus panel, grid unchanged). **Click** = lock (swaps grid positions). Prevents hover-spam bug.
+- Newly appearing cards animate in (scale 0.92→1, opacity 0→1, 350ms).
+- Auto-rotate timer (5s `setTimeout`). Pauses on grid hover (sweep animation pauses too via `animation-play-state`).
+- Scroll-in animation via IntersectionObserver.
+- Blocks: `effect` type — icon, title, subtitle, image_picker, richtext description, link_label, link_url.
+- Defaults: 5 blocks (High blood pressure, Snoring, Dry mouth, Poor sleep quality, Facial development).
 
 ---
 
@@ -207,6 +212,22 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - Scroll animation: IntersectionObserver, `data-sp-animate`, removes `opacity-0 translate-y-8/6`.
 - Dark gradient vignette (left+right edges) layered above overlay for readability on any image.
 - Defaults: 3 stat blocks (88% snoring, 92% sinus, 87% sleep).
+
+### sections/judgeme-reviews.liquid
+- Judge.me review widget section. Section heading (via `section-heading` snippet, align center).
+- CMS `product` picker to select which product's reviews to display.
+- Renders Judge.me `jdgm-review-widget` div with product data attributes. Supports legacy widget fallback.
+- Injects `jdgm.data.reviewWidget` script block if metafield data available.
+- CMS: eyebrow, heading, subheading, heading_size, product, background_color, padding_vertical.
+
+### sections/faq.liquid
+- Centered accordion FAQ. Section heading (via `section-heading` snippet, align center). `max-w-3xl` content column.
+- CMS blocks: `question` type with text `question` + richtext `answer`.
+- Accordion: `max-height` animation (0→scrollHeight, 300ms ease-out). Plus icon rotates 45° to × via `group-aria-expanded:rotate-45`.
+- `aria-expanded` toggled for accessibility. After open transition, `max-height` set to `none` to allow dynamic content.
+- Items divided by `divide-y divide-bg-muted` borders.
+- Scroll-in animation via IntersectionObserver.
+- CMS: eyebrow, heading, subheading, heading_size, background_color, container_width, padding_vertical.
 
 ---
 
@@ -279,4 +300,12 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - Created sections/social-proof.liquid: fullscreen image, split layout — intro copy left, stat blocks right
 - Scroll-in animations via IntersectionObserver (data-sp-animate)
 - 3 default stat blocks: 88% snoring reduction, 92% sinus relief, 87% deeper sleep
-- templates/index.json updated: social_proof added after health_effects_cards
+- templates/index.json updated: social_proof added after health_effects
+
+[Session 14] Header two-state nav + health-effects refactor + FAQ
+- Header: refactored to two-state nav (transparent at top, solid on scroll). White logo + text overlay hero, solid pill slides in on scroll. CTA changed to accent (orange).
+- Health effects: refactored from accordion to grid layout — focus panel left (image top, text bottom), 2×2 card grid right. Conic-gradient clock sweep on next card, hover preview vs click lock, auto-rotate timer 5s.
+- Removed sections/health-effects-cards.liquid (duplicate) and all references.
+- Created sections/judgeme-reviews.liquid: Judge.me review widget with section heading.
+- Created sections/faq.liquid: centered accordion FAQ, max-w-3xl, plus→× icon toggle, max-height animation.
+- templates/index.json: removed health_effects_cards, added faq after judgeme_reviews.
