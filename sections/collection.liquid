@@ -215,8 +215,67 @@
 				});
 
 				updateCard(findVariant());
+			updateSellingPlanPrices(findVariant());
 			});
 		});
+
+		/* Selling plan (subscription) toggle */
+		var spInput = card.querySelector('[data-selling-plan-input]');
+		var spGroup = card.querySelector('[data-selling-plan-group]');
+		if (spInput && spGroup) {
+			var planBtns = spGroup.querySelectorAll('[data-plan-btn]');
+			var selectedPlan = 'onetime';
+
+			function setActivePlan(plan) {
+				selectedPlan = plan;
+				planBtns.forEach(function(b) {
+					var type = b.dataset.planBtn;
+					var radio = b.querySelector('[data-plan-radio]');
+					if (type === plan) {
+						b.classList.add('border-main', 'bg-bg-soft');
+						b.classList.remove('border-bg-muted', 'bg-bg');
+						radio.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-main"></span>';
+					} else {
+						b.classList.remove('border-main', 'bg-bg-soft');
+						b.classList.add('border-bg-muted', 'bg-bg');
+						radio.innerHTML = '';
+					}
+				});
+
+				var variant = findVariant();
+				if (plan === 'subscribe' && variant) {
+					var alloc = variant.selling_plan_allocations[0];
+					if (alloc) {
+						spInput.value = alloc.selling_plan_id;
+						priceEl.textContent = alloc.per_delivery_price_formatted;
+					}
+				} else {
+					spInput.value = '';
+					if (variant) priceEl.textContent = variant.price_formatted;
+				}
+			}
+
+			planBtns.forEach(function(b) {
+				b.addEventListener('click', function() {
+					setActivePlan(this.dataset.planBtn);
+				});
+			});
+		}
+
+		function updateSellingPlanPrices(variant) {
+			if (!variant || !spGroup) return;
+			var onetimePrice = card.querySelector('[data-onetime-price]');
+			var subscribePrice = card.querySelector('[data-subscribe-price]');
+			if (onetimePrice) onetimePrice.textContent = variant.price_formatted;
+			if (subscribePrice && variant.selling_plan_allocations.length > 0) {
+				var alloc = variant.selling_plan_allocations[0];
+				subscribePrice.textContent = alloc.per_delivery_price_formatted + ' / ' + alloc.name.toLowerCase();
+			}
+			if (selectedPlan === 'subscribe' && variant.selling_plan_allocations.length > 0) {
+				spInput.value = variant.selling_plan_allocations[0].selling_plan_id;
+				priceEl.textContent = variant.selling_plan_allocations[0].per_delivery_price_formatted;
+			}
+		}
 	});
 })();
 </script>

@@ -57,7 +57,7 @@
 	{%- endif -%}
 
 	{%- comment -%} Foreground image — full-cover background with parallax {%- endcomment -%}
-	<div class="absolute inset-0 w-full h-full" data-hero-parallax style="will-change: transform; height: 120%;">
+	<div class="absolute inset-0 w-full h-full" data-hero-parallax style="will-change: transform; height: 140%;">
 		{%- if has_fg_image -%}
 			{{
 				section.settings.foreground_image
@@ -147,7 +147,7 @@
 		var visible = rect.bottom > 0 && rect.top < window.innerHeight;
 		if (visible) {
 			var progress = -rect.top / (rect.height + window.innerHeight);
-			var offset = progress * rect.height * 0.2;
+			var offset = progress * rect.height * 0.35;
 			layer.style.transform = 'translate3d(0,' + offset + 'px,0)';
 		}
 		ticking = false;

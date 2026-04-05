@@ -123,7 +123,7 @@
 					eyebrow:    section.settings.eyebrow,
 					heading:    section.settings.heading,
 					subheading: section.settings.subheading,
-					align:      'left',
+					align:      'center',
 					size:       section.settings.heading_size
 				-%}
 			</div>
@@ -195,10 +195,21 @@
 							data-target="{{ section.id }}"
 							{{ block.shopify_attributes }}
 						>
-							<span class="flex flex-col items-center justify-center gap-3 p-5 rounded-[14px] w-full h-full bg-bg-soft transition-colors duration-300 hover:bg-secondary">
-								<span class="text-3xl leading-none select-none">{{ block.settings.icon }}</span>
-								<span class="font-heading font-semibold text-title text-sm lg:text-base leading-snug text-center">
-									{{ block.settings.title }}
+							<span class="relative flex flex-col rounded-[14px] w-full h-full bg-bg-soft overflow-hidden transition-colors duration-300 hover:bg-secondary">
+								{%- if block.settings.image != blank -%}
+									{{
+										block.settings.image
+										| image_url: width: 600
+										| image_tag:
+											loading: 'lazy',
+											class: 'absolute inset-0 w-full h-full object-cover',
+											widths: '300, 400, 600'
+									}}
+								{%- endif -%}
+								<span class="relative z-10 mt-auto p-3 lg:p-4 bg-linear-to-t from-black/70 via-black/40 to-transparent">
+									<span class="font-heading font-semibold text-white text-sm lg:text-base leading-snug block">
+										{{ block.settings.title }}
+									</span>
 								</span>
 							</span>
 						</button>

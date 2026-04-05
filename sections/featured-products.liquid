@@ -66,16 +66,95 @@
 			</div>
 		{%- endif -%}
 
-		{%- comment -%} Product grid {%- endcomment -%}
+		{%- comment -%} Product cards {%- endcomment -%}
 		{%- if section.blocks.size > 0 -%}
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
 				{%- for block in section.blocks -%}
 					{%- assign product = block.settings.product -%}
 					{%- if product != blank -%}
-						{%- render 'product-card',
-							product: product,
-							badge:   block.settings.badge
-						-%}
+
+						<div class="flex flex-col bg-bg rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300" {{ block.shopify_attributes }}>
+
+							{%- comment -%} Image {%- endcomment -%}
+							<a href="{{ product.url }}" class="block relative aspect-4/5 overflow-hidden bg-bg-muted group">
+								{%- if product.featured_image -%}
+									{{
+										product.featured_image
+										| image_url: width: 800
+										| image_tag:
+											loading: 'lazy',
+											class: 'w-full h-full object-cover transition-transform duration-500 group-hover:scale-105',
+											widths: '400, 600, 800',
+											draggable: 'false'
+									}}
+								{%- endif -%}
+
+								{%- if block.settings.badge != blank -%}
+									<span class="absolute top-3 left-3 px-3 py-1 rounded-lg bg-main text-secondary text-xs font-bold tracking-wide pointer-events-none">
+										{{ block.settings.badge }}
+									</span>
+								{%- endif -%}
+							</a>
+
+							{%- comment -%} Content {%- endcomment -%}
+							<div class="flex flex-col flex-1 p-6 gap-4">
+
+								<h3 class="font-heading text-title font-semibold text-xl leading-snug">
+									{{ product.title }}
+								</h3>
+
+								{%- if block.type == 'subscription_product' -%}
+
+									{%- comment -%} ── Refill / subscription card ── {%- endcomment -%}
+									{%- if block.settings.description != blank -%}
+										<p class="text-copy text-sm leading-relaxed">{{ block.settings.description }}</p>
+									{%- endif -%}
+
+									{%- comment -%} Subscribe section {%- endcomment -%}
+									<div class="flex flex-col gap-1.5 p-4 rounded-xl bg-bg-soft border border-bg-muted">
+										<div class="flex items-center gap-2">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="text-highlight-green shrink-0">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+											</svg>
+											<span class="font-heading text-sm font-bold text-title">{{ block.settings.subscribe_heading | default: 'Subscribe & save' }}</span>
+										</div>
+										<p class="text-xs text-copy leading-snug">{{ block.settings.subscribe_text | default: 'Never run out — automatic delivery at a discount, cancel any time.' }}</p>
+									</div>
+
+									{%- comment -%} One-time / bulk section {%- endcomment -%}
+									<div class="flex flex-col gap-1.5 p-4 rounded-xl bg-bg-soft border border-bg-muted">
+										<div class="flex items-center gap-2">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="text-highlight-blue shrink-0">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+											</svg>
+											<span class="font-heading text-sm font-bold text-title">{{ block.settings.onetime_heading | default: 'Buy in bulk' }}</span>
+										</div>
+										<p class="text-xs text-copy leading-snug">{{ block.settings.onetime_text | default: 'Stock up with 30, 60 or 90 packs — the more you buy, the more you save.' }}</p>
+									</div>
+
+								{%- else -%}
+
+									{%- comment -%} ── Standard product card ── {%- endcomment -%}
+									{%- if block.settings.description != blank -%}
+										<p class="text-copy text-sm leading-relaxed">{{ block.settings.description }}</p>
+									{%- endif -%}
+
+								{%- endif -%}
+
+								{%- comment -%} CTA link {%- endcomment -%}
+								<div class="mt-auto pt-2">
+									{%- render 'cta-button',
+										label: block.settings.cta_label | default: 'Shop now',
+										url: product.url,
+										variant: 'primary',
+										extra_classes: 'w-full text-center'
+									-%}
+								</div>
+
+							</div>
+
+						</div>
+
 					{%- endif -%}
 				{%- endfor -%}
 			</div>
@@ -83,74 +162,6 @@
 
 	</div>
 </section>
-
-<script>
-	(function () {
-		document.querySelectorAll('[data-product-card]').forEach(function (card) {
-			var variantInput = card.querySelector('[data-variant-id]');
-			var priceEl      = card.querySelector('[data-price]');
-			var addBtn       = card.querySelector('[data-add-to-cart]');
-			var imgEl        = card.querySelector('a img');
-			var variants     = JSON.parse(card.querySelector('[data-product-variants]').textContent);
-			var selectedOptions = variants[0].options.slice();
-
-			function findVariant() {
-				return variants.find(function (v) {
-					return v.options.every(function (opt, i) {
-						return opt === selectedOptions[i];
-					});
-				}) || null;
-			}
-
-			function updateCard(variant) {
-				if (!variant) return;
-				variantInput.value  = variant.id;
-				priceEl.textContent = variant.price_formatted;
-				addBtn.disabled     = !variant.available;
-				addBtn.textContent  = variant.available ? 'Add to Cart' : 'Sold Out';
-				if (variant.image && imgEl) {
-					imgEl.removeAttribute('srcset');
-					imgEl.removeAttribute('sizes');
-					imgEl.src = variant.image;
-				}
-			}
-
-			card.querySelectorAll('[data-option-btn]').forEach(function (btn) {
-				btn.addEventListener('click', function () {
-					var idx      = parseInt(this.dataset.optionIndex);
-					var value    = this.dataset.optionValue;
-					selectedOptions[idx] = value;
-
-					var group    = card.querySelector('[data-option-group="' + idx + '"]');
-					var isColour = group.dataset.type === 'colour';
-
-					group.querySelectorAll('[data-option-btn]').forEach(function (b) {
-						var active = b.dataset.optionValue === value;
-						if (isColour) {
-							if (active) {
-								b.classList.add('border-main', 'ring-2', 'ring-main', 'ring-offset-1');
-								b.classList.remove('border-transparent');
-							} else {
-								b.classList.remove('border-main', 'ring-2', 'ring-main', 'ring-offset-1');
-								b.classList.add('border-transparent');
-							}
-						} else {
-							if (active) {
-								b.classList.add('bg-main', 'text-secondary', 'border-main');
-								b.classList.remove('bg-bg', 'border-bg-muted', 'text-copy');
-							} else {
-								b.classList.remove('bg-main', 'text-secondary', 'border-main');
-								b.classList.add('bg-bg', 'border-bg-muted', 'text-copy');
-							}
-						}
-					});
-
-					updateCard(findVariant());
-				});
-			});
-		});
-	})();
-</script>
 
 {% schema %}
 {
@@ -274,7 +285,72 @@
 					"type": "text",
 					"id": "badge",
 					"label": "Badge",
-					"info": "Optional label on the image, e.g. 'Best Seller' or 'New'"
+					"info": "Optional label on the image, e.g. 'Best Seller'"
+				},
+				{
+					"type": "textarea",
+					"id": "description",
+					"label": "Description",
+					"default": "Everything you need to start breathing better tonight. Includes 4 sized nasal strips and 15 adhesive tabs."
+				},
+				{
+					"type": "text",
+					"id": "cta_label",
+					"label": "Button label",
+					"default": "Shop now"
+				}
+			]
+		},
+		{
+			"type": "subscription_product",
+			"name": "Product (subscribe)",
+			"settings": [
+				{
+					"type": "product",
+					"id": "product",
+					"label": "Product"
+				},
+				{
+					"type": "text",
+					"id": "badge",
+					"label": "Badge",
+					"info": "Optional label on the image, e.g. 'Best Seller'"
+				},
+				{
+					"type": "textarea",
+					"id": "description",
+					"label": "Description",
+					"default": "Fresh adhesive tabs for your Aira strip. Replace nightly for the best hold and hygiene."
+				},
+				{
+					"type": "text",
+					"id": "subscribe_heading",
+					"label": "Subscribe heading",
+					"default": "Subscribe & save"
+				},
+				{
+					"type": "textarea",
+					"id": "subscribe_text",
+					"label": "Subscribe description",
+					"default": "Never run out — automatic delivery at a discount, cancel any time."
+				},
+				{
+					"type": "text",
+					"id": "onetime_heading",
+					"label": "Bulk heading",
+					"default": "Buy in bulk"
+				},
+				{
+					"type": "textarea",
+					"id": "onetime_text",
+					"label": "Bulk description",
+					"default": "Stock up with 30, 60 or 90 packs — the more you buy, the more you save."
+				},
+				{
+					"type": "text",
+					"id": "cta_label",
+					"label": "Button label",
+					"default": "Shop now"
 				}
 			]
 		}
@@ -284,7 +360,7 @@
 			"name": "Featured Products",
 			"blocks": [
 				{ "type": "product" },
-				{ "type": "product" }
+				{ "type": "subscription_product" }
 			]
 		}
 	]

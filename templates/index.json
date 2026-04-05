@@ -87,6 +87,8 @@
           "settings": {
             "icon": "🫀",
             "title": "High blood pressure",
+            "subtitle": "",
+            "image": "shopify://shop_images/blood-pressure.png",
             "description": "<p>Mouth breathing activates the body's stress response, raising cortisol and constricting blood vessels. Over time this can contribute to chronically elevated blood pressure — a major risk factor for heart disease.</p>",
             "link_label": "",
             "link_url": ""
@@ -97,6 +99,8 @@
           "settings": {
             "icon": "😴",
             "title": "Snoring",
+            "subtitle": "",
+            "image": "shopify://shop_images/snoring.png",
             "description": "<p>When the nose is bypassed, the soft tissue at the back of the throat is more likely to vibrate during sleep — producing the sound of snoring. Nasal breathing stabilises this tissue and reduces vibration significantly.</p>",
             "link_label": "",
             "link_url": ""
@@ -107,6 +111,8 @@
           "settings": {
             "icon": "💧",
             "title": "Dry mouth",
+            "subtitle": "",
+            "image": "shopify://shop_images/mouth-breathing.png",
             "description": "<p>Breathing through the mouth dries out saliva, which is your body's first line of defence against bacteria. Chronic dry mouth leads to bad breath, tooth decay, and gum disease.</p>",
             "link_label": "",
             "link_url": ""
@@ -117,6 +123,8 @@
           "settings": {
             "icon": "🌙",
             "title": "Poor sleep quality",
+            "subtitle": "",
+            "image": "shopify://shop_images/poor-sleep.png",
             "description": "<p>Mouth breathing reduces oxygen uptake and disrupts sleep architecture — resulting in more time in lighter sleep stages. Switching to nasal breathing has been shown to improve deep sleep and morning energy levels.</p>",
             "link_label": "",
             "link_url": ""
@@ -127,6 +135,8 @@
           "settings": {
             "icon": "🧒",
             "title": "Facial development",
+            "subtitle": "",
+            "image": "shopify://shop_images/face-development.png",
             "description": "<p>In children, long-term mouth breathing can alter the development of facial bones — leading to a narrower palate, elongated face, and crowded teeth. Early nasal breathing habits help guide healthy craniofacial growth.</p>",
             "link_label": "",
             "link_url": ""
@@ -187,6 +197,7 @@
       ],
       "settings": {
         "background_color": "#0a1a34",
+        "background_image": "shopify://shop_images/intake_sleeping-35_websize.webp",
         "overlay_color": "#000000",
         "overlay_opacity": 50,
         "container_width": "contained",
@@ -204,6 +215,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/face-development.png",
             "heading": "Instantly Expands",
             "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
           }
@@ -211,6 +223,7 @@
         "slide_2": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/poor-sleep.png",
             "heading": "Sweat Resistant. Stays On.",
             "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
           }
@@ -218,6 +231,7 @@
         "slide_3": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/snoring.png",
             "heading": "Won't Collapse",
             "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
           }
@@ -225,6 +239,7 @@
         "slide_4": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/face-development.png",
             "heading": "Skin Safe. Medical Grade.",
             "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
           }
@@ -232,6 +247,7 @@
         "slide_5": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/poor-sleep.png",
             "heading": "Reusable Band",
             "description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
           }
@@ -327,7 +343,7 @@
         "heading": "Got questions? We've got answers.",
         "subheading": "",
         "heading_size": "md",
-        "background_color": "#FAFAFA",
+        "background_color": "#fafafa",
         "container_width": "contained",
         "padding_vertical": "lg"
       }

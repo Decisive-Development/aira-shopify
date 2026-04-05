@@ -1,5 +1,5 @@
 {%- comment -%} Footer {%- endcomment -%}
-<footer style="background: radial-gradient(ellipse 95% 35% at 50% 100%, rgba(184,68,0,0.55) 0%, rgba(92,34,0,0.35) 30%, rgba(10,26,52,0) 68%), #0A1A34;">
+<footer style="background: radial-gradient(ellipse 140% 40% at 50% 100%, rgba(184,68,0,0.55) 0%, rgba(92,34,0,0.35) 30%, rgba(10,26,52,0) 68%), #0A1A34;">
 	<div class="w-full px-4 md:px-8 pt-10 pb-28">
 
 		{%- comment -%} Floating pill {%- endcomment -%}
@@ -7,10 +7,10 @@
 			class="w-full max-w-7xl mx-auto bg-secondary rounded-2xl px-8 py-12 md:py-14"
 			style="box-shadow: 0 12px 40px rgba(10,26,52,0.35), 0 4px 16px rgba(255,255,255,0.15);"
 		>
-			<div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 md:gap-6">
+			<div class="grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 md:gap-6">
 
 				{%- comment -%} Col 1: Brand — logo, newsletter, social {%- endcomment -%}
-				<div class="flex flex-col gap-6">
+				<div class="flex flex-col gap-6 col-span-2 md:col-span-1">
 
 					<a href="{{ routes.root_url }}" class="inline-block">
 						<img
@@ -27,20 +27,20 @@
 					{%- form 'customer', id: 'footer-newsletter' -%}
 						<input type="hidden" name="contact[tags]" value="newsletter">
 						<p class="text-sm font-semibold mb-2 text-main">Stay in the loop</p>
-						<div class="flex gap-2">
+						<div class="flex flex-col sm:flex-row gap-2">
 							<input
 								type="email"
 								name="contact[email]"
 								placeholder="Your email"
 								required
-								class="w-70 rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-none"
+								class="w-full sm:w-70 rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-none"
 							>
 							{%- render 'cta-button',
 								label: 'Subscribe',
 								element: 'button',
 								button_type: 'submit',
 								variant: 'primary',
-								extra_classes: 'shrink-0'
+								extra_classes: 'shrink-0 w-full sm:w-auto text-center'
 							-%}
 						</div>
 					{%- endform -%}
@@ -96,7 +96,7 @@
 				</div>
 
 				{%- comment -%} Col 4: Company {%- endcomment -%}
-				<div>
+				<div class="col-span-2 md:col-span-1">
 					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Company</h4>
 					<ul class="flex flex-col gap-2.5">
 						<li><a href="/pages/affiliate" class="text-sm text-main transition-colors">Affiliate Program</a></li>

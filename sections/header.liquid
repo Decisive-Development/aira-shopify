@@ -25,6 +25,21 @@
 	[data-header].no-transition .nav-solid {
 		transition: none !important;
 	}
+
+	/* Mobile menu animation */
+	[data-mobile-menu] {
+		transition: opacity 0.25s ease, transform 0.25s ease;
+	}
+	[data-mobile-menu].menu-closed {
+		opacity: 0;
+		transform: translateY(-8px);
+		pointer-events: none;
+	}
+	[data-mobile-menu].menu-open {
+		opacity: 1;
+		transform: translateY(0);
+		pointer-events: auto;
+	}
 </style>
 
 <header data-header class="fixed top-0 inset-x-0 z-50">
@@ -33,12 +48,20 @@
 	<div class="nav-transparent flex justify-center px-4 md:px-8 pt-2">
 		<div class="w-full max-w-7xl flex items-center gap-10 px-6 py-2">
 
-			{%- comment -%} White logo {%- endcomment -%}
+			{%- comment -%} White logo — icon on mobile, full on desktop {%- endcomment -%}
 			<a href="{{ routes.root_url }}" class="flex items-center shrink-0">
+				<img
+					src="{{ 'aira-logo-only-white.svg' | asset_url }}"
+					alt="{{ shop.name }}"
+					class="h-7 w-auto md:hidden"
+					width="28"
+					height="28"
+					loading="eager"
+				>
 				<img
 					src="{{ 'aira-logo-text-white.svg' | asset_url }}"
 					alt="{{ shop.name }}"
-					class="h-7 w-auto -translate-y-0.5"
+					class="h-7 w-auto -translate-y-0.5 hidden md:block"
 					width="120"
 					height="28"
 					loading="eager"
@@ -127,7 +150,7 @@
 				<button
 					class="md:hidden flex items-center text-white transition-opacity hover:opacity-60"
 					aria-label="Open menu"
-					onclick="this.closest('header').querySelector('[data-mobile-menu]').classList.toggle('hidden')"
+					data-mobile-toggle
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
@@ -145,12 +168,20 @@
 			style="box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.4);"
 		>
 
-			{%- comment -%} Blue logo {%- endcomment -%}
+			{%- comment -%} Blue logo — icon on mobile, full on desktop {%- endcomment -%}
 			<a href="{{ routes.root_url }}" class="flex items-center shrink-0">
+				<img
+					src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+					alt="{{ shop.name }}"
+					class="h-7 w-auto md:hidden"
+					width="28"
+					height="28"
+					loading="eager"
+				>
 				<img
 					src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
 					alt="{{ shop.name }}"
-					class="h-7 w-auto -translate-y-0.5"
+					class="h-7 w-auto -translate-y-0.5 hidden md:block"
 					width="120"
 					height="28"
 					loading="eager"
@@ -239,7 +270,7 @@
 				<button
 					class="md:hidden flex items-center text-main transition-opacity hover:opacity-60"
 					aria-label="Open menu"
-					onclick="this.closest('header').querySelector('[data-mobile-menu]').classList.toggle('hidden')"
+					data-mobile-toggle
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
@@ -254,12 +285,12 @@
 	{%- if section.settings.menu != blank -%}
 		<div
 			data-mobile-menu
-			class="hidden absolute top-full left-4 right-4 mt-2 max-w-7xl rounded-2xl px-6 py-4 flex-col gap-1 shadow-lg bg-secondary md:hidden"
+			class="menu-closed absolute top-full left-4 right-4 mt-2 max-w-7xl rounded-2xl px-6 py-5 flex flex-col gap-1 shadow-lg bg-secondary md:hidden"
 		>
 			{%- for link in section.settings.menu.links -%}
 				<a
 					href="{{ link.url }}"
-					class="block text-sm font-bold py-2 text-main transition-opacity hover:opacity-60"
+					class="block text-lg font-bold py-2.5 text-main transition-opacity hover:opacity-60"
 				>
 					{{ link.title }}
 				</a>
@@ -267,7 +298,7 @@
 					{%- for child in link.links -%}
 						<a
 							href="{{ child.url }}"
-							class="block text-sm font-medium py-1.5 pl-4 text-main opacity-65 transition-opacity hover:opacity-60"
+							class="block text-base font-medium py-2 pl-4 text-main opacity-65 transition-opacity hover:opacity-60"
 						>
 							{{ child.title }}
 						</a>
@@ -279,7 +310,8 @@
 					label: section.settings.cta_label,
 					url: section.settings.cta_url,
 					variant: 'accent',
-					extra_classes: 'mt-2 w-full text-center'
+					size: 'sm',
+					extra_classes: 'mt-3 w-full text-center'
 				-%}
 			{%- endif -%}
 		</div>
@@ -291,15 +323,37 @@
 	var header = document.querySelector('[data-header]');
 	if (!header) return;
 
+	var menu = header.querySelector('[data-mobile-menu]');
 	var scrolled = false;
+
+	function closeMenu() {
+		if (menu) {
+			menu.classList.remove('menu-open');
+			menu.classList.add('menu-closed');
+		}
+	}
+
+	function toggleMenu() {
+		if (!menu) return;
+		var isOpen = menu.classList.contains('menu-open');
+		if (isOpen) {
+			closeMenu();
+		} else {
+			menu.classList.remove('menu-closed');
+			menu.classList.add('menu-open');
+		}
+	}
+
+	header.querySelectorAll('[data-mobile-toggle]').forEach(function(btn) {
+		btn.addEventListener('click', toggleMenu);
+	});
 
 	function update() {
 		var isScrolled = window.scrollY > 50;
 		if (isScrolled === scrolled) return;
 		scrolled = isScrolled;
 		header.classList.toggle('scrolled', scrolled);
-		var menu = header.querySelector('[data-mobile-menu]');
-		if (menu) menu.classList.add('hidden');
+		closeMenu();
 	}
 
 	if (window.scrollY > 50) {

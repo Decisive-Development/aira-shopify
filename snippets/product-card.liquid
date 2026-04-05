@@ -1,11 +1,19 @@
 {%- comment -%}
 	snippets/product-card.liquid
 	Params:
-		product — Shopify product object (required)
-		badge   — String badge text shown on image (optional)
+		product     — Shopify product object (required)
+		badge       — String badge text shown on image (optional)
+		description — Custom card description from CMS (optional)
 {%- endcomment -%}
 
 {%- assign first_variant = product.selected_or_first_available_variant | default: product.variants.first -%}
+{%- assign has_selling_plans = false -%}
+{%- if product.selling_plan_groups.size > 0 -%}
+	{%- assign has_selling_plans = true -%}
+	{%- assign sp_group = product.selling_plan_groups.first -%}
+	{%- assign sp_first = sp_group.selling_plans.first -%}
+	{%- assign sp_allocation = first_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first -%}
+{%- endif -%}
 
 <div class="flex flex-col bg-bg rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300" data-product-card>
 
@@ -33,84 +41,161 @@
 	{%- comment -%} Content {%- endcomment -%}
 	<div class="flex flex-col flex-1 p-6 gap-4">
 
-		{%- comment -%} Title + description {%- endcomment -%}
-		<div class="flex flex-col gap-1.5">
-			<a href="{{ product.url }}" class="font-heading text-title font-semibold text-xl leading-snug hover:opacity-75 transition-opacity">
+		{%- comment -%} Title + custom description {%- endcomment -%}
+		<div>
+			<h3 class="font-heading text-title font-semibold text-xl leading-snug">
 				{{ product.title }}
-			</a>
-			{%- if product.description != blank -%}
-				<p class="text-copy text-sm leading-relaxed line-clamp-2">{{ product.description | strip_html | truncate: 120 }}</p>
+			</h3>
+			{%- if description != blank -%}
+				<p class="text-copy text-sm leading-relaxed mt-2">{{ description }}</p>
+			{%- elsif product.description != blank -%}
+				<p class="text-copy text-sm leading-relaxed mt-2">{{ product.description | strip_html | truncate: 120 }}</p>
 			{%- endif -%}
 		</div>
 
-		{%- comment -%} Form: variant selectors + price + add to cart {%- endcomment -%}
-		<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-4 mt-auto" data-product-form>
+		{%- comment -%} Purchase form {%- endcomment -%}
+		<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-3 mt-auto" data-product-form>
 			<input type="hidden" name="id" value="{{ first_variant.id }}" data-variant-id>
 			<input type="hidden" name="quantity" value="1">
 
-			{%- comment -%} Option selectors {%- endcomment -%}
-			{%- for option in product.options_with_values -%}
-				{%- liquid
-					assign opt_index = forloop.index0
-					assign is_colour = false
-					if option.name == 'Colour' or option.name == 'Color'
-						assign is_colour = true
-					endif
-				-%}
+			{%- if has_selling_plans -%}
+				<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 
-				{%- if is_colour -%}
-					<div class="flex gap-2.5 items-center" data-option-group="{{ opt_index }}" data-type="colour">
-						{%- for value in option.values -%}
-							{%- liquid
-								assign swatch_hex = '#888888'
-								case value
-									when 'Black'
-										assign swatch_hex = '#1A1A1A'
-									when 'Beige'
-										assign swatch_hex = '#C8B89A'
-								endcase
-								assign is_active = false
-								if first_variant.options[opt_index] == value
-									assign is_active = true
-								endif
-							-%}
-							<button
-								type="button"
-								class="w-7 h-7 rounded-full border-2 transition-all {% if is_active %}border-main ring-2 ring-main ring-offset-1{% else %}border-transparent{% endif %}"
-								style="background: {{ swatch_hex }}"
-								data-option-btn
-								data-option-index="{{ opt_index }}"
-								data-option-value="{{ value }}"
-								aria-label="{{ value }}"
-								title="{{ value }}"
-							></button>
-						{%- endfor -%}
+				<div class="flex flex-col gap-2.5" data-selling-plan-group>
+
+					{%- comment -%} ── Subscribe option (promoted) ── {%- endcomment -%}
+					<button
+						type="button"
+						class="flex flex-col gap-1.5 p-4 rounded-xl border-2 border-main bg-bg-soft text-left transition-colors"
+						data-plan-btn="subscribe"
+					>
+						<div class="flex items-center justify-between w-full">
+							<span class="font-heading text-sm font-bold text-title">Subscribe & save</span>
+							<span class="w-5 h-5 rounded-full border-2 border-main flex items-center justify-center shrink-0" data-plan-radio="subscribe">
+								<span class="w-2.5 h-2.5 rounded-full bg-main"></span>
+							</span>
+						</div>
+						<p class="text-xs text-copy leading-snug">Hassle-free restock at a discount, delivered on your schedule</p>
+						<div class="flex items-baseline gap-2 mt-0.5">
+							<span class="font-heading font-bold text-lg text-title" data-subscribe-price>
+								{%- if sp_allocation -%}{{ sp_allocation.per_delivery_price | money }}{%- endif -%}
+							</span>
+							<span class="text-xs text-copy">/ {{ sp_first.name | downcase }}</span>
+							{%- if sp_allocation -%}
+								{%- assign sp_price = sp_allocation.per_delivery_price -%}
+								{%- assign save_amount = first_variant.price | minus: sp_price -%}
+								{%- if save_amount > 0 -%}
+									<span class="text-xs font-bold text-highlight-green">Save {{ save_amount | money }}</span>
+								{%- endif -%}
+							{%- endif -%}
+						</div>
+					</button>
+
+					{%- comment -%} ── Divider ── {%- endcomment -%}
+					<p class="text-xs text-copy text-center py-0.5">Or buy one time</p>
+
+					{%- comment -%} ── One-time option ── {%- endcomment -%}
+					<button
+						type="button"
+						class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 border-bg-muted bg-bg text-left transition-colors"
+						data-plan-btn="onetime"
+					>
+						<span class="font-heading text-sm font-semibold text-title">One-time purchase</span>
+						<span class="w-5 h-5 rounded-full border-2 border-bg-muted flex items-center justify-center shrink-0" data-plan-radio="onetime"></span>
+					</button>
+
+				</div>
+
+				{%- comment -%} Variant options (quantity tabs etc) {%- endcomment -%}
+				{%- for option in product.options_with_values -%}
+					{%- assign opt_index = forloop.index0 -%}
+					<div>
+						<p class="text-xs font-semibold text-copy mb-1.5">{{ option.name }}</p>
+						<div class="flex gap-2 flex-wrap" data-option-group="{{ opt_index }}" data-type="pill">
+							{%- for value in option.values -%}
+								{%- liquid
+									assign is_active = false
+									if first_variant.options[opt_index] == value
+										assign is_active = true
+									endif
+								-%}
+								<button
+									type="button"
+									class="px-3.5 py-1.5 rounded-lg text-sm font-medium border-2 transition-colors {% if is_active %}bg-main text-secondary border-main{% else %}bg-bg border-bg-muted text-copy{% endif %}"
+									data-option-btn
+									data-option-index="{{ opt_index }}"
+									data-option-value="{{ value }}"
+								>{{ value }}</button>
+							{%- endfor -%}
+						</div>
 					</div>
+				{%- endfor -%}
 
-				{%- else -%}
-					<div class="flex gap-2 flex-wrap" data-option-group="{{ opt_index }}" data-type="pill">
-						{%- for value in option.values -%}
-							{%- liquid
-								assign is_active = false
-								if first_variant.options[opt_index] == value
-									assign is_active = true
-								endif
-							-%}
-							<button
-								type="button"
-								class="px-3.5 py-1.5 rounded-lg text-sm font-medium border-2 transition-colors {% if is_active %}bg-main text-secondary border-main{% else %}bg-bg border-bg-muted text-copy{% endif %}"
-								data-option-btn
-								data-option-index="{{ opt_index }}"
-								data-option-value="{{ value }}"
-							>{{ value }}</button>
-						{%- endfor -%}
-					</div>
+			{%- else -%}
 
-				{%- endif -%}
-			{%- endfor -%}
+				{%- comment -%} No selling plans — standard option selectors {%- endcomment -%}
+				{%- for option in product.options_with_values -%}
+					{%- liquid
+						assign opt_index = forloop.index0
+						assign is_colour = false
+						if option.name == 'Colour' or option.name == 'Color'
+							assign is_colour = true
+						endif
+					-%}
+
+					{%- if is_colour -%}
+						<div class="flex gap-2.5 items-center" data-option-group="{{ opt_index }}" data-type="colour">
+							{%- for value in option.values -%}
+								{%- liquid
+									assign swatch_hex = '#888888'
+									case value
+										when 'Black'
+											assign swatch_hex = '#1A1A1A'
+										when 'Beige'
+											assign swatch_hex = '#C8B89A'
+									endcase
+									assign is_active = false
+									if first_variant.options[opt_index] == value
+										assign is_active = true
+									endif
+								-%}
+								<button
+									type="button"
+									class="w-7 h-7 rounded-full border-2 transition-all {% if is_active %}border-main ring-2 ring-main ring-offset-1{% else %}border-transparent{% endif %}"
+									style="background: {{ swatch_hex }}"
+									data-option-btn
+									data-option-index="{{ opt_index }}"
+									data-option-value="{{ value }}"
+									aria-label="{{ value }}"
+									title="{{ value }}"
+								></button>
+							{%- endfor -%}
+						</div>
+					{%- else -%}
+						<div class="flex gap-2 flex-wrap" data-option-group="{{ opt_index }}" data-type="pill">
+							{%- for value in option.values -%}
+								{%- liquid
+									assign is_active = false
+									if first_variant.options[opt_index] == value
+										assign is_active = true
+									endif
+								-%}
+								<button
+									type="button"
+									class="px-3.5 py-1.5 rounded-lg text-sm font-medium border-2 transition-colors {% if is_active %}bg-main text-secondary border-main{% else %}bg-bg border-bg-muted text-copy{% endif %}"
+									data-option-btn
+									data-option-index="{{ opt_index }}"
+									data-option-value="{{ value }}"
+								>{{ value }}</button>
+							{%- endfor -%}
+						</div>
+					{%- endif -%}
+				{%- endfor -%}
+
+			{%- endif -%}
 
 			{%- comment -%} Price + CTA {%- endcomment -%}
-			<div class="flex items-center justify-between gap-4">
+			<div class="flex items-center justify-between gap-4 pt-1">
 				<div>
 					<span class="font-heading text-title font-bold text-2xl" data-price>{{ first_variant.price | money }}</span>
 					{%- if first_variant.compare_at_price > first_variant.price -%}
@@ -138,11 +223,22 @@
 				{
 					"id": {{ variant.id }},
 					"options": {{ variant.options | json }},
+					"price": {{ variant.price }},
 					"price_formatted": {{ variant.price | money | json }},
 					"compare_at_price": {{ variant.compare_at_price | default: 0 }},
 					"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
 					"available": {{ variant.available | json }},
-					"image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 800 | json }}{% else %}null{% endif %}
+					"image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 800 | json }}{% else %}null{% endif %},
+					"selling_plan_allocations": [
+						{%- for alloc in variant.selling_plan_allocations -%}
+							{
+								"selling_plan_id": {{ alloc.selling_plan.id }},
+								"per_delivery_price": {{ alloc.per_delivery_price }},
+								"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
+								"name": {{ alloc.selling_plan.name | json }}
+							}{%- unless forloop.last -%},{%- endunless -%}
+						{%- endfor -%}
+					]
 				}{%- unless forloop.last -%},{%- endunless -%}
 			{%- endfor -%}
 		]
