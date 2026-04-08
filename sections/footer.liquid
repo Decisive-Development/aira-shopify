@@ -1,6 +1,14 @@
 {%- comment -%} Footer {%- endcomment -%}
-<footer style="background: radial-gradient(ellipse 140% 40% at 50% 100%, rgba(184,68,0,0.55) 0%, rgba(92,34,0,0.35) 30%, rgba(10,26,52,0) 68%), #0A1A34;">
-	<div class="w-full px-4 md:px-8 pt-10 pb-28">
+<footer style="background: #0A1A34;" class="relative overflow-hidden">
+<div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 140% 50% at 50% 100%, rgba(184,68,0,0.7) 0%, rgba(92,34,0,0.45) 35%, rgba(10,26,52,0) 70%); animation: footerGlow 12s ease-in-out infinite;"></div>
+<div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 120% 40% at 45% 100%, rgba(184,68,0,0.3) 0%, rgba(10,26,52,0) 50%); animation: footerGlow 8s ease-in-out infinite; animation-delay: -4s;"></div>
+<style>
+	@keyframes footerGlow {
+		0%, 100% { opacity: 0.5; transform: scale(1); }
+		50% { opacity: 1; transform: scale(1.12); }
+	}
+</style>
+	<div class="w-full px-4 md:px-8 pt-10 pb-32 md:pb-28">
 
 		{%- comment -%} Floating pill {%- endcomment -%}
 		<div

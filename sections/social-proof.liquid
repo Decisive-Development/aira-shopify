@@ -3,23 +3,14 @@
 	if section.settings.background_image != blank
 		assign has_bg_image = true
 	endif
-
-	case section.settings.container_width
-		when 'contained'
-			assign container_class = 'container-contained'
-		when 'wide'
-			assign container_class = 'container-wide'
-		when 'full'
-			assign container_class = 'container-full'
-	endcase
 -%}
 
 <section
-	class="relative overflow-hidden w-full min-h-screen flex items-center"
+	class="relative overflow-hidden w-full"
 	style="{% unless has_bg_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
 >
 
-	{%- comment -%} Background image / placeholder {%- endcomment -%}
+	{%- comment -%} Background image {%- endcomment -%}
 	{%- if has_bg_image -%}
 		<div class="absolute inset-0 w-full h-full -z-10">
 			{{
@@ -31,106 +22,256 @@
 					widths: '375, 768, 1280, 1920, 2400',
 					draggable: 'false'
 			}}
-			{%- if section.settings.overlay_opacity > 0 -%}
-				<div
-					class="absolute inset-0"
-					style="background-color: {{ section.settings.overlay_color }}; opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"
-				></div>
-			{%- endif -%}
 		</div>
 	{%- endif -%}
 
-	{%- comment -%} Subtle left-to-right gradient vignette for readability {%- endcomment -%}
-	<div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.45) 100%);"></div>
+	{%- comment -%} Darken layer {%- endcomment -%}
+	<div class="absolute inset-0 bg-black/35 pointer-events-none"></div>
+
+	{%- comment -%} Vignette overlay — darkens edges {%- endcomment -%}
+	<div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 40%, rgba(0,0,0,0.75) 100%);"></div>
 
 	{%- comment -%} Content {%- endcomment -%}
-	<div class="relative z-10 w-full {{ container_class }} py-24 md:py-36">
-		<div class="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+	<div class="relative z-10 w-full pt-12 md:pt-16 pb-16 md:pb-36">
 
-			{%- comment -%} Left: intro + trust copy {%- endcomment -%}
-			<div
-				class="flex flex-col gap-8 transition-all duration-700 ease-out opacity-0 translate-y-8"
-				data-sp-animate
-			>
-				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-xs font-body font-semibold uppercase tracking-widest text-highlight">
-						{{- section.settings.eyebrow -}}
-					</p>
-				{%- endif -%}
+		{%- comment -%} Centered heading {%- endcomment -%}
+		<div class="container-contained text-center mb-10 md:mb-24">
+			{%- if section.settings.eyebrow != blank -%}
+				<p
+					class="text-xs font-body font-semibold uppercase tracking-widest text-highlight mb-3 md:mb-4 transition-all duration-700 ease-out opacity-0 translate-y-6"
+					data-sp-animate
+				>
+					{{- section.settings.eyebrow -}}
+				</p>
+			{%- endif -%}
 
-				{%- if section.settings.heading != blank -%}
-					<h2 class="font-heading font-bold text-white text-4xl md:text-5xl lg:text-6xl leading-tight">
-						{{- section.settings.heading -}}
-					</h2>
-				{%- endif -%}
+			{%- if section.settings.heading != blank -%}
+				<h2
+					class="font-heading font-bold text-white text-2xl md:text-4xl lg:text-5xl leading-tight transition-all duration-700 ease-out opacity-0 translate-y-6"
+					style="transition-delay: 80ms"
+					data-sp-animate
+				>
+					{{- section.settings.heading -}}
+				</h2>
+			{%- endif -%}
 
-				{%- if section.settings.tagline != blank -%}
-					<p class="font-heading font-semibold text-white/80 text-lg md:text-xl leading-snug">
-						{{- section.settings.tagline -}}
-					</p>
-				{%- endif -%}
+			{%- if section.settings.subheading != blank -%}
+				<p
+					class="font-body text-white/70 text-sm md:text-lg leading-relaxed max-w-2xl mx-auto mt-3 md:mt-5 hidden md:block transition-all duration-700 ease-out opacity-0 translate-y-6"
+					style="transition-delay: 160ms"
+					data-sp-animate
+				>
+					{{- section.settings.subheading -}}
+				</p>
+			{%- endif -%}
+		</div>
 
-				{%- if section.settings.body != blank -%}
-					<p class="font-body text-white/65 text-base md:text-lg leading-relaxed max-w-md">
-						{{- section.settings.body -}}
-					</p>
-				{%- endif -%}
+		{%- comment -%} ═══ MOBILE layout (< lg) ═══ {%- endcomment -%}
+		<div class="lg:hidden px-5">
 
-				{%- if section.settings.badge != blank -%}
-					<div class="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-5 py-3 w-fit">
-						<svg class="w-5 h-5 text-highlight flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-							<path d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.745 3.745 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.745 3.745 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"/>
-						</svg>
-						<span class="font-body text-sm text-white/90">{{ section.settings.badge }}</span>
-					</div>
-				{%- endif -%}
+			{%- comment -%} Column headings row {%- endcomment -%}
+			<div class="grid grid-cols-2 gap-4 mb-4">
+				<p class="font-heading font-bold text-highlight text-xs uppercase tracking-widest">
+					{{- section.settings.left_heading | default: 'The problem' -}}
+				</p>
+				<p class="font-heading font-bold text-xs uppercase tracking-widest text-right" style="color: #4ADE80;">
+					{{- section.settings.right_heading | default: 'With better breathing' -}}
+				</p>
 			</div>
 
-			{%- comment -%} Right: stats {%- endcomment -%}
-			<div class="flex flex-col gap-2">
-
-				{%- if section.settings.stats_heading != blank -%}
-					<div
-						class="mb-8 transition-all duration-700 ease-out opacity-0 translate-y-8"
-						style="transition-delay: 100ms"
-						data-sp-animate
-					>
-						<h3 class="font-heading font-bold text-white text-3xl md:text-4xl">
-							{{- section.settings.stats_heading -}}
-						</h3>
-					</div>
+			{%- comment -%} Paired rows — problems on left, benefits on right {%- endcomment -%}
+			{%- assign problem_count = 0 -%}
+			{%- assign benefit_count = 0 -%}
+			{%- for block in section.blocks -%}
+				{%- if block.type == 'problem' -%}
+					{%- assign problem_count = problem_count | plus: 1 -%}
 				{%- endif -%}
+				{%- if block.type == 'benefit' -%}
+					{%- assign benefit_count = benefit_count | plus: 1 -%}
+				{%- endif -%}
+			{%- endfor -%}
+			{%- assign max_rows = problem_count -%}
+			{%- if benefit_count > max_rows -%}
+				{%- assign max_rows = benefit_count -%}
+			{%- endif -%}
 
-				{%- for block in section.blocks -%}
-					{%- assign delay = forloop.index | times: 120 | plus: 180 -%}
-					<div
-						class="flex items-start gap-6 py-7 border-b border-white/15 last:border-0 first:border-t first:border-white/15 transition-all duration-600 ease-out opacity-0 translate-y-6"
-						style="transition-delay: {{ delay }}ms"
-						data-sp-animate
-						{{ block.shopify_attributes }}
-					>
-						{%- comment -%} Stat value {%- endcomment -%}
-						<div class="flex-shrink-0 w-32">
-							<span class="font-heading font-bold text-white leading-none" style="font-size: clamp(2.5rem, 5vw, 4rem);">
-								{{- block.settings.value -}}
-							</span>
-						</div>
+			{%- assign p_i = 0 -%}
+			{%- assign b_i = 0 -%}
+			{%- for row in (1..max_rows) -%}
 
-						{%- comment -%} Label + footnote {%- endcomment -%}
-						<div class="flex flex-col gap-1 pt-2">
-							<p class="font-body text-white/85 text-base md:text-lg leading-snug">
-								{{- block.settings.label -}}
-							</p>
-							{%- if block.settings.footnote != blank -%}
-								<p class="font-body text-white/40 text-xs">{{ block.settings.footnote }}</p>
+				{%- comment -%} Find the nth problem and benefit {%- endcomment -%}
+				{%- assign p_found = false -%}
+				{%- assign b_found = false -%}
+				{%- assign p_counter = 0 -%}
+				{%- assign b_counter = 0 -%}
+
+				<div class="grid grid-cols-2 gap-4 py-3 {% unless forloop.last %}border-b border-white/10{% endunless %}">
+
+					{%- comment -%} Problem cell {%- endcomment -%}
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'problem' -%}
+							{%- if p_counter == p_i and p_found == false -%}
+								{%- assign p_found = true -%}
+								<div class="flex flex-col gap-0.5">
+									<span class="font-heading font-bold text-highlight leading-none" style="font-size: clamp(1.5rem, 6vw, 2rem);">
+										{{- block.settings.value -}}
+									</span>
+									{%- if block.settings.keyword != blank -%}
+										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight mt-1">
+											{{- block.settings.keyword -}}
+										</p>
+									{%- endif -%}
+									<p class="font-body text-white/60 text-xs leading-snug mt-0.5">
+										{{- block.settings.label -}}
+									</p>
+								</div>
 							{%- endif -%}
-						</div>
-					</div>
-				{%- endfor -%}
+							{%- assign p_counter = p_counter | plus: 1 -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- unless p_found -%}<div></div>{%- endunless -%}
 
+					{%- comment -%} Benefit cell {%- endcomment -%}
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'benefit' -%}
+							{%- if b_counter == b_i and b_found == false -%}
+								{%- assign b_found = true -%}
+								<div class="flex flex-col gap-0.5 text-right">
+									<span class="font-heading font-bold leading-none" style="color: #4ADE80; font-size: clamp(1.5rem, 6vw, 2rem);">
+										{{- block.settings.value -}}
+									</span>
+									{%- if block.settings.keyword != blank -%}
+										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight mt-1">
+											{{- block.settings.keyword -}}
+										</p>
+									{%- endif -%}
+									<p class="font-body text-white/60 text-xs leading-snug mt-0.5">
+										{{- block.settings.label -}}
+									</p>
+								</div>
+							{%- endif -%}
+							{%- assign b_counter = b_counter | plus: 1 -%}
+						{%- endif -%}
+					{%- endfor -%}
+					{%- unless b_found -%}<div></div>{%- endunless -%}
+
+				</div>
+
+				{%- assign p_i = p_i | plus: 1 -%}
+				{%- assign b_i = b_i | plus: 1 -%}
+			{%- endfor -%}
+
+		</div>
+
+		{%- comment -%} ═══ DESKTOP layout (lg+) ═══ {%- endcomment -%}
+		<div class="hidden lg:grid grid-cols-2">
+
+			{%- comment -%} Left column — the problem {%- endcomment -%}
+			<div>
+				<div class="pl-10 xl:pl-16 pr-12 max-w-[50vw]">
+
+					{%- if section.settings.left_heading != blank -%}
+						<h3
+							class="font-heading font-bold text-highlight text-sm uppercase tracking-widest mb-8 transition-all duration-700 ease-out opacity-0 translate-y-6"
+							style="transition-delay: 200ms"
+							data-sp-animate
+						>
+							{{- section.settings.left_heading -}}
+						</h3>
+					{%- endif -%}
+
+					<div class="flex flex-col">
+						{%- for block in section.blocks -%}
+							{%- if block.type == 'problem' -%}
+								{%- assign delay = forloop.index | times: 100 | plus: 250 -%}
+								<div
+									class="flex items-start gap-5 py-6 border-b border-white/10 last:border-0 transition-all duration-600 ease-out opacity-0 translate-y-6"
+									style="transition-delay: {{ delay }}ms"
+									data-sp-animate
+									{{ block.shopify_attributes }}
+								>
+									<span class="font-heading font-bold text-highlight leading-none shrink-0 w-24 text-right" style="font-size: clamp(2rem, 4vw, 3rem);">
+										{{- block.settings.value -}}
+									</span>
+									<div class="flex flex-col gap-1 pt-1">
+										{%- if block.settings.keyword != blank -%}
+											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
+												{{- block.settings.keyword -}}
+											</p>
+										{%- endif -%}
+										<p class="font-body text-white/75 text-sm leading-snug">
+											{{- block.settings.label -}}
+										</p>
+										{%- if block.settings.footnote != blank -%}
+											{%- if block.settings.footnote_url != blank -%}
+												<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
+											{%- else -%}
+												<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
+											{%- endif -%}
+										{%- endif -%}
+									</div>
+								</div>
+							{%- endif -%}
+						{%- endfor -%}
+					</div>
+
+				</div>
+			</div>
+
+			{%- comment -%} Right column — the solution {%- endcomment -%}
+			<div class="border-l border-white/10">
+				<div class="pr-10 xl:pr-16 pl-12 max-w-[50vw] ml-auto">
+
+					{%- if section.settings.right_heading != blank -%}
+						<h3
+							class="font-heading font-bold text-sm uppercase tracking-widest mb-8 text-right transition-all duration-700 ease-out opacity-0 translate-y-6"
+							style="color: #4ADE80; transition-delay: 200ms"
+							data-sp-animate
+						>
+							{{- section.settings.right_heading -}}
+						</h3>
+					{%- endif -%}
+
+					<div class="flex flex-col">
+						{%- for block in section.blocks -%}
+							{%- if block.type == 'benefit' -%}
+								{%- assign delay = forloop.index | times: 100 | plus: 250 -%}
+								<div
+									class="flex items-start gap-5 py-6 border-b border-white/10 last:border-0 flex-row-reverse text-right transition-all duration-600 ease-out opacity-0 translate-y-6"
+									style="transition-delay: {{ delay }}ms"
+									data-sp-animate
+									{{ block.shopify_attributes }}
+								>
+									<span class="font-heading font-bold leading-none shrink-0 w-24 text-left" style="color: #4ADE80; font-size: clamp(2rem, 4vw, 3rem);">
+										{{- block.settings.value -}}
+									</span>
+									<div class="flex flex-col gap-1 pt-1">
+										{%- if block.settings.keyword != blank -%}
+											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
+												{{- block.settings.keyword -}}
+											</p>
+										{%- endif -%}
+										<p class="font-body text-white/75 text-sm leading-snug">
+											{{- block.settings.label -}}
+										</p>
+										{%- if block.settings.footnote != blank -%}
+											{%- if block.settings.footnote_url != blank -%}
+												<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
+											{%- else -%}
+												<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
+											{%- endif -%}
+										{%- endif -%}
+									</div>
+								</div>
+							{%- endif -%}
+						{%- endfor -%}
+					</div>
+
+				</div>
 			</div>
 
 		</div>
+
 	</div>
 
 </section>
@@ -178,81 +319,83 @@
 			"label": "Background image"
 		},
 		{
-			"type": "color",
-			"id": "overlay_color",
-			"label": "Overlay color",
-			"default": "#000000"
-		},
-		{
-			"type": "range",
-			"id": "overlay_opacity",
-			"label": "Overlay opacity",
-			"min": 0,
-			"max": 100,
-			"step": 5,
-			"default": 50,
-			"unit": "%"
-		},
-		{
-			"type": "select",
-			"id": "container_width",
-			"label": "Container width",
-			"options": [
-				{ "value": "contained", "label": "Contained (1280px)" },
-				{ "value": "wide",      "label": "Wide (1536px)" },
-				{ "value": "full",      "label": "Full width" }
-			],
-			"default": "contained"
-		},
-		{
 			"type": "header",
-			"content": "Left column — intro"
+			"content": "Heading"
 		},
 		{
 			"type": "text",
 			"id": "eyebrow",
 			"label": "Eyebrow",
-			"default": "Introducing Intake Breathing."
+			"default": "The science of sleep"
 		},
 		{
 			"type": "text",
 			"id": "heading",
 			"label": "Heading",
-			"default": "Trusted by Millions.\nBacked by Research."
-		},
-		{
-			"type": "text",
-			"id": "tagline",
-			"label": "Tagline",
-			"default": "Trusted by Millions. Backed By Research."
+			"default": "Better breathing, deeper sleep, better life."
 		},
 		{
 			"type": "textarea",
-			"id": "body",
-			"label": "Body copy",
-			"default": "SleepScore Labs confirms what our users experience every day — better breathing and better sleep."
-		},
-		{
-			"type": "text",
-			"id": "badge",
-			"label": "Trust badge text",
-			"default": "Clinically validated by SleepScore Labs"
+			"id": "subheading",
+			"label": "Subheading",
+			"default": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely."
 		},
 		{
 			"type": "header",
-			"content": "Right column — stats"
+			"content": "Columns"
 		},
 		{
 			"type": "text",
-			"id": "stats_heading",
-			"label": "Stats heading",
-			"default": "Transform Your Breath"
+			"id": "left_heading",
+			"label": "Left column heading",
+			"default": "The problem"
+		},
+		{
+			"type": "text",
+			"id": "right_heading",
+			"label": "Right column heading",
+			"default": "With better breathing"
 		}
 	],
 	"blocks": [
 		{
-			"type": "stat",
-			"name": "Stat",
+			"type": "problem",
+			"name": "Problem stat",
+			"settings": [
+				{
+					"type": "text",
+					"id": "value",
+					"label": "Stat value",
+					"default": "45%"
+				},
+				{
+					"type": "text",
+					"id": "keyword",
+					"label": "Keyword",
+					"info": "Bold emphasis word, e.g. SNORE, EXHAUSTED"
+				},
+				{
+					"type": "text",
+					"id": "label",
+					"label": "Description",
+					"default": "of adults snore at least occasionally"
+				},
+				{
+					"type": "text",
+					"id": "footnote",
+					"label": "Source",
+					"default": "American Academy of Sleep Medicine"
+				},
+				{
+					"type": "url",
+					"id": "footnote_url",
+					"label": "Source URL"
+				}
+			]
+		},
+		{
+			"type": "benefit",
+			"name": "Benefit stat",
 			"settings": [
 				{
 					"type": "text",
@@ -262,15 +405,26 @@
 				},
 				{
 					"type": "text",
+					"id": "keyword",
+					"label": "Keyword",
+					"info": "Bold emphasis word, e.g. QUIET, RESTED"
+				},
+				{
+					"type": "text",
 					"id": "label",
-					"label": "Label",
-					"default": "Of Users Reported A Reduction In Snoring"
+					"label": "Description",
+					"default": "reported a reduction in snoring"
 				},
 				{
 					"type": "text",
 					"id": "footnote",
-					"label": "Footnote (e.g. *Based on user survey)",
-					"default": "*Based on a survey of verified Aira users"
+					"label": "Source",
+					"default": "Aira user survey, 2025"
+				},
+				{
+					"type": "url",
+					"id": "footnote_url",
+					"label": "Source URL"
 				}
 			]
 		}
@@ -280,27 +434,21 @@
 			"name": "Social Proof",
 			"blocks": [
 				{
-					"type": "stat",
+					"type": "problem",
 					"settings": {
-						"value": "88%",
-						"label": "Of Users Reported A Reduction In Snoring",
-						"footnote": "*Based on a survey of verified Aira users"
+						"value": "44%",
+						"keyword": "Snoring",
+						"label": "Nearly half of all adults snore regularly",
+						"footnote": "N Engl J Med, 1993"
 					}
 				},
 				{
-					"type": "stat",
+					"type": "benefit",
 					"settings": {
-						"value": "92%",
-						"label": "Of Users Reported Relief From Sinus Pressure",
-						"footnote": "*Based on a survey of verified Aira users"
-					}
-				},
-				{
-					"type": "stat",
-					"settings": {
-						"value": "87%",
-						"label": "Of Users Reported Deeper & More Restful Sleep",
-						"footnote": "*Based on a survey of verified Aira users"
+						"value": "75%",
+						"keyword": "Quiet nights",
+						"label": "Less snoring with a nasal dilator",
+						"footnote": "Rhinology, 1997"
 					}
 				}
 			]

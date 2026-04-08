@@ -12,9 +12,9 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "eyebrow": "Breathe freely. Sleep better.",
+        "eyebrow": "The breath that changes everything.",
         "heading": "Rest starts with your breath.",
-        "subheading": "Aira's magnetic nasal strip gently opens your airway for deeper, quieter sleep, no discomfort.",
+        "subheading": "Aira's magnetic nasal strip opens your airway to help you sleep deeper, wake up restored, and breathe the way your body was always meant to.",
         "button_label": "Shop now",
         "button_url": "",
         "secondary_button_label": "Learn more",
@@ -30,9 +30,9 @@
     "before_after_slider": {
       "type": "before-after-slider",
       "settings": {
-        "eyebrow": "See the difference",
-        "heading": "Breathe the way you were meant to.",
-        "subheading": "Drag to compare your airways — without and with the Aira nasal strip.",
+        "eyebrow": "BEFORE & AFTER",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways - without and with the Aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
         "before_label": "Without Aira",
@@ -51,14 +51,18 @@
           "type": "product",
           "settings": {
             "product": "aira-starter-kit",
-            "badge": "Best Seller"
+            "badge": "Best Seller",
+            "description": "Everything you need to start breathing better tonight. Includes 4 sized nasal strips and 15 adhesive tabs.",
+            "cta_label": "Shop now"
           }
         },
         "refill_tabs": {
           "type": "product",
           "settings": {
             "product": "aira-refill-tabs",
-            "badge": ""
+            "badge": "",
+            "description": "Everything you need to start breathing better tonight. Includes 4 sized nasal strips and 15 adhesive tabs.",
+            "cta_label": "Shop now"
           }
         }
       },
@@ -100,7 +104,7 @@
             "icon": "😴",
             "title": "Snoring",
             "subtitle": "",
-            "image": "shopify://shop_images/snoring.png",
+            "image": "shopify://shop_images/How_to_Deal_with_Snoring_from_Seasonal_Allergies.jpg",
             "description": "<p>When the nose is bypassed, the soft tissue at the back of the throat is more likely to vibrate during sleep — producing the sound of snoring. Nasal breathing stabilises this tissue and reduces vibration significantly.</p>",
             "link_label": "",
             "link_url": ""
@@ -112,7 +116,7 @@
             "icon": "💧",
             "title": "Dry mouth",
             "subtitle": "",
-            "image": "shopify://shop_images/mouth-breathing.png",
+            "image": "shopify://shop_images/5_Mouth_Exercises_to_Stop_Teeth_Grinding_and_Jaw_Clenching___Sentinel_Mouthguards.jpg",
             "description": "<p>Breathing through the mouth dries out saliva, which is your body's first line of defence against bacteria. Chronic dry mouth leads to bad breath, tooth decay, and gum disease.</p>",
             "link_label": "",
             "link_url": ""
@@ -124,7 +128,7 @@
             "icon": "🌙",
             "title": "Poor sleep quality",
             "subtitle": "",
-            "image": "shopify://shop_images/poor-sleep.png",
+            "image": "shopify://shop_images/Screenshot_2026-04-05_at_19.38.03.png",
             "description": "<p>Mouth breathing reduces oxygen uptake and disrupts sleep architecture — resulting in more time in lighter sleep stages. Switching to nasal breathing has been shown to improve deep sleep and morning energy levels.</p>",
             "link_label": "",
             "link_url": ""
@@ -165,48 +169,105 @@
     "social_proof": {
       "type": "social-proof",
       "blocks": {
-        "stat_1": {
-          "type": "stat",
+        "problem_1": {
+          "type": "problem",
           "settings": {
-            "value": "88%",
-            "label": "Of Users Reported A Reduction In Snoring",
-            "footnote": "*Based on a survey of verified Aira users"
+            "value": "44%",
+            "keyword": "Snoring",
+            "label": "Nearly half of all adults snore regularly — disrupting their sleep and their partner's",
+            "footnote": "N Engl J Med, 1993",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/8464434/"
           }
         },
-        "stat_2": {
-          "type": "stat",
+        "problem_2": {
+          "type": "problem",
           "settings": {
-            "value": "92%",
-            "label": "Of Users Reported Relief From Sinus Pressure",
-            "footnote": "*Based on a survey of verified Aira users"
+            "value": "1 in 3",
+            "keyword": "Sleep deprived",
+            "label": "Adults consistently sleep fewer than 7 hours, leading to fatigue, poor focus and weakened immunity",
+            "footnote": "CDC MMWR, 2016",
+            "footnote_url": "https://www.cdc.gov/mmwr/volumes/65/wr/mm6506a1.htm"
           }
         },
-        "stat_3": {
-          "type": "stat",
+        "problem_3": {
+          "type": "problem",
           "settings": {
-            "value": "87%",
-            "label": "Of Users Reported Deeper & More Restful Sleep",
-            "footnote": "*Based on a survey of verified Aira users"
+            "value": "48%",
+            "keyword": "Heart disease",
+            "label": "Higher risk of coronary heart disease when sleep is chronically cut short",
+            "footnote": "Eur Heart J, 2011",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/21558425/"
+          }
+        },
+        "problem_4": {
+          "type": "problem",
+          "settings": {
+            "value": "3.5×",
+            "keyword": "Dry mouth",
+            "label": "More likely to wake with a dry mouth and sore throat when breathing through the mouth overnight",
+            "footnote": "J Clin Sleep Med, 2016",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/26951420/"
+          }
+        },
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "value": "75%",
+            "keyword": "Quiet nights",
+            "label": "Significant reduction in snoring when using an external nasal dilator during sleep",
+            "footnote": "Rhinology, 1997",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/9299651/"
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "value": "30%",
+            "keyword": "Deep sleep",
+            "label": "Lower airway resistance when breathing nasally, promoting deeper and more restorative rest",
+            "footnote": "Eur Respir J, 2003",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/14621092/"
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "value": "65%",
+            "keyword": "Healthier heart",
+            "label": "Lower cardiovascular risk in adults who consistently achieve quality sleep each night",
+            "footnote": "Eur Heart J, 2020",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/31872249/"
+          }
+        },
+        "benefit_4": {
+          "type": "benefit",
+          "settings": {
+            "value": "59%",
+            "keyword": "Breathe free",
+            "label": "Reduction in nasal obstruction — keeping airways open and your mouth closed all night",
+            "footnote": "Laryngoscope, 1998",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/9591552/"
           }
         }
       },
       "block_order": [
-        "stat_1",
-        "stat_2",
-        "stat_3"
+        "problem_1",
+        "problem_2",
+        "problem_3",
+        "problem_4",
+        "benefit_1",
+        "benefit_2",
+        "benefit_3",
+        "benefit_4"
       ],
       "settings": {
         "background_color": "#0a1a34",
-        "background_image": "shopify://shop_images/intake_sleeping-35_websize.webp",
-        "overlay_color": "#000000",
-        "overlay_opacity": 50,
-        "container_width": "contained",
-        "eyebrow": "Introducing Intake Breathing.",
-        "heading": "Trusted by Millions. Backed by Research.",
-        "tagline": "Trusted by Millions. Backed By Research.",
-        "body": "SleepScore Labs confirms what our users experience every day — better breathing and better sleep.",
-        "badge": "Clinically validated by SleepScore Labs",
-        "stats_heading": "Transform Your Breath"
+        "background_image": "shopify://shop_images/IMG_4337.jpg",
+        "eyebrow": "The science of sleep",
+        "heading": "Better breathing, deeper sleep, better life.",
+        "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
+        "left_heading": "The problem",
+        "right_heading": "With better breathing"
       }
     },
     "benefits_slider": {
@@ -291,42 +352,84 @@
           "type": "question",
           "settings": {
             "question": "How does the Aira nasal strip work?",
-            "answer": "<p>Aira uses a lightweight magnetic band that gently pulls open your nasal passages from the outside. The adhesive tabs stick to either side of your nose and the magnetic bridge connects them, creating a comfortable outward pull that instantly improves airflow.</p>"
+            "answer": "<p>Aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
           }
         },
         "faq_2": {
           "type": "question",
           "settings": {
-            "question": "Is it comfortable to sleep with?",
-            "answer": "<p>Yes. The strip weighs less than 2 grams and is made from medical-grade, hypoallergenic materials. Most users forget they're wearing it within a few minutes. The adhesive tabs are gentle on skin and leave no residue.</p>"
+            "question": "Is it comfortable to sleep with and what if it falls off during the night?",
+            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Starter Pack </em>includes a simple application guide to help you get it right from night one.</p>"
           }
         },
         "faq_3": {
           "type": "question",
           "settings": {
             "question": "How long does the band last?",
-            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in packs of 30, 60, or 90 pairs. One tab lasts for a single use (one night).</p>"
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, Aira was built to last.</p>"
           }
         },
         "faq_4": {
           "type": "question",
           "settings": {
             "question": "Will it help with my snoring?",
-            "answer": "<p>In our user survey, 88% of Aira users reported a noticeable reduction in snoring. By opening the nasal passages, Aira encourages nose breathing during sleep, which reduces the soft-tissue vibration that causes snoring.</p>"
+            "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could!</p>"
           }
         },
         "faq_5": {
           "type": "question",
           "settings": {
             "question": "Can I use it during exercise?",
-            "answer": "<p>Absolutely. Aira was originally designed for athletes. The adhesive tabs are sweat-resistant and the band stays securely in place during high-intensity workouts, running, cycling, and more.</p>"
+            "answer": "<p>Absolutely, and honestly, this is where Aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, Aira works with your body, not against it.</p>"
           }
         },
         "faq_6": {
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes, we ship across the GCC including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3-5 business days. Free shipping is available on orders over a certain threshold.</p>"
+            "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and free shipping is available above a certain order value. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
+          }
+        },
+        "question_LR3ReA": {
+          "type": "question",
+          "settings": {
+            "question": "How do I know which size is right for me?",
+            "answer": "<p>We've made finding your size easy. The Aira starter pack includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
+          }
+        },
+        "question_EeFcrc": {
+          "type": "question",
+          "settings": {
+            "question": "How is Aira different from regular adhesive nasal strips?",
+            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> Aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
+          }
+        },
+        "question_zb7UxY": {
+          "type": "question",
+          "settings": {
+            "question": "Can I use it if I have a deviated septum / allergies / congestion?",
+            "answer": "<p>Of couse! And many of our most loyal customers come to us for exactly these reasons. Aira physically widens the nasal passage from the outside, so it works regardless of what's causing the restriction inside: whether that's a <strong>structural deviation</strong>, <strong>seasonal allergies</strong>, or <strong>everyday congestion</strong>. It <em>won't treat</em> the underlying condition, but it will meaningfully improve your airflow and your quality of sleep and help you manage it. As always, if you have a specific medical concern, we <strong>recommend checking in with your doctor.</strong></p>"
+          }
+        },
+        "question_dgLjbn": {
+          "type": "question",
+          "settings": {
+            "question": "Can my partner or child use it too?",
+            "answer": "<p>Aira is designed for adults, and each band is personal, so we'd recommend one per person for hygiene and fit reasons. That said, we know better sleep is a family affair. If your partner is the one keeping you both awake at night, this might just be the <strong>gift that changes everything</strong>. For children, we currently recommend consulting a <strong>paediatrician</strong> before use.</p>"
+          }
+        },
+        "question_4wVE9a": {
+          "type": "question",
+          "settings": {
+            "question": "How do I clean the band?",
+            "answer": "<p>It's simple: after each use, rinse the magnetic band under warm water and let it air dry. You can use a mild soap if needed, just make sure to avoid harsh chemicals or submerging it for long periods. The tabs are single-use and should be replaced each time you're using Aira. Keep your band in the box it comes with, and it'll stay in great condition for months.</p><p></p>"
+          }
+        },
+        "question_DUHFCB": {
+          "type": "question",
+          "settings": {
+            "question": "What I should do if I experience discomfort while wearing the Aira nasal strip?",
+            "answer": "<p>Your comfort is something we take seriously. If you notice any redness, irritation, or soreness while wearing your Aira nasal strip, the first step is simply to take it off and give your skin a day or two to rest. In most cases, this is enough, and it's often just a sign that the tabs were applied to skin that needed a little more cleaning or drying beforehand.</p><p>If the discomfort persists after a rest period, please don't hesitate to reach out to us at <a href=\"mailto:contact@aira-breathing.com\"><strong>contact@aira-breathing.com</strong></a>. We're here to help you figure out what's going on: whether that's a simple adjustment to how you're applying the strip, or guidance on connecting with a healthcare professional near you. You'll never be left to figure it out alone.</p><p>When you write to us, it helps to include your name, a brief description of what you're experiencing, and a photo of the affected area if you're comfortable sharing one. The more context you give us, the better we can support you.</p>"
           }
         }
       },
@@ -336,7 +439,13 @@
         "faq_3",
         "faq_4",
         "faq_5",
-        "faq_6"
+        "faq_6",
+        "question_LR3ReA",
+        "question_EeFcrc",
+        "question_zb7UxY",
+        "question_dgLjbn",
+        "question_4wVE9a",
+        "question_DUHFCB"
       ],
       "settings": {
         "eyebrow": "FAQ",

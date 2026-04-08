@@ -45,14 +45,14 @@
 -%}
 
 {%- if eyebrow != blank or heading != blank or subheading != blank -%}
-	<div class="flex flex-col gap-4 {{ align_class }}">
+	<div class="flex flex-col gap-2 md:gap-3 {{ align_class }}">
 
 		{%- if eyebrow != blank -%}
 			<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ eyebrow }}</p>
 		{%- endif -%}
 
 		{%- if heading != blank -%}
-			<h2 class="font-heading font-bold {{ h_class }} leading-tight tracking-tight text-title">{{ heading }}</h2>
+			<h2 class="font-heading font-bold {{ h_class }} leading-none tracking-tight text-title">{{ heading }}</h2>
 		{%- endif -%}
 
 		{%- if subheading != blank -%}

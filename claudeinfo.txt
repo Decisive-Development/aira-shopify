@@ -51,6 +51,7 @@ Tailwind: `font-heading`, `font-body`
 - **Modular** — reusable UI elements go in `snippets/`. Sections use `{% render %}` to pull them in.
 - **CMS-first** — expose content/settings via `{% schema %}`. Hardcode structure, make content editable.
 - **No backwards-compat hacks** — delete unused code, don't comment it out.
+- **Don't push** — user pushes to Shopify manually. Never auto-push.
 
 ---
 
@@ -118,15 +119,14 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - Scroll threshold: 50px. Transparent fades out (opacity 0.3s), solid slides down (translateY 0.4s cubic-bezier). Reverse on scroll to top.
 - If page loads already scrolled, `no-transition` class prevents flash
 - CTA: `cta-button` snippet, `variant: accent` (both states)
-- Mobile: hamburger toggle → dropdown pill below nav. Menu auto-closes on state change.
-- Mobile CTA: `variant: accent`
+- **Mobile**: icon-only logo (`aira-logo-only-white.svg` / `aira-logo-only-dark.svg`) via `md:hidden` / `hidden md:block`. Hamburger toggle → animated dropdown (CSS transitions: opacity + translateY, 0.25s ease). Menu text `text-lg`, child links `text-base`. CTA `size: 'sm'` for thinner padding. Uses `menu-closed` / `menu-open` classes with `toggleMenu()` JS.
 - Spacer div (`h-20`) in `layout/theme.liquid` prevents content hiding behind fixed nav
 - JS: inline `<script>`, adds/removes `.scrolled` class on `[data-header]`
 
 ### sections/hero.liquid
-- Full-width, full-cover image hero. Foreground image fills entire section as background (`absolute inset-0 object-cover`, 120% height for parallax headroom).
+- Full-width, full-cover image hero. Foreground image fills entire section as background (`absolute inset-0 object-cover`, 140% height for parallax headroom).
 - Three darken layers: uniform `bg-black/35`, bottom gradient `from-black/60` for copy contrast, top gradient `h-40 from-black/50` for navbar contrast.
-- Parallax: JS translates image layer on scroll (20% rate, rAF-driven, respects `prefers-reduced-motion`).
+- Parallax: JS translates image layer on scroll (35% rate, rAF-driven, respects `prefers-reduced-motion`).
 - Copy positioned bottom-left (`justify-end`), capped at `max-w-2xl`.
 - CMS controls: eyebrow, heading, subheading, primary + secondary CTA, foreground image, background image, overlay, full-height toggle, container width, vertical padding.
 - Background: night-sky gradient toggle (default on) — fallback when no image set.
@@ -135,8 +135,10 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 
 ### sections/footer.liquid
 - Outer `<footer>` has blue→burnt-orange sunset gradient background: `linear-gradient(to bottom, #0A1A34 50%, ... #6b2f00 100%)`
+- Sunset gradient widened: `ellipse 140% 40%` for broader coverage
 - Floating pill inside: `bg-secondary`, `rounded-2xl`, wide vertical padding (`py-12 md:py-14`)
 - Grid: `2fr 1fr 1fr 1fr` — left col wider (logo + newsletter + socials), 3 right cols equal (Shop / Resources / Company)
+- **Mobile**: first two columns side-by-side (`grid-cols-2`), brand col `col-span-2`, company col `col-span-2`. Email form full-width (`flex flex-col sm:flex-row`, input `w-full sm:w-70`, button `w-full sm:w-auto`).
 - Newsletter form: Shopify `form 'customer'` with `contact[tags]: newsletter`. Input `rounded-xl`, fixed width. Subscribe uses `cta-button` snippet (`element: button`, `button_type: submit`, `variant: primary`)
 - Social icons: Instagram, YouTube, TikTok — CMS-controlled URLs via schema (hidden if blank)
 - Copyright bar: below the pill, `text-white`, `© 2026 Aira Wellness. · Privacy Policy · Terms of Service`
@@ -155,22 +157,52 @@ Reusable heading block. Pass via `{% render 'section-heading', eyebrow: ..., hea
 Eyebrow: `text-highlight`, uppercase, tracking-widest. Heading: `font-heading text-title`. Subheading: `text-copy max-w-2xl`, auto-centered when align=center.
 
 ### snippets/product-card.liquid
-Reusable product card. Pass via `{% render 'product-card', product: product, badge: 'Best Seller' %}`.
+Reusable product card for collection/shop pages. Used by `sections/collection.liquid`. Pass via `{% render 'product-card', product: product, badge: 'Best Seller', description: '...' %}`.
 - Portrait image `aspect-4/5` with hover scale-105. Optional badge pill top-left.
+- Title is plain `<h3>` (not a link — the CTA is the action).
+- Optional `description` param from CMS; falls back to `product.description | strip_html | truncate: 120`.
 - Colour option (name `Colour`/`Color`) → circle swatches with inline `style="background: #hex"`. Known colours: Black=`#1A1A1A`, Beige=`#C8B89A`.
 - All other options → pill buttons.
+- Selling plan (subscription) support: if product has selling plans, shows subscribe/one-time toggle with radio buttons, pricing, save amount. Subscribe promoted first, one-time below with "or" divider.
 - Price display with compare-at strikethrough. Add to Cart / Sold Out button.
-- Variant data embedded as `<script type="application/json" data-product-variants>` for JS consumption.
-- JS lives in `sections/featured-products.liquid` (where the cards are rendered).
+- Variant data embedded as `<script type="application/json" data-product-variants>` including `selling_plan_allocations` for JS.
+- `.product-card-description` CSS in `critical.source.css` handles list/heading styles for Shopify rich-text HTML.
+
+### snippets/product-card-subscription.liquid
+Standalone subscription-focused product card snippet (currently unused — featured-products section now renders cards inline). May be used in future for other sections needing subscription card layout.
 
 ### sections/featured-products.liquid
+- **Visual CTA cards only** — no forms, no add-to-cart, no variant selectors, no JS. Cards link to product pages.
 - 2-col responsive grid (`grid-cols-1 md:grid-cols-2`, `max-w-4xl mx-auto`)
 - Section heading via `section-heading` snippet (eyebrow, heading, subheading, align, size)
-- Blocks: `product` type with `product_picker` + `badge` text field
-- JS handles variant selection: swatch/pill active classes, variant ID, price, availability, image swap (clears `srcset`/`sizes` before setting `src`)
+- Two block types:
+  - **Product**: image, title, CMS description, "Shop now" CTA button → product URL
+  - **Product (subscribe)**: image, title, CMS description, then two info boxes:
+    - "Subscribe & save" box (green heart icon, heading + description)
+    - "Buy in bulk" box (blue cube icon, heading + description)
+    - "Shop now" CTA button → product URL
+  - All copy comes from CMS block settings with sensible defaults. Does NOT use `product.description`.
+- CTA uses `cta-button` snippet (`variant: primary`, `extra_classes: 'w-full text-center'`).
+- CMS: eyebrow, heading, subheading, heading_align, heading_size, background_color, background_image, overlay, container_width, padding_vertical. Block settings: product, badge, description, cta_label (+ subscribe/bulk headings & text for subscription type).
+
+### sections/collection.liquid
+- Dark navy header banner (`bg-main pt-32 pb-16`) for transparent nav compatibility.
+- Cream text headings (`text-secondary`). Sort dropdown with Shopify `collection.sort_options`.
+- Product grid using `product-card` snippet (the full add-to-cart version), configurable 2/3/4 columns.
+- Pagination with numbered pages and prev/next arrows.
+- Variant JS + selling plan toggle JS for subscription products.
+- CMS: eyebrow, columns, products_per_page, background_color, padding_vertical.
+
+### sections/collections.liquid
+- Collection listing page (grid of collection cards).
+- Dark navy header banner with cream text.
+- Filters out empty collections and `frontpage` handle.
+- Falls back to first product image if no collection image set.
+- Cards: image (aspect-4/5), title, description, product count.
+- CMS: eyebrow, heading, subheading, background_color, padding_vertical.
 
 ### sections/before-after-slider.liquid
-Drag comparison slider. Section heading (via `section-heading` snippet) above a `max-w-3xl` comparison widget.
+Drag comparison slider. Section heading (via `section-heading` snippet) above a `max-w-2xl` (672px, reduced ~15% from original 768px) comparison widget.
 - After image (`w-full h-auto block`) is the base layer, determines container height.
 - Before pane: `absolute inset-0`, `clip-path: inset(0 R% 0 0)` on the pane div — clips image + label together.
 - Drag handle: `w-10` container, centred via `left: pct%; margin-left: -20px` (no transform). White circle with ←→ arrows SVG, white 2px vertical line.
@@ -183,9 +215,9 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 ---
 
 ### sections/health-effects.liquid
-Grid layout (50/50 on lg): focus panel left, 2×2 card grid right.
-- **Focus panel** (left): image fills top portion, solid `bg-main` block at bottom with title + description + optional link. No icon. Stacked layers per block, crossfade via opacity (500ms).
-- **Card grid** (right): 2×2 `aspect-square` cards. Each card has outer/inner structure for conic-gradient border. Icon + title centered.
+Grid layout (50/50 on lg): focus panel left, 2×2 card grid right. Heading centered.
+- **Focus panel** (left): image `flex-1`, solid `bg-main` block at bottom with title + description + optional link. No icon. Stacked layers per block, crossfade via opacity (500ms).
+- **Card grid** (right): 2×2 `aspect-square` cards. Each card uses its block image as full background with title in overlay div at bottom (`bg-linear-to-t from-black/70 via-black/40 to-transparent`). Icons removed.
 - Active card hidden from grid. "Next" card gets `@property --border-progress` conic-gradient sweep animation (5s, clockwise from 12 o'clock, orange #FF4000).
 - **Hover** = preview (shows content in focus panel, grid unchanged). **Click** = lock (swaps grid positions). Prevents hover-spam bug.
 - Newly appearing cards animate in (scale 0.92→1, opacity 0→1, 350ms).
@@ -206,14 +238,15 @@ Horizontally scrollable card slider for product benefits. Cards are `w-72 flex-s
 - CMS: eyebrow, heading, subheading, padding_top, padding_bottom. Blocks: `slide` type with image_picker, heading, description.
 
 ### sections/social-proof.liquid
-Fullscreen image section with split layout: intro copy left, stat blocks right.
-- Background: CMS image_picker + overlay darkness (range 0–90, maps to bg-black/N). Fallback: deep navy gradient.
-- Left column: eyebrow, heading, tagline, body copy, optional trust badge pill (icon + text).
-- Right column: stats_heading + CMS blocks (type: `stat`) with `value`, `label`, `footnote`.
-- Stats layout: horizontal row per stat — large value (clamp 2.5–4rem) left, label + footnote right, separated by border-white/15 lines.
-- Scroll animation: IntersectionObserver, `data-sp-animate`, removes `opacity-0 translate-y-8/6`.
-- Dark gradient vignette (left+right edges) layered above overlay for readability on any image.
-- Defaults: 3 stat blocks (88% snoring, 92% sinus, 87% sleep).
+Full-width problem-vs-solution stats section over a background image.
+- **Background**: CMS image_picker, `bg-black/35` darken layer + radial vignette (`radial-gradient ellipse, transparent 40% → rgba(0,0,0,0.75) 100%`). Fallback: deep navy solid color.
+- **Heading**: centered at top — eyebrow, heading (reduced `text-3xl md:text-4xl lg:text-5xl`), subheading (hidden on mobile).
+- **Two block types**: `problem` (left column, red/orange `text-highlight`) and `benefit` (right column, bright green `#4ADE80`).
+- **Block fields**: `value` (stat number), `keyword` (bold emphasis word e.g. "Snoring"), `label` (description), `footnote` (source), `footnote_url` (links to study). Footnotes colored `--color-tertiary-light` (#9BB7D4), clickable when URL provided.
+- **Desktop layout** (`lg+`): two-column grid, full-width (not container-constrained), `max-w-[50vw]` per column. Left = problems left-aligned, right = benefits right-aligned. Vertical divider `border-l border-white/10`. Each stat row: large value → keyword → label → source link. Scroll-in animations via IntersectionObserver.
+- **Mobile layout** (`< lg`): separate code block (`lg:hidden`). Paired rows — each row is `grid-cols-2` with problem on left, matching benefit on right. Compact: no footnotes, smaller text, tighter spacing. Uses counter-based iteration to find nth problem/benefit per row (Liquid can't index arrays with string keys from `split`).
+- **Stats are research-backed**: all cite peer-reviewed studies (PubMed, CDC, journal publications). No "Aira survey" claims. Problems: snoring prevalence, sleep deprivation, heart disease risk, dry mouth. Benefits: snoring reduction, airway resistance, cardiovascular health, nasal obstruction — paired to mirror the problems.
+- CMS: eyebrow, heading, subheading, left_heading, right_heading, background_color, background_image.
 
 ### sections/judgeme-reviews.liquid
 - Judge.me review widget section. Section heading (via `section-heading` snippet, align center).
@@ -250,6 +283,22 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - Items divided by `divide-y divide-bg-muted` borders.
 - Scroll-in animation via IntersectionObserver.
 - CMS: eyebrow, heading, subheading, heading_size, background_color, container_width, padding_vertical.
+
+---
+
+## Products
+
+Two products currently:
+- **Aira Starter Kit** — includes 4 sized nasal strips (XS/S/M/L) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
+- **Aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
+
+Navigation: "Shop" menu item should point to "Nasal Strips" collection (not `/collections` or `/collections/all`).
+
+Shopify collection notes:
+- `/collections` = collection listing page (uses `sections/collections.liquid`)
+- `/collections/all` = all products page (uses `sections/collection.liquid`)
+- `/collections/handle` = specific collection page
+- `collection.handle == 'frontpage'` filters out Shopify's default auto-collection
 
 ---
 
@@ -353,3 +402,30 @@ Fullscreen image section with split layout: intro copy left, stat blocks right.
 - Write-review modal fully branded: product image made tall (160×290px, not square), Satoshi headings, Nunito Sans body, blue nav buttons, blue focus rings, branded upload area.
 - Pagination arrow borders removed.
 - Key learnings: Judge.me modal uses `jdgm-` classes while widget uses `jm-`. Inline CSS variable overrides require JS, not just CSS `!important`.
+
+[Session 17] Collection pages, mobile polish, featured products redesign
+- Created sections/collection.liquid: dark navy header banner for nav visibility, sort dropdown, product grid (product-card snippet), pagination, variant JS + selling plan JS.
+- Created sections/collections.liquid: collection listing grid, filters out empty + frontpage collections, falls back to product image if no collection image.
+- Health effects: heading centered, card icons removed, cards now use block image as full background with title overlay (gradient from-black/70). Focus panel image reverted to flex-1.
+- Hero: parallax increased — container height 140%, scroll rate 0.35.
+- Before-after slider: reduced from max-w-3xl (768px) to max-w-2xl (672px).
+- Header mobile: icon-only logo, animated menu dropdown (CSS transitions), larger text (text-lg), thinner CTA (size: sm).
+- Footer mobile: side-by-side columns (grid-cols-2), full-width email form, wider sunset gradient (ellipse 140% 40%).
+- Featured products: completely rewritten as visual CTA cards (no forms/JS). Two block types — standard Product (title + description + CTA link) and Product (subscribe) with subscribe & save + buy in bulk info boxes. All copy from CMS fields with defaults, NOT from product.description.
+- Created snippets/product-card-subscription.liquid (standalone snippet, currently unused by featured-products which renders inline).
+- Added .product-card-description CSS to critical.source.css for rich-text HTML styling on collection page cards.
+- Navigation: decided "Shop" menu should point to "Nasal Strips" collection.
+
+[Session 18] Social proof redesign + featured products CTA cards
+- Social proof completely redesigned: problem-vs-solution two-column layout replacing old single-column stats.
+- Two block types: `problem` (left, red/orange) and `benefit` (right, bright green #4ADE80).
+- Added `keyword` field to blocks — bold emphasis word between stat value and description (e.g. 44% → SNORING → description).
+- All stats now cite peer-reviewed research with PubMed/CDC links. Footnotes colored `--color-tertiary-light`, clickable.
+- Paired stats: Snoring↔Quiet nights, Exhausted↔Deep sleep, Heart disease↔Healthier heart, Dry mouth↔Breathe free.
+- Background: `bg-black/35` darken + radial vignette (transparent 40% → 0.75 opacity at edges).
+- Heading reduced in size, top padding reduced, subheading hidden on mobile, trust badge removed.
+- Separate mobile layout: paired rows (grid-cols-2, problem+benefit side by side per row), compact text, no footnotes. Counter-based Liquid iteration to avoid string-index array lookup bug.
+- Desktop: full-width columns (not container-constrained), `max-w-[50vw]` each, scroll-in animations.
+- Featured products: rewrote as pure CTA cards — no forms, no variant selectors, no JS. Title is `<h3>` not a link. CTA button links to product page. Product (subscribe) block type has subscribe & bulk info boxes with icons.
+- product-card.liquid: description now falls back to `product.description | strip_html | truncate: 120` when no CMS description set. Kept full add-to-cart form for collection pages.
+- Key learning: Liquid `split` returns string values — `section.blocks[string_index]` silently fails. Must use counter-based iteration instead.
