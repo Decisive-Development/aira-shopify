@@ -11,7 +11,15 @@
   "sections": {
     "main": {
       "type": "collection",
-      "settings": {}
+      "settings": {
+        "hero_image": "shopify://shop_images/IMG_4805.jpg",
+        "hero_heading": "Shop Aira",
+        "eyebrow": "",
+        "columns": "3",
+        "products_per_page": 12,
+        "background_color": "#ffffff",
+        "padding_vertical": "lg"
+      }
     }
   },
   "order": [

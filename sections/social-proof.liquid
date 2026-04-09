@@ -47,7 +47,7 @@
 
 			{%- if section.settings.heading != blank -%}
 				<h2
-					class="font-heading font-bold text-white text-2xl md:text-4xl lg:text-5xl leading-tight transition-all duration-700 ease-out opacity-0 translate-y-6"
+					class="font-heading heading-weight text-white text-2xl md:text-4xl lg:text-5xl leading-tight transition-all duration-700 ease-out opacity-0 translate-y-6"
 					style="transition-delay: 80ms"
 					data-sp-animate
 				>
@@ -164,113 +164,137 @@
 		</div>
 
 		{%- comment -%} ═══ DESKTOP layout (lg+) ═══ {%- endcomment -%}
-		<div class="hidden lg:grid grid-cols-2">
+		<div class="hidden lg:block">
 
-			{%- comment -%} Left column — the problem {%- endcomment -%}
-			<div>
-				<div class="pl-10 xl:pl-16 pr-12 max-w-[50vw]">
-
+			{%- comment -%} Column headings {%- endcomment -%}
+			<div class="grid grid-cols-2">
+				<div class="pl-10 xl:pl-16 pr-12">
 					{%- if section.settings.left_heading != blank -%}
 						<h3
-							class="font-heading font-bold text-highlight text-sm uppercase tracking-widest mb-8 transition-all duration-700 ease-out opacity-0 translate-y-6"
+							class="font-heading font-bold text-highlight text-sm uppercase tracking-widest mb-0 transition-all duration-700 ease-out opacity-0 translate-y-6"
 							style="transition-delay: 200ms"
 							data-sp-animate
 						>
 							{{- section.settings.left_heading -}}
 						</h3>
 					{%- endif -%}
-
-					<div class="flex flex-col">
-						{%- for block in section.blocks -%}
-							{%- if block.type == 'problem' -%}
-								{%- assign delay = forloop.index | times: 100 | plus: 250 -%}
-								<div
-									class="flex items-start gap-5 py-6 border-b border-white/10 last:border-0 transition-all duration-600 ease-out opacity-0 translate-y-6"
-									style="transition-delay: {{ delay }}ms"
-									data-sp-animate
-									{{ block.shopify_attributes }}
-								>
-									<span class="font-heading font-bold text-highlight leading-none shrink-0 w-24 text-right" style="font-size: clamp(2rem, 4vw, 3rem);">
-										{{- block.settings.value -}}
-									</span>
-									<div class="flex flex-col gap-1 pt-1">
-										{%- if block.settings.keyword != blank -%}
-											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
-												{{- block.settings.keyword -}}
-											</p>
-										{%- endif -%}
-										<p class="font-body text-white/75 text-sm leading-snug">
-											{{- block.settings.label -}}
-										</p>
-										{%- if block.settings.footnote != blank -%}
-											{%- if block.settings.footnote_url != blank -%}
-												<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
-											{%- else -%}
-												<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
-											{%- endif -%}
-										{%- endif -%}
-									</div>
-								</div>
-							{%- endif -%}
-						{%- endfor -%}
-					</div>
-
 				</div>
-			</div>
-
-			{%- comment -%} Right column — the solution {%- endcomment -%}
-			<div class="border-l border-white/10">
-				<div class="pr-10 xl:pr-16 pl-12 max-w-[50vw] ml-auto">
-
+				<div class="pr-10 xl:pr-16 pl-12 border-l border-white/10">
 					{%- if section.settings.right_heading != blank -%}
 						<h3
-							class="font-heading font-bold text-sm uppercase tracking-widest mb-8 text-right transition-all duration-700 ease-out opacity-0 translate-y-6"
+							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 text-right transition-all duration-700 ease-out opacity-0 translate-y-6"
 							style="color: #4ADE80; transition-delay: 200ms"
 							data-sp-animate
 						>
 							{{- section.settings.right_heading -}}
 						</h3>
 					{%- endif -%}
+				</div>
+			</div>
 
-					<div class="flex flex-col">
+			{%- comment -%} Paired rows — problem left, benefit right, same grid row {%- endcomment -%}
+			{%- assign dt_p_i = 0 -%}
+			{%- assign dt_b_i = 0 -%}
+			{%- assign dt_p_count = 0 -%}
+			{%- assign dt_b_count = 0 -%}
+			{%- for block in section.blocks -%}
+				{%- if block.type == 'problem' -%}{%- assign dt_p_count = dt_p_count | plus: 1 -%}{%- endif -%}
+				{%- if block.type == 'benefit' -%}{%- assign dt_b_count = dt_b_count | plus: 1 -%}{%- endif -%}
+			{%- endfor -%}
+			{%- assign dt_max = dt_p_count -%}
+			{%- if dt_b_count > dt_max -%}{%- assign dt_max = dt_b_count -%}{%- endif -%}
+
+			{%- for row in (1..dt_max) -%}
+				{%- assign delay = forloop.index | times: 100 | plus: 250 -%}
+				<div
+					class="grid grid-cols-2 transition-all duration-600 ease-out opacity-0 translate-y-6"
+					style="transition-delay: {{ delay }}ms"
+					data-sp-animate
+				>
+					{%- comment -%} Problem cell {%- endcomment -%}
+					<div class="pl-10 xl:pl-16 pr-12 py-6 {% unless forloop.last %}border-b border-white/10{% endunless %}">
+						{%- assign dt_p_counter = 0 -%}
 						{%- for block in section.blocks -%}
-							{%- if block.type == 'benefit' -%}
-								{%- assign delay = forloop.index | times: 100 | plus: 250 -%}
-								<div
-									class="flex items-start gap-5 py-6 border-b border-white/10 last:border-0 flex-row-reverse text-right transition-all duration-600 ease-out opacity-0 translate-y-6"
-									style="transition-delay: {{ delay }}ms"
-									data-sp-animate
-									{{ block.shopify_attributes }}
-								>
-									<span class="font-heading font-bold leading-none shrink-0 w-24 text-left" style="color: #4ADE80; font-size: clamp(2rem, 4vw, 3rem);">
-										{{- block.settings.value -}}
-									</span>
-									<div class="flex flex-col gap-1 pt-1">
-										{%- if block.settings.keyword != blank -%}
-											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
-												{{- block.settings.keyword -}}
-											</p>
-										{%- endif -%}
-										<p class="font-body text-white/75 text-sm leading-snug">
-											{{- block.settings.label -}}
-										</p>
-										{%- if block.settings.footnote != blank -%}
-											{%- if block.settings.footnote_url != blank -%}
-												<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
-											{%- else -%}
-												<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
+							{%- if block.type == 'problem' -%}
+								{%- if dt_p_counter == dt_p_i -%}
+									<div class="flex items-start gap-5" {{ block.shopify_attributes }}>
+										<span class="font-heading font-bold text-highlight leading-none shrink-0 w-24 text-right" style="font-size: clamp(2rem, 4vw, 3rem);">
+											{{- block.settings.value -}}
+										</span>
+										<div class="flex flex-col gap-1 pt-1">
+											{%- if block.settings.keyword != blank -%}
+												<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
+													{{- block.settings.keyword -}}
+												</p>
 											{%- endif -%}
-										{%- endif -%}
+											<p class="font-body text-white/75 text-sm leading-snug">
+												{{- block.settings.label -}}
+											</p>
+											{%- if block.settings.footnote != blank -%}
+												{%- if block.settings.footnote_url != blank -%}
+													<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
+												{%- else -%}
+													<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
+												{%- endif -%}
+											{%- endif -%}
+										</div>
 									</div>
-								</div>
+								{%- endif -%}
+								{%- assign dt_p_counter = dt_p_counter | plus: 1 -%}
 							{%- endif -%}
 						{%- endfor -%}
 					</div>
 
+					{%- comment -%} Benefit cell {%- endcomment -%}
+					<div class="pr-10 xl:pr-16 pl-12 py-6 {% unless forloop.last %}border-b border-white/10{% endunless %} border-l">
+						{%- assign dt_b_counter = 0 -%}
+						{%- for block in section.blocks -%}
+							{%- if block.type == 'benefit' -%}
+								{%- if dt_b_counter == dt_b_i -%}
+									<div class="flex items-start gap-5 flex-row-reverse text-right" {{ block.shopify_attributes }}>
+										<span class="font-heading font-bold leading-none shrink-0 w-24 text-left" style="color: #4ADE80; font-size: clamp(2rem, 4vw, 3rem);">
+											{{- block.settings.value -}}
+										</span>
+										<div class="flex flex-col gap-1 pt-1">
+											{%- if block.settings.keyword != blank -%}
+												<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
+													{{- block.settings.keyword -}}
+												</p>
+											{%- endif -%}
+											<p class="font-body text-white/75 text-sm leading-snug">
+												{{- block.settings.label -}}
+											</p>
+											{%- if block.settings.footnote != blank -%}
+												{%- if block.settings.footnote_url != blank -%}
+													<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
+												{%- else -%}
+													<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
+												{%- endif -%}
+											{%- endif -%}
+										</div>
+									</div>
+								{%- endif -%}
+								{%- assign dt_b_counter = dt_b_counter | plus: 1 -%}
+							{%- endif -%}
+						{%- endfor -%}
+					</div>
 				</div>
-			</div>
+
+				{%- assign dt_p_i = dt_p_i | plus: 1 -%}
+				{%- assign dt_b_i = dt_b_i | plus: 1 -%}
+			{%- endfor -%}
 
 		</div>
+
+		{%- if section.settings.cta_label != blank -%}
+			<div class="mt-12 md:mt-16 text-center">
+				{%- render 'cta-button',
+					label: section.settings.cta_label,
+					url: section.settings.cta_url,
+					variant: 'accent'
+				-%}
+			</div>
+		{%- endif -%}
 
 	</div>
 
@@ -339,6 +363,21 @@
 			"id": "subheading",
 			"label": "Subheading",
 			"default": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely."
+		},
+		{
+			"type": "header",
+			"content": "CTA"
+		},
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "CTA label",
+			"default": "Shop Starter Kit"
+		},
+		{
+			"type": "url",
+			"id": "cta_url",
+			"label": "CTA URL"
 		},
 		{
 			"type": "header",

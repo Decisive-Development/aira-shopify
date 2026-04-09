@@ -11,10 +11,373 @@
   "sections": {
     "main": {
       "type": "product",
-      "settings": {}
+      "blocks": {
+        "trust_1": {
+          "type": "trust_badge",
+          "settings": {
+            "icon_type": "research",
+            "text": "Research Backed"
+          }
+        },
+        "trust_2": {
+          "type": "trust_badge",
+          "settings": {
+            "icon_type": "patented",
+            "text": "High Success Rate"
+          }
+        },
+        "trust_3": {
+          "type": "trust_badge",
+          "settings": {
+            "icon_type": "doctor",
+            "text": "Doctor Recommended"
+          }
+        },
+        "perk_1": {
+          "type": "plan_perk",
+          "settings": {
+            "text": "15 Uses of Tabs"
+          }
+        },
+        "perk_2": {
+          "type": "plan_perk",
+          "settings": {
+            "text": "4 Magnetic Bands"
+          }
+        },
+        "perk_3": {
+          "type": "plan_perk",
+          "settings": {
+            "text": "FREE Shipping"
+          }
+        },
+        "perk_4": {
+          "type": "plan_perk",
+          "settings": {
+            "text": "30 Tabs Delivered Every 30 Days"
+          }
+        },
+        "perk_5": {
+          "type": "plan_perk",
+          "settings": {
+            "text": "Discounted refill tabs"
+          }
+        },
+        "faq_1": {
+          "type": "product_faq",
+          "settings": {
+            "question": "What's included in the starter kit?",
+            "answer": "<p>The starter kit includes 4 sized magnetic bands (XS, S, M, L), 15 adhesive tabs, and a fit guide to help you find your perfect size.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "product_faq",
+          "settings": {
+            "question": "How long does the magnetic band last?",
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which are single-use (one per night).</p>"
+          }
+        },
+        "faq_3": {
+          "type": "product_faq",
+          "settings": {
+            "question": "Will it stay on all night?",
+            "answer": "<p>Yes — the medical-grade adhesive tabs are designed to hold firmly through the night, even if you move around. They're also sweat-resistant for use during exercise.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "trust_1",
+        "trust_2",
+        "trust_3",
+        "perk_1",
+        "perk_2",
+        "perk_3",
+        "perk_4",
+        "perk_5",
+        "faq_1",
+        "faq_2",
+        "faq_3"
+      ],
+      "settings": {
+        "hero_image": "shopify://shop_images/IMG_4805.jpg",
+        "hero_heading": "",
+        "hero_eyebrow": "",
+        "product_subtitle": "Aira is a research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing and breathe your best.",
+        "image_badge": "",
+        "show_rating": true,
+        "rating_text": "4.5 · 100+ Customers",
+        "plan_title": "Refill Plan",
+        "plan_badge": "Best Value",
+        "plan_save_text": "Save 20%",
+        "plan_compare_price": "",
+        "plan_price": "",
+        "onetime_subtitle": "15 Tabs + 4 Bands only",
+        "refill_link_label": "Already have a strip? Buy refill tabs →",
+        "refill_link_url": "/products/aira-refill-tabs"
+      }
+    },
+    "benefits_slider": {
+      "type": "benefits-slider",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/face-development.png",
+            "heading": "Instantly Expands",
+            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/poor-sleep.png",
+            "heading": "Sweat Resistant. Stays On.",
+            "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
+          }
+        },
+        "slide_3": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/snoring.png",
+            "heading": "Won't Collapse",
+            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+          }
+        },
+        "slide_4": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/face-development.png",
+            "heading": "Skin Safe. Medical Grade.",
+            "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
+          }
+        },
+        "slide_5": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/poor-sleep.png",
+            "heading": "Reusable Band",
+            "description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
+          }
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3",
+        "slide_4",
+        "slide_5"
+      ],
+      "settings": {
+        "eyebrow": "Why Aira",
+        "heading": "Built for better breathing.",
+        "subheading": "Every feature of the Aira strip was designed with one goal — to keep your airway open, all night long.",
+        "heading_size": "md",
+        "background_color": "#fafafa",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
+      }
+    },
+    "social_proof": {
+      "type": "social-proof",
+      "blocks": {
+        "problem_1": {
+          "type": "problem",
+          "settings": {
+            "value": "57%",
+            "keyword": "Snoring",
+            "label": "More than half of all adults snore regularly — disrupting their sleep and their partner's",
+            "footnote": "PMC, 2022",
+            "footnote_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9670768/"
+          }
+        },
+        "problem_2": {
+          "type": "problem",
+          "settings": {
+            "value": "1 in 3",
+            "keyword": "Sleep deprived",
+            "label": "Adults consistently sleep fewer than 7 hours, leading to fatigue, poor focus and weakened immunity",
+            "footnote": "CDC MMWR, 2016",
+            "footnote_url": "https://www.cdc.gov/mmwr/volumes/65/wr/mm6506a1.htm"
+          }
+        },
+        "problem_3": {
+          "type": "problem",
+          "settings": {
+            "value": "48%",
+            "keyword": "Heart disease",
+            "label": "Higher risk of coronary heart disease when sleep is chronically cut short",
+            "footnote": "Eur Heart J, 2011",
+            "footnote_url": "https://academic.oup.com/eurheartj/article-abstract/32/12/1484/502022"
+          }
+        },
+        "problem_4": {
+          "type": "problem",
+          "settings": {
+            "value": "3.5x",
+            "keyword": "Dry mouth",
+            "label": "More likely to wake with dry mouth when breathing through the mouth overnight — with oral pH dropping low enough to damage tooth enamel",
+            "footnote": "J Oral Rehabil, 2016",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/26666708/"
+          }
+        },
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "value": "75%",
+            "keyword": "Quiet nights",
+            "label": "Reduction in snoring frequency when using an external nasal dilator during sleep, measured by overnight polysomnography",
+            "footnote": "Eur Respir J, 2000",
+            "footnote_url": "https://publications.ersnet.org/content/erj/15/6/996"
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "value": "58%",
+            "keyword": "Deep sleep",
+            "label": "Lower airway resistance when breathing nasally, promoting deeper and more restorative rest",
+            "footnote": "Eur Respir J, 2003",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/14621092/"
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "value": "65%",
+            "keyword": "Healthier heart",
+            "label": "Lower cardiovascular risk associated with consistent quality sleep duration and habits",
+            "footnote": "Eur Heart J, 2023",
+            "footnote_url": "https://academic.oup.com/eurheartj/article/44/47/4968/7320440"
+          }
+        },
+        "benefit_4": {
+          "type": "benefit",
+          "settings": {
+            "value": "64%",
+            "keyword": "Breathe free",
+            "label": "Reduction in obstructive breathing events when using a nasal dilator — keeping airways open and your mouth closed all night",
+            "footnote": "Schönhofer et al., 1992",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/1554449/"
+          }
+        }
+      },
+      "block_order": [
+        "problem_1",
+        "problem_2",
+        "problem_3",
+        "problem_4",
+        "benefit_1",
+        "benefit_2",
+        "benefit_3",
+        "benefit_4"
+      ],
+      "settings": {
+        "background_color": "#0a1a34",
+        "background_image": "shopify://shop_images/IMG_4337.jpg",
+        "eyebrow": "The science of sleep",
+        "heading": "Better breathing, deeper sleep, better life.",
+        "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
+        "cta_label": "Shop Starter Kit",
+        "cta_url": "/products/aira-starter-kit",
+        "left_heading": "The problem",
+        "right_heading": "With better breathing"
+      }
+    },
+    "judgeme_reviews": {
+      "type": "judgeme-reviews",
+      "settings": {
+        "eyebrow": "What our customers say",
+        "heading": "Real results. Real people.",
+        "subheading": "",
+        "heading_size": "md",
+        "product": "aira-starter-kit",
+        "background_color": "#ffffff",
+        "padding_vertical": "lg"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "faq_1": {
+          "type": "question",
+          "settings": {
+            "question": "How does the Aira nasal strip work?",
+            "answer": "<p>Aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "question",
+          "settings": {
+            "question": "Is it comfortable to sleep with and what if it falls off during the night?",
+            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Starter Pack </em>includes a simple application guide to help you get it right from night one.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "question",
+          "settings": {
+            "question": "How long does the band last?",
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, Aira was built to last.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "question",
+          "settings": {
+            "question": "Will it help with my snoring?",
+            "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could!</p>"
+          }
+        },
+        "faq_5": {
+          "type": "question",
+          "settings": {
+            "question": "Can I use it during exercise?",
+            "answer": "<p>Absolutely, and honestly, this is where Aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, Aira works with your body, not against it.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship to the GCC?",
+            "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and free shipping is available above a certain order value. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "settings": {
+        "eyebrow": "FAQ",
+        "heading": "Got questions? We've got answers.",
+        "subheading": "",
+        "heading_size": "md",
+        "background_color": "#fafafa",
+        "container_width": "contained",
+        "padding_vertical": "lg"
+      }
+    },
+    "final_cta": {
+      "type": "final-cta",
+      "settings": {
+        "heading": "Ready to breathe better?",
+        "button_label": "Shop Starter Kit",
+        "button_url": "/products/aira-starter-kit",
+        "background_color": "#0a1a34",
+        "padding_vertical": "lg"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "benefits_slider",
+    "social_proof",
+    "judgeme_reviews",
+    "faq",
+    "final_cta"
   ]
 }

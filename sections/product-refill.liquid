@@ -1,0 +1,650 @@
+{%- liquid
+	assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
+	assign has_selling_plans = false
+	if product.selling_plan_groups.size > 0
+		assign has_selling_plans = true
+		assign sp_group = product.selling_plan_groups.first
+		assign sp_first = sp_group.selling_plans.first
+		assign sp_allocation = current_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first
+	endif
+-%}
+
+<style>
+	.refill-toggle-wrap {
+		position: relative;
+	}
+	.refill-toggle-pill {
+		position: absolute;
+		top: 4px;
+		bottom: 4px;
+		left: 4px;
+		width: calc(50% - 4px);
+		border-radius: 9999px;
+		background-color: var(--color-primary);
+		transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+		z-index: 0;
+	}
+	.refill-toggle-pill.at-right {
+		transform: translateX(100%);
+	}
+	.refill-toggle-btn {
+		position: relative;
+		z-index: 1;
+		cursor: pointer;
+		transition: color 0.25s ease;
+	}
+	.refill-toggle-btn.is-active {
+		color: var(--color-secondary-text, #F1EBE1);
+	}
+	.refill-toggle-btn:not(.is-active) {
+		color: var(--color-copy);
+	}
+	.refill-variant-card {
+		cursor: pointer;
+		transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+	}
+	.refill-variant-card.is-selected {
+		border-color: var(--color-primary);
+		background-color: var(--color-secondary);
+		box-shadow: 0 0 0 1px var(--color-primary);
+	}
+	.refill-variant-card:not(.is-selected) {
+		border-color: var(--color-bg-muted, #F2F2F2);
+		background-color: var(--color-bg);
+	}
+	.refill-variant-card:hover:not(.is-selected) {
+		border-color: var(--color-primary);
+	}
+
+	/* Fade + scale animation for plan views */
+	.refill-view {
+		transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+	.refill-view.is-visible {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	.refill-view.is-hidden {
+		display: none;
+		opacity: 0;
+		transform: scale(0.97) translateY(8px);
+	}
+	.refill-view.is-exiting {
+		opacity: 0;
+		transform: scale(0.97) translateY(-8px);
+		pointer-events: none;
+	}
+</style>
+
+{%- assign hero_heading = section.settings.hero_heading | default: product.title -%}
+{%- render 'page-hero',
+	image: section.settings.hero_image,
+	eyebrow: section.settings.hero_eyebrow,
+	heading: hero_heading
+-%}
+
+<section class="bg-bg pt-12 md:pt-16 pb-16 md:pb-24" data-refill-section>
+	<div class="container-contained">
+
+		{%- comment -%} ══════ Two-column layout ══════ {%- endcomment -%}
+		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
+
+			{%- comment -%} ── Left: Image gallery ── {%- endcomment -%}
+			<div class="flex flex-col gap-4">
+
+				{%- comment -%} Main image {%- endcomment -%}
+				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted">
+					{%- if product.featured_image -%}
+						{{
+							product.featured_image
+							| image_url: width: 1200
+							| image_tag:
+								loading: 'eager',
+								class: 'w-full h-full object-cover',
+								widths: '400, 600, 800, 1200',
+								id: 'refill-main-image'
+						}}
+					{%- endif -%}
+				</div>
+
+				{%- comment -%} Thumbnail row {%- endcomment -%}
+				<div class="grid grid-cols-6 gap-2">
+					{%- for image in product.images limit: 6 -%}
+						<button
+							type="button"
+							class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if forloop.first %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
+							data-thumb-btn
+							data-thumb-src="{{ image | image_url: width: 1200 }}"
+						>
+							{{
+								image
+								| image_url: width: 200
+								| image_tag:
+									loading: 'lazy',
+									class: 'w-full h-full object-cover',
+									widths: '100, 200'
+							}}
+						</button>
+					{%- endfor -%}
+					{%- if product.images.size < 6 -%}
+						{%- assign placeholders_needed = 6 | minus: product.images.size -%}
+						{%- for i in (1..placeholders_needed) -%}
+							<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
+						{%- endfor -%}
+					{%- endif -%}
+				</div>
+
+			</div>
+
+			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
+			<div class="flex flex-col gap-5">
+
+				{%- comment -%} Rating {%- endcomment -%}
+				{%- if section.settings.show_rating -%}
+					<div class="flex items-center gap-2">
+						<div class="flex items-center gap-0.5 text-highlight">
+							{%- for i in (1..5) -%}
+								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+							{%- endfor -%}
+						</div>
+						{%- if section.settings.rating_text != blank -%}
+							<span class="text-copy text-sm">{{ section.settings.rating_text }}</span>
+						{%- endif -%}
+					</div>
+				{%- endif -%}
+
+				{%- comment -%} Title + description {%- endcomment -%}
+				<div>
+					<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ product.title }}</h2>
+					{%- if section.settings.product_subtitle != blank -%}
+						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
+					{%- endif -%}
+				</div>
+
+				{%- comment -%} Plan toggle bar {%- endcomment -%}
+				<div class="refill-toggle-wrap flex items-center bg-bg-muted rounded-full p-1" data-refill-toggle>
+					<div class="refill-toggle-pill" data-toggle-pill></div>
+					<button
+						type="button"
+						class="refill-toggle-btn is-active flex-1 text-center py-2.5 px-4 rounded-full text-sm font-bold tracking-wide"
+						data-toggle="subscribe"
+					>
+						Refill Plan
+					</button>
+					<button
+						type="button"
+						class="refill-toggle-btn flex-1 text-center py-2.5 px-4 rounded-full text-sm font-bold tracking-wide"
+						data-toggle="onetime"
+					>
+						One-Time
+					</button>
+				</div>
+
+				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5" data-refill-form>
+					<input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+					<input type="hidden" name="quantity" value="1">
+					{%- if has_selling_plans -%}
+						<input type="hidden" name="selling_plan" value="{{ sp_first.id }}" data-selling-plan-input>
+					{%- else -%}
+						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
+					{%- endif -%}
+
+					{%- comment -%} ══════ Plan views ══════ {%- endcomment -%}
+
+						{%- comment -%} ── Refill Plan view ── {%- endcomment -%}
+						<div class="refill-view is-visible" data-view="subscribe">
+							<div class="relative border-2 border-main rounded-2xl p-5 bg-secondary">
+								{%- if section.settings.plan_badge != blank -%}
+									<span class="absolute -top-3 left-4 px-3 py-0.5 rounded-full bg-main text-secondary text-xs font-bold tracking-wide">
+										{{ section.settings.plan_badge }}
+									</span>
+								{%- endif -%}
+
+								<div class="flex items-start justify-between gap-4 mt-1">
+									<div>
+										<span class="font-heading font-bold text-title text-lg">{{ section.settings.plan_title | default: 'Refill Plan' }}</span>
+										{%- if has_selling_plans and sp_allocation -%}
+											{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
+											{%- if save_amount > 0 -%}
+												<p class="text-highlight text-sm font-bold mt-0.5" data-plan-save>Save {{ save_amount | money }}</p>
+											{%- endif -%}
+										{%- elsif section.settings.plan_save_text != blank -%}
+											<p class="text-highlight text-sm font-bold mt-0.5">{{ section.settings.plan_save_text }}</p>
+										{%- endif -%}
+									</div>
+									<div class="text-right shrink-0">
+										{%- if has_selling_plans and sp_allocation -%}
+											<span class="text-copy text-sm line-through">{{ current_variant.price | money }}</span>
+											<span class="font-heading font-bold text-title text-2xl block" data-subscribe-price>{{ sp_allocation.per_delivery_price | money }}</span>
+										{%- else -%}
+											{%- if section.settings.plan_compare_price != blank -%}
+												<span class="text-copy text-sm line-through">{{ section.settings.plan_compare_price }}</span>
+											{%- endif -%}
+											<span class="font-heading font-bold text-title text-2xl block" data-subscribe-price>{{ section.settings.plan_price | default: current_variant.price | money }}</span>
+										{%- endif -%}
+									</div>
+								</div>
+
+								{%- assign perk_blocks = section.blocks | where: "type", "refill_perk" -%}
+								{%- if perk_blocks.size > 0 -%}
+									<ul class="flex flex-col gap-2 mt-4">
+										{%- for block in perk_blocks -%}
+											<li class="flex items-center gap-2.5 text-sm text-copy" {{ block.shopify_attributes }}>
+												<img src="{{ 'aira-logo-only-dark.svg' | asset_url }}" alt="" class="w-4 h-4 shrink-0" width="16" height="16" loading="lazy">
+												{{ block.settings.text }}
+											</li>
+										{%- endfor -%}
+									</ul>
+								{%- endif -%}
+							</div>
+						</div>
+
+						{%- comment -%} ── One-Time view ── {%- endcomment -%}
+						<div class="refill-view is-hidden" data-view="onetime">
+							<div class="flex flex-col gap-3">
+								{%- for variant in product.variants -%}
+									<button
+										type="button"
+										class="refill-variant-card relative flex items-center justify-between gap-4 p-4 rounded-2xl border-2 text-left {% if variant == current_variant %}is-selected{% endif %}"
+										data-variant-btn="{{ variant.id }}"
+									>
+										<div class="flex items-center gap-3">
+											<span class="font-heading font-bold text-title text-base">{{ variant.title }}</span>
+											{%- if variant.metafields.custom.badge != blank -%}
+												<span class="px-2 py-0.5 rounded-full bg-highlight text-white text-xs font-bold tracking-wide">{{ variant.metafields.custom.badge }}</span>
+											{%- endif -%}
+										</div>
+										<span class="font-heading font-bold text-title text-lg shrink-0">{{ variant.price | money }}</span>
+									</button>
+								{%- endfor -%}
+							</div>
+						</div>
+
+					{%- comment -%} Add to cart {%- endcomment -%}
+					<button
+						type="submit"
+						class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-main text-secondary px-10 py-4 w-full text-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+						data-add-to-cart
+						{% unless current_variant.available %}disabled{% endunless %}
+					>
+						{%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+					</button>
+				</form>
+
+				{%- comment -%} Starter kit link {%- endcomment -%}
+				{%- if section.settings.starter_link_url != blank -%}
+					<a
+						href="{{ section.settings.starter_link_url }}"
+						class="text-sm text-copy hover:text-highlight transition-colors"
+					>
+						{{ section.settings.starter_link_label | default: 'Need a starter kit? Start here →' }}
+					</a>
+				{%- endif -%}
+
+				{%- comment -%} ── Inline FAQ ── {%- endcomment -%}
+				{%- assign faq_blocks = section.blocks | where: "type", "product_faq" -%}
+				{%- if faq_blocks.size > 0 -%}
+					<div class="flex flex-col gap-0 border-t border-bg-muted mt-2">
+						{%- for block in faq_blocks -%}
+							<div class="border-b border-bg-muted" {{ block.shopify_attributes }}>
+								<button
+									type="button"
+									class="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer"
+									aria-expanded="false"
+									data-faq-toggle
+								>
+									<span class="font-heading font-semibold text-title text-sm">{{ block.settings.question }}</span>
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="shrink-0 text-copy transition-transform duration-200" style="transition: transform 0.2s ease;">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+									</svg>
+								</button>
+								<div class="overflow-hidden transition-all duration-300" style="max-height: 0;">
+									<div class="pb-4 text-copy text-sm leading-relaxed">{{ block.settings.answer }}</div>
+								</div>
+							</div>
+						{%- endfor -%}
+					</div>
+				{%- endif -%}
+
+			</div>
+		</div>
+
+	</div>
+</section>
+
+<script>
+(function () {
+	var section = document.querySelector('[data-refill-section]');
+	if (!section) return;
+
+	var form = section.querySelector('[data-refill-form]');
+	var variantInput = form.querySelector('[data-variant-id]');
+	var sellingPlanInput = form.querySelector('[data-selling-plan-input]');
+	var addBtn = form.querySelector('[data-add-to-cart]');
+
+	var toggleBtns = section.querySelectorAll('[data-toggle]');
+	var togglePill = section.querySelector('[data-toggle-pill]');
+	var subscribeView = section.querySelector('[data-view="subscribe"]');
+	var onetimeView = section.querySelector('[data-view="onetime"]');
+	var variantBtns = section.querySelectorAll('[data-variant-btn]');
+	var mainImage = document.getElementById('refill-main-image');
+	var thumbBtns = section.querySelectorAll('[data-thumb-btn]');
+
+	/* ── Variant data ── */
+	var variantsJson = document.querySelector('[data-product-variants]');
+	var variants = variantsJson ? JSON.parse(variantsJson.textContent) : [];
+
+	var currentView = 'subscribe';
+
+	function findVariant(id) {
+		return variants.find(function (v) { return v.id === id; }) || null;
+	}
+
+	/* ── Fade + scale animation helper ── */
+	function switchView(type) {
+		var incoming = section.querySelector('[data-view="' + type + '"]');
+		var outgoing = section.querySelector('.refill-view.is-visible');
+
+		if (!incoming || !outgoing || incoming === outgoing) return;
+
+		/* Exit the current view */
+		outgoing.classList.remove('is-visible');
+		outgoing.classList.add('is-exiting');
+
+		/* After exit transition, hide it and show incoming */
+		setTimeout(function () {
+			outgoing.classList.remove('is-exiting');
+			outgoing.classList.add('is-hidden');
+
+			/* Prepare incoming: unhide but start from scaled-down state */
+			incoming.classList.remove('is-hidden');
+			incoming.offsetHeight; /* force reflow */
+			incoming.classList.add('is-visible');
+		}, 200);
+	}
+
+	/* ── Toggle between Refill Plan and One-Time ── */
+	function setView(type) {
+		if (type === currentView) return;
+		currentView = type;
+
+		toggleBtns.forEach(function (b) {
+			if (b.getAttribute('data-toggle') === type) {
+				b.classList.add('is-active');
+			} else {
+				b.classList.remove('is-active');
+			}
+		});
+
+		/* Slide the pill */
+		if (togglePill) {
+			if (type === 'onetime') {
+				togglePill.classList.add('at-right');
+			} else {
+				togglePill.classList.remove('at-right');
+			}
+		}
+
+		switchView(type);
+
+		if (type === 'subscribe') {
+			/* Set selling plan */
+			if (variants.length > 0 && variants[0].selling_plan_allocations.length > 0) {
+				sellingPlanInput.value = variants[0].selling_plan_allocations[0].selling_plan_id;
+				variantInput.value = variants[0].id;
+			}
+		} else {
+			/* Clear selling plan */
+			sellingPlanInput.value = '';
+
+			/* Ensure a variant is selected */
+			var selected = section.querySelector('.refill-variant-card.is-selected');
+			if (selected) {
+				variantInput.value = selected.getAttribute('data-variant-btn');
+			}
+		}
+
+		updateAddBtn();
+	}
+
+	toggleBtns.forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			setView(btn.getAttribute('data-toggle'));
+		});
+	});
+
+	/* ── Variant selection (One-Time view) ── */
+	variantBtns.forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var id = parseInt(btn.getAttribute('data-variant-btn'));
+			variantInput.value = id;
+
+			variantBtns.forEach(function (b) {
+				b.classList.remove('is-selected');
+			});
+			btn.classList.add('is-selected');
+
+			updateAddBtn();
+		});
+	});
+
+	/* ── Thumbnail gallery ── */
+	thumbBtns.forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			if (!mainImage) return;
+			mainImage.removeAttribute('srcset');
+			mainImage.removeAttribute('sizes');
+			mainImage.src = btn.getAttribute('data-thumb-src');
+
+			thumbBtns.forEach(function (b) {
+				b.classList.remove('border-main');
+				b.classList.add('border-transparent');
+			});
+			btn.classList.remove('border-transparent');
+			btn.classList.add('border-main');
+		});
+	});
+
+	/* ── FAQ accordion ── */
+	section.querySelectorAll('[data-faq-toggle]').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var expanded = btn.getAttribute('aria-expanded') === 'true';
+			var content = btn.nextElementSibling;
+			btn.setAttribute('aria-expanded', !expanded);
+			if (!expanded) {
+				content.style.maxHeight = content.scrollHeight + 'px';
+				content.addEventListener('transitionend', function handler() {
+					content.style.maxHeight = 'none';
+					content.removeEventListener('transitionend', handler);
+				});
+			} else {
+				content.style.maxHeight = content.scrollHeight + 'px';
+				requestAnimationFrame(function () {
+					content.style.maxHeight = '0';
+				});
+			}
+		});
+	});
+
+	function updateAddBtn() {
+		var id = parseInt(variantInput.value);
+		var variant = findVariant(id);
+		if (variant) {
+			addBtn.disabled = !variant.available;
+			addBtn.textContent = variant.available ? 'Add to Cart' : 'Sold Out';
+		}
+	}
+})();
+</script>
+
+{%- comment -%} ── Variant data for JS ── {%- endcomment -%}
+<script type="application/json" data-product-variants>
+	[
+		{%- for variant in product.variants -%}
+			{
+				"id": {{ variant.id }},
+				"options": {{ variant.options | json }},
+				"price": {{ variant.price }},
+				"price_formatted": {{ variant.price | money | json }},
+				"compare_at_price": {{ variant.compare_at_price | default: 0 }},
+				"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+				"available": {{ variant.available | json }},
+				"selling_plan_allocations": [
+					{%- for alloc in variant.selling_plan_allocations -%}
+						{
+							"selling_plan_id": {{ alloc.selling_plan.id }},
+							"per_delivery_price": {{ alloc.per_delivery_price }},
+							"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
+							"name": {{ alloc.selling_plan.name | json }}
+						}{%- unless forloop.last -%},{%- endunless -%}
+					{%- endfor -%}
+				]
+			}{%- unless forloop.last -%},{%- endunless -%}
+		{%- endfor -%}
+	]
+</script>
+
+{% schema %}
+{
+	"name": "Product – Refill",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Hero"
+		},
+		{
+			"type": "image_picker",
+			"id": "hero_image",
+			"label": "Hero background image"
+		},
+		{
+			"type": "text",
+			"id": "hero_heading",
+			"label": "Heading override",
+			"info": "Leave blank to use the product title"
+		},
+		{
+			"type": "text",
+			"id": "hero_eyebrow",
+			"label": "Eyebrow"
+		},
+		{
+			"type": "header",
+			"content": "Rating"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_rating",
+			"label": "Show star rating",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "rating_text",
+			"label": "Rating text",
+			"default": "4.5 · 100+ Customers"
+		},
+		{
+			"type": "header",
+			"content": "Description"
+		},
+		{
+			"type": "textarea",
+			"id": "product_subtitle",
+			"label": "Short description",
+			"default": "Replacement adhesive tabs for your Aira magnetic nasal strip. Choose a plan or buy one-time.",
+			"info": "Shown below the product title."
+		},
+		{
+			"type": "header",
+			"content": "Refill Plan card"
+		},
+		{
+			"type": "text",
+			"id": "plan_badge",
+			"label": "Badge text",
+			"default": "MOST POPULAR"
+		},
+		{
+			"type": "text",
+			"id": "plan_title",
+			"label": "Plan title",
+			"default": "Refill Plan | 30 Uses"
+		},
+		{
+			"type": "text",
+			"id": "plan_save_text",
+			"label": "Save text (preview, no selling plan)",
+			"default": "Save 20%",
+			"info": "Shown when no selling plans are configured."
+		},
+		{
+			"type": "text",
+			"id": "plan_compare_price",
+			"label": "Compare price (preview)",
+			"info": "Strikethrough price when no selling plans. E.g. $25.00"
+		},
+		{
+			"type": "text",
+			"id": "plan_price",
+			"label": "Plan price (preview)",
+			"info": "Displayed price when no selling plans. E.g. $20.00"
+		},
+		{
+			"type": "header",
+			"content": "Links"
+		},
+		{
+			"type": "text",
+			"id": "starter_link_label",
+			"label": "Starter kit link text",
+			"default": "Need a starter kit? Start here →"
+		},
+		{
+			"type": "url",
+			"id": "starter_link_url",
+			"label": "Starter kit link URL"
+		}
+	],
+	"blocks": [
+		{
+			"type": "refill_perk",
+			"name": "Refill perk",
+			"settings": [
+				{
+					"type": "text",
+					"id": "text",
+					"label": "Perk text",
+					"default": "FREE Shipping"
+				}
+			]
+		},
+		{
+			"type": "product_faq",
+			"name": "Product FAQ",
+			"settings": [
+				{
+					"type": "text",
+					"id": "question",
+					"label": "Question",
+					"default": "How does it work?"
+				},
+				{
+					"type": "richtext",
+					"id": "answer",
+					"label": "Answer",
+					"default": "<p>Answer goes here.</p>"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Product – Refill"
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

@@ -33,6 +33,7 @@
 %}
 
 <section
+	data-hero
 	class="relative overflow-hidden w-full {% if section.settings.full_height %}min-h-screen flex items-center{% endif %}"
 	style="{% if has_bg_image %}background-color: var(--color-primary);{% elsif section.settings.use_gradient %}background: linear-gradient(160deg, #0d2247 0%, #0A1A34 40%, #150d2a 72%, #2e0c1e 100%);{% else %}background-color: var(--color-primary);{% endif %}"
 >
@@ -96,7 +97,7 @@
 				{%- endif -%}
 
 				{%- if section.settings.heading != blank -%}
-					<h1 class="font-heading font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
+					<h1 class="font-heading heading-weight text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
 						{{ section.settings.heading }}
 					</h1>
 				{%- endif -%}

@@ -13,10 +13,14 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "main-menu",
+        "cta_label": "Shop Starter Kit",
+        "cta_url": "shopify://products/aira-starter-kit"
+      }
     }
   },
   "order": [
     "header"
-  ],
+  ]
 }

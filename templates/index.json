@@ -12,12 +12,12 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "eyebrow": "The breath that changes everything.",
-        "heading": "Rest starts with your breath.",
-        "subheading": "Aira's magnetic nasal strip opens your airway to help you sleep deeper, wake up restored, and breathe the way your body was always meant to.",
-        "button_label": "Shop now",
-        "button_url": "",
-        "secondary_button_label": "Learn more",
+        "eyebrow": "SLEEP. BREATHE. RECOVER.",
+        "heading": "Breathe, the way you were meant to.",
+        "subheading": "One magnetic strip. Quieter nights, deeper sleep, and mornings that actually feel like mornings.",
+        "button_label": "Shop Starter Kit",
+        "button_url": "/products/aira-starter-kit",
+        "secondary_button_label": "How it works",
         "secondary_button_url": "",
         "use_gradient": true,
         "overlay_color": "#000000",
@@ -38,45 +38,6 @@
         "before_label": "Without Aira",
         "after_label": "With Aira",
         "background_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "container_width": "contained",
-        "padding_vertical": "lg"
-      }
-    },
-    "featured_products": {
-      "type": "featured-products",
-      "blocks": {
-        "starter_kit": {
-          "type": "product",
-          "settings": {
-            "product": "aira-starter-kit",
-            "badge": "Best Seller",
-            "description": "Everything you need to start breathing better tonight. Includes 4 sized nasal strips and 15 adhesive tabs.",
-            "cta_label": "Shop now"
-          }
-        },
-        "refill_tabs": {
-          "type": "product",
-          "settings": {
-            "product": "aira-refill-tabs",
-            "badge": "",
-            "description": "Everything you need to start breathing better tonight. Includes 4 sized nasal strips and 15 adhesive tabs.",
-            "cta_label": "Shop now"
-          }
-        }
-      },
-      "block_order": [
-        "starter_kit",
-        "refill_tabs"
-      ],
-      "settings": {
-        "eyebrow": "Our products",
-        "heading": "Simple. Effective. Aira.",
-        "subheading": "Two products. Everything you need to breathe freely and sleep better.",
-        "heading_align": "center",
-        "heading_size": "md",
-        "background_color": "#fafafa",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
         "container_width": "contained",
@@ -159,6 +120,8 @@
         "heading": "Health effects of poor airflow",
         "subheading": "Mouth breathing and restricted nasal airflow have been linked to a surprising range of health issues — many of which are reversible.",
         "heading_size": "md",
+        "cta_label": "Shop Starter Kit",
+        "cta_url": "/products/aira-starter-kit",
         "background_color": "#fafafa",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
@@ -172,11 +135,11 @@
         "problem_1": {
           "type": "problem",
           "settings": {
-            "value": "44%",
+            "value": "57%",
             "keyword": "Snoring",
-            "label": "Nearly half of all adults snore regularly — disrupting their sleep and their partner's",
-            "footnote": "N Engl J Med, 1993",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/8464434/"
+            "label": "More than half of all adults snore regularly — disrupting their sleep and their partner's",
+            "footnote": "PMC, 2022",
+            "footnote_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9670768/"
           }
         },
         "problem_2": {
@@ -196,17 +159,17 @@
             "keyword": "Heart disease",
             "label": "Higher risk of coronary heart disease when sleep is chronically cut short",
             "footnote": "Eur Heart J, 2011",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/21558425/"
+            "footnote_url": "https://academic.oup.com/eurheartj/article-abstract/32/12/1484/502022"
           }
         },
         "problem_4": {
           "type": "problem",
           "settings": {
-            "value": "3.5×",
+            "value": "3.5x",
             "keyword": "Dry mouth",
-            "label": "More likely to wake with a dry mouth and sore throat when breathing through the mouth overnight",
-            "footnote": "J Clin Sleep Med, 2016",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/26951420/"
+            "label": "More likely to wake with dry mouth when breathing through the mouth overnight — with oral pH dropping low enough to damage tooth enamel",
+            "footnote": "J Oral Rehabil, 2016",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/26666708/"
           }
         },
         "benefit_1": {
@@ -214,15 +177,15 @@
           "settings": {
             "value": "75%",
             "keyword": "Quiet nights",
-            "label": "Significant reduction in snoring when using an external nasal dilator during sleep",
-            "footnote": "Rhinology, 1997",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/9299651/"
+            "label": "Reduction in snoring frequency when using an external nasal dilator during sleep, measured by overnight polysomnography",
+            "footnote": "Eur Respir J, 2000",
+            "footnote_url": "https://publications.ersnet.org/content/erj/15/6/996"
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "value": "30%",
+            "value": "58%",
             "keyword": "Deep sleep",
             "label": "Lower airway resistance when breathing nasally, promoting deeper and more restorative rest",
             "footnote": "Eur Respir J, 2003",
@@ -234,19 +197,19 @@
           "settings": {
             "value": "65%",
             "keyword": "Healthier heart",
-            "label": "Lower cardiovascular risk in adults who consistently achieve quality sleep each night",
-            "footnote": "Eur Heart J, 2020",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/31872249/"
+            "label": "Lower cardiovascular risk associated with consistent quality sleep duration and habits",
+            "footnote": "Eur Heart J, 2023",
+            "footnote_url": "https://academic.oup.com/eurheartj/article/44/47/4968/7320440"
           }
         },
         "benefit_4": {
           "type": "benefit",
           "settings": {
-            "value": "59%",
+            "value": "64%",
             "keyword": "Breathe free",
-            "label": "Reduction in nasal obstruction — keeping airways open and your mouth closed all night",
-            "footnote": "Laryngoscope, 1998",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/9591552/"
+            "label": "Reduction in obstructive breathing events when using a nasal dilator — keeping airways open and your mouth closed all night",
+            "footnote": "Schönhofer et al., 1992",
+            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/1554449/"
           }
         }
       },
@@ -266,6 +229,8 @@
         "eyebrow": "The science of sleep",
         "heading": "Better breathing, deeper sleep, better life.",
         "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
+        "cta_label": "Shop Starter Kit",
+        "cta_url": "/products/aira-starter-kit",
         "left_heading": "The problem",
         "right_heading": "With better breathing"
       }
@@ -456,16 +421,26 @@
         "container_width": "contained",
         "padding_vertical": "lg"
       }
+    },
+    "final_cta": {
+      "type": "final-cta",
+      "settings": {
+        "heading": "Ready to breathe better?",
+        "button_label": "Shop Starter Kit",
+        "button_url": "/products/aira-starter-kit",
+        "background_color": "#0A1A34",
+        "padding_vertical": "lg"
+      }
     }
   },
   "order": [
     "hero",
     "before_after_slider",
-    "featured_products",
     "health_effects",
     "social_proof",
     "benefits_slider",
     "judgeme_reviews",
-    "faq"
+    "faq",
+    "final_cta"
   ]
 }

@@ -1,0 +1,87 @@
+{%- liquid
+	case section.settings.padding_vertical
+		when 'none'
+			assign py = ''
+		when 'sm'
+			assign py = 'py-4 md:py-6'
+		when 'md'
+			assign py = 'py-6 md:py-10'
+		when 'lg'
+			assign py = 'py-10 md:py-14'
+		when 'xl'
+			assign py = 'py-14 md:py-20'
+	endcase
+-%}
+
+<section
+	class="w-full {{ py }}"
+	style="background-color: {{ section.settings.background_color }}; margin-top: -2px; margin-bottom: -2px;"
+>
+	<div class="container-contained text-center">
+
+		{%- if section.settings.heading != blank -%}
+			<h2 class="font-heading heading-weight text-3xl md:text-4xl lg:text-5xl tracking-tight text-secondary mb-8">
+				{{ section.settings.heading }}
+			</h2>
+		{%- endif -%}
+
+		{%- if section.settings.button_label != blank -%}
+			{%- render 'cta-button',
+				label: section.settings.button_label,
+				url: section.settings.button_url,
+				variant: 'accent',
+				size: 'lg'
+			-%}
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Final CTA",
+	"settings": [
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Ready to breathe better?"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Button label",
+			"default": "Shop Starter Kit"
+		},
+		{
+			"type": "url",
+			"id": "button_url",
+			"label": "Button URL"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background colour",
+			"default": "#0A1A34"
+		},
+		{
+			"type": "select",
+			"id": "padding_vertical",
+			"label": "Vertical padding",
+			"options": [
+				{ "value": "none", "label": "None" },
+				{ "value": "sm", "label": "Small" },
+				{ "value": "md", "label": "Medium" },
+				{ "value": "lg", "label": "Large" },
+				{ "value": "xl", "label": "Extra large" }
+			],
+			"default": "lg"
+		}
+	],
+	"presets": [
+		{
+			"name": "Final CTA"
+		}
+	]
+}
+{% endschema %}

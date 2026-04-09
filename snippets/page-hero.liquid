@@ -1,0 +1,45 @@
+{%- comment -%}
+  Page hero — dark photo cover banner.
+
+  Parameters:
+    image       — image object (from section.settings)
+    eyebrow     — optional eyebrow text
+    heading     — heading text (required)
+    description — optional description text below heading
+{%- endcomment -%}
+
+{%- assign has_image = false -%}
+{%- if image != blank -%}
+	{%- assign has_image = true -%}
+{%- endif -%}
+
+<div data-hero class="relative overflow-hidden flex items-end min-h-[50vh] md:min-h-[30vh] {% unless has_image %}bg-main{% endunless %}">
+	{%- if has_image -%}
+		<div class="absolute inset-0 w-full h-full">
+			{{
+				image
+				| image_url: width: 2400
+				| image_tag:
+					loading: 'eager',
+					class: 'w-full h-full object-cover',
+					widths: '375, 768, 1280, 1920, 2400'
+			}}
+		</div>
+		<div class="absolute inset-0 bg-black/35"></div>
+		<div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);"></div>
+	{%- endif -%}
+
+	<div class="relative z-10 w-full pt-32 pb-10 md:pt-36 md:pb-14">
+		<div class="container-contained text-center">
+			{%- if eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-4">{{ eyebrow }}</p>
+			{%- endif -%}
+			<h1 class="font-heading heading-weight text-4xl md:text-5xl leading-tight tracking-tight text-secondary">
+				{{ heading }}
+			</h1>
+			{%- if description != blank -%}
+				<p class="text-base md:text-lg leading-relaxed text-secondary opacity-65 max-w-2xl mx-auto mt-4">{{ description }}</p>
+			{%- endif -%}
+		</div>
+	</div>
+</div>

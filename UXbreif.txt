@@ -1,0 +1,168 @@
+AIRA Shopify Store — UX/Conversion Implementation Brief
+OBJECTIVE: Two user paths, zero friction. New customer → starter kit. Returning customer → refills. Every click either educates or converts.
+NAV RESTRUCTURE:
+
+Remove: "Home" (logo does this)
+Keep as text links: Shop | Refills | About (with dropdown: Backed by science, Tutorials, Our story, Affiliate program)
+"Shop" links to /products/aira-starter-kit (direct product page, NOT /collections/nasal-strips)
+"Refills" links to /products/aira-refill-tabs (direct product page, NOT /collections)
+Keep the styled orange CTA button: rename to "Shop Starter Kit" → links to /products/aira-starter-kit
+Fix the current href="#" on the nav CTA — this is currently a dead link
+Keep cart icon
+Keep account icon
+
+HOMEPAGE SECTION ORDER (reorder existing sections):
+
+Hero — keep as-is structurally. Fix the "Shop now" button href from "#" to /products/aira-starter-kit. Keep "Learn more" as placeholder for now (will link to a compelling page or section later).
+Before & After slider — keep. Good visual proof, earns attention early.
+Why it matters (health effects tabs) — move UP from position 4. This educates on the problem before showing the product. End with a CTA: "Shop Starter Kit" → /products/aira-starter-kit
+Science stats section — keep after "Why it matters". Problem → data → solution flow. End with CTA.
+Why Aira (feature carousel) — this is the product solution. Keep after stats.
+Reviews — social proof after features. Keep.
+FAQ — keep at bottom, before footer.
+Final CTA block — add a new simple section: heading + "Shop Starter Kit" button. Last chance before footer.
+
+REMOVE FROM HOMEPAGE:
+
+The "Our products" dual product card section (section showing both starter kit and refills). This creates a decision point that slows conversion. Homepage sells the starter kit only. Returning customers use the "Refills" nav link.
+
+STARTER KIT PRODUCT PAGE (/products/aira-starter-kit):
+
+Current layout is: image, title, price, variant dropdown, quantity, add to cart, buy it now, reviews. This needs expansion:
+Add below the variant/price area: a "What's included" list (4 bands, 15 tabs, and whatever else is in the box)
+Add a "How it works" 3-step visual section below the buy box
+Add a short FAQ accordion (3-4 top questions, pulled from homepage FAQ)
+Below add-to-cart: small text link "Already have a strip? Buy refill tabs →" → /products/aira-refill-tabs
+Add purchase option toggle: "One-time purchase" / "Subscribe & Save X%" above add-to-cart
+Implement sticky add-to-cart bar on mobile (price + "Add to Cart" always visible on scroll)
+Current variant selector is a dropdown — replace with visual swatches (black circle, beige circle) since there are only 2 colour options
+
+CART BEHAVIOUR:
+
+Replace /cart page redirect with a slide-out cart drawer
+On add-to-cart trigger: show cart drawer with upsell — "Add a refill pack" with one-click add button
+If refills are already in cart, suppress the upsell
+
+REFILLS PAGE (/products/aira-refill-tabs):
+
+Keep minimal. No hero, no storytelling. This serves returning customers.
+Quantity selector, subscription toggle ("Subscribe & save X%"), add to cart
+Optionally: a small "Don't have a strip yet? Start here →" link to starter kit for anyone who lands here by mistake
+
+COLLECTION PAGE (/collections/nasal-strips):
+
+Remove from all navigation and CTAs
+Do not delete — keep for SEO indexing
+Nothing in the user flow should link to it
+
+FOOTER (keep current structure):
+
+Shop column: Starter Packs, Refills
+Resources column: How to use, Blog, Return, FAQ
+Company column: Affiliate Program, Our Story, Contact Support
+Legal: Privacy Policy, Terms of Service
+
+CMS TASKS (Shopify admin, not code):
+
+Update nav menu links as specified above
+Set up subscription selling plan via subscription app (Recharge, Loop, or Shopify native) with 30/60/90 day intervals
+Configure cart upsell (via app or custom Liquid in cart drawer)
+Remove /collections/nasal-strips from all navigation menus
+Delete test reviews from Judge.me ("Tom2", "Tom")
+
+──────────────────────────────────────────────────────────────────────
+AUDIT LOG — Implementation Progress
+──────────────────────────────────────────────────────────────────────
+
+[DONE] NAV RESTRUCTURE
+  - Mobile nav rebuilt: hamburger (left), logo (centred), account + cart icons (right)
+  - CTA button removed from mobile header entirely
+  - CTA uses !hidden md:!inline-block to override snippet base class
+  - Account icon now visible on all screen sizes (was desktop-only)
+  - Icon order (right group): CTA (desktop only) → account → cart
+  - Nav y-padding increased (py-2 → py-3) for breathing room
+  - Gap reduced on mobile (gap-4 md:gap-10)
+  - Logo uses absolute centering on mobile, static on desktop
+  - Both transparent and solid nav variants updated identically
+  - Nav link hrefs: needs CMS menu update (see CMS TASKS)
+
+[DONE] HOMEPAGE SECTION ORDER
+  - Reordered to: Hero → Before & After → Health Effects → Social Proof → Benefits Slider → Reviews → FAQ → Final CTA
+  - Final CTA section created (sections/final-cta.liquid): heading + Shop Starter Kit button, dark bg
+  - Final CTA padding reduced significantly, negative margins to close gap with footer
+
+[DONE] REMOVE FROM HOMEPAGE
+  - Dual product card section removed from index.json order
+
+[DONE] STARTER KIT PRODUCT PAGE
+  - Full buy box: image gallery, title, price, colour swatches (visual, not dropdown), subscribe toggle, add to cart
+  - Selling plan toggle: "One-time purchase" / "Subscribe & Save" above add-to-cart
+  - What's included section built into product page
+  - How it works 3-step section built into product page
+  - Short FAQ accordion on product page
+  - Refill link below add-to-cart: "Already have a strip? Buy refill tabs →"
+  - Sticky mobile add-to-cart bar (fixed bottom, shows on scroll past buy box)
+  - Variant + selling plan JS fully functional
+
+[DONE] REFILLS PAGE
+  - Built as sections/product-refill.liquid with dedicated template (product.refill.json)
+  - Minimal layout: no hero, no storytelling
+  - Quantity selector, subscription toggle, add to cart
+  - "Don't have a strip yet? Start here →" link to starter kit
+
+[DONE] COLLECTION PAGE
+  - sections/collection.liquid rebuilt with proper product grid
+  - Page header with dark bg matching site style
+  - Collection not linked from nav (as intended — SEO-only)
+
+[DONE] MOBILE STICKY BAR
+  - New section: sections/mobile-sticky-bar.liquid
+  - Fixed-bottom floating bar, frosted glass (bg-main/60 backdrop-blur-lg, rounded-2xl)
+  - Left: CMS-editable text ("Breathe better tonight"), Right: CTA pill button
+  - Hidden on desktop (lg:hidden), hidden on product pages
+  - Scroll-triggered: slides in after user passes 80% of hero height
+  - Uses cta-button snippet for consistent styling
+  - Added to footer-group.json, button URL set to /products/aira-starter-kit
+  - NOTE: Button URL must also be set in theme editor (url type can't have code default)
+
+[DONE] HERO TEXT UPDATE
+  - Super-heading: "SLEEP. BREATHE. RECOVER."
+  - Headline: "Breathe, the way you were meant to."
+  - Body: "One magnetic strip. Quieter nights, deeper sleep, and mornings that actually feel like mornings."
+  - Primary CTA: "Shop Starter Kit" → /products/aira-starter-kit
+  - Secondary CTA: "How it works" (URL not yet set — needs destination page/anchor)
+
+[DONE] HEADING FONT WEIGHT — SINGLE SOURCE OF TRUTH
+  - Created .heading-weight class in critical.source.css (@layer components)
+  - Currently set to font-weight: 400
+  - Applied to: hero.liquid, page-hero snippet, section-heading snippet, final-cta, product title, product-refill title, social-proof heading, collections page heading
+  - section-heading snippet covers: benefits-slider, health-effects, before-after-slider, featured-products, faq, judgeme-reviews
+
+[DONE] JUDGEME REVIEWS MOBILE POLISH
+  - Reduced review card x-axis padding on mobile via injected CSS
+  - Reduced star icon size on mobile
+
+[DONE] FOOTER FIXES
+  - Copyright bar: added relative z-10 to sit above gradient overlays
+  - Links styled explicitly: text-white/70 hover:text-white
+
+──────────────────────────────────────────────────────────────────────
+REMAINING TASKS
+──────────────────────────────────────────────────────────────────────
+
+[TODO] CART BEHAVIOUR
+  - Replace /cart page redirect with slide-out cart drawer
+  - On add-to-cart: show drawer with "Add a refill pack" upsell
+  - Suppress upsell if refills already in cart
+
+[TODO] CMS TASKS (Shopify admin)
+  - Update nav menu links (Shop → /products/aira-starter-kit, Refills → /products/aira-refill-tabs)
+  - Set up subscription selling plan (Recharge, Loop, or Shopify native)
+  - Remove /collections/nasal-strips from navigation menus
+  - Delete test reviews from Judge.me ("Tom2", "Tom")
+  - Set mobile sticky bar button URL in theme editor (footer group > Mobile Sticky Bar)
+  - Set "How it works" secondary CTA URL on hero
+
+[TODO] CLEANUP
+  - Remove unused section/snippet files
+  - Audit for any remaining dead links or placeholder hrefs

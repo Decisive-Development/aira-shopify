@@ -1,0 +1,74 @@
+{%- comment -%}
+  Mobile sticky bottom bar — shows on non-product pages only.
+  Slides in after user scrolls past 80% of the hero.
+  Hidden on desktop (lg:hidden) and on product pages.
+{%- endcomment -%}
+
+{%- unless request.page_type == 'product' -%}
+<div
+	class="fixed bottom-0 inset-x-0 z-40 px-4 pb-4 lg:hidden translate-y-full transition-transform duration-300 ease-out"
+	data-mobile-sticky-cta
+>
+	<div class="rounded-2xl bg-main/60 backdrop-blur-lg px-5 py-3 flex items-center justify-between gap-4"
+		style="box-shadow: 0 -4px 24px rgba(10,26,52,0.15);"
+	>
+		<p class="text-secondary text-sm font-semibold leading-tight">{{ section.settings.text }}</p>
+		{%- render 'cta-button',
+			label: section.settings.button_label,
+			url: section.settings.button_url,
+			variant: 'accent',
+			size: 'sm',
+			extra_classes: 'shrink-0 !text-xs !px-5 !py-2'
+		-%}
+	</div>
+</div>
+
+<script>
+(function() {
+	var bar = document.querySelector('[data-mobile-sticky-cta]');
+	if (!bar) return;
+	var shown = false;
+
+	function check() {
+		var hero = document.querySelector('.page-hero, [data-hero]');
+		var threshold = hero ? hero.offsetHeight * 0.8 : window.innerHeight * 0.8;
+		var shouldShow = window.scrollY > threshold;
+		if (shouldShow === shown) return;
+		shown = shouldShow;
+		if (shown) {
+			bar.classList.remove('translate-y-full');
+		} else {
+			bar.classList.add('translate-y-full');
+		}
+	}
+
+	window.addEventListener('scroll', check, { passive: true });
+	check();
+})();
+</script>
+{%- endunless -%}
+
+{% schema %}
+{
+	"name": "Mobile Sticky Bar",
+	"settings": [
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text",
+			"default": "Breathe better tonight"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Button label",
+			"default": "Shop Now"
+		},
+		{
+			"type": "url",
+			"id": "button_url",
+			"label": "Button URL"
+		}
+	]
+}
+{% endschema %}

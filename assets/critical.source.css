@@ -88,6 +88,10 @@
       padding-right: 3rem;
     }
   }
+
+  .heading-weight {
+    font-weight: 400;
+  }
 }
 
 @layer base {

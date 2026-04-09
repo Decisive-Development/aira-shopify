@@ -1,0 +1,110 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "product-refill",
+      "blocks": {
+        "perk_1": {
+          "type": "refill_perk",
+          "settings": {
+            "text": "FREE Shipping"
+          }
+        },
+        "perk_2": {
+          "type": "refill_perk",
+          "settings": {
+            "text": "Save 20% on all refills"
+          }
+        },
+        "perk_3": {
+          "type": "refill_perk",
+          "settings": {
+            "text": "VIP Customer Service"
+          }
+        },
+        "perk_4": {
+          "type": "refill_perk",
+          "settings": {
+            "text": "Pause or cancel anytime"
+          }
+        },
+        "perk_5": {
+          "type": "refill_perk",
+          "settings": {
+            "text": "Never run out"
+          }
+        },
+        "faq_1": {
+          "type": "product_faq",
+          "settings": {
+            "question": "How many tabs are in each refill?",
+            "answer": "<p>Each refill pack contains 30 adhesive tabs — that's one per night for a full month of better breathing.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "product_faq",
+          "settings": {
+            "question": "Can I use the tabs with any Aira band?",
+            "answer": "<p>Yes — the refill tabs are compatible with all Aira magnetic band sizes. They work with both the original starter kit bands and any replacement bands.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "product_faq",
+          "settings": {
+            "question": "How do I cancel or pause my refill plan?",
+            "answer": "<p>You can pause, skip, or cancel your refill plan at any time from your account dashboard. No commitments, no hassle.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "perk_1",
+        "perk_2",
+        "perk_3",
+        "perk_4",
+        "perk_5",
+        "faq_1",
+        "faq_2",
+        "faq_3"
+      ],
+      "settings": {
+        "hero_image": "shopify://shop_images/IMG_4890.jpg",
+        "hero_heading": "",
+        "hero_eyebrow": "",
+        "show_rating": true,
+        "rating_text": "4.5 · 100+ Customers",
+        "product_subtitle": "Replacement adhesive tabs for your Aira magnetic nasal strip. Choose a plan or buy one-time.",
+        "plan_badge": "MOST POPULAR",
+        "plan_title": "Refill Plan | 30 Uses",
+        "plan_save_text": "Save 20%",
+        "plan_compare_price": "",
+        "plan_price": "",
+        "starter_link_label": "Need a starter kit? Start here →",
+        "starter_link_url": "/products/aira-starter-kit"
+      }
+    },
+    "judgeme_reviews": {
+      "type": "judgeme-reviews",
+      "settings": {
+        "eyebrow": "What our customers say",
+        "heading": "Real results. Real people.",
+        "subheading": "",
+        "heading_size": "md",
+        "product": "aira-starter-kit",
+        "background_color": "#ffffff",
+        "padding_vertical": "lg"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "judgeme_reviews"
+  ]
+}

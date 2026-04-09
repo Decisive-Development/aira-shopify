@@ -11,6 +11,14 @@
   "type": "footer",
   "name": "t:general.footer",
   "sections": {
+    "mobile_sticky_bar": {
+      "type": "mobile-sticky-bar",
+      "settings": {
+        "text": "Breathe better tonight",
+        "button_label": "Shop Now",
+        "button_url": "/products/aira-starter-kit"
+      }
+    },
     "footer": {
       "type": "footer",
       "settings": {
@@ -20,6 +28,7 @@
     }
   },
   "order": [
+    "mobile_sticky_bar",
     "footer"
   ]
 }
