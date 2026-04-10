@@ -13,7 +13,7 @@
 	{%- assign has_image = true -%}
 {%- endif -%}
 
-<div data-hero class="relative overflow-hidden flex items-end min-h-[50vh] md:min-h-[30vh] {% unless has_image %}bg-main{% endunless %}">
+<div data-hero class="relative overflow-hidden flex items-end min-h-[20vh] md:min-h-[30vh] {% unless has_image %}bg-main{% endunless %}">
 	{%- if has_image -%}
 		<div class="absolute inset-0 w-full h-full">
 			{{
@@ -29,7 +29,7 @@
 		<div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);"></div>
 	{%- endif -%}
 
-	<div class="relative z-10 w-full pt-32 pb-10 md:pt-36 md:pb-14">
+	<div class="relative z-10 w-full pt-24 pb-10 md:pt-36 md:pb-14">
 		<div class="container-contained text-center">
 			{%- if eyebrow != blank -%}
 				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-4">{{ eyebrow }}</p>

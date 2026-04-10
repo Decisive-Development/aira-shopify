@@ -7,7 +7,10 @@
       "Bash(grep -E '\\\\.\\(css|js\\)$')",
       "Bash(ls -la c:/code/aira-shopify/sections/faq*)",
       "Bash(xargs wc:*)",
-      "Bash(shopify theme:*)"
+      "Bash(shopify theme:*)",
+      "WebFetch(domain:www.intakebreathing.com)",
+      "Bash(ls /c/code/aira-shopify/snippets/*.liquid)",
+      "Bash(xargs -n1 basename)"
     ]
   }
 }

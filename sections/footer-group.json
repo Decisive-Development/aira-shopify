@@ -22,8 +22,9 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "social_instagram": "https://www.instagram.com/aira.breathing/",
+        "social_youtube": "",
+        "social_tiktok": "https://www.tiktok.com/@aira.breathing"
       }
     }
   },

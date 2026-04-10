@@ -76,14 +76,8 @@
 	}
 </style>
 
-{%- assign hero_heading = section.settings.hero_heading | default: product.title -%}
-{%- render 'page-hero',
-	image: section.settings.hero_image,
-	eyebrow: section.settings.hero_eyebrow,
-	heading: hero_heading
--%}
 
-<section class="bg-bg pt-12 md:pt-16 pb-16 md:pb-24" data-refill-section>
+<section class="bg-bg pt-20 md:pt-24 pb-16 md:pb-24" data-refill-section>
 	<div class="container-contained">
 
 		{%- comment -%} ══════ Two-column layout ══════ {%- endcomment -%}

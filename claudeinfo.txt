@@ -120,6 +120,9 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - If page loads already scrolled, `no-transition` class prevents flash
 - CTA: `cta-button` snippet, `variant: accent` (both states)
 - **Mobile**: icon-only logo (`aira-logo-only-white.svg` / `aira-logo-only-dark.svg`) via `md:hidden` / `hidden md:block`. Hamburger toggle → animated dropdown (CSS transitions: opacity + translateY, 0.25s ease). Menu text `text-lg`, child links `text-base`. CTA `size: 'sm'` for thinner padding. Uses `menu-closed` / `menu-open` classes with `toggleMenu()` JS.
+- **Product pages**: transparent nav gets `bg-main` (blue) background instead of transparent, no `pt-2` offset. Conditional via `request.page_type == 'product'`.
+- Cart icon links have `data-cart-toggle` attribute — cart drawer JS binds to these.
+- Cart count badges: `data-cart-count-bubble` (bubble span) + `data-cart-count` (count text) updated dynamically by cart drawer JS.
 - Spacer div (`h-20`) in `layout/theme.liquid` prevents content hiding behind fixed nav
 - JS: inline `<script>`, adds/removes `.scrolled` class on `[data-header]`
 
@@ -168,22 +171,11 @@ Reusable product card for collection/shop pages. Used by `sections/collection.li
 - Variant data embedded as `<script type="application/json" data-product-variants>` including `selling_plan_allocations` for JS.
 - `.product-card-description` CSS in `critical.source.css` handles list/heading styles for Shopify rich-text HTML.
 
-### snippets/product-card-subscription.liquid
-Standalone subscription-focused product card snippet (currently unused — featured-products section now renders cards inline). May be used in future for other sections needing subscription card layout.
+### snippets/product-card-subscription.liquid — DELETED (Session 19)
+Removed during cleanup. Was unused.
 
-### sections/featured-products.liquid
-- **Visual CTA cards only** — no forms, no add-to-cart, no variant selectors, no JS. Cards link to product pages.
-- 2-col responsive grid (`grid-cols-1 md:grid-cols-2`, `max-w-4xl mx-auto`)
-- Section heading via `section-heading` snippet (eyebrow, heading, subheading, align, size)
-- Two block types:
-  - **Product**: image, title, CMS description, "Shop now" CTA button → product URL
-  - **Product (subscribe)**: image, title, CMS description, then two info boxes:
-    - "Subscribe & save" box (green heart icon, heading + description)
-    - "Buy in bulk" box (blue cube icon, heading + description)
-    - "Shop now" CTA button → product URL
-  - All copy comes from CMS block settings with sensible defaults. Does NOT use `product.description`.
-- CTA uses `cta-button` snippet (`variant: primary`, `extra_classes: 'w-full text-center'`).
-- CMS: eyebrow, heading, subheading, heading_align, heading_size, background_color, background_image, overlay, container_width, padding_vertical. Block settings: product, badge, description, cta_label (+ subscribe/bulk headings & text for subscription type).
+### sections/featured-products.liquid — DELETED (Session 19)
+Removed during cleanup. Homepage no longer shows dual product cards (per UX brief — homepage sells starter kit only).
 
 ### sections/collection.liquid
 - Dark navy header banner (`bg-main pt-32 pb-16`) for transparent nav compatibility.
@@ -193,13 +185,8 @@ Standalone subscription-focused product card snippet (currently unused — featu
 - Variant JS + selling plan toggle JS for subscription products.
 - CMS: eyebrow, columns, products_per_page, background_color, padding_vertical.
 
-### sections/collections.liquid
-- Collection listing page (grid of collection cards).
-- Dark navy header banner with cream text.
-- Filters out empty collections and `frontpage` handle.
-- Falls back to first product image if no collection image set.
-- Cards: image (aspect-4/5), title, description, product count.
-- CMS: eyebrow, heading, subheading, background_color, padding_vertical.
+### sections/collections.liquid — DELETED (Session 19)
+Removed during cleanup. Collection listing page was unused in navigation flow.
 
 ### sections/before-after-slider.liquid
 Drag comparison slider. Section heading (via `section-heading` snippet) above a `max-w-2xl` (672px, reduced ~15% from original 768px) comparison widget.
@@ -275,6 +262,24 @@ Full-width problem-vs-solution stats section over a background image.
 - **Important:** Judge.me's `.jm-cluster` layout uses CSS custom properties (`--cluster-wrap`) set inline. CSS `!important` alone can't override inline styles on variables — requires JS `el.style.setProperty()` to force overrides.
 - CMS: eyebrow, heading, subheading, heading_size, product, background_color, padding_vertical.
 
+### snippets/cart-drawer.liquid
+- Slide-out AJAX cart drawer, rendered once in theme.liquid (before `</body>`).
+- Floating design: fixed top-3 right-3 bottom-3, rounded-2xl, `max-width: min(32rem, calc(100vw - 1.5rem))` for mobile responsiveness.
+- Custom CSS classes `.cart-drawer-closed` / `.cart-drawer-open` for JS toggle (translateX transitions).
+- Backdrop overlay with click-to-close.
+- Intercepts all `form[action*="/cart/add"]` submissions site-wide via event delegation — no page redirect.
+- Cart icon opens drawer via `[data-cart-toggle]` attribute on header links.
+- Opens instantly, fetches cart data in parallel (`open()` first, then `fetchAndRender()`).
+- Line items with qty +/- controls, remove button, product image.
+- Refill upsell "Complete your kit" card using `all_products['aira-refill-tabs']` — auto-hidden when refills already in cart.
+- Subtotal + Checkout link + "Continue shopping" close button.
+- Header cart count badges update dynamically (`data-cart-count` / `data-cart-count-bubble`).
+- `formatMoney()` uses `toLocaleString` with shop currency from Liquid.
+
+### sections/final-cta.liquid
+- Simple last-chance CTA section before footer: heading + "Shop Starter Kit" button, dark background.
+- Negative margins to close gap with footer.
+
 ### sections/faq.liquid
 - Centered accordion FAQ. Section heading (via `section-heading` snippet, align center). `max-w-3xl` content column.
 - CMS blocks: `question` type with text `question` + richtext `answer`.
@@ -292,7 +297,7 @@ Two products currently:
 - **Aira Starter Kit** — includes 4 sized nasal strips (XS/S/M/L) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
 - **Aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
 
-Navigation: "Shop" menu item should point to "Nasal Strips" collection (not `/collections` or `/collections/all`).
+Navigation: "Shop" links to /products/aira-starter-kit, "Refills" links to /products/aira-refill-tabs (direct product pages, not collections).
 
 Shopify collection notes:
 - `/collections` = collection listing page (uses `sections/collections.liquid`)
@@ -429,3 +434,14 @@ Shopify collection notes:
 - Featured products: rewrote as pure CTA cards — no forms, no variant selectors, no JS. Title is `<h3>` not a link. CTA button links to product page. Product (subscribe) block type has subscribe & bulk info boxes with icons.
 - product-card.liquid: description now falls back to `product.description | strip_html | truncate: 120` when no CMS description set. Kept full add-to-cart form for collection pages.
 - Key learning: Liquid `split` returns string values — `section.blocks[string_index]` silently fails. Must use counter-based iteration instead.
+
+[Session 19] UX brief implementation — cart drawer, product page rework, footer, cleanup
+- Full UX brief (UXbreif.txt) implementation completing all code tasks.
+- **Hero text**: Updated super-heading ("SLEEP. BREATHE. RECOVER."), headline, body copy, CTAs ("Shop Starter Kit" + "How it works").
+- **Cart drawer** (snippets/cart-drawer.liquid): Built complete AJAX slide-out cart from scratch. Floating design (12px margin, rounded-2xl), responsive via CSS min(). Intercepts all add-to-cart forms site-wide. Refill upsell auto-hidden when refills in cart. Instant open with parallel fetch. All interactives cursor-pointer. "Continue shopping" close button.
+- **Product page nav/hero rework**: Removed hero from product pages (starter kit + refill). Transparent nav gets `bg-main` (blue) on product pages via `request.page_type == 'product'` check. Sticky mobile ATC bar restyled: bg-secondary (beige), accent CTA.
+- **Footer**: Shop links updated to direct product pages. Social icons (Instagram + TikTok) set in footer-group.json. Copyright bar z-index fix.
+- **Cleanup**: Deleted 10 unused files (sections: collections, custom-section, featured-products, imageHero, section-wrapper; templates: list-collections.json; snippets: card, product-card-subscription; assets: icon-cart.svg, icon-account.svg). All references audited before deletion.
+- **Page hero**: Mobile height reduced to min-h-[20vh], heading padding-top reduced to pt-24.
+- Key learnings: HTML entities (`&#plus;`) don't work in JS string concatenation — use plain characters or unicode escapes. CSS `min()` for responsive max-width. `querySelectorAll` + `forEach` needed for multiple close buttons (not `querySelector`).
+- All code tasks from UX brief now complete. Only CMS tasks (Shopify admin) remain.
