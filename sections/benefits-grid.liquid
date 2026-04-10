@@ -1,0 +1,160 @@
+{%- assign benefit_blocks = section.blocks | where: "type", "benefit" -%}
+
+<section class="py-12 md:py-16 bg-bg" data-benefits-grid>
+	<div class="container-contained">
+
+		{%- render 'section-heading',
+			eyebrow: section.settings.eyebrow,
+			heading: section.settings.heading,
+			subheading: section.settings.subheading,
+			align: 'center',
+			size: section.settings.heading_size
+		-%}
+
+		{%- if benefit_blocks.size > 0 -%}
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+				{%- for block in benefit_blocks -%}
+					<div class="flex gap-4 p-5 rounded-xl bg-bg-soft" {{ block.shopify_attributes }}>
+						{%- if block.settings.icon != blank -%}
+							<div class="w-8 h-8 shrink-0">
+								{{
+									block.settings.icon
+									| image_url: width: 64
+									| image_tag:
+										loading: 'lazy',
+										class: 'w-full h-full object-contain',
+										widths: '32, 64'
+								}}
+							</div>
+						{%- else -%}
+							<div class="w-8 h-8 shrink-0 flex items-center justify-center">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-highlight"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+							</div>
+						{%- endif -%}
+						<div>
+							<h3 class="font-heading heading-weight text-sm text-title">{{ block.settings.heading }}</h3>
+							{%- if block.settings.description != blank -%}
+								<p class="text-copy text-sm leading-relaxed mt-1">{{ block.settings.description }}</p>
+							{%- endif -%}
+						</div>
+					</div>
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Benefits grid",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Benefits"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Why Aira works."
+		},
+		{
+			"type": "text",
+			"id": "subheading",
+			"label": "Subheading"
+		},
+		{
+			"type": "select",
+			"id": "heading_size",
+			"label": "Heading size",
+			"options": [
+				{ "value": "sm", "label": "Small" },
+				{ "value": "md", "label": "Medium" },
+				{ "value": "lg", "label": "Large" }
+			],
+			"default": "md"
+		}
+	],
+	"blocks": [
+		{
+			"type": "benefit",
+			"name": "Benefit",
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "icon",
+					"label": "Icon",
+					"info": "Small SVG or image (24-32px). Leave blank for default checkmark."
+				},
+				{
+					"type": "text",
+					"id": "heading",
+					"label": "Heading",
+					"default": "Opens airways instantly"
+				},
+				{
+					"type": "textarea",
+					"id": "description",
+					"label": "Description",
+					"default": "Magnetic force gently expands nasal passages."
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Benefits grid",
+			"blocks": [
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Opens airways instantly",
+						"description": "Magnetic force gently expands nasal passages."
+					}
+				},
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Reduces snoring",
+						"description": "Promotes nose breathing for quieter nights."
+					}
+				},
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Deeper sleep",
+						"description": "Better airflow means more restorative rest."
+					}
+				},
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Reusable for months",
+						"description": "Only replace the adhesive tabs."
+					}
+				},
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Medical-grade adhesive",
+						"description": "Stays on all night, gentle removal."
+					}
+				},
+				{
+					"type": "benefit",
+					"settings": {
+						"heading": "Fits all nose sizes",
+						"description": "4 band sizes included (XS to L)."
+					}
+				}
+			]
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

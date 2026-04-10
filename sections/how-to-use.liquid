@@ -1,0 +1,231 @@
+{%- assign step_blocks = section.blocks | where: "type", "step" -%}
+
+<style>
+	/* ─── Mobile carousel track ─── */
+	#shopify-section-{{ section.id }} .htu-track::-webkit-scrollbar { display: none; }
+	#shopify-section-{{ section.id }} .htu-track { -ms-overflow-style: none; scrollbar-width: none; }
+
+	#shopify-section-{{ section.id }} .htu-track {
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: 80%;
+		gap: 16px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	/* ─── Desktop: normal 3-col grid, no scroll ─── */
+	@media (min-width: 768px) {
+		#shopify-section-{{ section.id }} .htu-track {
+			display: grid;
+			grid-auto-flow: unset;
+			grid-template-columns: repeat(3, 1fr);
+			grid-auto-columns: unset;
+			gap: 3rem;
+			overflow-x: visible;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+</style>
+
+<section class="py-16 md:py-24 bg-secondary" data-how-to-use>
+	<div class="container-contained">
+
+		{%- comment -%} Section header {%- endcomment -%}
+		<div class="text-center mb-10 md:mb-14">
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+			{%- endif -%}
+			{%- if section.settings.heading != blank -%}
+				<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title">{{ section.settings.heading }}</h2>
+			{%- endif -%}
+		</div>
+
+	</div>
+
+	{%- if step_blocks.size > 0 -%}
+		<div class="container-contained">
+			<div class="htu-track" data-htu-track>
+				{%- for block in step_blocks -%}
+					<div class="flex flex-col min-w-0" {{ block.shopify_attributes }}>
+
+						{%- comment -%} Image {%- endcomment -%}
+						<div class="aspect-square rounded-2xl overflow-hidden bg-bg-muted mb-5" style="box-shadow: 0 8px 30px rgba(10,26,52,0.15);">
+							{%- if block.settings.step_image != blank -%}
+								{{
+									block.settings.step_image
+									| image_url: width: 800
+									| image_tag:
+										loading: 'lazy',
+										class: 'w-full h-full object-cover',
+										widths: '400, 600, 800',
+										draggable: 'false'
+								}}
+							{%- endif -%}
+						</div>
+
+						{%- comment -%} Step number + title inline {%- endcomment -%}
+						<div class="flex items-baseline gap-3 mb-1">
+							<span class="font-heading font-bold text-4xl text-main leading-none">{{ block.settings.step_number | default: forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+							<h3 class="font-heading heading-weight text-lg text-title">{{ block.settings.step_heading }}</h3>
+						</div>
+						{%- if block.settings.step_description != blank -%}
+							<p class="text-copy text-sm leading-relaxed mt-1">{{ block.settings.step_description }}</p>
+						{%- endif -%}
+					</div>
+				{%- endfor -%}
+			</div>
+		</div>
+	{%- endif -%}
+
+	{%- if section.settings.tutorial_label != blank -%}
+		<div class="container-contained">
+			<div class="text-center mt-10">
+				<p class="text-copy text-sm mb-4">{{ section.settings.tutorial_label }}</p>
+				{%- render 'cta-button',
+					label: 'Watch tutorial',
+					url: section.settings.tutorial_url,
+					variant: 'primary',
+					size: 'md'
+				-%}
+			</div>
+		</div>
+	{%- endif -%}
+
+</section>
+
+<script>
+(function () {
+	var section = document.querySelector('[data-how-to-use]');
+	if (!section) return;
+	var track = section.querySelector('[data-htu-track]');
+	if (!track) return;
+
+	/* ── Touch snap ── */
+	function cardStep() {
+		var card = track.firstElementChild;
+		if (!card) return track.clientWidth;
+		var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+		return card.getBoundingClientRect().width + gap;
+	}
+
+	function snapSettle() {
+		var max = track.scrollWidth - track.clientWidth;
+		if (track.scrollLeft <= 2 || track.scrollLeft >= max - 2) return;
+		var step = cardStep();
+		var nearest = Math.min(Math.round(track.scrollLeft / step) * step, max);
+		if (Math.abs(track.scrollLeft - nearest) > 2)
+			track.scrollTo({ left: nearest, behavior: 'smooth' });
+	}
+
+	if ('onscrollend' in window) {
+		track.addEventListener('scrollend', snapSettle, { passive: true });
+	} else {
+		var snapTimer;
+		track.addEventListener('scroll', function () {
+			clearTimeout(snapTimer);
+			snapTimer = setTimeout(snapSettle, 120);
+		}, { passive: true });
+	}
+})();
+</script>
+
+{% schema %}
+{
+	"name": "How to use",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "How it works"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "3 steps to better breathing."
+		},
+		{
+			"type": "text",
+			"id": "tutorial_label",
+			"label": "Tutorial link text",
+			"default": "For a more detailed guide, watch our short tutorial video."
+		},
+		{
+			"type": "url",
+			"id": "tutorial_url",
+			"label": "Tutorial link URL"
+		}
+	],
+	"blocks": [
+		{
+			"type": "step",
+			"name": "Step",
+			"settings": [
+				{
+					"type": "text",
+					"id": "step_number",
+					"label": "Step number",
+					"default": "01",
+					"info": "E.g. 01, 02, 03"
+				},
+				{
+					"type": "image_picker",
+					"id": "step_image",
+					"label": "Step image"
+				},
+				{
+					"type": "text",
+					"id": "step_heading",
+					"label": "Heading",
+					"default": "Peel"
+				},
+				{
+					"type": "textarea",
+					"id": "step_description",
+					"label": "Description",
+					"default": "Peel the adhesive tab from its backing."
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "How to use",
+			"blocks": [
+				{
+					"type": "step",
+					"settings": {
+						"step_number": "01",
+						"step_heading": "Peel",
+						"step_description": "Peel the adhesive tab from its backing."
+					}
+				},
+				{
+					"type": "step",
+					"settings": {
+						"step_number": "02",
+						"step_heading": "Place",
+						"step_description": "Place a tab on either side of your nose bridge."
+					}
+				},
+				{
+					"type": "step",
+					"settings": {
+						"step_number": "03",
+						"step_heading": "Breathe",
+						"step_description": "Attach the magnetic band and breathe freely all night."
+					}
+				}
+			]
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

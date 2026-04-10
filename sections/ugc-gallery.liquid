@@ -1,0 +1,259 @@
+{%- assign ugc_blocks = section.blocks | where: "type", "testimonial" -%}
+
+{%- if ugc_blocks.size > 0 -%}
+
+<style>
+	#shopify-section-{{ section.id }} .ugc-track::-webkit-scrollbar { display: none; }
+	#shopify-section-{{ section.id }} .ugc-track {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+		cursor: grab;
+		scroll-behavior: smooth;
+	}
+	#shopify-section-{{ section.id }} .ugc-track.is-dragging {
+		cursor: grabbing;
+		scroll-behavior: auto;
+	}
+</style>
+
+<section class="py-16 md:py-24 bg-bg" data-ugc-section="{{ section.id }}">
+	<div class="container-contained">
+
+		{%- render 'section-heading',
+			eyebrow: section.settings.eyebrow,
+			heading: section.settings.heading,
+			align: 'center',
+			size: 'md'
+		-%}
+
+		{%- comment -%} Image row {%- endcomment -%}
+		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
+			{%- for block in ugc_blocks -%}
+				<div class="relative shrink-0 w-[60%] md:w-[22%] rounded-2xl overflow-hidden" style="aspect-ratio: 9 / 16;" {{ block.shopify_attributes }}>
+					{%- if block.settings.image != blank -%}
+						{{
+							block.settings.image
+							| image_url: width: 600
+							| image_tag:
+								loading: 'lazy',
+								class: 'absolute inset-0 w-full h-full object-cover',
+								widths: '300, 400, 600',
+								draggable: 'false'
+						}}
+					{%- else -%}
+						<div class="absolute inset-0 bg-bg-muted"></div>
+					{%- endif -%}
+					<div class="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
+					{%- if block.settings.quote != blank or block.settings.name != blank -%}
+						<div class="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+							{%- if block.settings.quote != blank -%}
+								<p class="text-white text-sm md:text-base font-medium leading-snug">"{{ block.settings.quote }}"</p>
+							{%- endif -%}
+							{%- if block.settings.name != blank -%}
+								<p class="text-white/70 text-xs mt-1">— {{ block.settings.name }}</p>
+							{%- endif -%}
+						</div>
+					{%- endif -%}
+				</div>
+			{%- endfor -%}
+		</div>
+
+		{%- comment -%} Scroll progress bar {%- endcomment -%}
+		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full bg-bg-muted overflow-hidden">
+			<div class="h-full rounded-full bg-main transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
+		</div>
+
+		{%- comment -%} Divider + CTA {%- endcomment -%}
+		<div class="border-t border-bg-muted mt-6 pt-6 text-center">
+			{%- if section.settings.handle != blank -%}
+				<p class="text-lg font-semibold text-main">{{ section.settings.handle }}</p>
+			{%- endif -%}
+			{%- if section.settings.cta_text != blank -%}
+				<p class="text-base text-copy mt-1">{{ section.settings.cta_text }}</p>
+			{%- endif -%}
+		</div>
+
+	</div>
+</section>
+
+<script>
+(function () {
+	var section = document.querySelector('[data-ugc-section="{{ section.id }}"]');
+	if (!section) return;
+	var track = section.querySelector('[data-ugc-track]');
+	var bar = section.querySelector('[data-ugc-progress]');
+	if (!track) return;
+
+	/* ── Scroll progress ── */
+	function updateProgress() {
+		if (!bar) return;
+		var max = track.scrollWidth - track.clientWidth;
+		if (max <= 0) { bar.style.width = '100%'; return; }
+		var pct = (track.scrollLeft / max) * 100;
+		bar.style.width = Math.max(5, Math.min(100, pct)) + '%';
+	}
+	track.addEventListener('scroll', updateProgress, { passive: true });
+	updateProgress();
+
+	/* ── Drag to scroll (desktop) ── */
+	var isDown = false, startX = 0, scrollLeft = 0, hasDragged = false;
+
+	track.addEventListener('mousedown', function (e) {
+		isDown = true;
+		hasDragged = false;
+		startX = e.pageX - track.offsetLeft;
+		scrollLeft = track.scrollLeft;
+		track.classList.add('is-dragging');
+	});
+
+	window.addEventListener('mousemove', function (e) {
+		if (!isDown) return;
+		var x = e.pageX - track.offsetLeft;
+		var delta = startX - x;
+		if (Math.abs(delta) > 4) hasDragged = true;
+		track.scrollLeft = scrollLeft + delta;
+	});
+
+	window.addEventListener('mouseup', function () {
+		if (!isDown) return;
+		isDown = false;
+		track.classList.remove('is-dragging');
+		resetAutoplay();
+	});
+
+	track.addEventListener('click', function (e) {
+		if (hasDragged) e.stopPropagation();
+	}, true);
+
+	/* ── Auto-scroll every 3 seconds ── */
+	var autoTimer = null;
+	var userTouching = false;
+
+	function getCardStep() {
+		var card = track.firstElementChild;
+		if (!card) return 200;
+		return card.getBoundingClientRect().width + 12; /* 12 = gap-3 */
+	}
+
+	function autoScroll() {
+		if (userTouching || isDown) return;
+		var max = track.scrollWidth - track.clientWidth;
+		var next = track.scrollLeft + getCardStep();
+		if (next >= max - 2) {
+			track.scrollTo({ left: 0, behavior: 'smooth' });
+		} else {
+			track.scrollTo({ left: next, behavior: 'smooth' });
+		}
+	}
+
+	function resetAutoplay() {
+		clearInterval(autoTimer);
+		autoTimer = setInterval(autoScroll, 3000);
+	}
+
+	/* Pause on touch / hover */
+	track.addEventListener('touchstart', function () { userTouching = true; clearInterval(autoTimer); }, { passive: true });
+	track.addEventListener('touchend', function () { userTouching = false; resetAutoplay(); }, { passive: true });
+	track.addEventListener('mouseenter', function () { clearInterval(autoTimer); });
+	track.addEventListener('mouseleave', function () { if (!isDown) resetAutoplay(); });
+
+	/* Start autoplay */
+	resetAutoplay();
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+	"name": "UGC Gallery",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "See it in action"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "The Aira community"
+		},
+		{
+			"type": "text",
+			"id": "handle",
+			"label": "Handle",
+			"default": "@aira.breathing"
+		},
+		{
+			"type": "text",
+			"id": "cta_text",
+			"label": "Bottom text",
+			"default": "Share your experience — tag @aira.breathing"
+		}
+	],
+	"blocks": [
+		{
+			"type": "testimonial",
+			"name": "Testimonial",
+			"limit": 8,
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image"
+				},
+				{
+					"type": "text",
+					"id": "quote",
+					"label": "Quote"
+				},
+				{
+					"type": "text",
+					"id": "name",
+					"label": "Name"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "UGC Gallery",
+			"blocks": [
+				{
+					"type": "testimonial",
+					"settings": {
+						"quote": "I sleep so much better now",
+						"name": "Sarah M."
+					}
+				},
+				{
+					"type": "testimonial",
+					"settings": {
+						"quote": "My partner noticed the difference immediately",
+						"name": "James K."
+					}
+				},
+				{
+					"type": "testimonial",
+					"settings": {
+						"quote": "Game changer for my workouts",
+						"name": "Aisha R."
+					}
+				},
+				{
+					"type": "testimonial",
+					"settings": {
+						"quote": "Finally stopped mouth breathing at night",
+						"name": "Omar D."
+					}
+				}
+			]
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

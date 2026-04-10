@@ -15,52 +15,67 @@
         "perk_1": {
           "type": "refill_perk",
           "settings": {
-            "text": "FREE Shipping"
+            "text": "Save 20% on all refills"
           }
         },
         "perk_2": {
           "type": "refill_perk",
           "settings": {
-            "text": "Save 20% on all refills"
+            "text": "VIP Customer Service"
           }
         },
         "perk_3": {
           "type": "refill_perk",
           "settings": {
-            "text": "VIP Customer Service"
+            "text": "Pause or cancel anytime"
           }
         },
         "perk_4": {
           "type": "refill_perk",
           "settings": {
-            "text": "Pause or cancel anytime"
+            "text": "Never run out"
           }
         },
-        "perk_5": {
-          "type": "refill_perk",
+        "trust_1": {
+          "type": "trust_badge",
           "settings": {
-            "text": "Never run out"
+            "icon_type": "research",
+            "text": "Research Backed"
+          }
+        },
+        "trust_2": {
+          "type": "trust_badge",
+          "settings": {
+            "icon_type": "patented",
+            "text": "High Success Rate"
+          }
+        },
+        "trust_3": {
+          "type": "trust_badge",
+          "settings": {
+            "icon_type": "doctor",
+            "text": "Doctor Recommended"
           }
         },
         "faq_1": {
           "type": "product_faq",
           "settings": {
-            "question": "How many tabs are in each refill?",
-            "answer": "<p>Each refill pack contains 30 adhesive tabs — that's one per night for a full month of better breathing.</p>"
+            "question": "Benefits",
+            "answer": "<ul><li>Medical-grade adhesive holds all night</li><li>Hypoallergenic and skin-safe</li><li>Each tab lasts a full night</li><li>30-pair pack = one month supply</li></ul>"
           }
         },
         "faq_2": {
           "type": "product_faq",
           "settings": {
-            "question": "Can I use the tabs with any Aira band?",
-            "answer": "<p>Yes — the refill tabs are compatible with all Aira magnetic band sizes. They work with both the original starter kit bands and any replacement bands.</p>"
+            "question": "How to use",
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place tabs on either side of your nose bridge</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
           }
         },
         "faq_3": {
           "type": "product_faq",
           "settings": {
-            "question": "How do I cancel or pause my refill plan?",
-            "answer": "<p>You can pause, skip, or cancel your refill plan at any time from your account dashboard. No commitments, no hassle.</p>"
+            "question": "Shipping & Returns",
+            "answer": "<p>Free shipping across the GCC. Delivery in 3–5 business days (UAE) or 5–7 days (rest of GCC). 30-day satisfaction guarantee.</p>"
           }
         }
       },
@@ -69,7 +84,9 @@
         "perk_2",
         "perk_3",
         "perk_4",
-        "perk_5",
+        "trust_1",
+        "trust_2",
+        "trust_3",
         "faq_1",
         "faq_2",
         "faq_3"
@@ -79,11 +96,11 @@
         "hero_heading": "",
         "hero_eyebrow": "",
         "show_rating": true,
-        "rating_text": "4.5 · 100+ Customers",
+        "rating_text": "",
         "product_subtitle": "Replacement adhesive tabs for your Aira magnetic nasal strip. Choose a plan or buy one-time.",
-        "plan_badge": "MOST POPULAR",
-        "plan_title": "Refill Plan | 30 Uses",
-        "plan_save_text": "Save 20%",
+        "plan_badge": "Best value",
+        "plan_title": "Monthly Refill Plan | 30 tabs",
+        "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
         "starter_link_label": "Need a starter kit? Start here →",

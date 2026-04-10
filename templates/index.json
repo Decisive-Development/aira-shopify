@@ -20,7 +20,7 @@
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
         "use_gradient": true,
-        "overlay_color": "#000000",
+        "overlay_color": "#0A1A34",
         "overlay_opacity": 30,
         "full_height": true,
         "container_width": "contained",
@@ -120,11 +120,11 @@
         "heading": "Health effects of poor airflow",
         "subheading": "Mouth breathing and restricted nasal airflow have been linked to a surprising range of health issues — many of which are reversible.",
         "heading_size": "md",
-        "cta_label": "Shop Starter Kit",
-        "cta_url": "/products/aira-starter-kit",
         "background_color": "#fafafa",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
+        "cta_label": "Shop Starter Kit",
+        "cta_url": "/products/aira-starter-kit",
         "container_width": "contained",
         "padding_vertical": "lg"
       }
@@ -428,7 +428,7 @@
         "heading": "Ready to breathe better?",
         "button_label": "Shop Starter Kit",
         "button_url": "/products/aira-starter-kit",
-        "background_color": "#0A1A34",
+        "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }
     }

@@ -1,0 +1,128 @@
+{%- assign cross_product = section.settings.product -%}
+
+{%- if cross_product != blank and cross_product.available -%}
+	{%- assign cs_variant = cross_product.selected_or_first_available_variant | default: cross_product.variants.first -%}
+
+	<section class="py-12 md:py-16 bg-bg-soft" data-cross-sell>
+		<div class="container-contained">
+
+			{%- render 'section-heading',
+				eyebrow: section.settings.eyebrow,
+				heading: section.settings.heading,
+				subheading: section.settings.subheading,
+				align: 'center',
+				size: 'md'
+			-%}
+
+			<div class="mt-8 max-w-2xl mx-auto bg-bg rounded-2xl border border-bg-muted overflow-hidden">
+				<div class="flex flex-col sm:flex-row items-center gap-6 p-6">
+
+					{%- comment -%} Product image {%- endcomment -%}
+					{%- if cross_product.featured_image -%}
+						<div class="w-28 h-28 shrink-0 rounded-xl overflow-hidden bg-bg-muted">
+							{{
+								cross_product.featured_image
+								| image_url: width: 300
+								| image_tag:
+									loading: 'lazy',
+									class: 'w-full h-full object-cover',
+									widths: '150, 300'
+							}}
+						</div>
+					{%- endif -%}
+
+					{%- comment -%} Product info {%- endcomment -%}
+					<div class="flex-1 text-center sm:text-left">
+						<h3 class="font-heading heading-weight text-lg text-title">{{ cross_product.title }}</h3>
+						{%- if section.settings.description != blank -%}
+							<p class="text-copy text-sm leading-relaxed mt-1">{{ section.settings.description }}</p>
+						{%- endif -%}
+						<p class="font-heading font-bold text-title text-lg mt-2">{{ cs_variant.price | money }}</p>
+					</div>
+
+					{%- comment -%} Add to cart {%- endcomment -%}
+					<form action="{{ routes.cart_add_url }}" method="post" class="shrink-0" data-cross-sell-form>
+						<input type="hidden" name="id" value="{{ cs_variant.id }}">
+						<input type="hidden" name="quantity" value="1">
+						{%- render 'cta-button',
+							label: 'Add to Cart',
+							element: 'button',
+							button_type: 'submit',
+							variant: 'primary',
+							size: 'sm'
+						-%}
+					</form>
+
+				</div>
+			</div>
+
+		</div>
+	</section>
+{%- endif -%}
+
+<script>
+(function () {
+	var form = document.querySelector('[data-cross-sell-form]');
+	if (!form) return;
+
+	form.addEventListener('submit', function (e) {
+		e.preventDefault();
+		var body = new FormData(form);
+		fetch('{{ routes.cart_add_url }}.js', {
+			method: 'POST',
+			body: body
+		})
+		.then(function (r) { return r.json(); })
+		.then(function () {
+			if (typeof window.CartDrawer !== 'undefined') {
+				window.CartDrawer.open();
+				window.CartDrawer.fetchAndRender();
+			}
+		});
+	});
+})();
+</script>
+
+{% schema %}
+{
+	"name": "Cross-sell",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Complete your kit"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Keep breathing better."
+		},
+		{
+			"type": "text",
+			"id": "subheading",
+			"label": "Subheading"
+		},
+		{
+			"type": "product",
+			"id": "product",
+			"label": "Cross-sell product"
+		},
+		{
+			"type": "textarea",
+			"id": "description",
+			"label": "Product description",
+			"default": "30 adhesive tab pairs — keep your strip going."
+		}
+	],
+	"presets": [
+		{
+			"name": "Cross-sell"
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

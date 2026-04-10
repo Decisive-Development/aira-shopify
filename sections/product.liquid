@@ -24,7 +24,7 @@
 		box-shadow: 0 0 0 1px var(--color-primary), 0 4px 20px rgba(10,26,52,0.08);
 	}
 	.plan-card:not(.is-selected) {
-		border-color: #F2F2F2;
+		border-color: var(--color-border);
 		background-color: #FFFFFF;
 		box-shadow: none;
 	}
@@ -40,17 +40,44 @@
 		opacity: 1;
 		margin-top: 0.25rem;
 	}
+
+	/* Accordion content — bullet lists */
+	.product-info-content ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+	}
+	.product-info-content li {
+		display: flex;
+		align-items: flex-start;
+		gap: 0.625rem;
+	}
+	.product-info-content li > img.bullet-icon {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		margin-top: 2px;
+	}
+
+	/* Step numbers in How to use — bold orange */
+	.product-info-content li strong {
+		font-weight: 700;
+		color: #FF4000;
+	}
 </style>
 
 
-<section class="bg-bg pt-20 md:pt-24 pb-16 md:pb-24" data-product-section>
+<section class="bg-bg pt-20 md:pt-24 pb-8 md:pb-12" data-product-section>
 	<div class="container-contained">
 
 		{%- comment -%} ══════ Buy box ══════ {%- endcomment -%}
 		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
 
-			{%- comment -%} ── Left: Image gallery ── {%- endcomment -%}
-			<div class="flex flex-col gap-4">
+			{%- comment -%} ── Left: Image gallery (sticky on desktop) ── {%- endcomment -%}
+			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
 
 				{%- comment -%} Main image {%- endcomment -%}
 				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted">
@@ -102,48 +129,29 @@
 					{%- endif -%}
 				</div>
 
-				{%- comment -%} Trust badges — 3 square cards side by side {%- endcomment -%}
-				{%- assign trust_blocks = section.blocks | where: "type", "trust_badge" -%}
-				{%- if trust_blocks.size > 0 -%}
-					<div class="grid grid-cols-3 gap-3">
-						{%- for block in trust_blocks -%}
-							<div class="flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3" {{ block.shopify_attributes }}>
-								{%- case block.settings.icon_type -%}
-									{%- when 'research' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 7v10m-3-7h6m-6 4h6"/></svg>
-									{%- when 'patented' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-									{%- when 'doctor' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M4.8 2.3A.3.3 0 105 2H4a2 2 0 00-2 2v5a6 6 0 006 6 6 6 0 006-6V4a2 2 0 00-2-2h-1a.2.2 0 10.3.3"/><path d="M8 15v1a6 6 0 006 6 6 6 0 006-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
-									{%- when 'shield' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-									{%- else -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-								{%- endcase -%}
-								<span class="font-heading font-semibold text-title text-xs leading-tight">{{ block.settings.text }}</span>
-							</div>
-						{%- endfor -%}
-					</div>
-				{%- endif -%}
-
 
 			</div>
 
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
 
-				{%- comment -%} Rating {%- endcomment -%}
+				{%- comment -%} Rating — dynamic from Judge.me, clickable to reviews {%- endcomment -%}
 				{%- if section.settings.show_rating -%}
-					<div class="flex items-center gap-2">
+					{%- assign jm_rating = product.metafields.judgeme.rating.value | default: 0 -%}
+					{%- assign jm_count = product.metafields.judgeme.review_count.value | default: 0 | plus: 0 -%}
+					<a href="#judgeme_product_reviews" class="flex flex-wrap items-center gap-2 hover:opacity-80 transition-opacity scroll-link">
 						<div class="flex items-center gap-0.5 text-highlight">
 							{%- for i in (1..5) -%}
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
 							{%- endfor -%}
 						</div>
-						{%- if section.settings.rating_text != blank -%}
-							<span class="text-copy text-sm">{{ section.settings.rating_text }}</span>
+						{%- if jm_count >= 10 -%}
+							<span class="text-copy text-sm">{{ jm_rating }} · {{ jm_count }} reviews</span>
 						{%- endif -%}
-					</div>
+						{%- if jm_count >= 20 and section.settings.review_snippet != blank -%}
+							<span class="text-copy text-sm italic">— "{{ section.settings.review_snippet }}"</span>
+						{%- endif -%}
+					</a>
 				{%- endif -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
@@ -162,7 +170,7 @@
 
 					{%- comment -%} ── PLAN selector (real or preview) ── {%- endcomment -%}
 					{%- if has_selling_plans -%}
-						<input type="hidden" name="selling_plan" value="{{ sp_first.id }}" data-selling-plan-input>
+						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
 					<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
@@ -172,11 +180,11 @@
 						{%- comment -%} ── Refill Plan card (default selected) ── {%- endcomment -%}
 						<button
 							type="button"
-							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
+							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border-2 border-border bg-bg text-left"
 							data-plan-btn="subscribe"
 						>
 							{%- if section.settings.plan_badge != blank -%}
-								<span class="absolute -top-3 left-4 px-3 py-0.5 rounded-full bg-main text-secondary text-xs font-bold tracking-wide">
+								<span class="absolute -top-3 left-4 px-3 py-1 rounded-full bg-main text-white text-xs font-bold">
 									{{ section.settings.plan_badge }}
 								</span>
 							{%- endif -%}
@@ -187,7 +195,7 @@
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
-											<p class="text-highlight text-sm font-bold mt-0.5" data-plan-save>Save {{ save_amount | money }}</p>
+											<p class="text-highlight text-sm font-bold mt-0.5" data-plan-save>Save {{ save_amount | money }} on refills</p>
 										{%- endif -%}
 									{%- elsif section.settings.plan_save_text != blank -%}
 										<p class="text-highlight text-sm font-bold mt-0.5">{{ section.settings.plan_save_text }}</p>
@@ -211,11 +219,11 @@
 							{%- if perk_blocks.size > 0 -%}
 								<ul class="plan-perks flex flex-col gap-2 mt-1">
 									{%- for block in perk_blocks -%}
-										<li class="flex items-center gap-2.5 text-sm text-copy" {{ block.shopify_attributes }}>
+										<li class="flex items-start gap-2.5 text-sm text-copy" {{ block.shopify_attributes }}>
 											<img
 												src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
 												alt=""
-												class="w-4 h-4 shrink-0"
+												class="w-4 h-4 shrink-0 mt-0.5"
 												width="16"
 												height="16"
 												loading="lazy"
@@ -230,16 +238,59 @@
 						{%- comment -%} ── One-time purchase card ── {%- endcomment -%}
 						<button
 							type="button"
-							class="plan-card flex items-center justify-between gap-4 p-5 rounded-2xl border-2 border-bg-muted bg-bg text-left"
+							class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
 							data-plan-btn="onetime"
 						>
-							<div>
-								<span class="font-heading font-bold text-title text-base">One-time Purchase</span>
-								{%- if section.settings.onetime_subtitle != blank -%}
-									<p class="text-copy text-sm mt-0.5">{{ section.settings.onetime_subtitle }}</p>
-								{%- endif -%}
+							<div class="flex items-start justify-between gap-4">
+								<span class="font-heading font-bold text-title text-lg">One-time Purchase</span>
+								<span class="font-heading font-bold text-title text-2xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
 							</div>
-							<span class="font-heading font-bold text-title text-xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
+							<ul class="flex flex-col gap-2">
+								<li class="flex items-start gap-2.5 text-sm text-copy">
+									<img
+										src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+										alt=""
+										class="w-4 h-4 shrink-0 mt-0.5"
+										width="16"
+										height="16"
+										loading="lazy"
+									>
+									4 magnetic bands (XS, S, M, L)
+								</li>
+								<li class="flex items-start gap-2.5 text-sm text-copy">
+									<img
+										src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+										alt=""
+										class="w-4 h-4 shrink-0 mt-0.5"
+										width="16"
+										height="16"
+										loading="lazy"
+									>
+									15 adhesive tab pairs
+								</li>
+								<li class="flex items-start gap-2.5 text-sm text-copy">
+									<img
+										src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+										alt=""
+										class="w-4 h-4 shrink-0 mt-0.5"
+										width="16"
+										height="16"
+										loading="lazy"
+									>
+									Magnetic placement tool
+								</li>
+								<li class="flex items-start gap-2.5 text-sm text-copy">
+									<img
+										src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+										alt=""
+										class="w-4 h-4 shrink-0 mt-0.5"
+										width="16"
+										height="16"
+										loading="lazy"
+									>
+									Instruction manual
+								</li>
+							</ul>
 						</button>
 
 					</div>
@@ -254,6 +305,9 @@
 						{%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
 					</button>
 
+					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
+					<p class="text-xs text-title text-center">✓ Free shipping on all GCC orders</p>
+
 				</form>
 
 				{%- comment -%} ── Refill link ── {%- endcomment -%}
@@ -266,30 +320,66 @@
 					</a>
 				{%- endif -%}
 
-				{%- comment -%} ── Inline FAQ ── {%- endcomment -%}
+				{%- comment -%} ── Trust badges ── {%- endcomment -%}
+				{%- assign trust_blocks = section.blocks | where: "type", "trust_badge" -%}
+				{%- if trust_blocks.size > 0 -%}
+					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+						{%- for block in trust_blocks -%}
+							<div class="flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}" {{ block.shopify_attributes }}>
+								{%- case block.settings.icon_type -%}
+									{%- when 'research' -%}
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 7v10m-3-7h6m-6 4h6"/></svg>
+									{%- when 'patented' -%}
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+									{%- when 'doctor' -%}
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M4.8 2.3A.3.3 0 105 2H4a2 2 0 00-2 2v5a6 6 0 006 6 6 6 0 006-6V4a2 2 0 00-2-2h-1a.2.2 0 10.3.3"/><path d="M8 15v1a6 6 0 006 6 6 6 0 006-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+									{%- when 'shield' -%}
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+									{%- else -%}
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+								{%- endcase -%}
+								<span class="font-heading font-semibold text-title text-xs leading-tight">{{ block.settings.text }}</span>
+							</div>
+						{%- endfor -%}
+					</div>
+				{%- endif -%}
+
+				{%- comment -%} ── Inline info accordions ── {%- endcomment -%}
 				{%- assign faq_blocks = section.blocks | where: "type", "product_faq" -%}
 				{%- if faq_blocks.size > 0 -%}
-					<div class="flex flex-col gap-0 border-t border-bg-muted mt-2">
+					<div class="flex flex-col gap-0 mt-2 [&>:last-child]:border-b-0">
 						{%- for block in faq_blocks -%}
-							<div class="border-b border-bg-muted" {{ block.shopify_attributes }}>
+							<div class="border-b border-border" {{ block.shopify_attributes }}>
 								<button
 									type="button"
-									class="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer"
+									class="group w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer"
 									aria-expanded="false"
 									data-faq-toggle
 								>
 									<span class="font-heading font-semibold text-title text-sm">{{ block.settings.question }}</span>
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="shrink-0 text-copy transition-transform duration-200" style="transition: transform 0.2s ease;">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="shrink-0 text-copy transition-transform duration-200 group-aria-expanded:rotate-180">
 										<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
 									</svg>
 								</button>
-								<div class="overflow-hidden transition-all duration-300" style="max-height: 0;">
+								<div class="overflow-hidden transition-all duration-300 product-info-content" style="max-height: 0;">
 									<div class="pb-4 text-copy text-sm leading-relaxed">{{ block.settings.answer }}</div>
 								</div>
 							</div>
 						{%- endfor -%}
 					</div>
 				{%- endif -%}
+
+				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
+				<div class="flex flex-col gap-4 border-t border-border pt-5 mt-4">
+					<div>
+						<p class="font-heading font-semibold text-title text-sm">Will it help with my snoring?</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">When your airway is open, your body naturally breathes through the nose instead of the mouth — the primary cause of snoring is reduced.</p>
+					</div>
+					<div>
+						<p class="font-heading font-semibold text-title text-sm">Does it fall off during sleep?</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">The medical-grade adhesive holds all night, even for restless sleepers. The magnetic band weighs less than 2 grams — most people forget it's there within minutes.</p>
+					</div>
+				</div>
 
 			</div>
 		</div>
@@ -321,6 +411,17 @@
 (function () {
 	var section = document.querySelector('[data-product-section]');
 	if (!section) return;
+
+	/* ── Smooth scroll for review link ── */
+	section.querySelectorAll('.scroll-link').forEach(function (link) {
+		link.addEventListener('click', function (e) {
+			var target = document.querySelector(link.getAttribute('href'));
+			if (target) {
+				e.preventDefault();
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		});
+	});
 
 	var sellingPlanInput = section.querySelector('[data-selling-plan-input]');
 	var addBtn = section.querySelector('[data-add-to-cart]');
@@ -382,7 +483,8 @@
 	});
 
 	/* ── Product FAQ accordion ── */
-	section.querySelectorAll('[data-faq-toggle]').forEach(function (btn) {
+	var faqToggles = section.querySelectorAll('[data-faq-toggle]');
+	faqToggles.forEach(function (btn) {
 		btn.addEventListener('click', function () {
 			var expanded = btn.getAttribute('aria-expanded') === 'true';
 			var content = btn.nextElementSibling;
@@ -401,6 +503,27 @@
 			}
 		});
 	});
+
+	/* ── Inject logo icons into accordion list items ── */
+	var logoSrc = '{{ "aira-logo-only-dark.svg" | asset_url }}';
+	section.querySelectorAll('.product-info-content li').forEach(function (li) {
+		if (li.querySelector('strong')) return;
+		var img = document.createElement('img');
+		img.src = logoSrc;
+		img.alt = '';
+		img.className = 'bullet-icon';
+		img.width = 16;
+		img.height = 16;
+		img.loading = 'lazy';
+		li.insertBefore(img, li.firstChild);
+	});
+
+	/* ── Auto-open first accordion (Benefits) ── */
+	if (faqToggles.length > 0) {
+		var firstBtn = faqToggles[0];
+		firstBtn.setAttribute('aria-expanded', 'true');
+		firstBtn.nextElementSibling.style.maxHeight = 'none';
+	}
 
 	/* ── Sticky mobile bar ── */
 	if (stickyBar && addBtn) {
@@ -510,9 +633,10 @@
 		},
 		{
 			"type": "text",
-			"id": "rating_text",
-			"label": "Rating text",
-			"default": "4.5 · 100+ Customers"
+			"id": "review_snippet",
+			"label": "Review snippet quote",
+			"default": "Best sleep purchase I've made",
+			"info": "Short quote from a top review. Only shown when 20+ reviews exist. Leave blank to hide."
 		},
 		{
 			"type": "header",
@@ -534,7 +658,7 @@
 			"type": "text",
 			"id": "plan_save_text",
 			"label": "Save text (preview, no selling plan)",
-			"default": "Save 20%",
+			"default": "Save 20% on refills",
 			"info": "Shown when no selling plans are configured. Overridden by real data."
 		},
 		{
@@ -548,12 +672,6 @@
 			"id": "plan_price",
 			"label": "Plan price (preview)",
 			"info": "Displayed price when no selling plans. E.g. $68.00"
-		},
-		{
-			"type": "text",
-			"id": "onetime_subtitle",
-			"label": "One-time subtitle",
-			"default": "15 Tabs + 4 Bands only"
 		},
 		{
 			"type": "header",

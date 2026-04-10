@@ -82,12 +82,13 @@
 	</div>
 
 	{%- comment -%} Footer — subtotal + checkout {%- endcomment -%}
-	<div data-cart-footer class="hidden border-t border-bg-muted px-6 py-5 flex flex-col gap-4">
+	<div data-cart-footer class="hidden border-t border-border px-6 py-5 flex flex-col gap-4">
 		<div class="flex items-center justify-between">
 			<span class="font-heading font-semibold text-title text-lg">Subtotal</span>
 			<span class="font-heading font-bold text-title text-xl" data-cart-subtotal></span>
 		</div>
 		<p class="text-copy text-sm">Shipping & taxes calculated at checkout</p>
+		<p class="text-center text-highlight text-sm font-semibold">Free shipping on all orders</p>
 		<a href="/checkout" data-cart-checkout class="block w-full text-center px-6 py-4 rounded-xl bg-main text-secondary text-base font-bold transition-opacity hover:opacity-90 cursor-pointer">
 			Checkout
 		</a>

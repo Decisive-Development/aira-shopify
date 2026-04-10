@@ -445,3 +445,48 @@ Shopify collection notes:
 - **Page hero**: Mobile height reduced to min-h-[20vh], heading padding-top reduced to pt-24.
 - Key learnings: HTML entities (`&#plus;`) don't work in JS string concatenation — use plain characters or unicode escapes. CSS `min()` for responsive max-width. `querySelectorAll` + `forEach` needed for multiple close buttons (not `querySelector`).
 - All code tasks from UX brief now complete. Only CMS tasks (Shopify admin) remain.
+
+[Session 20] Product page V2 — buy box, refill page rework, cart drawer
+
+**Starter kit buy box (sections/product.liquid):**
+- Accordion "Benefits" section now auto-opens on all devices (removed desktop-only `window.innerWidth >= 1024` check).
+- Accordion bullet icons refactored from CSS `::before` pseudo-elements to JS-injected `<img>` tags using `aira-logo-only-dark.svg`. Skips `<li>` items containing `<strong>` (numbered steps). Ensures visual consistency with product tile bullet icons.
+- One-time Purchase card bullets updated: reordered, added "Magnetic placement tool" and "Instruction manual".
+- Borders standardised across both product pages: created `--color-border: #D4D4D4` in `critical.source.css` as single source of truth. Tailwind v4 auto-generates `border-border` utility. All plan cards, accordion dividers updated from `border-bg-muted`.
+- Accordion wrapper: removed `border-t`, added `[&>:last-child]:border-b-0` to remove last item's bottom border.
+- Badge styling: `text-white`, `py-1`, removed `tracking-wide`, sentence case "Best value".
+- Default plan switched from Refill Plan to One-time Purchase.
+- Sticky mobile bar: removed product thumbnail image (user preference).
+
+**Refill page (sections/product-refill.liquid) — full rework:**
+- Replaced pill toggle plan selector with flat 5-card layout: 1 Monthly Refill Plan card (with expandable perks) + 4 variant cards (30/60/90/360 tab pairs).
+- Monthly Refill Plan card: "Best value" badge, expandable perks list (Save 20%, VIP service, Pause/cancel, Never run out) via `.plan-perks` collapse/expand (max-height 0 → 300px on `.is-selected`).
+- Variant cards: single-row layout with inline savings text. 360-tab card shows "· Biggest saving" in `text-highlight`. Other variants show `variant.metafields.custom.badge` if set.
+- `selectCard()` JS handles mutual exclusion across all 5 cards, sets/clears selling plan input.
+- Gallery column made sticky: `lg:sticky lg:top-24 lg:self-start`.
+- Trust badges added (Research Backed, High Success Rate, Doctor Recommended) with SVG icons.
+- Accordions: Benefits (tab-specific content), How to use (numbered steps), Shipping & Returns. Benefits auto-opens. Bullet icon injection matches starter kit.
+- Free shipping micro-copy below Add to Cart.
+- Starter link: "Need a starter kit? Start here →".
+- Added sticky mobile add-to-cart bar (matching starter kit): slides up when main ATC scrolls out of view, price updates on variant/plan selection via `selectCard()`.
+
+**Refill template (templates/product.refill.json):**
+- Badge: "Best value", Title: "Monthly Refill Plan | 30 tabs", Save text: "Save 20% on refills".
+- Trust badge blocks added. Accordion content populated. FREE Shipping perk removed.
+
+**Cart drawer (snippets/cart-drawer.liquid):**
+- Added "Free shipping on all orders" line (text-highlight) above checkout button.
+- Footer border updated from `border-bg-muted` to `border-border` for consistency.
+- Verified "+" button uses literal `+` character — no HTML entity bug.
+
+**New sections created:**
+- sections/how-to-use.liquid: 3-step visual section (B1). 3-col desktop, horizontal scroll mobile. CMS image/heading/description blocks. Tutorial CTA link.
+- sections/benefits-grid.liquid: 2×3 icon grid (B2). Icon + heading + description cards. 6 default blocks.
+- sections/ugc-gallery.liquid: UGC carousel (B3). 9:16 portrait cards, auto-scroll, drag-to-scroll, progress bar. Testimonial blocks.
+- sections/cross-sell.liquid: Cross-sell card (B4). Product picker, AJAX add-to-cart, opens cart drawer.
+
+**Template order (templates/product.json):**
+- Updated to: main → how_to_use → benefits_grid → benefits_slider → social_proof → judgeme_reviews → faq → cross_sell → final_cta.
+
+**CSS (assets/critical.source.css):**
+- Added `--color-border: #D4D4D4` custom property. Tailwind v4 auto-generates `.border-border` utility.

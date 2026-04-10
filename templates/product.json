@@ -48,40 +48,34 @@
         "perk_3": {
           "type": "plan_perk",
           "settings": {
-            "text": "FREE Shipping"
+            "text": "30 tabs delivered every 30 days"
           }
         },
         "perk_4": {
           "type": "plan_perk",
           "settings": {
-            "text": "30 Tabs Delivered Every 30 Days"
-          }
-        },
-        "perk_5": {
-          "type": "plan_perk",
-          "settings": {
             "text": "Discounted refill tabs"
           }
         },
-        "faq_1": {
+        "info_2": {
           "type": "product_faq",
           "settings": {
-            "question": "What's included in the starter kit?",
-            "answer": "<p>The starter kit includes 4 sized magnetic bands (XS, S, M, L), 15 adhesive tabs, and a fit guide to help you find your perfect size.</p>"
+            "question": "Benefits",
+            "answer": "<ul><li>Opens nasal passages instantly</li><li>Reduces snoring</li><li>Promotes nose breathing</li><li>Improves sleep quality</li><li>Reusable for months</li></ul>"
           }
         },
-        "faq_2": {
+        "info_3": {
           "type": "product_faq",
           "settings": {
-            "question": "How long does the magnetic band last?",
-            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which are single-use (one per night).</p>"
+            "question": "How to use",
+            "answer": "<ul><li><strong>1.</strong> Peel adhesive tab from backing</li><li><strong>2.</strong> Place tabs on either side of your nose bridge</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
           }
         },
-        "faq_3": {
+        "info_4": {
           "type": "product_faq",
           "settings": {
-            "question": "Will it stay on all night?",
-            "answer": "<p>Yes — the medical-grade adhesive tabs are designed to hold firmly through the night, even if you move around. They're also sweat-resistant for use during exercise.</p>"
+            "question": "Shipping & Returns",
+            "answer": "<p>Free shipping across the GCC. Delivery in 3–5 business days (UAE) or 5–7 days (rest of GCC). 30-day satisfaction guarantee.</p>"
           }
         }
       },
@@ -93,10 +87,9 @@
         "perk_2",
         "perk_3",
         "perk_4",
-        "perk_5",
-        "faq_1",
-        "faq_2",
-        "faq_3"
+        "info_2",
+        "info_3",
+        "info_4"
       ],
       "settings": {
         "hero_image": "shopify://shop_images/IMG_4805.jpg",
@@ -105,15 +98,118 @@
         "product_subtitle": "Aira is a research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing and breathe your best.",
         "image_badge": "",
         "show_rating": true,
-        "rating_text": "4.5 · 100+ Customers",
+        "review_snippet": "Best sleep purchase I've made",
         "plan_title": "Refill Plan",
-        "plan_badge": "Best Value",
-        "plan_save_text": "Save 20%",
+        "plan_badge": "Best value",
+        "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "onetime_subtitle": "15 Tabs + 4 Bands only",
         "refill_link_label": "Already have a strip? Buy refill tabs →",
         "refill_link_url": "/products/aira-refill-tabs"
+      }
+    },
+    "how_to_use": {
+      "type": "how-to-use",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
+            "step_heading": "Peel",
+            "step_description": "Peel the adhesive tab from its backing."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
+            "step_heading": "Place",
+            "step_description": "Place a tab on either side of your nose bridge."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
+            "step_heading": "Breathe",
+            "step_description": "Attach the magnetic band and breathe freely all night."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "eyebrow": "How it works",
+        "heading": "3 steps to better breathing.",
+        "tutorial_label": "For a more detailed guide, watch our short tutorial video.",
+        "tutorial_url": ""
+      }
+    },
+    "benefits_grid": {
+      "type": "benefits-grid",
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Opens airways instantly",
+            "description": "Magnetic force gently expands nasal passages."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Reduces snoring",
+            "description": "Promotes nose breathing for quieter nights."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Deeper sleep",
+            "description": "Better airflow means more restorative rest."
+          }
+        },
+        "benefit_4": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Reusable for months",
+            "description": "Only replace the adhesive tabs."
+          }
+        },
+        "benefit_5": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Medical-grade adhesive",
+            "description": "Stays on all night, gentle removal."
+          }
+        },
+        "benefit_6": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Fits all nose sizes",
+            "description": "4 band sizes included (XS to L)."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_1",
+        "benefit_2",
+        "benefit_3",
+        "benefit_4",
+        "benefit_5",
+        "benefit_6"
+      ],
+      "settings": {
+        "eyebrow": "Benefits",
+        "heading": "Why Aira works.",
+        "subheading": "",
+        "heading_size": "md"
       }
     },
     "benefits_slider": {
@@ -285,11 +381,78 @@
         "right_heading": "With better breathing"
       }
     },
+    "ugc_gallery": {
+      "type": "ugc-gallery",
+      "blocks": {
+        "testimonial_N9zF6j": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "",
+            "name": ""
+          }
+        },
+        "testimonial_wxmefq": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "",
+            "name": ""
+          }
+        },
+        "ugc_1": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "I sleep so much better now",
+            "name": "Sarah M."
+          }
+        },
+        "ugc_2": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "My partner noticed the difference immediately",
+            "name": "James K."
+          }
+        },
+        "ugc_3": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Game changer for my workouts",
+            "name": "Aisha R."
+          }
+        },
+        "ugc_4": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Finally stopped mouth breathing at night",
+            "name": "Omar D."
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_N9zF6j",
+        "testimonial_wxmefq",
+        "ugc_1",
+        "ugc_2",
+        "ugc_3",
+        "ugc_4"
+      ],
+      "settings": {
+        "eyebrow": "See it in action",
+        "heading": "The Aira community",
+        "handle": "@aira.breathing",
+        "cta_text": "Share your experience — tag @aira.breathing"
+      }
+    },
     "judgeme_reviews": {
       "type": "judgeme-reviews",
       "settings": {
         "eyebrow": "What our customers say",
-        "heading": "Real results. Real people.",
+        "heading": "Trusted by hundreds of better breathers.",
         "subheading": "",
         "heading_size": "md",
         "product": "aira-starter-kit",
@@ -361,6 +524,16 @@
         "padding_vertical": "lg"
       }
     },
+    "cross_sell": {
+      "type": "cross-sell",
+      "settings": {
+        "eyebrow": "Complete your kit",
+        "heading": "Keep breathing better.",
+        "subheading": "",
+        "product": "aira-refill-tabs",
+        "description": "30 adhesive tab pairs — keep your strip going."
+      }
+    },
     "final_cta": {
       "type": "final-cta",
       "settings": {
@@ -374,10 +547,14 @@
   },
   "order": [
     "main",
+    "how_to_use",
+    "benefits_grid",
+    "ugc_gallery",
     "benefits_slider",
     "social_proof",
     "judgeme_reviews",
     "faq",
+    "cross_sell",
     "final_cta"
   ]
 }
