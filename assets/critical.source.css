@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
 @source "../layout/**/*.liquid";
 @source "../sections/**/*.liquid";
 @source "../snippets/**/*.liquid";
@@ -26,6 +30,7 @@
   /* Colors */
   --color-main: #0A1A34;
   --color-secondary: #F1EBE1;
+  --color-cream-light: rgb(248, 245, 240);
   --color-tertiary: #44092E;
   --color-tertiary-light: #9BB7D4;
   --color-highlight: #FF4000;

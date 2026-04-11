@@ -157,122 +157,76 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "heading": "Opens airways instantly",
-            "description": "Magnetic force gently expands nasal passages."
+            "heading": "Opens your airway instantly",
+            "description": "The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow."
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "heading": "Reduces snoring",
-            "description": "Promotes nose breathing for quieter nights."
+            "heading": "Stays put all night",
+            "description": "Medical-grade adhesive holds through any sleeping position. The band weighs under 2 grams — most people forget it's there."
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
-            "heading": "Deeper sleep",
-            "description": "Better airflow means more restorative rest."
-          }
-        },
-        "benefit_4": {
-          "type": "benefit",
-          "settings": {
             "heading": "Reusable for months",
-            "description": "Only replace the adhesive tabs."
-          }
-        },
-        "benefit_5": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Medical-grade adhesive",
-            "description": "Stays on all night, gentle removal."
-          }
-        },
-        "benefit_6": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Fits all nose sizes",
-            "description": "4 band sizes included (XS to L)."
+            "description": "The magnetic bands last for months of nightly use. Only the adhesive tabs need replacing — keeping costs low."
           }
         }
       },
       "block_order": [
         "benefit_1",
         "benefit_2",
-        "benefit_3",
-        "benefit_4",
-        "benefit_5",
-        "benefit_6"
+        "benefit_3"
       ],
       "settings": {
-        "eyebrow": "Benefits",
-        "heading": "Why Aira works.",
-        "subheading": "",
-        "heading_size": "md"
+        "eyebrow": "Why Aira",
+        "heading": "Why Aira works."
       }
     },
-    "benefits_slider": {
-      "type": "benefits-slider",
+    "product_features_grid": {
+      "type": "product-features-grid",
       "blocks": {
-        "slide_1": {
-          "type": "slide",
+        "feature_1": {
+          "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/face-development.png",
-            "heading": "Instantly Expands",
+            "title": "Instantly Expands",
             "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
           }
         },
-        "slide_2": {
-          "type": "slide",
+        "feature_2": {
+          "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/poor-sleep.png",
-            "heading": "Sweat Resistant. Stays On.",
-            "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
-          }
-        },
-        "slide_3": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/snoring.png",
-            "heading": "Won't Collapse",
+            "title": "Won't Collapse",
             "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
           }
         },
-        "slide_4": {
-          "type": "slide",
+        "feature_3": {
+          "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/face-development.png",
-            "heading": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
+            "title": "Sweat-Proof. Stays On.",
+            "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
           }
         },
-        "slide_5": {
-          "type": "slide",
+        "feature_4": {
+          "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/poor-sleep.png",
-            "heading": "Reusable Band",
-            "description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
+            "title": "Skin Safe. Medical Grade.",
+            "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
           }
         }
       },
       "block_order": [
-        "slide_1",
-        "slide_2",
-        "slide_3",
-        "slide_4",
-        "slide_5"
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
       ],
       "settings": {
-        "eyebrow": "Why Aira",
-        "heading": "Built for better breathing.",
-        "subheading": "Every feature of the Aira strip was designed with one goal — to keep your airway open, all night long.",
-        "heading_size": "md",
-        "background_color": "#fafafa",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "container_width": "contained",
-        "padding_vertical": "lg"
+        "eyebrow": "Product",
+        "heading": "Built for better breathing."
       }
     },
     "social_proof": {
@@ -442,22 +396,19 @@
         "ugc_4"
       ],
       "settings": {
-        "eyebrow": "See it in action",
-        "heading": "The Aira community",
+        "eyebrow": "The Aira community",
+        "heading": "See it in action.",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing"
       }
     },
-    "judgeme_reviews": {
-      "type": "judgeme-reviews",
+    "custom_reviews": {
+      "type": "custom-reviews",
       "settings": {
         "eyebrow": "What our customers say",
-        "heading": "Trusted by hundreds of better breathers.",
-        "subheading": "",
-        "heading_size": "md",
-        "product": "aira-starter-kit",
-        "background_color": "#ffffff",
-        "padding_vertical": "lg"
+        "heading": "Trusted by better breathers.",
+        "cta_text": "Write a review",
+        "product": "aira-starter-kit"
       }
     },
     "faq": {
@@ -524,14 +475,21 @@
         "padding_vertical": "lg"
       }
     },
-    "cross_sell": {
-      "type": "cross-sell",
+    "before_after_slider": {
+      "type": "before-after-slider",
       "settings": {
-        "eyebrow": "Complete your kit",
-        "heading": "Keep breathing better.",
-        "subheading": "",
-        "product": "aira-refill-tabs",
-        "description": "30 adhesive tab pairs — keep your strip going."
+        "eyebrow": "Before & After",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways - without and with the Aira nasal strip.",
+        "heading_align": "center",
+        "heading_size": "md",
+        "before_label": "Without Aira",
+        "after_label": "With Aira",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "final_cta": {
@@ -547,14 +505,14 @@
   },
   "order": [
     "main",
+    "before_after_slider",
     "how_to_use",
     "benefits_grid",
-    "ugc_gallery",
-    "benefits_slider",
     "social_proof",
-    "judgeme_reviews",
+    "product_features_grid",
+    "ugc_gallery",
+    "custom_reviews",
     "faq",
-    "cross_sell",
     "final_cta"
   ]
 }

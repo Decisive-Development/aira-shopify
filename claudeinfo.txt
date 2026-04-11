@@ -490,3 +490,104 @@ Shopify collection notes:
 
 **CSS (assets/critical.source.css):**
 - Added `--color-border: #D4D4D4` custom property. Tailwind v4 auto-generates `.border-border` utility.
+
+[Session 21] Product pages — consolidated brief, section parity, bug fixes
+
+**Benefits grid rebuild (sections/benefits-grid.liquid):**
+- Replaced 6-card icon grid with 2-column layout: product image left (aspect-[3/4] desktop, aspect-[4/3] mobile), 3 text benefit blocks right.
+- Benefits: "Opens your airway instantly", "Stays put all night", "Reusable for months" — each with headline + supporting sentence.
+- Eyebrow "WHY AIRA", heading "Why Aira works." — inline (not section-heading snippet).
+- CMS: image_picker for left column, falls back to product.featured_image.
+- Mobile: stacks image on top, text blocks below with gap-6.
+- Removed old schema fields (subheading, heading_size, icon image_picker per block).
+
+**Cross-sell section removed:**
+- Deleted cross_sell from templates/product.json (section + order entry).
+- Section file (sections/cross-sell.liquid) kept in case of future re-use.
+
+**Duplicate heading fixes:**
+- UGC section: eyebrow changed to "THE AIRA COMMUNITY", heading to "See it in action." (both templates).
+- Reviews section: heading changed to "Trusted by better breathers." — removed "hundreds of" (both templates).
+
+**Refill page section parity (templates/product.refill.json):**
+- Added benefits_slider (same 5 slides as starter kit).
+- Added social_proof (same 8 research stat blocks as starter kit).
+- Added ugc_gallery (4 testimonial blocks).
+- Added faq (same 6 questions as starter kit).
+- Added final_cta ("Ready to breathe better?").
+- Section order: main → benefits_slider → social_proof → ugc_gallery → judgeme_reviews → faq → final_cta.
+
+**Starter kit template order (templates/product.json):**
+- Updated to: main → how_to_use → benefits_grid → ugc_gallery → benefits_slider → social_proof → judgeme_reviews → faq → final_cta.
+- cross_sell removed from order.
+
+**Judge.me review popup fix (sections/judgeme-reviews.liquid):**
+- Added CSS rules to hide Judge.me auto-popups: `.jdgm-rev-widg`, `.jdgm-overlay`, `.jdgm-modal`, `.jdgm-toast`, `.jdgm-preview-badge`, `.jdgm-all-reviews-badge`, `.jdgm-review-request-widget`, `[data-jdgm-widget="review-request"]`.
+- Root cause: star rating linked to `#judgeme_product_reviews` — Judge.me intercepts this hash and triggers its review request popup on page load.
+- Fix: added `id="reviews-section"` wrapper div above the Judge.me widget. Star rating links now point to `#reviews-section` instead. Judge.me no longer intercepts.
+
+**Refill page star rating link (sections/product-refill.liquid):**
+- Rating wrapped in `<a href="#reviews-section" class="scroll-link">` — was previously a plain div with no link.
+- Added smooth scroll JS (`scrollIntoView({ behavior: 'smooth' })`) matching the starter kit implementation.
+
+**Global smooth scrolling (assets/critical.source.css):**
+- Added `html { scroll-behavior: smooth; }` so all anchor links scroll smoothly.
+
+**UGC gallery mobile fix (sections/ugc-gallery.liquid):**
+- Card width changed from `w-[60%]` to `w-[65%]` on mobile.
+- Added `snap-start` to cards and `snap-x snap-mandatory` to track container.
+
+---
+
+### Session 22 — Custom Reviews Carousel (11 April 2026)
+
+**Custom reviews carousel (sections/custom-reviews.liquid) — NEW FILE:**
+- Replaced default Judge.me widget with a fully custom reviews carousel section.
+- Architecture: Judge.me widget loads HIDDEN (`display:none`), JS extracts review data from its DOM, injects into branded carousel cards.
+- MutationObserver + fallback polling detects when Judge.me renders reviews.
+- 2-second delay after detection to allow Judge.me's second render pass (media thumbnails).
+- Image extraction uses `getAttribute('src')` instead of `.src` for lazy-loaded images, with fallback to any non-avatar img in the review item.
+- Title selector: `.jm-review-content__title-wrapper` (primary) || `.jm-review-content__title` (fallback).
+- Date selector: second `.jm-cluster` child inside `.jm-reviewer-info__details` (first cluster = name, second = date).
+- Review count + average rating: reads from `jdgm.data.reviewWidget[productId]` (product-specific data), falls back to header DOM parsing, last resort calculates from visible reviews.
+- "Write a review" button triggers hidden widget's `.jm-button--primary` via `onclick`.
+- Skeleton loader with shimmer animation while waiting for Judge.me.
+- Touch/swipe support, dot nav, arrow buttons, responsive resize handling.
+- XSS protection via `escapeHTML()` utility.
+
+**Card design:**
+- Two variants: with-image (60/40 text/image split) and text-only.
+- Cards: `bg-bg-soft` (#FAFAFA), `rounded-2xl`, `border border-main/6`, `shadow-[0_2px_12px_rgba(0,0,0,0.06)]`, `min-h-[300px]`.
+- Images inset with `p-3` padding and `rounded-xl` corners (not flush to card edge).
+- Title above stars, body text below with `mt-1` gap.
+- Title: `text-lg font-bold leading-snug font-heading`.
+- Stars: warm gold `#D4A853` SVG (14px), not brand orange.
+- Avatar initials rotate through 5 brand colors: navy, orange, teal, green, blue.
+- Video thumbnails get play icon overlay via CSS `::after` pseudo-element.
+- Body text clamped to 4 lines via `-webkit-line-clamp`.
+- CTA button: `bg-main text-secondary rounded-xl px-10 py-4` (matches site's CTA pattern).
+
+**Section background:**
+- `bg-cream-light` — `rgb(248, 245, 240)`, softer than `bg-secondary`.
+- Added `--color-cream-light` to `@theme` block in `assets/critical.source.css`.
+
+**Carousel mechanics (custom CSS in section `<style>` tag):**
+- `.review-card { flex: 0 0 calc(50% - 12px) }` desktop, `100%` mobile.
+- Pixel-based offset calculation for `translateX`, accounting for 24px gap.
+- 2 cards per slide desktop, 1 mobile. Dots + arrows for navigation.
+
+**Template JSON updates (all three):**
+- `judgeme_reviews` section replaced with `custom_reviews` (type: `custom-reviews`).
+- Settings: eyebrow, heading, cta_text, product (product picker).
+- templates/product.json order: main → before_after_slider → how_to_use → benefits_grid → social_proof → product_features_grid → ugc_gallery → custom_reviews → faq → final_cta.
+- templates/product.refill.json order: main → product_features_grid → ugc_gallery → custom_reviews → faq → final_cta.
+- templates/index.json order: hero → before_after_slider → how_to_use → health_effects → social_proof → benefits_slider → ugc_gallery → custom_reviews → faq → final_cta.
+
+**Old section (sections/judgeme-reviews.liquid):**
+- No longer referenced by any template JSON. Still exists on disk.
+- Contains extensive Judge.me CSS overrides (v1/v2/v3) that are now unused.
+- Safe to delete.
+
+**Judge.me popup/badge hiding:**
+- Moved from judgeme-reviews.liquid into custom-reviews.liquid `<style>` block.
+- Hides: `.jdgm-preview-badge`, `.jdgm-all-reviews-badge`, `.jdgm-carousel-wrapper`, `.jdgm-overlay`, `.jdgm-review-request-widget`, `.jdgm-modal`, `.jdgm-toast`.

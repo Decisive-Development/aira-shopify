@@ -127,7 +127,7 @@
 
 				{%- comment -%} Rating {%- endcomment -%}
 				{%- if section.settings.show_rating -%}
-					<div class="flex items-center gap-2">
+					<a href="#reviews-section" class="flex items-center gap-2 hover:opacity-80 transition-opacity scroll-link">
 						<div class="flex items-center gap-0.5 text-highlight">
 							{%- for i in (1..5) -%}
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -136,7 +136,7 @@
 						{%- if section.settings.rating_text != blank -%}
 							<span class="text-copy text-sm">{{ section.settings.rating_text }}</span>
 						{%- endif -%}
-					</div>
+					</a>
 				{%- endif -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
@@ -337,6 +337,17 @@
 (function () {
 	var section = document.querySelector('[data-refill-section]');
 	if (!section) return;
+
+	/* ── Smooth scroll for review link ── */
+	section.querySelectorAll('.scroll-link').forEach(function (link) {
+		link.addEventListener('click', function (e) {
+			var target = document.querySelector(link.getAttribute('href'));
+			if (target) {
+				e.preventDefault();
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		});
+	});
 
 	var form = section.querySelector('[data-refill-form]');
 	var variantInput = form.querySelector('[data-variant-id]');

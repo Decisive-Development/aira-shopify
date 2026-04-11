@@ -1,0 +1,119 @@
+{%- assign feature_blocks = section.blocks | where: "type", "feature" -%}
+
+<section class="py-16 md:py-24 bg-bg" data-features-grid>
+	<div class="container-contained">
+
+		<p class="text-xs uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+		<h2 class="text-3xl md:text-4xl font-heading heading-weight text-title mb-10 md:mb-12">{{ section.settings.heading }}</h2>
+
+		{%- if feature_blocks.size > 0 -%}
+			<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+				{%- for block in feature_blocks -%}
+					<div {{ block.shopify_attributes }}>
+						<div class="aspect-square rounded-2xl overflow-hidden bg-main">
+							{%- if block.settings.image != blank -%}
+								{{
+									block.settings.image
+									| image_url: width: 600
+									| image_tag:
+										loading: 'lazy',
+										class: 'w-full h-full object-cover',
+										widths: '300, 400, 600'
+								}}
+							{%- endif -%}
+						</div>
+						<h3 class="text-lg md:text-xl lg:text-2xl font-heading font-bold text-main mt-4">{{ block.settings.title }}</h3>
+						{%- if block.settings.description != blank -%}
+							<p class="text-sm md:text-base text-copy leading-relaxed mt-2">{{ block.settings.description }}</p>
+						{%- endif -%}
+					</div>
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Product Features Grid",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Product"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Built for better breathing."
+		}
+	],
+	"blocks": [
+		{
+			"type": "feature",
+			"name": "Feature",
+			"limit": 4,
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image"
+				},
+				{
+					"type": "text",
+					"id": "title",
+					"label": "Title",
+					"default": "Instantly Expands"
+				},
+				{
+					"type": "textarea",
+					"id": "description",
+					"label": "Description",
+					"default": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Product Features Grid",
+			"blocks": [
+				{
+					"type": "feature",
+					"settings": {
+						"title": "Instantly Expands",
+						"description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+					}
+				},
+				{
+					"type": "feature",
+					"settings": {
+						"title": "Won't Collapse",
+						"description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+					}
+				},
+				{
+					"type": "feature",
+					"settings": {
+						"title": "Sweat-Proof. Stays On.",
+						"description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
+					}
+				},
+				{
+					"type": "feature",
+					"settings": {
+						"title": "Skin Safe. Medical Grade.",
+						"description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
+					}
+				}
+			]
+		}
+	],
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	}
+}
+{% endschema %}

@@ -1,46 +1,56 @@
-{%- assign benefit_blocks = section.blocks | where: "type", "benefit" -%}
-
-<section class="py-12 md:py-16 bg-bg" data-benefits-grid>
+<section class="py-16 md:py-24 bg-bg" data-benefits-grid>
 	<div class="container-contained">
 
-		{%- render 'section-heading',
-			eyebrow: section.settings.eyebrow,
-			heading: section.settings.heading,
-			subheading: section.settings.subheading,
-			align: 'center',
-			size: section.settings.heading_size
-		-%}
+		<div class="mb-10 md:mb-14">
+			<p class="text-xs uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+			<h2 class="text-3xl md:text-4xl font-heading heading-weight text-title">{{ section.settings.heading }}</h2>
+		</div>
 
-		{%- if benefit_blocks.size > 0 -%}
-			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-				{%- for block in benefit_blocks -%}
-					<div class="flex gap-4 p-5 rounded-xl bg-bg-soft" {{ block.shopify_attributes }}>
-						{%- if block.settings.icon != blank -%}
-							<div class="w-8 h-8 shrink-0">
-								{{
-									block.settings.icon
-									| image_url: width: 64
-									| image_tag:
-										loading: 'lazy',
-										class: 'w-full h-full object-contain',
-										widths: '32, 64'
-								}}
-							</div>
-						{%- else -%}
-							<div class="w-8 h-8 shrink-0 flex items-center justify-center">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-highlight"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-							</div>
-						{%- endif -%}
-						<div>
-							<h3 class="font-heading heading-weight text-sm text-title">{{ block.settings.heading }}</h3>
+		<div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+
+			{%- comment -%} Left column — product image {%- endcomment -%}
+			<div>
+				{%- if section.settings.image != blank -%}
+					{{
+						section.settings.image
+						| image_url: width: 800
+						| image_tag:
+							loading: 'lazy',
+							class: 'w-full aspect-[4/3] md:aspect-[3/4] rounded-2xl object-cover',
+							widths: '400, 600, 800'
+					}}
+				{%- else -%}
+					{%- if product != blank and product.featured_image -%}
+						{{
+							product.featured_image
+							| image_url: width: 800
+							| image_tag:
+								loading: 'lazy',
+								class: 'w-full aspect-[4/3] md:aspect-[3/4] rounded-2xl object-cover',
+								widths: '400, 600, 800'
+						}}
+					{%- else -%}
+						<div class="w-full aspect-[4/3] md:aspect-[3/4] rounded-2xl bg-bg-muted"></div>
+					{%- endif -%}
+				{%- endif -%}
+			</div>
+
+			{%- comment -%} Right column — benefit blocks {%- endcomment -%}
+			{%- assign benefit_blocks = section.blocks | where: "type", "benefit" -%}
+			{%- if benefit_blocks.size > 0 -%}
+				<div class="flex flex-col gap-6 md:gap-8">
+					{%- for block in benefit_blocks -%}
+						<div {{ block.shopify_attributes }}>
+							<h3 class="text-lg md:text-xl font-semibold text-main">{{ block.settings.heading }}</h3>
 							{%- if block.settings.description != blank -%}
-								<p class="text-copy text-sm leading-relaxed mt-1">{{ block.settings.description }}</p>
+								<p class="text-base text-copy leading-relaxed mt-2">{{ block.settings.description }}</p>
 							{%- endif -%}
 						</div>
-					</div>
-				{%- endfor -%}
-			</div>
-		{%- endif -%}
+					{%- endfor -%}
+				</div>
+			{%- endif -%}
+
+		</div>
 
 	</div>
 </section>
@@ -53,7 +63,7 @@
 			"type": "text",
 			"id": "eyebrow",
 			"label": "Eyebrow",
-			"default": "Benefits"
+			"default": "Why Aira"
 		},
 		{
 			"type": "text",
@@ -62,20 +72,10 @@
 			"default": "Why Aira works."
 		},
 		{
-			"type": "text",
-			"id": "subheading",
-			"label": "Subheading"
-		},
-		{
-			"type": "select",
-			"id": "heading_size",
-			"label": "Heading size",
-			"options": [
-				{ "value": "sm", "label": "Small" },
-				{ "value": "md", "label": "Medium" },
-				{ "value": "lg", "label": "Large" }
-			],
-			"default": "md"
+			"type": "image_picker",
+			"id": "image",
+			"label": "Image",
+			"info": "Product image for the left column. Falls back to the page product image if blank."
 		}
 	],
 	"blocks": [
@@ -84,22 +84,16 @@
 			"name": "Benefit",
 			"settings": [
 				{
-					"type": "image_picker",
-					"id": "icon",
-					"label": "Icon",
-					"info": "Small SVG or image (24-32px). Leave blank for default checkmark."
-				},
-				{
 					"type": "text",
 					"id": "heading",
 					"label": "Heading",
-					"default": "Opens airways instantly"
+					"default": "Opens your airway instantly"
 				},
 				{
 					"type": "textarea",
 					"id": "description",
 					"label": "Description",
-					"default": "Magnetic force gently expands nasal passages."
+					"default": "The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow."
 				}
 			]
 		}
@@ -111,43 +105,22 @@
 				{
 					"type": "benefit",
 					"settings": {
-						"heading": "Opens airways instantly",
-						"description": "Magnetic force gently expands nasal passages."
+						"heading": "Opens your airway instantly",
+						"description": "The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow."
 					}
 				},
 				{
 					"type": "benefit",
 					"settings": {
-						"heading": "Reduces snoring",
-						"description": "Promotes nose breathing for quieter nights."
-					}
-				},
-				{
-					"type": "benefit",
-					"settings": {
-						"heading": "Deeper sleep",
-						"description": "Better airflow means more restorative rest."
+						"heading": "Stays put all night",
+						"description": "Medical-grade adhesive holds through any sleeping position. The band weighs under 2 grams — most people forget it's there."
 					}
 				},
 				{
 					"type": "benefit",
 					"settings": {
 						"heading": "Reusable for months",
-						"description": "Only replace the adhesive tabs."
-					}
-				},
-				{
-					"type": "benefit",
-					"settings": {
-						"heading": "Medical-grade adhesive",
-						"description": "Stays on all night, gentle removal."
-					}
-				},
-				{
-					"type": "benefit",
-					"settings": {
-						"heading": "Fits all nose sizes",
-						"description": "4 band sizes included (XS to L)."
+						"description": "The magnetic bands last for months of nightly use. Only the adhesive tabs need replacing — keeping costs low."
 					}
 				}
 			]

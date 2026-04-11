@@ -107,21 +107,188 @@
         "starter_link_url": "/products/aira-starter-kit"
       }
     },
-    "judgeme_reviews": {
-      "type": "judgeme-reviews",
+    "product_features_grid": {
+      "type": "product-features-grid",
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "title": "Instantly Expands",
+            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "title": "Won't Collapse",
+            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "title": "Sweat-Proof. Stays On.",
+            "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "title": "Skin Safe. Medical Grade.",
+            "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
+          }
+        }
+      },
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ],
+      "settings": {
+        "eyebrow": "Product",
+        "heading": "Built for better breathing."
+      }
+    },
+    "ugc_gallery": {
+      "type": "ugc-gallery",
+      "blocks": {
+        "ugc_1": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "I sleep so much better now",
+            "name": "Sarah M."
+          }
+        },
+        "ugc_2": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "My partner noticed the difference immediately",
+            "name": "James K."
+          }
+        },
+        "ugc_3": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Game changer for my workouts",
+            "name": "Aisha R."
+          }
+        },
+        "ugc_4": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Finally stopped mouth breathing at night",
+            "name": "Omar D."
+          }
+        }
+      },
+      "block_order": [
+        "ugc_1",
+        "ugc_2",
+        "ugc_3",
+        "ugc_4"
+      ],
+      "settings": {
+        "eyebrow": "The Aira community",
+        "heading": "See it in action.",
+        "handle": "@aira.breathing",
+        "cta_text": "Share your experience — tag @aira.breathing"
+      }
+    },
+    "custom_reviews": {
+      "type": "custom-reviews",
       "settings": {
         "eyebrow": "What our customers say",
-        "heading": "Real results. Real people.",
+        "heading": "Trusted by better breathers.",
+        "cta_text": "Write a review",
+        "product": "aira-starter-kit"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "faq_1": {
+          "type": "question",
+          "settings": {
+            "question": "How often should I replace the adhesive tabs?",
+            "answer": "<p>Each adhesive tab pair is designed for single-night use. A 30-pack gives you a full month of nightly use.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "question",
+          "settings": {
+            "question": "What's the difference between the pack sizes?",
+            "answer": "<p>30 tabs = 1 month supply, 60 tabs = 2 months, 90 tabs = 3 months, 360 tabs = best value bulk pack (12 months). Larger packs come with bigger savings.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "question",
+          "settings": {
+            "question": "Do I need to replace the magnetic band too?",
+            "answer": "<p>No — the magnetic band is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my refill subscription?",
+            "answer": "<p>Yes. You can pause, skip, or cancel your subscription at any time from your account dashboard. No commitments.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "question",
+          "settings": {
+            "question": "Will any tab size work with my band?",
+            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (XS, S, M, L).</p>"
+          }
+        },
+        "faq_6": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship to the GCC?",
+            "answer": "<p>Yes. Free shipping on all GCC orders.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6"
+      ],
+      "settings": {
+        "eyebrow": "FAQ",
+        "heading": "Got questions? We've got answers.",
         "subheading": "",
         "heading_size": "md",
-        "product": "aira-starter-kit",
-        "background_color": "#ffffff",
+        "background_color": "#fafafa",
+        "container_width": "contained",
+        "padding_vertical": "lg"
+      }
+    },
+    "final_cta": {
+      "type": "final-cta",
+      "settings": {
+        "heading": "Ready to breathe better?",
+        "button_label": "Shop Starter Kit",
+        "button_url": "/products/aira-starter-kit",
+        "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }
     }
   },
   "order": [
     "main",
-    "judgeme_reviews"
+    "product_features_grid",
+    "ugc_gallery",
+    "custom_reviews",
+    "faq",
+    "final_cta"
   ]
 }

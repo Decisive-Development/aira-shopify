@@ -44,6 +44,46 @@
         "padding_vertical": "lg"
       }
     },
+    "how_to_use": {
+      "type": "how-to-use",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "step_heading": "Peel",
+            "step_description": "Peel the adhesive tab from its backing."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "step_heading": "Place",
+            "step_description": "Place a tab on either side of your nose bridge."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "step_heading": "Breathe",
+            "step_description": "Attach the magnetic band and breathe freely all night."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "eyebrow": "How it works",
+        "heading": "3 simple steps.",
+        "tutorial_label": "See the full tutorial →",
+        "tutorial_url": "/pages/tutorials"
+      }
+    },
     "health_effects": {
       "type": "health-effects",
       "blocks": {
@@ -298,16 +338,62 @@
         "padding_vertical": "lg"
       }
     },
-    "judgeme_reviews": {
-      "type": "judgeme-reviews",
+    "ugc_gallery": {
+      "type": "ugc-gallery",
+      "blocks": {
+        "ugc_1": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "I sleep so much better now",
+            "name": "Sarah M."
+          }
+        },
+        "ugc_2": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "My partner noticed the difference immediately",
+            "name": "James K."
+          }
+        },
+        "ugc_3": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Game changer for my workouts",
+            "name": "Aisha R."
+          }
+        },
+        "ugc_4": {
+          "type": "testimonial",
+          "settings": {
+            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
+            "quote": "Finally stopped mouth breathing at night",
+            "name": "Omar D."
+          }
+        }
+      },
+      "block_order": [
+        "ugc_1",
+        "ugc_2",
+        "ugc_3",
+        "ugc_4"
+      ],
+      "settings": {
+        "eyebrow": "The Aira community",
+        "heading": "See it in action.",
+        "handle": "@aira.breathing",
+        "cta_text": "Share your experience — tag @aira.breathing"
+      }
+    },
+    "custom_reviews": {
+      "type": "custom-reviews",
       "settings": {
         "eyebrow": "What our customers say",
-        "heading": "Real results. Real people.",
-        "subheading": "",
-        "heading_size": "md",
-        "product": "aira-starter-kit",
-        "background_color": "#ffffff",
-        "padding_vertical": "lg"
+        "heading": "Trusted by better breathers.",
+        "cta_text": "Write a review",
+        "product": "aira-starter-kit"
       }
     },
     "faq": {
@@ -369,48 +455,16 @@
             "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> Aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
           }
         },
-        "question_zb7UxY": {
-          "type": "question",
-          "settings": {
-            "question": "Can I use it if I have a deviated septum / allergies / congestion?",
-            "answer": "<p>Of couse! And many of our most loyal customers come to us for exactly these reasons. Aira physically widens the nasal passage from the outside, so it works regardless of what's causing the restriction inside: whether that's a <strong>structural deviation</strong>, <strong>seasonal allergies</strong>, or <strong>everyday congestion</strong>. It <em>won't treat</em> the underlying condition, but it will meaningfully improve your airflow and your quality of sleep and help you manage it. As always, if you have a specific medical concern, we <strong>recommend checking in with your doctor.</strong></p>"
-          }
-        },
-        "question_dgLjbn": {
-          "type": "question",
-          "settings": {
-            "question": "Can my partner or child use it too?",
-            "answer": "<p>Aira is designed for adults, and each band is personal, so we'd recommend one per person for hygiene and fit reasons. That said, we know better sleep is a family affair. If your partner is the one keeping you both awake at night, this might just be the <strong>gift that changes everything</strong>. For children, we currently recommend consulting a <strong>paediatrician</strong> before use.</p>"
-          }
-        },
-        "question_4wVE9a": {
-          "type": "question",
-          "settings": {
-            "question": "How do I clean the band?",
-            "answer": "<p>It's simple: after each use, rinse the magnetic band under warm water and let it air dry. You can use a mild soap if needed, just make sure to avoid harsh chemicals or submerging it for long periods. The tabs are single-use and should be replaced each time you're using Aira. Keep your band in the box it comes with, and it'll stay in great condition for months.</p><p></p>"
-          }
-        },
-        "question_DUHFCB": {
-          "type": "question",
-          "settings": {
-            "question": "What I should do if I experience discomfort while wearing the Aira nasal strip?",
-            "answer": "<p>Your comfort is something we take seriously. If you notice any redness, irritation, or soreness while wearing your Aira nasal strip, the first step is simply to take it off and give your skin a day or two to rest. In most cases, this is enough, and it's often just a sign that the tabs were applied to skin that needed a little more cleaning or drying beforehand.</p><p>If the discomfort persists after a rest period, please don't hesitate to reach out to us at <a href=\"mailto:contact@aira-breathing.com\"><strong>contact@aira-breathing.com</strong></a>. We're here to help you figure out what's going on: whether that's a simple adjustment to how you're applying the strip, or guidance on connecting with a healthcare professional near you. You'll never be left to figure it out alone.</p><p>When you write to us, it helps to include your name, a brief description of what you're experiencing, and a photo of the affected area if you're comfortable sharing one. The more context you give us, the better we can support you.</p>"
-          }
-        }
       },
       "block_order": [
         "faq_1",
         "faq_2",
         "faq_3",
         "faq_4",
-        "faq_5",
-        "faq_6",
-        "question_LR3ReA",
         "question_EeFcrc",
-        "question_zb7UxY",
-        "question_dgLjbn",
-        "question_4wVE9a",
-        "question_DUHFCB"
+        "question_LR3ReA",
+        "faq_5",
+        "faq_6"
       ],
       "settings": {
         "eyebrow": "FAQ",
@@ -436,10 +490,12 @@
   "order": [
     "hero",
     "before_after_slider",
+    "how_to_use",
     "health_effects",
     "social_proof",
     "benefits_slider",
-    "judgeme_reviews",
+    "ugc_gallery",
+    "custom_reviews",
     "faq",
     "final_cta"
   ]

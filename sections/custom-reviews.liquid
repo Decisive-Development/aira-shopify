@@ -1,0 +1,576 @@
+{%- liquid
+  assign review_product = section.settings.product
+-%}
+
+<style>
+  /* ── Carousel slide sizing ── */
+  .review-card {
+    flex: 0 0 calc(50% - 12px);
+  }
+  @media (max-width: 768px) {
+    .review-card {
+      flex: 0 0 100%;
+    }
+  }
+
+  /* ── Smooth carousel transition ── */
+  .reviews-track {
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+
+  /* ── Review body text clamp ── */
+  .review-card__body {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Video play icon overlay ── */
+  .review-card__image--video {
+    position: relative;
+  }
+  .review-card__image--video::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230A1A34'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+  }
+
+  /* ── Skeleton shimmer animation ── */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .reviews-skeleton > div {
+    background: linear-gradient(90deg, var(--color-bg) 25%, var(--color-bg-muted) 50%, var(--color-bg) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* ── Dot active state ── */
+  .reviews-dot {
+    transition: background-color 0.3s ease;
+  }
+
+  /* ── Hide Judge.me popups / badges / overlays ── */
+  .jdgm-preview-badge,
+  .jdgm-all-reviews-badge,
+  .jdgm-carousel-wrapper,
+  .jdgm-widget.jdgm-preview-badge,
+  [data-jdgm-widget="preview-badge"],
+  .jdgm-overlay,
+  .jdgm-review-request-widget,
+  [data-jdgm-widget="review-request"],
+  .jdgm-modal,
+  .jdgm-toast {
+    display: none !important;
+  }
+</style>
+
+<section class="bg-cream-light" data-custom-reviews data-product-id="{{ review_product.id }}">
+  <div class="container-contained py-12 md:py-20">
+
+    <!-- ── Section header ── -->
+    <div class="text-center mb-10 md:mb-14">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="text-xs uppercase tracking-widest text-highlight mb-3 font-semibold">
+          {{ section.settings.eyebrow }}
+        </p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-title">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+      <div class="reviews-summary flex items-center justify-center gap-2 mt-3">
+        <!-- Stars + "4.8 from 12 reviews" — populated by JS -->
+      </div>
+    </div>
+
+    <!-- ── Skeleton loader (shown while Judge.me loads) ── -->
+    <div class="reviews-skeleton flex gap-6">
+      <div class="flex-1 bg-bg rounded-2xl h-72 hidden md:block"></div>
+      <div class="flex-1 bg-bg rounded-2xl h-72"></div>
+    </div>
+
+    <!-- ── Carousel container (hidden until JS populates it) ── -->
+    <div class="reviews-carousel overflow-hidden relative" style="display:none;">
+      <div class="reviews-track flex gap-6">
+        <!-- Review cards injected here by JS -->
+      </div>
+    </div>
+
+    <!-- ── Navigation ── -->
+    <div class="reviews-nav flex items-center justify-center gap-4 mt-8" style="display:none;">
+      <button class="reviews-arrow reviews-arrow--prev w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Previous reviews">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="reviews-dots flex gap-2">
+        <!-- Dot indicators injected by JS -->
+      </div>
+      <button class="reviews-arrow reviews-arrow--next w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Next reviews">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <!-- ── Write a review CTA ── -->
+    <div class="text-center mt-8">
+      <button class="reviews-write-cta inline-block bg-main text-secondary border-none rounded-xl px-10 py-4 text-sm font-medium tracking-wide cursor-pointer transition-colors duration-200 hover:bg-main/90"
+        onclick="document.querySelector('.jdgm-widget-hidden .jm-button--primary').click()">
+        {{ section.settings.cta_text | default: 'Write a review' }}
+      </button>
+    </div>
+
+    <!-- ── Hidden Judge.me widget (data source) ── -->
+    {%- if review_product != blank -%}
+      <div class="jdgm-widget-hidden" style="display:none !important; position:absolute; pointer-events:none;">
+        <div id="judgeme_product_reviews"
+             class="jdgm-widget jdgm-review-widget"
+             data-product-title="{{ review_product.title | escape }}"
+             data-id="{{ review_product.id }}"
+             data-product-id="{{ review_product.id }}"
+             data-widget="review"
+             data-auto-install="false"
+             data-shop-reviews-count="{{ shop.metafields.judgeme.shop_reviews_count | default: 0 | escape }}"
+             data-entry-point="review_widget.js"
+             data-entry-key="review-widget/main.js">
+          {%- if review_product.metafields.judgeme.widget.size > 20 -%}
+            <div class="jdgm-legacy-widget-content" style="display: none;">{{ review_product.metafields.judgeme.widget }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- if review_product.metafields.judgeme.review_widget_data -%}
+        <script>jdgm.data ||= {}; jdgm.data.reviewWidget ||= {}; jdgm.data.reviewWidget[{{ review_product.id }}] = {{ review_product.metafields.judgeme.review_widget_data }}</script>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>
+</section>
+
+<script>
+(function() {
+  var section = document.currentScript.closest('section') ||
+                document.currentScript.parentElement.closest('section') ||
+                document.querySelector('.bg-cream-light');
+  if (!section) return;
+
+  var hiddenWidget = section.querySelector('.jdgm-widget-hidden');
+  var skeleton = section.querySelector('.reviews-skeleton');
+  var carousel = section.querySelector('.reviews-carousel');
+  var nav = section.querySelector('.reviews-nav');
+  var track = section.querySelector('.reviews-track');
+  var dotsContainer = section.querySelector('.reviews-dots');
+  var summaryEl = section.querySelector('.reviews-summary');
+  var prevBtn = section.querySelector('.reviews-arrow--prev');
+  var nextBtn = section.querySelector('.reviews-arrow--next');
+
+  if (!hiddenWidget || !track) return;
+
+  // ── Star SVGs ──
+  var filledStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="#D4A853" stroke="#D4A853" stroke-width="0.5"/></svg>';
+  var emptyStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="none" stroke="#D4A853" stroke-width="0.5"/></svg>';
+
+  function starsHTML(count) {
+    var html = '';
+    for (var i = 0; i < 5; i++) html += (i < count) ? filledStar : emptyStar;
+    return html;
+  }
+
+  // ── Phase 1: Wait for Judge.me ──
+  // Watch for .jm-review-item to appear, then wait 2s for media to load
+  var hasRun = false;
+
+  function tryExtract() {
+    if (hasRun) return;
+    var items = hiddenWidget.querySelectorAll('.jm-review-item');
+    if (items.length > 0) {
+      hasRun = true;
+      // CRITICAL: Wait 2 seconds for Judge.me to finish populating media
+      // thumbnails. They are added in a second render pass after review items.
+      setTimeout(function() {
+        extractAndRender(items);
+      }, 2000);
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    tryExtract();
+  });
+  observer.observe(hiddenWidget, { childList: true, subtree: true });
+
+  // Fallback poll every 500ms for up to 15 seconds
+  var pollCount = 0;
+  var poll = setInterval(function() {
+    pollCount++;
+    if (hasRun || pollCount > 30) {
+      clearInterval(poll);
+      observer.disconnect();
+      if (!hasRun) showNoReviews();
+      return;
+    }
+    tryExtract();
+  }, 500);
+
+  // ── Phase 2: Extract review data from hidden widget DOM ──
+  function extractAndRender(items) {
+    observer.disconnect();
+    clearInterval(poll);
+
+    var reviews = [];
+
+    items.forEach(function(item) {
+      var review = {};
+
+      // Star count from aria-label "X out of 5 stars"
+      var starEl = item.querySelector('.jm-star-rating');
+      review.stars = 5;
+      if (starEl) {
+        var label = starEl.getAttribute('aria-label') || '';
+        var match = label.match(/(\d+)/);
+        if (match) review.stars = parseInt(match[1]);
+      }
+
+      // Reviewer name
+      var nameEl = item.querySelector('.jm-reviewer-info__name');
+      review.name = nameEl ? nameEl.textContent.trim() : 'Anonymous';
+      review.initial = review.name.charAt(0).toUpperCase();
+
+      // Date — SECOND cluster child inside .jm-reviewer-info__details
+      // First cluster = name, second cluster = date
+      review.date = '';
+      var detailsEl = item.querySelector('.jm-reviewer-info__details');
+      if (detailsEl) {
+        var clusters = detailsEl.querySelectorAll(':scope > .jm-cluster');
+        if (clusters.length >= 2) {
+          var dateSpan = clusters[1].querySelector('.jm-text');
+          if (dateSpan) review.date = dateSpan.textContent.trim();
+        }
+      }
+      // Safety: if date equals name, clear it
+      if (review.date === review.name) review.date = '';
+
+      // Title — only present on some reviews
+      var titleEl = item.querySelector('.jm-review-content__title-wrapper') ||
+                    item.querySelector('.jm-review-content__title');
+      review.title = titleEl ? titleEl.textContent.trim() : '';
+
+      // Body text
+      var bodyEl = item.querySelector('.jm-review-content__body') ||
+                   item.querySelector('.jm-review-body-wrapper');
+      review.body = bodyEl ? bodyEl.textContent.trim() : '';
+
+      // Image — inside a SIBLING .jm-cluster of .jm-review-item__body
+      // Selector: .jm-media-thumbnail-list__thumbnail img
+      var imgEl = item.querySelector('.jm-media-thumbnail-list__thumbnail img');
+      review.image = null;
+      review.isVideo = false;
+      if (imgEl) {
+        // Use getAttribute('src') — .src property can be empty for lazy images
+        review.image = imgEl.getAttribute('src') || imgEl.src || null;
+        // Detect video thumbnails
+        if (review.image && review.image.indexOf('videodelivery.net') > -1) {
+          review.isVideo = true;
+        }
+      }
+
+      // Fallback: try any img inside the card that isn't the avatar
+      if (!review.image) {
+        var allImgs = item.querySelectorAll('img');
+        for (var ii = 0; ii < allImgs.length; ii++) {
+          var testSrc = allImgs[ii].getAttribute('src') || '';
+          if (testSrc && testSrc.indexOf('avatar') === -1) {
+            review.image = testSrc;
+            if (testSrc.indexOf('videodelivery.net') > -1) review.isVideo = true;
+            break;
+          }
+        }
+      }
+
+      reviews.push(review);
+    });
+
+    // Get total count and average from Judge.me's data object (product-specific)
+    var totalCount = reviews.length;
+    var avgRating = 0;
+    var productId = section.getAttribute('data-product-id');
+
+    // Primary: read from jdgm.data.reviewWidget which has actual product stats
+    if (typeof jdgm !== 'undefined' && jdgm.data && jdgm.data.reviewWidget && productId) {
+      var widgetData = jdgm.data.reviewWidget[productId];
+      if (widgetData) {
+        if (widgetData.reviewCount != null) totalCount = widgetData.reviewCount;
+        if (widgetData.averageRating != null) avgRating = parseFloat(widgetData.averageRating);
+        // Try alternate keys
+        if (!totalCount && widgetData.review_count != null) totalCount = widgetData.review_count;
+        if (!avgRating && widgetData.average_rating != null) avgRating = parseFloat(widgetData.average_rating);
+      }
+    }
+
+    // Fallback: parse from header star aria-label + count text
+    if (!avgRating || totalCount <= reviews.length) {
+      var summaryHeader = hiddenWidget.querySelector('.jm-review-widget-minimal-header');
+      if (summaryHeader) {
+        // Average from star element aria-label: "X.X out of 5 stars"
+        if (!avgRating) {
+          var headerStars = summaryHeader.querySelector('.jm-star-rating');
+          if (headerStars) {
+            var starLabel = headerStars.getAttribute('aria-label') || '';
+            var avgMatch = starLabel.match(/([\d.]+)\s*out\s*of/);
+            if (avgMatch) avgRating = parseFloat(avgMatch[1]);
+          }
+        }
+        // Count from text: look for "X reviews" but ignore shop-wide counts
+        if (totalCount <= reviews.length) {
+          var countEls = summaryHeader.querySelectorAll('.jm-text');
+          countEls.forEach(function(el) {
+            var t = el.textContent.trim();
+            var cm = t.match(/^(\d+)\s*review/);
+            if (cm) totalCount = parseInt(cm[1]);
+          });
+        }
+      }
+    }
+
+    // Last resort: calculate from visible reviews
+    if (!avgRating && reviews.length > 0) {
+      avgRating = reviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / reviews.length;
+    }
+
+    buildCarousel(reviews, totalCount, avgRating);
+  }
+
+  // ── Phase 3: Build the carousel ──
+  function buildCarousel(reviews, totalCount, avgRating) {
+    // Clear any existing cards
+    track.innerHTML = '';
+
+    // Avatar color rotation
+    var avatarColors = ['bg-main', 'bg-highlight', 'bg-teal', 'bg-highlight-green', 'bg-highlight-blue'];
+
+    reviews.forEach(function(review, index) {
+      var card = document.createElement('div');
+      var hasImage = !!(review.image);
+
+      card.className = 'review-card flex bg-bg-soft rounded-2xl border border-main/6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden min-h-[300px]' +
+        (hasImage ? ' review-card--has-image' : ' review-card--text-only');
+
+      var contentWidth = hasImage ? 'w-[60%]' : 'w-full';
+      var avatarColor = avatarColors[index % avatarColors.length];
+
+      var titleHTML = '';
+      if (review.title) {
+        titleHTML = '<h3 class="text-lg font-bold text-title leading-snug mb-2 font-heading">' + review.title + '</h3>';
+      }
+
+      var imageHTML = '';
+      if (hasImage) {
+        var videoClass = review.isVideo ? ' review-card__image--video' : '';
+        imageHTML = '<div class="review-card__image w-[40%] p-3 flex items-stretch' + videoClass + '">' +
+          '<img src="' + review.image + '" alt="Photo by ' + review.name + '" loading="lazy" class="w-full h-full object-cover block rounded-xl" />' +
+          '</div>';
+      }
+
+      card.innerHTML =
+        '<div class="review-card__content ' + contentWidth + ' p-5 md:p-9 flex flex-col justify-between">' +
+          '<div>' +
+            titleHTML +
+            '<div class="flex gap-0.5 mb-3">' + starsHTML(review.stars) + '</div>' +
+            '<p class="review-card__body text-[15px] text-copy leading-relaxed mt-1">' + review.body + '</p>' +
+          '</div>' +
+          '<div class="flex items-center gap-2.5 mt-4">' +
+            '<div class="w-9 h-9 rounded-full ' + avatarColor + ' text-white flex items-center justify-center text-sm font-semibold shrink-0">' + review.initial + '</div>' +
+            '<div>' +
+              '<span class="block text-sm font-semibold text-main">' + review.name + '</span>' +
+              '<span class="block text-xs text-copy/50">' + review.date + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        imageHTML;
+
+      track.appendChild(card);
+    });
+
+    // Hide skeleton, show carousel
+    if (skeleton) skeleton.style.display = 'none';
+    if (carousel) carousel.style.display = 'block';
+
+    // Update summary
+    if (summaryEl) {
+      summaryEl.innerHTML =
+        '<span class="flex gap-0.5">' + starsHTML(Math.round(avgRating)) + '</span>' +
+        '<span class="text-[15px] text-copy">' + avgRating.toFixed(1) + ' from ' + totalCount + ' reviews</span>';
+    }
+
+    // Setup carousel navigation
+    setupCarousel(reviews.length);
+  }
+
+  // ── Phase 4: Carousel navigation ──
+  function setupCarousel(totalReviews) {
+    var isMobile = window.innerWidth <= 768;
+    var perSlide = isMobile ? 1 : 2;
+    var totalSlides = Math.ceil(totalReviews / perSlide);
+    var currentSlide = 0;
+
+    function buildDots() {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = '';
+      for (var i = 0; i < totalSlides; i++) {
+        var dot = document.createElement('button');
+        dot.className = 'reviews-dot w-2 h-2 rounded-full border-none cursor-pointer p-0 ' +
+          (i === 0 ? 'bg-main' : 'bg-border');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        (function(idx) {
+          dot.addEventListener('click', function() { goToSlide(idx); });
+        })(i);
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+
+      // Calculate transform offset
+      var containerWidth = track.parentElement.offsetWidth;
+      var gap = 24; // matches gap-6 (1.5rem = 24px)
+      var offset;
+      if (isMobile) {
+        offset = index * (containerWidth + gap);
+      } else {
+        var cardWidth = (containerWidth - gap) / 2;
+        offset = index * (cardWidth * 2 + gap * 2);
+      }
+      track.style.transform = 'translateX(-' + offset + 'px)';
+
+      // Update dots
+      if (dotsContainer) {
+        var dots = dotsContainer.querySelectorAll('.reviews-dot');
+        dots.forEach(function(d, i) {
+          if (i === index) {
+            d.classList.remove('bg-border');
+            d.classList.add('bg-main');
+          } else {
+            d.classList.remove('bg-main');
+            d.classList.add('bg-border');
+          }
+        });
+      }
+
+      // Update arrows
+      if (prevBtn) prevBtn.disabled = (index === 0);
+      if (nextBtn) nextBtn.disabled = (index >= totalSlides - 1);
+    }
+
+    buildDots();
+
+    // Show or hide nav
+    if (nav) {
+      nav.style.display = totalSlides <= 1 ? 'none' : 'flex';
+    }
+
+    // Arrow click handlers
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        if (currentSlide > 0) goToSlide(currentSlide - 1);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+      });
+    }
+
+    // Touch/swipe
+    var startX = 0;
+    track.addEventListener('touchstart', function(e) {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    track.addEventListener('touchend', function(e) {
+      var diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+        if (diff < 0 && currentSlide > 0) goToSlide(currentSlide - 1);
+      }
+    }, { passive: true });
+
+    // Resize handler
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        var wasMobile = isMobile;
+        isMobile = window.innerWidth <= 768;
+        if (wasMobile !== isMobile) {
+          perSlide = isMobile ? 1 : 2;
+          totalSlides = Math.ceil(totalReviews / perSlide);
+          currentSlide = 0;
+          buildDots();
+          goToSlide(0);
+        }
+      }, 150);
+    });
+
+    // Initial state
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = (totalSlides <= 1);
+  }
+
+  // ── Phase 5: No reviews fallback ──
+  function showNoReviews() {
+    if (skeleton) skeleton.style.display = 'none';
+    // Just show header + write a review CTA
+  }
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Custom Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "What our customers say"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trusted by better breathers."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA button text",
+      "default": "Write a review"
+    },
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product to show reviews for"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Reviews"
+    }
+  ]
+}
+{% endschema %}
