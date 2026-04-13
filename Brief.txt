@@ -1,297 +1,502 @@
 ================================================================================
-AIRA — JUDGE.ME "WRITE A REVIEW" MODAL: BRANDING OVERRIDES
+AIRA — REVIEWS: PAGINATION FIX + PHOTO STRIP CAROUSEL
 ================================================================================
-Date: 11 April 2026
-File: sections/custom-reviews.liquid (add to existing <style> block)
-      OR assets/custom-reviews.css (if styles were moved to a CSS file)
+Date: 13 April 2026
+File: sections/custom-reviews.liquid
 ================================================================================
 
-The Judge.me "Write a Review" modal uses .jdgm-write-review-modal__*
-classes (NOT the revamp .jm-* classes). The modal is injected into the
-DOM by Judge.me's JS and lives outside our section, so these styles
-need enough specificity to override Judge.me's defaults.
-
-Currently everything is teal (#108474). We're rebranding to AIRA's
-palette: navy, cream, gold stars, Satoshi headings.
+TWO CHANGES:
+  1. BUG FIX: Only 5 of 13 reviews are extracted (Judge.me paginates,
+     our code only reads page 1)
+  2. NEW FEATURE: Horizontal photo strip carousel showing all user-
+     submitted images, clickable to open the lightbox modal
 
 
 ================================================================================
-CSS OVERRIDES — PASTE INTO THE <style> BLOCK
+PART 1: PAGINATION FIX — EXTRACT ALL REVIEW PAGES
 ================================================================================
 
-Copy this entire block into the <style> tag in custom-reviews.liquid
-(or wherever the section's styles live):
+ROOT CAUSE:
+Judge.me loads 5 reviews per page by default. Our MutationObserver
+detects the first 5 .jm-review-item elements, waits 2 seconds for
+media, then extracts and builds the carousel. The remaining 8 reviews
+on pages 2 and 3 are never loaded.
 
-/* ════════════════════════════════════════════════════════════
-   Judge.me Write-Review Modal — AIRA Brand Overrides
-   ════════════════════════════════════════════════════════════ */
+The hidden widget has pagination controls:
+  .jm-pagination-controls with buttons:
+  - "Go to previous page" (disabled on page 1)
+  - "Go to page 1", "Go to page 2", "Go to page 3"
+  - "Go to next page"
 
-/* ── Override the primary color variable ── */
-.jdgm-write-review-modal,
-.jdgm-review-widget-modal {
-  --jdgm-primary-color: #0A1A34 !important;
-}
+FIX STRATEGY:
+After extracting page 1 reviews, click the "next page" button, wait
+for new reviews to load in the DOM, extract those, repeat until all
+pages are done. Then build the carousel with the complete set.
 
-/* ── Overlay / Backdrop ── */
-.jdgm-write-review-modal__overlay {
-  background: rgba(10, 26, 52, 0.6) !important;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
+────────────────────────────────────────────────────────────────────────
 
-/* ── Content Container (the white card) ── */
-.jdgm-write-review-modal__content {
-  border-radius: 16px !important;
-  box-shadow: 0 24px 48px rgba(10, 26, 52, 0.15) !important;
-  overflow: hidden;
-  max-width: 520px !important;
-  margin: auto;
-}
+REPLACE the extractAndRender() function with this new version that
+handles multi-page extraction:
 
-/* ── Close Button (X) ── */
-.jdgm-write-review-modal__close-btn {
-  color: var(--color-main, #0A1A34) !important;
-  opacity: 0.5;
-  transition: opacity 0.2s;
-}
-.jdgm-write-review-modal__close-btn:hover {
-  opacity: 1;
-}
+  function extractAndRender(items) {
+    observer.disconnect();
+    clearInterval(poll);
 
-/* ── Main Title ("How would you rate...", "About you", etc.) ── */
-.jdgm-write-review-modal__title {
-  font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
-  font-weight: 700 !important;
-  color: var(--color-main, #0A1A34) !important;
-  font-size: 22px !important;
-  line-height: 1.3 !important;
-}
+    // Extract reviews from current page
+    var reviews = extractReviewsFromDOM();
 
-/* ── Subtitle / Description Text ── */
-.jdgm-write-review-modal__sub-title {
-  color: var(--color-copy, #555) !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-}
+    // Check for more pages
+    var nextPageBtn = hiddenWidget.querySelector(
+      '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
+    );
 
-/* ── Product Title ── */
-.jdgm-write-review-modal__product-title {
-  font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
-  font-weight: 600 !important;
-  color: var(--color-main, #0A1A34) !important;
-}
+    if (nextPageBtn) {
+      // There are more pages — start paginating
+      loadAllPages(reviews, function(allReviews) {
+        finishBuild(allReviews);
+      });
+    } else {
+      // Single page — build immediately
+      finishBuild(reviews);
+    }
+  }
 
-/* ── Stars — Gold instead of Teal ── */
-.jdgm-write-review-modal .jdgm-star svg,
-.jdgm-write-review-modal .jdgm-star path,
-.jdgm-review-widget-modal .jdgm-star svg,
-.jdgm-review-widget-modal .jdgm-star path {
-  fill: #D4A853 !important;
-  stroke: #D4A853 !important;
-  color: #D4A853 !important;
-}
+  // ── Extract reviews from whatever is currently in the DOM ──
+  function extractReviewsFromDOM() {
+    var items = hiddenWidget.querySelectorAll('.jm-review-item');
+    var reviews = [];
 
-/* Unselected / empty stars */
-.jdgm-write-review-modal .jdgm-star.jdgm--off svg,
-.jdgm-write-review-modal .jdgm-star.jdgm--off path {
-  fill: transparent !important;
-  stroke: #D4A853 !important;
-  color: #D4A853 !important;
-}
+    items.forEach(function(item) {
+      var review = {};
 
-/* Star labels (Poor / Great) */
-.jdgm-write-review-modal__field-group--stars .jdgm-write-review-modal__field-label {
-  color: var(--color-copy, #555) !important;
-  font-size: 12px !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+      // Star count
+      var starEl = item.querySelector('.jm-star-rating');
+      review.stars = 5;
+      if (starEl) {
+        var label = starEl.getAttribute('aria-label') || '';
+        var match = label.match(/(\d+)/);
+        if (match) review.stars = parseInt(match[1]);
+      }
 
-/* ── Form Field Labels ── */
-.jdgm-write-review-modal__field-label {
-  font-family: var(--font-body, 'Nunito Sans', sans-serif) !important;
-  font-weight: 600 !important;
-  color: var(--color-main, #0A1A34) !important;
-  font-size: 14px !important;
-}
+      // Name
+      var nameEl = item.querySelector('.jm-reviewer-info__name');
+      review.name = nameEl ? nameEl.textContent.trim() : 'Anonymous';
+      review.initial = review.name.charAt(0).toUpperCase();
 
-/* ── Form Inputs (text fields, textareas) ── */
-.jdgm-write-review-modal__field-input {
-  border: 1.5px solid rgba(10, 26, 52, 0.15) !important;
-  border-radius: 10px !important;
-  padding: 12px 16px !important;
-  font-family: var(--font-body, 'Nunito Sans', sans-serif) !important;
-  font-size: 14px !important;
-  color: var(--color-main, #0A1A34) !important;
-  background: var(--color-bg-soft, #FAFAFA) !important;
-  transition: border-color 0.2s;
-}
-.jdgm-write-review-modal__field-input:focus {
-  border-color: var(--color-main, #0A1A34) !important;
-  outline: none !important;
-  box-shadow: 0 0 0 3px rgba(10, 26, 52, 0.08) !important;
-}
-.jdgm-write-review-modal__field-input::placeholder {
-  color: rgba(10, 26, 52, 0.35) !important;
-}
+      // Date
+      review.date = '';
+      var detailsEl = item.querySelector('.jm-reviewer-info__details');
+      if (detailsEl) {
+        var clusters = detailsEl.querySelectorAll(':scope > .jm-cluster');
+        if (clusters.length >= 2) {
+          var dateSpan = clusters[1].querySelector('.jm-text');
+          if (dateSpan) review.date = dateSpan.textContent.trim();
+        }
+      }
+      if (review.date === review.name) review.date = '';
 
-/* ── Helper / Hint Text ── */
-.jdgm-write-review-modal__field-help,
-.jdgm-write-review-modal__anonymous-help {
-  color: var(--color-copy, #555) !important;
-  font-size: 12px !important;
-  opacity: 0.7;
-}
+      // Title
+      var titleEl = item.querySelector('.jm-review-content__title-wrapper') ||
+                    item.querySelector('.jm-review-content__title');
+      review.title = titleEl ? titleEl.textContent.trim() : '';
 
-/* ── Primary Button (Next, Submit, Close) ── */
-.jdgm-write-review-modal__btn {
-  background-color: var(--color-main, #0A1A34) !important;
-  color: var(--color-secondary, #F1EBE1) !important;
-  border: none !important;
-  border-radius: 12px !important;
-  padding: 14px 32px !important;
-  font-family: var(--font-body, 'Nunito Sans', sans-serif) !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.jdgm-write-review-modal__btn:hover {
-  background-color: rgba(10, 26, 52, 0.9) !important;
-}
+      // Body
+      var bodyEl = item.querySelector('.jm-review-content__body') ||
+                   item.querySelector('.jm-review-body-wrapper');
+      review.body = bodyEl ? bodyEl.textContent.trim() : '';
 
-/* ── Back Button — Subtle text style ── */
-.jdgm-write-review-modal__btn--back {
-  background: none !important;
-  color: var(--color-main, #0A1A34) !important;
-  border: none !important;
-  padding: 14px 16px !important;
-  font-weight: 500 !important;
-  opacity: 0.6;
-}
-.jdgm-write-review-modal__btn--back:hover {
-  opacity: 1;
-  background: none !important;
-}
+      // Image
+      var imgEl = item.querySelector('.jm-media-thumbnail-list__thumbnail img');
+      review.image = null;
+      review.isVideo = false;
+      if (imgEl) {
+        review.image = imgEl.getAttribute('src') || imgEl.src || null;
+        if (review.image && review.image.indexOf('videodelivery.net') > -1) {
+          review.isVideo = true;
+        }
+      }
+      if (!review.image) {
+        var allImgs = item.querySelectorAll('img');
+        for (var ii = 0; ii < allImgs.length; ii++) {
+          var testSrc = allImgs[ii].getAttribute('src') || '';
+          if (testSrc && testSrc.indexOf('avatar') === -1) {
+            review.image = testSrc;
+            if (testSrc.indexOf('videodelivery.net') > -1) review.isVideo = true;
+            break;
+          }
+        }
+      }
 
-/* ── Contact Us / Leave Review Links ── */
-.jdgm-write-review-modal__btn--contact-us,
-.jdgm-write-review-modal__btn--leave-review {
-  background-color: var(--color-main, #0A1A34) !important;
-  color: var(--color-secondary, #F1EBE1) !important;
-  border-radius: 12px !important;
-}
+      reviews.push(review);
+    });
 
-/* ── Links inside the modal ── */
-.jdgm-write-review-modal a {
-  color: var(--color-main, #0A1A34) !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.jdgm-write-review-modal a:hover {
-  opacity: 0.7;
-}
+    return reviews;
+  }
 
-/* ── Media Upload Area ── */
-.jdgm-write-review-modal__field-group--media-upload {
-  border: 2px dashed rgba(10, 26, 52, 0.15) !important;
-  border-radius: 12px !important;
-  background: var(--color-bg-soft, #FAFAFA) !important;
-  transition: border-color 0.2s;
-}
-.jdgm-write-review-modal__field-group--media-upload:hover {
-  border-color: rgba(10, 26, 52, 0.3) !important;
-}
+  // ── Paginate through all pages ──
+  function loadAllPages(existingReviews, callback) {
+    var allReviews = existingReviews.slice(); // copy
+    var maxPages = 10; // safety limit
+    var currentPage = 1;
 
-/* Upload icon/link color */
-.jdgm-write-review-modal__field-group--media-upload a,
-.jdgm-write-review-modal__field-group--media-upload span {
-  color: var(--color-main, #0A1A34) !important;
-}
+    function loadNextPage() {
+      currentPage++;
+      if (currentPage > maxPages) {
+        callback(allReviews);
+        return;
+      }
 
-/* ── Checkbox (Post as anonymous) ── */
-.jdgm-write-review-modal__checkbox-custom {
-  border: 1.5px solid rgba(10, 26, 52, 0.2) !important;
-  border-radius: 4px !important;
-}
-.jdgm-write-review-modal__checkbox-input:checked + .jdgm-write-review-modal__checkbox-custom {
-  background-color: var(--color-main, #0A1A34) !important;
-  border-color: var(--color-main, #0A1A34) !important;
-}
-.jdgm-write-review-modal__checkbox-text {
-  color: var(--color-copy, #555) !important;
-  font-size: 13px !important;
-}
+      // Find and click the next page button
+      var nextBtn = hiddenWidget.querySelector(
+        '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
+      );
 
-/* ── Thank You Screen ── */
-.jdgm-write-review-modal__form--thank-you .jdgm-write-review-modal__title {
-  color: var(--color-main, #0A1A34) !important;
-}
+      if (!nextBtn) {
+        // No more pages
+        callback(allReviews);
+        return;
+      }
 
-/* ── Negative Resolution (Tell us more) ── */
-.jdgm-write-review-modal__negative-resolution-title {
-  font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
-  color: var(--color-main, #0A1A34) !important;
-}
+      nextBtn.click();
 
-/* ── Product Image — Rounded ── */
-.jdgm-write-review-modal__product-image img {
-  border-radius: 12px !important;
-}
+      // Wait for Judge.me to load the new page
+      // Watch for DOM changes in the review list
+      var pageLoaded = false;
+      var pageObserver = new MutationObserver(function() {
+        if (pageLoaded) return;
+        var items = hiddenWidget.querySelectorAll('.jm-review-item');
+        if (items.length > 0) {
+          pageLoaded = true;
+          pageObserver.disconnect();
 
-/* ── Terms & Privacy Links ── */
-.jdgm-write-review-modal__terms a {
-  color: var(--color-main, #0A1A34) !important;
-  font-size: 12px !important;
-}
+          // Wait 2 seconds for media to load (same timing fix as before)
+          setTimeout(function() {
+            var pageReviews = extractReviewsFromDOM();
 
+            // De-duplicate by name + body (in case of overlap)
+            pageReviews.forEach(function(newReview) {
+              var isDupe = allReviews.some(function(existing) {
+                return existing.name === newReview.name &&
+                       existing.body === newReview.body;
+              });
+              if (!isDupe) {
+                allReviews.push(newReview);
+              }
+            });
 
-================================================================================
-WHAT THIS CHANGES (VISUAL SUMMARY)
-================================================================================
+            // Try next page
+            loadNextPage();
+          }, 2000);
+        }
+      });
 
-  ELEMENT               BEFORE (Teal)          AFTER (AIRA Brand)
-  ────────────────────  ─────────────────────  ─────────────────────
-  Stars                 Teal (#108474)         Gold (#D4A853)
-  Empty stars           Teal outline           Gold outline
-  Next/Submit button    Teal bg, white text    Navy bg, cream text
-  Button radius         8px                    12px (rounded-xl)
-  Back button           Teal styled            Subtle text, no bg
-  Modal card            No radius, no shadow   16px radius, soft shadow
-  Overlay               Black                  Navy tint + blur
-  Headings              Nunito Sans 500        Satoshi 700
-  Heading color         Grey (#333)            Navy (#0A1A34)
-  Form inputs           Default browser        Soft bg, navy border
-  Input focus           Default                Navy border + glow
-  Upload area           Default                Dashed navy border
-  Links                 Teal                   Navy underline
-  Checkbox (checked)    Teal                   Navy
-  Close button (X)      Default                Navy, subtle
+      pageObserver.observe(hiddenWidget, { childList: true, subtree: true });
+
+      // Fallback timeout — if page doesn't load within 5s, move on
+      setTimeout(function() {
+        if (!pageLoaded) {
+          pageLoaded = true;
+          pageObserver.disconnect();
+          callback(allReviews);
+        }
+      }, 5000);
+    }
+
+    loadNextPage();
+  }
+
+  // ── Final build with all reviews ──
+  function finishBuild(allReviews) {
+    // Get summary data
+    var totalCount = allReviews.length;
+    var avgRating = 0;
+    var summaryHeader = hiddenWidget.querySelector('.jm-review-widget-minimal-header');
+    if (summaryHeader) {
+      var text = summaryHeader.textContent || '';
+      var countMatch = text.match(/(\d+)\s*review/);
+      if (countMatch) totalCount = parseInt(countMatch[1]);
+      var ratingMatch = text.match(/([\d.]+)/);
+      if (ratingMatch) avgRating = parseFloat(ratingMatch[1]);
+    }
+    if (!avgRating && allReviews.length > 0) {
+      avgRating = allReviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / allReviews.length;
+    }
+
+    // Store for lightbox access
+    storedReviews = allReviews;
+
+    buildCarousel(allReviews, totalCount, avgRating);
+
+    // Build the photo strip (new feature)
+    buildPhotoStrip(allReviews);
+  }
+
+────────────────────────────────────────────────────────────────────────
+
+ALSO UPDATE the tryExtract() function to call the new extractAndRender:
+
+The existing tryExtract already calls extractAndRender(items).
+Change it to just call extractAndRender() with no arguments — the
+new version reads the DOM itself:
+
+  function tryExtract() {
+    if (hasRun) return;
+    var items = hiddenWidget.querySelectorAll('.jm-review-item');
+    if (items.length > 0) {
+      hasRun = true;
+      setTimeout(function() {
+        extractAndRender();
+      }, 2000);
+    }
+  }
+
+(Remove the `items` parameter from the extractAndRender call and
+from the function signature.)
 
 
 ================================================================================
-WHERE TO PUT IT
+PART 2: PHOTO STRIP CAROUSEL
 ================================================================================
 
-These styles go in the SAME <style> block as the review section CSS.
-Even though the modal HTML lives outside our section (Judge.me injects
-it into the body), CSS rules are global — they'll still apply.
+A horizontal row of all user-submitted review photos/video thumbnails,
+displayed below the main review card carousel. Each image is a square
+thumbnail that can be clicked to open the lightbox modal.
 
-If the styles don't take effect, it's a specificity issue. Every rule
-above uses !important which should override Judge.me's defaults. If a
-specific rule still doesn't work, add the parent selector:
+────────────────────────────────────────────────────────────────────────
+STEP A: ADD HTML CONTAINER
+────────────────────────────────────────────────────────────────────────
 
-  body .jdgm-write-review-modal .jdgm-write-review-modal__btn { ... }
+Add this HTML right AFTER the carousel navigation (.reviews-nav) and
+BEFORE the "Write a review" CTA button. It starts empty — JS fills it.
 
-This gives extra specificity without changing the structure.
+  <!-- Photo Strip -->
+  <div class="reviews-photo-strip" style="display:none;">
+    <div class="reviews-photo-strip__track">
+      <!-- JS populates with clickable thumbnails -->
+    </div>
+    <button class="reviews-photo-strip__arrow reviews-photo-strip__arrow--next" aria-label="Scroll photos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+
+
+────────────────────────────────────────────────────────────────────────
+STEP B: ADD CSS FOR PHOTO STRIP
+────────────────────────────────────────────────────────────────────────
+
+Add to the <style> block:
+
+  /* ── Photo Strip Carousel ── */
+  .reviews-photo-strip {
+    position: relative;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .reviews-photo-strip__track {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE */
+    padding: 4px 0;
+  }
+  .reviews-photo-strip__track::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .reviews-photo-strip__thumb {
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .reviews-photo-strip__thumb:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(10, 26, 52, 0.12);
+  }
+
+  .reviews-photo-strip__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Video play overlay on thumbnails */
+  .reviews-photo-strip__thumb--video::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230A1A34'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
+    background-size: 18px;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+  }
+
+  /* Scroll arrow */
+  .reviews-photo-strip__arrow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, transparent, var(--color-cream-light, rgb(248,245,240)) 50%);
+    color: var(--color-main, #0A1A34);
+    z-index: 2;
+    transition: opacity 0.2s;
+  }
+  .reviews-photo-strip__arrow:hover {
+    opacity: 0.8;
+  }
+
+  /* Mobile: smaller thumbnails */
+  @media (max-width: 768px) {
+    .reviews-photo-strip__thumb {
+      width: 110px;
+      height: 110px;
+      border-radius: 10px;
+    }
+  }
+
+
+────────────────────────────────────────────────────────────────────────
+STEP C: ADD JS — buildPhotoStrip() FUNCTION
+────────────────────────────────────────────────────────────────────────
+
+Add this function inside the IIFE, after the buildCarousel() function:
+
+  // ── Photo Strip: All user-submitted images ──
+  function buildPhotoStrip(reviews) {
+    var stripContainer = section.querySelector('.reviews-photo-strip');
+    var stripTrack = section.querySelector('.reviews-photo-strip__track');
+    var stripArrow = section.querySelector('.reviews-photo-strip__arrow--next');
+
+    if (!stripContainer || !stripTrack) return;
+
+    // Filter to reviews that have images
+    var mediaReviews = reviews.filter(function(r) { return !!r.image; });
+
+    // Need at least 2 photos to show the strip
+    if (mediaReviews.length < 2) return;
+
+    // Build thumbnails
+    stripTrack.innerHTML = '';
+    mediaReviews.forEach(function(review, idx) {
+      var thumb = document.createElement('div');
+      thumb.className = 'reviews-photo-strip__thumb' +
+        (review.isVideo ? ' reviews-photo-strip__thumb--video' : '');
+      thumb.setAttribute('data-review-index', reviews.indexOf(review));
+
+      thumb.innerHTML = '<img src="' + review.image + '" alt="Review by ' + review.name + '" loading="lazy" />';
+
+      stripTrack.appendChild(thumb);
+    });
+
+    // Show the strip
+    stripContainer.style.display = 'block';
+
+    // ── Click → open lightbox ──
+    stripTrack.addEventListener('click', function(e) {
+      var thumb = e.target.closest('.reviews-photo-strip__thumb');
+      if (!thumb) return;
+      var idx = parseInt(thumb.getAttribute('data-review-index'));
+      if (!isNaN(idx) && storedReviews[idx]) {
+        openLightbox(storedReviews[idx]);
+      }
+    });
+
+    // ── Scroll arrow ──
+    if (stripArrow) {
+      stripArrow.addEventListener('click', function() {
+        stripTrack.scrollBy({ left: 300, behavior: 'smooth' });
+      });
+
+      // Hide arrow when scrolled to end
+      stripTrack.addEventListener('scroll', function() {
+        var atEnd = stripTrack.scrollLeft + stripTrack.clientWidth >= stripTrack.scrollWidth - 10;
+        stripArrow.style.opacity = atEnd ? '0' : '1';
+        stripArrow.style.pointerEvents = atEnd ? 'none' : 'auto';
+      });
+    }
+
+    // ── Touch swipe (native scroll handles it, but enable momentum) ──
+    stripTrack.style.webkitOverflowScrolling = 'touch';
+  }
+
+
+────────────────────────────────────────────────────────────────────────
+
+IMPORTANT: The buildPhotoStrip() call is already included in the
+finishBuild() function from Part 1 above:
+
+  buildCarousel(allReviews, totalCount, avgRating);
+  buildPhotoStrip(allReviews);  // ← this line
+
+
+================================================================================
+VISUAL RESULT
+================================================================================
+
+After these changes:
+  - The main carousel shows ALL 13 reviews (7 slides of 2 on desktop)
+  - Below the carousel nav (dots + arrows), a horizontal strip of
+    square photo thumbnails appears
+  - Each thumbnail is 140x140px, rounded corners, hover scale effect
+  - Video thumbnails get a small play icon overlay
+  - Clicking any thumbnail opens the lightbox modal with the full
+    review details
+  - A gradient fade + arrow on the right edge hints at more photos
+  - On mobile, thumbnails shrink to 110x110px and scroll naturally
+    with touch
+
+
+================================================================================
+LOADING SEQUENCE (TIMING)
+================================================================================
+
+  1. Page loads → MutationObserver detects .jm-review-item (page 1)
+  2. Wait 2s → extract page 1 reviews (5 reviews)
+  3. Click "next page" in hidden widget
+  4. MutationObserver detects new items → wait 2s → extract page 2
+  5. Click "next page" again
+  6. Extract page 3 → no more pages
+  7. finishBuild() called with all 13 reviews
+  8. buildCarousel() renders 13 cards in the carousel
+  9. buildPhotoStrip() renders photo thumbnails for all image reviews
+
+Total load time: ~5-7 seconds from page load to full carousel.
+The skeleton loader stays visible until all pages are extracted.
+
+This is slower than before (single page was ~3s), but the user sees
+the skeleton animation during loading, and having all 13 reviews is
+worth the extra few seconds.
 
 
 ================================================================================
 DO NOT CHANGE
 ================================================================================
-- The HTML structure (Judge.me owns this, we can only override CSS)
-- The JS that triggers the modal (.jm-button--primary click)
-- Any functionality (form submission, validation, file upload)
-- The review extraction or carousel code
+- Card HTML template / styling (handled by previous briefs)
+- Lightbox modal code (already works — photo strip reuses it)
+- Section heading / eyebrow / summary
+- Hidden widget setup
+- Star SVGs
 ================================================================================

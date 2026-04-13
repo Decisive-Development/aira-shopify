@@ -591,3 +591,71 @@ Shopify collection notes:
 **Judge.me popup/badge hiding:**
 - Moved from judgeme-reviews.liquid into custom-reviews.liquid `<style>` block.
 - Hides: `.jdgm-preview-badge`, `.jdgm-all-reviews-badge`, `.jdgm-carousel-wrapper`, `.jdgm-overlay`, `.jdgm-review-request-widget`, `.jdgm-modal`, `.jdgm-toast`.
+
+### Session 23 — Review Lightbox Modal + Judge.me Modal Branding (11 April 2026)
+
+**Lightbox modal (sections/custom-reviews.liquid):**
+- Clicking a review card's image/video opens a lightbox modal showing media on the left and review details on the right.
+- Modal HTML shell appended before `</section>`: backdrop + dialog + media area + details panel (reviewer, stars, title, body, helpful).
+- `storedReviews` array stored at IIFE scope, populated after `buildCarousel()` call.
+- Image containers get `data-review-index` attribute + `cursor-pointer` class. Click delegation on the track element.
+- `openLightbox(review)` populates modal: injects `<img>` for photos, `<iframe>` for Cloudflare Stream videos (extracts video ID from `videodelivery.net` thumbnail URL).
+- Video iframe: `aspect-ratio: 9/16`, autoplay, poster param, `background: transparent`.
+- `closeLightbox()` hides modal, removes body scroll lock, kills video playback by clearing iframe src.
+
+**Close button evolution (4 iterations):**
+- V1: Absolute positioned inside dialog — failed on mobile (iframe captured touch events).
+- V2: Added `touchend` handlers + `stopPropagation` — still failed due to `touchmove` prevention handler disrupting touch chain.
+- V3: Inline `onclick` + `ontouchstart="this.click()"` — worked but still inside dialog.
+- V4 (final): Moved button outside `.review-lightbox__dialog` to be direct child of `.review-lightbox` overlay. Changed to `position: fixed`, `z-index: 10001` (above overlay's 9999). Dark semi-transparent bg (`rgba(0,0,0,0.5)`) with white text — visible over any image/video. 44px tap target. `touch-action: manipulation`. Inline `onclick` as primary handler, event delegation on lightbox container as backup (click + touchend).
+- Root cause of mobile failure: iframes capture touch events within their bounds regardless of sibling z-index. Only fix is to take the button out of the iframe's stacking context entirely via `position: fixed`.
+
+**Desktop lightbox layout:**
+- Side-by-side: 45% media / 55% details.
+- Details panel: `justify-content: center`, `gap: 16px`, `padding: 36px 32px`.
+- Date: `white-space: nowrap`.
+- Dialog: `max-width: 900px`, `max-height: 85vh`, `border-radius: 16px`, scale-in animation.
+- Backdrop: `rgba(0,0,0,0.7)` with `backdrop-filter: blur(4px)`.
+
+**Mobile lightbox layout:**
+- Floating card (not fullscreen): `padding: 24px 16px`, `border-radius: 16px`, `max-height: 80vh`.
+- Image: `max-height: 45vh`, `object-fit: contain`, soft bg (matches card).
+- Details: `flex: 1`, touch scroll (`-webkit-overflow-scrolling: touch`).
+- Smaller text: title 16px, body 14px.
+
+**Image rendering:**
+- `object-fit: contain` (not cover) — shows full image without cropping selfies.
+- `background: var(--color-bg-soft, #FAFAFA)` on images — any letterbox space matches card bg (no visible bars).
+- Media container bg also `var(--color-bg-soft)` instead of `#000`.
+
+**Judge.me "Write a Review" modal branding (CSS overrides in same `<style>` block):**
+- Judge.me modal uses `.jdgm-write-review-modal__*` classes (NOT `.jm-*` revamp classes).
+- CSS variable overrides: `--jdgm-primary-color`, `--jdgm-btn-primary-bg-color`, `--jdgm-btn-primary-text-color`, `--jdgm-accent-color`, `--jdgm-star-color` all set with `!important`.
+- Overlay: navy tint `rgba(10,26,52,0.6)` + blur.
+- Content card: `border-radius: 16px`, `max-width: 520px`, soft shadow.
+- Stars: gold `#D4A853` (fill + stroke + color on `.jdgm-star svg path`). Empty stars: transparent fill, gold stroke, `opacity: 0.3`.
+- Headings: Satoshi 700, navy.
+- Form inputs: `bg-bg-soft`, navy border, `border-radius: 10px`, navy focus ring + glow.
+- Two button systems discovered:
+  - `.jdgm-write-review-modal__btn` — "Contact us", "Leave a review" action buttons.
+  - `.jdgm-write-review-modal__nav-btn` — "Next", "Back", "Close" navigation buttons.
+  - Both now styled: navy bg + cream text, `border-radius: 12px`. Back button: subtle text style, no bg.
+- Upload area: dashed navy border, soft bg.
+- Checkbox: navy when checked.
+- Links: navy underline.
+- Product image: `border-radius: 12px`.
+- Field ordering fix: CSS `order: -2` on title field group, `order: -1` on body field group (Judge.me renders body before title by default).
+
+**Key learnings:**
+- iframes capture all touch events within their bounds on mobile — z-index alone cannot fix touch interception. Must use `position: fixed` to escape the stacking context.
+- `ontouchstart` is more reliable than `ontouchend` for close buttons — fires before any `touchmove` prevention can interfere.
+- Judge.me has TWO separate button class systems in its write-review modal: `__btn` for actions and `__nav-btn` for navigation.
+- Judge.me uses multiple CSS variables for button colors: `--jdgm-primary-color`, `--jdgm-btn-primary-bg-color`, `--jdgm-accent-color` — all must be overridden.
+
+### Session 24 — Cart Drawer Premium Refinements (12 April 2026)
+
+**Cart drawer polish (snippets/cart-drawer.liquid):**
+- **Upsell card border**: dashed 2px → solid 1px `border-border` token. Padding `p-4` → `p-5`. Reads as elevated card, not coupon bin.
+- **Upsell "Add" button**: solid navy → ghost/outline (`border-2 border-main text-main`), fills navy on hover. Makes Checkout the dominant CTA; Add is clearly secondary.
+- **Remove button**: replaced "Remove" text with 14px SVG trash icon at `text-copy/40` opacity, hover turns `text-highlight` orange. Cleaner, less prominent in a buy-focused UI.
+- **Trust badge**: added lock icon + "Secure checkout · Free UAE delivery" at `text-copy/30` opacity below upsell card. Fills the empty gap when cart is sparse while reinforcing shipping/security.

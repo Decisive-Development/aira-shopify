@@ -20,7 +20,7 @@
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
         "use_gradient": true,
-        "overlay_color": "#0A1A34",
+        "overlay_color": "#0a1a34",
         "overlay_opacity": 30,
         "full_height": true,
         "container_width": "contained",
@@ -51,6 +51,7 @@
           "type": "step",
           "settings": {
             "step_number": "01",
+            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
             "step_heading": "Peel",
             "step_description": "Peel the adhesive tab from its backing."
           }
@@ -59,6 +60,7 @@
           "type": "step",
           "settings": {
             "step_number": "02",
+            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
             "step_description": "Place a tab on either side of your nose bridge."
           }
@@ -67,6 +69,7 @@
           "type": "step",
           "settings": {
             "step_number": "03",
+            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
             "step_heading": "Breathe",
             "step_description": "Attach the magnetic band and breathe freely all night."
           }
@@ -427,6 +430,20 @@
             "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could!</p>"
           }
         },
+        "question_EeFcrc": {
+          "type": "question",
+          "settings": {
+            "question": "How is Aira different from regular adhesive nasal strips?",
+            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> Aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
+          }
+        },
+        "question_LR3ReA": {
+          "type": "question",
+          "settings": {
+            "question": "How do I know which size is right for me?",
+            "answer": "<p>We've made finding your size easy. The Aira starter pack includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
+          }
+        },
         "faq_5": {
           "type": "question",
           "settings": {
@@ -440,21 +457,7 @@
             "question": "Do you ship to the GCC?",
             "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and free shipping is available above a certain order value. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
           }
-        },
-        "question_LR3ReA": {
-          "type": "question",
-          "settings": {
-            "question": "How do I know which size is right for me?",
-            "answer": "<p>We've made finding your size easy. The Aira starter pack includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
-          }
-        },
-        "question_EeFcrc": {
-          "type": "question",
-          "settings": {
-            "question": "How is Aira different from regular adhesive nasal strips?",
-            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> Aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
-          }
-        },
+        }
       },
       "block_order": [
         "faq_1",
