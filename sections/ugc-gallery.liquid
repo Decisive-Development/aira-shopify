@@ -16,15 +16,23 @@
 	}
 </style>
 
-<section class="py-16 md:py-24 bg-bg" data-ugc-section="{{ section.id }}">
+<section
+	class="py-16 md:py-24 bg-main"
+	style="background-image: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%), radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);"
+	data-ugc-section="{{ section.id }}"
+>
 	<div class="container-contained">
 
-		{%- render 'section-heading',
-			eyebrow: section.settings.eyebrow,
-			heading: section.settings.heading,
-			align: 'center',
-			size: 'md'
-		-%}
+		{%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
+			<div class="flex flex-col gap-2 md:gap-3 text-center">
+				{%- if section.settings.eyebrow != blank -%}
+					<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ section.settings.eyebrow }}</p>
+				{%- endif -%}
+				{%- if section.settings.heading != blank -%}
+					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight text-secondary">{{ section.settings.heading }}</h2>
+				{%- endif -%}
+			</div>
+		{%- endif -%}
 
 		{%- comment -%} Image row {%- endcomment -%}
 		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 snap-x snap-mandatory ugc-track" data-ugc-track>
@@ -59,17 +67,17 @@
 		</div>
 
 		{%- comment -%} Scroll progress bar {%- endcomment -%}
-		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full bg-bg-muted overflow-hidden">
-			<div class="h-full rounded-full bg-main transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
+		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full bg-white/10 overflow-hidden">
+			<div class="h-full rounded-full bg-secondary transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
 		</div>
 
 		{%- comment -%} Divider + CTA {%- endcomment -%}
-		<div class="border-t border-bg-muted mt-6 pt-6 text-center">
+		<div class="border-t border-white/10 mt-6 pt-6 text-center">
 			{%- if section.settings.handle != blank -%}
-				<p class="text-lg font-semibold text-main">{{ section.settings.handle }}</p>
+				<p class="text-lg font-semibold text-secondary">{{ section.settings.handle }}</p>
 			{%- endif -%}
 			{%- if section.settings.cta_text != blank -%}
-				<p class="text-base text-copy mt-1">{{ section.settings.cta_text }}</p>
+				<p class="text-base text-secondary opacity-75 mt-1">{{ section.settings.cta_text }}</p>
 			{%- endif -%}
 		</div>
 

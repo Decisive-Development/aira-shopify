@@ -688,7 +688,7 @@
   }
 </style>
 
-<section class="bg-cream-light" data-custom-reviews data-product-id="{{ review_product.id }}">
+<section class="bg-secondary" data-custom-reviews data-product-id="{{ review_product.id }}">
   <div class="container-contained py-12 md:py-20">
 
     <!-- ── Section header ── -->
@@ -1074,7 +1074,7 @@
       var card = document.createElement('div');
       var hasImage = !!(review.image);
 
-      card.className = 'review-card flex bg-bg-soft rounded-2xl border border-main/6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden min-h-[300px]' +
+      card.className = 'review-card flex bg-bg rounded-2xl border border-main/6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden min-h-[300px]' +
         (hasImage ? ' review-card--has-image' : ' review-card--text-only');
 
       var contentWidth = hasImage ? 'w-[60%]' : 'w-full';
