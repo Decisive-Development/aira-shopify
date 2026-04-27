@@ -1,0 +1,215 @@
+{%- comment -%}
+	Our Story — Hero
+	Navy section with eyebrow, centered headline, full-width landscape photo,
+	and supporting copy + meta row below.
+{%- endcomment -%}
+
+<section class="relative overflow-hidden bg-main text-secondary py-16 md:py-25">
+
+	{%- comment -%} Atmospheric radial washes (top-right blue, bottom-left teal) {%- endcomment -%}
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background:
+			radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%),
+			radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);"
+	></div>
+
+	<div class="relative z-10 container-contained">
+
+		{%- comment -%} Eyebrow {%- endcomment -%}
+		<div class="flex items-center justify-center gap-3 md:gap-3.5 mb-6 md:mb-8">
+			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+			<p class="font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0">
+				{{ section.settings.eyebrow | default: 'Our story' }}
+			</p>
+			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+		</div>
+
+		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
+		{%- liquid
+			assign hl_text = section.settings.headline
+			assign hl_accent = section.settings.headline_accent
+			if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
+				assign hl_accent_wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>'
+				assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
+			else
+				assign hl_html = hl_text
+			endif
+		-%}
+		<h1
+			class="font-heading font-normal text-[38px] md:text-[clamp(40px,5.4vw,76px)] leading-[1.08] md:leading-[1.05] tracking-[-0.025em] text-secondary text-center text-balance mx-auto mb-10 md:mb-16"
+			style="max-width: 18ch;"
+		>
+			{{ hl_html }}
+		</h1>
+
+		{%- comment -%} Landscape photograph (21:9 desktop / 4:5 mobile) {%- endcomment -%}
+		<div
+			class="relative w-full aspect-4/5 md:aspect-21/9 rounded-sm overflow-hidden border border-secondary/8"
+			{% if section.settings.hero_image == blank %}
+				style="background:
+					repeating-linear-gradient(135deg, rgba(241,235,225,0.04) 0 2px, transparent 2px 18px),
+					linear-gradient(160deg, #071226 0%, #1a2540 60%, #2d3a5a 100%);"
+			{% endif %}
+		>
+			{%- if section.settings.hero_image != blank -%}
+				{{
+					section.settings.hero_image
+					| image_url: width: 2400
+					| image_tag:
+						loading: 'eager',
+						class: 'absolute inset-0 w-full h-full object-cover',
+						widths: '600, 900, 1280, 1600, 2000, 2400',
+						alt: section.settings.hero_image_alt
+				}}
+			{%- else -%}
+				<div
+					class="absolute inset-0 pointer-events-none"
+					style="background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(155,183,212,0.10), transparent 65%);"
+				></div>
+				<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5 md:gap-2">
+					<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">Hero photograph</span>
+					<span class="font-body text-[10px] md:text-[11px] text-secondary/35">{% if request.design_mode %}{% endif %}lifestyle · dim-lit</span>
+				</div>
+			{%- endif -%}
+
+			{%- comment -%} Caption (bottom-right) {%- endcomment -%}
+			<div class="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-body text-[9.5px] md:text-[10.5px] uppercase tracking-[0.14em] text-tertiary-light/85">
+				{{ section.settings.photo_caption | default: 'Aira · 2025' }}
+			</div>
+		</div>
+
+		{%- comment -%} Supporting copy + meta row {%- endcomment -%}
+		<div class="mt-10 md:mt-16 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8 lg:gap-20 items-start">
+
+			{%- comment -%} Left: supporting paragraph {%- endcomment -%}
+			<p
+				class="font-body text-[16.5px] md:text-[19px] leading-[1.6] text-secondary/80 m-0"
+				style="max-width: 46ch;"
+			>
+				{{ section.settings.supporting_copy | default: 'Aira makes one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there.' }}
+			</p>
+
+			{%- comment -%} Right: meta items — desktop = 3-col grid, mobile = stacked rows {%- endcomment -%}
+			<div class="hidden lg:grid grid-cols-[repeat(3,auto)] gap-10 pt-1 justify-end">
+				{%- for block in section.blocks -%}
+					{%- if block.type == 'meta' -%}
+						<div {{ block.shopify_attributes }}>
+							<span class="block font-body text-[10.5px] uppercase tracking-[0.16em] text-tertiary-light/75 mb-2">
+								{{ block.settings.label }}
+							</span>
+							<span class="font-heading text-[16px] font-medium text-secondary tracking-[-0.005em]">
+								{{ block.settings.value }}
+							</span>
+						</div>
+					{%- endif -%}
+				{%- endfor -%}
+			</div>
+
+			{%- comment -%} Mobile: stacked rows with translucent dividers {%- endcomment -%}
+			<div class="lg:hidden border-t border-secondary/12">
+				{%- for block in section.blocks -%}
+					{%- if block.type == 'meta' -%}
+						<div
+							class="flex justify-between items-baseline py-4 border-b border-secondary/12"
+							{{ block.shopify_attributes }}
+						>
+							<span class="font-body text-[10.5px] uppercase tracking-[0.16em] text-tertiary-light/75">
+								{{ block.settings.label }}
+							</span>
+							<span class="font-heading text-[15px] font-medium text-secondary tracking-[-0.005em]">
+								{{ block.settings.value }}
+							</span>
+						</div>
+					{%- endif -%}
+				{%- endfor -%}
+			</div>
+
+		</div>
+
+	</div>
+
+</section>
+
+{% schema %}
+{
+	"name": "Our Story Hero",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Our story"
+		},
+		{
+			"type": "text",
+			"id": "headline",
+			"label": "Headline",
+			"default": "What if breathing well was the easiest part of your day?"
+		},
+		{
+			"type": "text",
+			"id": "headline_accent",
+			"label": "Headline accent phrase",
+			"info": "Phrase from the headline to highlight in editorial blue (must match exactly).",
+			"default": "breathing well"
+		},
+		{
+			"type": "image_picker",
+			"id": "hero_image",
+			"label": "Hero photograph",
+			"info": "21:9 landscape on desktop, 4:5 portrait on mobile. Editorial / dim-lit."
+		},
+		{
+			"type": "text",
+			"id": "hero_image_alt",
+			"label": "Hero image alt text"
+		},
+		{
+			"type": "text",
+			"id": "photo_caption",
+			"label": "Photo caption",
+			"default": "Aira · 2025"
+		},
+		{
+			"type": "text",
+			"id": "supporting_copy",
+			"label": "Supporting copy",
+			"default": "Aira makes one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there."
+		}
+	],
+	"blocks": [
+		{
+			"type": "meta",
+			"name": "Meta item",
+			"limit": 4,
+			"settings": [
+				{
+					"type": "text",
+					"id": "label",
+					"label": "Label",
+					"default": "Established"
+				},
+				{
+					"type": "text",
+					"id": "value",
+					"label": "Value",
+					"default": "2025"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Our Story Hero",
+			"blocks": [
+				{ "type": "meta", "settings": { "label": "Established", "value": "2025" } },
+				{ "type": "meta", "settings": { "label": "Made for", "value": "The GCC" } },
+				{ "type": "meta", "settings": { "label": "Products", "value": "One, for now" } }
+			]
+		}
+	]
+}
+{% endschema %}

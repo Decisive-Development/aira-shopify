@@ -1,0 +1,187 @@
+{%- comment -%}
+	Our Story — Tiles
+	Three image/copy tiles on cream background.
+	Desktop alternates image-left/right (use 'reverse' on a tile to put image on the right).
+	Mobile is always image-on-top.
+{%- endcomment -%}
+
+<section class="bg-secondary py-18 md:py-35">
+	<div class="container-contained max-w-[1200px] flex flex-col gap-20 md:gap-[140px]">
+
+		{%- for block in section.blocks -%}
+			{%- if block.type == 'tile' -%}
+
+				<article
+					class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 lg:gap-24 items-center"
+					{{ block.shopify_attributes }}
+				>
+
+					{%- comment -%} Image (4:5) {%- endcomment -%}
+					<div
+						class="relative w-full aspect-4/5 rounded-sm overflow-hidden border border-[#E6DFD2] bg-cream-light {% if block.settings.reverse %}lg:order-2{% else %}lg:order-1{% endif %}"
+						{% if block.settings.image == blank %}
+							style="background:
+								repeating-linear-gradient(135deg, rgba(10,26,52,0.04) 0 2px, transparent 2px 18px),
+								#F8F4EB;"
+						{% endif %}
+					>
+						{%- if block.settings.image != blank -%}
+							{{
+								block.settings.image
+								| image_url: width: 1200
+								| image_tag:
+									loading: 'lazy',
+									class: 'absolute inset-0 w-full h-full object-cover',
+									widths: '400, 600, 900, 1200',
+									alt: block.settings.image_alt
+							}}
+						{%- else -%}
+							<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
+								<span class="font-body text-[10.5px] md:text-[11px] uppercase tracking-[0.18em] text-copy/60">
+									{{ block.settings.image_label }}
+								</span>
+								<span class="font-body text-[10px] md:text-[10.5px] text-copy/40">
+									4:5 placeholder
+								</span>
+							</div>
+						{%- endif -%}
+
+						{%- comment -%} Index marker (top-left) {%- endcomment -%}
+						<span class="absolute top-4 left-4 md:top-5 md:left-5 font-body text-[10.5px] md:text-[11px] uppercase tracking-[0.16em] text-tertiary-light">
+							{{ forloop.index | prepend: '0' | slice: -2, 2 }}
+						</span>
+					</div>
+
+					{%- comment -%} Copy {%- endcomment -%}
+					<div class="{% if block.settings.reverse %}lg:order-1{% else %}lg:order-2{% endif %}">
+
+						{%- if block.settings.eyebrow != blank -%}
+							<p class="font-body text-[10.5px] md:text-[11px] uppercase tracking-[0.18em] text-highlight m-0 mb-4 md:mb-6">
+								{{ block.settings.eyebrow }}
+							</p>
+						{%- endif -%}
+
+						{%- if block.settings.heading != blank -%}
+							<h2
+								class="font-heading font-normal text-[28px] md:text-[clamp(30px,3.6vw,44px)] leading-[1.15] md:leading-[1.12] tracking-[-0.02em] text-main text-balance mb-5 md:mb-7"
+								style="max-width: 18ch;"
+							>
+								{{ block.settings.heading }}
+							</h2>
+						{%- endif -%}
+
+						{%- if block.settings.body != blank -%}
+							<div
+								class="font-body text-[16px] md:text-[17px] leading-[1.7] md:leading-[1.75] text-copy flex flex-col gap-3.5 md:gap-[18px]"
+								style="max-width: 46ch;"
+							>
+								{{ block.settings.body }}
+							</div>
+						{%- endif -%}
+
+					</div>
+
+				</article>
+
+			{%- endif -%}
+		{%- endfor -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Our Story Tiles",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [],
+	"blocks": [
+		{
+			"type": "tile",
+			"name": "Story tile",
+			"limit": 6,
+			"settings": [
+				{
+					"type": "text",
+					"id": "eyebrow",
+					"label": "Eyebrow",
+					"default": "Where it began"
+				},
+				{
+					"type": "text",
+					"id": "heading",
+					"label": "Heading",
+					"default": "A small thing, missed by most."
+				},
+				{
+					"type": "richtext",
+					"id": "body",
+					"label": "Body",
+					"info": "One or more paragraphs.",
+					"default": "<p>Aira began with restless nights — partners who couldn't sleep through snoring, mornings that started tired, gyms where breath gave out before the legs did.</p><p>The fix was always the same: breathe through the nose. Easy to say. Harder when your nasal passages are working against you.</p>"
+				},
+				{
+					"type": "image_picker",
+					"id": "image",
+					"label": "Image (4:5)"
+				},
+				{
+					"type": "text",
+					"id": "image_alt",
+					"label": "Image alt text"
+				},
+				{
+					"type": "text",
+					"id": "image_label",
+					"label": "Placeholder label",
+					"info": "Shown when no image is set.",
+					"default": "Origin · workshop"
+				},
+				{
+					"type": "checkbox",
+					"id": "reverse",
+					"label": "Image on right (desktop)",
+					"default": false
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Our Story Tiles",
+			"blocks": [
+				{
+					"type": "tile",
+					"settings": {
+						"eyebrow": "Where it began",
+						"heading": "A small thing, missed by most.",
+						"body": "<p>Aira began with restless nights — partners who couldn't sleep through snoring, mornings that started tired, gyms where breath gave out before the legs did.</p><p>The fix was always the same: breathe through the nose. Easy to say. Harder when your nasal passages are working against you.</p>",
+						"image_label": "Origin · workshop",
+						"reverse": false
+					}
+				},
+				{
+					"type": "tile",
+					"settings": {
+						"eyebrow": "How we work",
+						"heading": "We engineer for nights, not first impressions.",
+						"body": "<p>We didn't set out to sell tape. We set out to fix something almost everyone takes for granted — and almost no one does well.</p><p>We don't chase trends. We pay attention to physiology, materials, and the small details that make a product disappear into your routine.</p>",
+						"image_label": "Materials · detail",
+						"reverse": true
+					}
+				},
+				{
+					"type": "tile",
+					"settings": {
+						"eyebrow": "What we won't compromise",
+						"heading": "Built to last. Honest about what it is.",
+						"body": "<p>A reusable magnetic band, replaceable adhesive tabs — designed for months of use, not landfill cycles.</p><p>A strip helps you breathe. It isn't a cure. We won't pretend otherwise, or invent stats to sell harder. Tested in heat, made for the GCC.</p>",
+						"image_label": "Product · still life",
+						"reverse": false
+					}
+				}
+			]
+		}
+	]
+}
+{% endschema %}

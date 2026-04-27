@@ -1,0 +1,148 @@
+{%- comment -%}
+	Our Story — Closing
+	Full-bleed navy statement with eyebrow, headline, paragraph and two CTAs.
+	Text-only by design — no photograph.
+{%- endcomment -%}
+
+<section class="relative overflow-hidden bg-main text-secondary py-22 md:py-40">
+
+	{%- comment -%} Atmospheric radial washes (top-center blue, bottom-center teal) {%- endcomment -%}
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background:
+			radial-gradient(ellipse 80% 40% at 50% 0%, rgba(155,183,212,0.10), transparent 70%),
+			radial-gradient(ellipse 90% 50% at 50% 100%, rgba(80,162,167,0.10), transparent 70%);"
+	></div>
+
+	<div class="relative z-10 container-contained max-w-[880px] text-center">
+
+		{%- comment -%} Eyebrow with hairlines {%- endcomment -%}
+		<div class="flex items-center justify-center gap-3 md:gap-3.5 mb-6 md:mb-8">
+			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+			<p class="font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0">
+				{{ section.settings.eyebrow | default: 'Where we go from here' }}
+			</p>
+			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+		</div>
+
+		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
+		{%- liquid
+			assign hl_text = section.settings.headline
+			assign hl_accent = section.settings.headline_accent
+			if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
+				assign hl_accent_wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>'
+				assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
+			else
+				assign hl_html = hl_text
+			endif
+		-%}
+		<h2 class="font-heading font-normal text-[34px] md:text-[clamp(36px,5vw,64px)] leading-[1.1] md:leading-[1.08] tracking-[-0.02em] text-secondary text-balance mb-6 md:mb-8">
+			{{ hl_html }}
+		</h2>
+
+		{%- comment -%} Body paragraph {%- endcomment -%}
+		<p
+			class="font-body text-[16px] md:text-[18.5px] leading-[1.65] text-secondary/78 mx-auto mb-10 md:mb-14"
+			style="max-width: 52ch;"
+		>
+			{{ section.settings.body | default: "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for." }}
+		</p>
+
+		{%- comment -%} CTAs — stacked on mobile, inline on desktop {%- endcomment -%}
+		<div class="flex flex-col md:flex-row gap-5 md:gap-4 items-center justify-center flex-wrap">
+
+			{%- if section.settings.primary_cta_label != blank -%}
+				{%-
+					render 'cta-button',
+					label: section.settings.primary_cta_label,
+					url: section.settings.primary_cta_url,
+					variant: 'accent',
+					size: 'lg',
+					extra_classes: 'w-full md:w-auto'
+				-%}
+			{%- endif -%}
+
+			{%- if section.settings.secondary_cta_label != blank -%}
+				<a
+					href="{{ section.settings.secondary_cta_url | default: '/' }}"
+					class="font-body text-[15px] font-medium text-secondary py-1 px-2 border-b border-secondary/40 hover:border-secondary transition-colors"
+				>
+					{{ section.settings.secondary_cta_label }}
+				</a>
+			{%- endif -%}
+
+		</div>
+
+	</div>
+
+</section>
+
+{% schema %}
+{
+	"name": "Our Story Closing",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Where we go from here"
+		},
+		{
+			"type": "text",
+			"id": "headline",
+			"label": "Headline",
+			"default": "One product, done properly. Then the next."
+		},
+		{
+			"type": "text",
+			"id": "headline_accent",
+			"label": "Headline accent phrase",
+			"info": "Phrase from the headline to highlight in editorial blue (must match exactly).",
+			"default": "Then the next."
+		},
+		{
+			"type": "textarea",
+			"id": "body",
+			"label": "Body",
+			"default": "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for."
+		},
+		{
+			"type": "header",
+			"content": "Primary CTA"
+		},
+		{
+			"type": "text",
+			"id": "primary_cta_label",
+			"label": "Label",
+			"default": "Shop the starter kit"
+		},
+		{
+			"type": "url",
+			"id": "primary_cta_url",
+			"label": "Link"
+		},
+		{
+			"type": "header",
+			"content": "Secondary CTA"
+		},
+		{
+			"type": "text",
+			"id": "secondary_cta_label",
+			"label": "Label",
+			"default": "Back to home →"
+		},
+		{
+			"type": "url",
+			"id": "secondary_cta_url",
+			"label": "Link"
+		}
+	],
+	"presets": [
+		{
+			"name": "Our Story Closing"
+		}
+	]
+}
+{% endschema %}

@@ -27,15 +27,18 @@
 	if section.settings.background_image != blank
 		assign has_bg_image = true
 	endif
+
+	assign initial_index = 0
+	for block in section.blocks
+		assign title_lower = block.settings.title | downcase
+		if title_lower contains 'snoring'
+			assign initial_index = forloop.index0
+			break
+		endif
+	endfor
 -%}
 
 <style>
-	@property --border-progress {
-		syntax: "<angle>";
-		initial-value: 0deg;
-		inherits: false;
-	}
-
 	.he-card {
 		background: rgba(10, 26, 52, 0.12);
 		padding: 2px;
@@ -43,32 +46,6 @@
 
 	.he-card:hover {
 		background: rgba(10, 26, 52, 0.22);
-	}
-
-	.he-card.is-next {
-		--border-progress: 0deg;
-		background: conic-gradient(
-			from 0deg,
-			#FF4000 var(--border-progress),
-			rgba(10, 26, 52, 0.12) var(--border-progress)
-		);
-		animation: he-sweep 5s linear forwards;
-	}
-
-	.he-card.is-next:hover {
-		background: conic-gradient(
-			from 0deg,
-			#FF4000 var(--border-progress),
-			rgba(10, 26, 52, 0.22) var(--border-progress)
-		);
-	}
-
-	.he-card.sweep-paused {
-		animation-play-state: paused;
-	}
-
-	@keyframes he-sweep {
-		to { --border-progress: 360deg; }
 	}
 
 	@keyframes he-card-enter {
@@ -141,7 +118,7 @@
 				<div class="relative rounded-2xl overflow-hidden bg-main min-h-[420px] lg:min-h-[540px]">
 					{%- for block in section.blocks -%}
 						<div
-							class="absolute inset-0 flex flex-col transition-opacity duration-500 {% if forloop.first %}opacity-100{% else %}opacity-0 pointer-events-none{% endif %}"
+							class="absolute inset-0 flex flex-col transition-opacity duration-500 {% if forloop.index0 == initial_index %}opacity-100{% else %}opacity-0 pointer-events-none{% endif %}"
 							data-focus-panel="{{ forloop.index0 }}"
 						>
 							{%- comment -%} Image — top portion {%- endcomment -%}
@@ -161,12 +138,12 @@
 							</div>
 
 							{%- comment -%} Text — bottom {%- endcomment -%}
-							<div class="relative z-10 p-8 lg:p-10 flex flex-col gap-3 bg-main">
-								<h3 class="font-heading font-semibold text-white text-2xl lg:text-3xl leading-snug">
+							<div class="relative z-10 px-6 py-5 lg:p-10 flex flex-col gap-2 lg:gap-3 bg-main">
+								<h3 class="font-heading font-semibold text-white text-lg lg:text-3xl leading-snug">
 									{{ block.settings.title }}
 								</h3>
 								{%- if block.settings.description != blank -%}
-									<div class="text-base text-white/85 leading-relaxed max-w-lg">
+									<div class="text-sm lg:text-base text-white/85 leading-relaxed max-w-lg">
 										{{ block.settings.description }}
 									</div>
 								{%- endif -%}
@@ -190,7 +167,7 @@
 				<div class="grid grid-cols-2 gap-4 auto-rows-fr" data-card-grid role="list">
 					{%- for block in section.blocks -%}
 						<button
-							class="he-card rounded-2xl cursor-pointer aspect-square {% if forloop.first %}hidden{% endif %}"
+							class="he-card rounded-2xl cursor-pointer aspect-square {% if forloop.index0 == initial_index %}hidden{% endif %}"
 							data-effect-card="{{ forloop.index0 }}"
 							data-target="{{ section.id }}"
 							{{ block.shopify_attributes }}
@@ -257,17 +234,8 @@
 
 	var panels = root.querySelectorAll('[data-focus-panel]');
 	var cards  = root.querySelectorAll('[data-effect-card]');
-	var grid   = root.querySelector('[data-card-grid]');
-	var total        = cards.length;
-	var lockedIndex  = 0;
+	var lockedIndex  = {{ initial_index }};
 	var previewIndex = null;
-	var ROTATE_MS    = 5000;
-	var timer        = null;
-	var paused       = false;
-
-	function getNextIndex() {
-		return (lockedIndex + 1) % total;
-	}
 
 	function showPanel(index) {
 		panels.forEach(function (p, i) {
@@ -282,12 +250,9 @@
 	}
 
 	function syncCards() {
-		var nextIdx = getNextIndex();
-
 		cards.forEach(function (c, i) {
 			if (i === lockedIndex) {
 				c.classList.add('hidden');
-				c.classList.remove('is-next');
 			} else {
 				var wasHidden = c.classList.contains('hidden');
 				c.classList.remove('hidden');
@@ -299,15 +264,6 @@
 						c.removeEventListener('animationend', handler);
 					});
 				}
-
-				if (i === nextIdx) {
-					c.classList.remove('is-next');
-					void c.offsetHeight;
-					c.classList.add('is-next');
-					if (paused) c.classList.add('sweep-paused');
-				} else {
-					c.classList.remove('is-next');
-				}
 			}
 		});
 	}
@@ -318,7 +274,6 @@
 		previewIndex = null;
 		showPanel(index);
 		syncCards();
-		resetTimer();
 	}
 
 	function preview(index) {
@@ -333,17 +288,6 @@
 		showPanel(lockedIndex);
 	}
 
-	function rotateNext() {
-		lock(getNextIndex());
-	}
-
-	function resetTimer() {
-		clearTimeout(timer);
-		if (!paused) {
-			timer = setTimeout(rotateNext, ROTATE_MS);
-		}
-	}
-
 	cards.forEach(function (card) {
 		var idx = parseInt(card.getAttribute('data-effect-card'), 10);
 		card.addEventListener('click', function () { lock(idx); });
@@ -351,22 +295,7 @@
 		card.addEventListener('mouseleave', function () { endPreview(); });
 	});
 
-	grid.addEventListener('mouseenter', function () {
-		paused = true;
-		clearTimeout(timer);
-		cards.forEach(function (c) {
-			if (c.classList.contains('is-next')) c.classList.add('sweep-paused');
-		});
-	});
-	grid.addEventListener('mouseleave', function () {
-		paused = false;
-		cards.forEach(function (c) { c.classList.remove('sweep-paused'); });
-		endPreview();
-		resetTimer();
-	});
-
 	syncCards();
-	resetTimer();
 })();
 </script>
 

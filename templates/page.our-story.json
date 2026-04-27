@@ -1,0 +1,89 @@
+{
+  "sections": {
+    "hero": {
+      "type": "our-story-hero",
+      "blocks": {
+        "meta-1": {
+          "type": "meta",
+          "settings": {
+            "label": "Established",
+            "value": "2025"
+          }
+        },
+        "meta-2": {
+          "type": "meta",
+          "settings": {
+            "label": "Made for",
+            "value": "The GCC"
+          }
+        },
+        "meta-3": {
+          "type": "meta",
+          "settings": {
+            "label": "Products",
+            "value": "One, for now"
+          }
+        }
+      },
+      "block_order": ["meta-1", "meta-2", "meta-3"],
+      "settings": {
+        "eyebrow": "Our story",
+        "headline": "What if breathing well was the easiest part of your day?",
+        "headline_accent": "breathing well",
+        "photo_caption": "Aira · 2025",
+        "supporting_copy": "Aira makes one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there."
+      }
+    },
+    "tiles": {
+      "type": "our-story-tiles",
+      "blocks": {
+        "tile-1": {
+          "type": "tile",
+          "settings": {
+            "eyebrow": "Where it began",
+            "heading": "A small thing, missed by most.",
+            "body": "<p>Aira began with restless nights — partners who couldn't sleep through snoring, mornings that started tired, gyms where breath gave out before the legs did.</p><p>The fix was always the same: breathe through the nose. Easy to say. Harder when your nasal passages are working against you.</p>",
+            "image_label": "Origin · workshop",
+            "reverse": false
+          }
+        },
+        "tile-2": {
+          "type": "tile",
+          "settings": {
+            "eyebrow": "How we work",
+            "heading": "We engineer for nights, not first impressions.",
+            "body": "<p>We didn't set out to sell tape. We set out to fix something almost everyone takes for granted — and almost no one does well.</p><p>We don't chase trends. We pay attention to physiology, materials, and the small details that make a product disappear into your routine.</p>",
+            "image_label": "Materials · detail",
+            "reverse": true
+          }
+        },
+        "tile-3": {
+          "type": "tile",
+          "settings": {
+            "eyebrow": "What we won't compromise",
+            "heading": "Built to last. Honest about what it is.",
+            "body": "<p>A reusable magnetic band, replaceable adhesive tabs — designed for months of use, not landfill cycles.</p><p>A strip helps you breathe. It isn't a cure. We won't pretend otherwise, or invent stats to sell harder. Tested in heat, made for the GCC.</p>",
+            "image_label": "Product · still life",
+            "reverse": false
+          }
+        }
+      },
+      "block_order": ["tile-1", "tile-2", "tile-3"],
+      "settings": {}
+    },
+    "closing": {
+      "type": "our-story-closing",
+      "settings": {
+        "eyebrow": "Where we go from here",
+        "headline": "One product, done properly. Then the next.",
+        "headline_accent": "Then the next.",
+        "body": "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for.",
+        "primary_cta_label": "Shop the starter kit",
+        "primary_cta_url": "/products/aira-starter-kit",
+        "secondary_cta_label": "Back to home →",
+        "secondary_cta_url": "/"
+      }
+    }
+  },
+  "order": ["hero", "tiles", "closing"]
+}

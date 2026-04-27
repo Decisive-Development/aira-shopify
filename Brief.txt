@@ -1,502 +1,724 @@
 ================================================================================
-AIRA — REVIEWS: PAGINATION FIX + PHOTO STRIP CAROUSEL
+AIRA — "WHY AIRA" SECTION: COMPLETE REWRITE (V3)
 ================================================================================
 Date: 13 April 2026
-File: sections/custom-reviews.liquid
+File: sections/benefits-grid.liquid
 ================================================================================
 
-TWO CHANGES:
-  1. BUG FIX: Only 5 of 13 reviews are extracted (Judge.me paginates,
-     our code only reads page 1)
-  2. NEW FEATURE: Horizontal photo strip carousel showing all user-
-     submitted images, clickable to open the lightbox modal
+FULL REPLACEMENT. Delete everything in benefits-grid.liquid and paste
+this entire file. Do NOT try to merge with the existing code.
 
+WHY A REWRITE:
+The GSAP ScrollTrigger pin:true approach is fundamentally fragile.
+It manipulates the DOM (creates pin-spacers), depends on exact pixel
+measurements of all content above, and breaks on resize / refresh /
+monitor switch. Three rounds of patches couldn't fix it.
 
-================================================================================
-PART 1: PAGINATION FIX — EXTRACT ALL REVIEW PAGES
-================================================================================
+NEW APPROACH:
+  - CSS position:sticky for pinning (native browser, zero DOM mutation)
+  - A tall wrapper div provides the scroll distance (normal document flow)
+  - Plain scroll listener calculates progress (simple math, no caching)
+  - GSAP used ONLY for slide animations, NOT for scroll observation
+  - The section is fully self-contained — nothing leaks outside
 
-ROOT CAUSE:
-Judge.me loads 5 reviews per page by default. Our MutationObserver
-detects the first 5 .jm-review-item elements, waits 2 seconds for
-media, then extracts and builds the carousel. The remaining 8 reviews
-on pages 2 and 3 are never loaded.
-
-The hidden widget has pagination controls:
-  .jm-pagination-controls with buttons:
-  - "Go to previous page" (disabled on page 1)
-  - "Go to page 1", "Go to page 2", "Go to page 3"
-  - "Go to next page"
-
-FIX STRATEGY:
-After extracting page 1 reviews, click the "next page" button, wait
-for new reviews to load in the DOM, extract those, repeat until all
-pages are done. Then build the carousel with the complete set.
-
-────────────────────────────────────────────────────────────────────────
-
-REPLACE the extractAndRender() function with this new version that
-handles multi-page extraction:
-
-  function extractAndRender(items) {
-    observer.disconnect();
-    clearInterval(poll);
-
-    // Extract reviews from current page
-    var reviews = extractReviewsFromDOM();
-
-    // Check for more pages
-    var nextPageBtn = hiddenWidget.querySelector(
-      '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
-    );
-
-    if (nextPageBtn) {
-      // There are more pages — start paginating
-      loadAllPages(reviews, function(allReviews) {
-        finishBuild(allReviews);
-      });
-    } else {
-      // Single page — build immediately
-      finishBuild(reviews);
-    }
-  }
-
-  // ── Extract reviews from whatever is currently in the DOM ──
-  function extractReviewsFromDOM() {
-    var items = hiddenWidget.querySelectorAll('.jm-review-item');
-    var reviews = [];
-
-    items.forEach(function(item) {
-      var review = {};
-
-      // Star count
-      var starEl = item.querySelector('.jm-star-rating');
-      review.stars = 5;
-      if (starEl) {
-        var label = starEl.getAttribute('aria-label') || '';
-        var match = label.match(/(\d+)/);
-        if (match) review.stars = parseInt(match[1]);
-      }
-
-      // Name
-      var nameEl = item.querySelector('.jm-reviewer-info__name');
-      review.name = nameEl ? nameEl.textContent.trim() : 'Anonymous';
-      review.initial = review.name.charAt(0).toUpperCase();
-
-      // Date
-      review.date = '';
-      var detailsEl = item.querySelector('.jm-reviewer-info__details');
-      if (detailsEl) {
-        var clusters = detailsEl.querySelectorAll(':scope > .jm-cluster');
-        if (clusters.length >= 2) {
-          var dateSpan = clusters[1].querySelector('.jm-text');
-          if (dateSpan) review.date = dateSpan.textContent.trim();
-        }
-      }
-      if (review.date === review.name) review.date = '';
-
-      // Title
-      var titleEl = item.querySelector('.jm-review-content__title-wrapper') ||
-                    item.querySelector('.jm-review-content__title');
-      review.title = titleEl ? titleEl.textContent.trim() : '';
-
-      // Body
-      var bodyEl = item.querySelector('.jm-review-content__body') ||
-                   item.querySelector('.jm-review-body-wrapper');
-      review.body = bodyEl ? bodyEl.textContent.trim() : '';
-
-      // Image
-      var imgEl = item.querySelector('.jm-media-thumbnail-list__thumbnail img');
-      review.image = null;
-      review.isVideo = false;
-      if (imgEl) {
-        review.image = imgEl.getAttribute('src') || imgEl.src || null;
-        if (review.image && review.image.indexOf('videodelivery.net') > -1) {
-          review.isVideo = true;
-        }
-      }
-      if (!review.image) {
-        var allImgs = item.querySelectorAll('img');
-        for (var ii = 0; ii < allImgs.length; ii++) {
-          var testSrc = allImgs[ii].getAttribute('src') || '';
-          if (testSrc && testSrc.indexOf('avatar') === -1) {
-            review.image = testSrc;
-            if (testSrc.indexOf('videodelivery.net') > -1) review.isVideo = true;
-            break;
-          }
-        }
-      }
-
-      reviews.push(review);
-    });
-
-    return reviews;
-  }
-
-  // ── Paginate through all pages ──
-  function loadAllPages(existingReviews, callback) {
-    var allReviews = existingReviews.slice(); // copy
-    var maxPages = 10; // safety limit
-    var currentPage = 1;
-
-    function loadNextPage() {
-      currentPage++;
-      if (currentPage > maxPages) {
-        callback(allReviews);
-        return;
-      }
-
-      // Find and click the next page button
-      var nextBtn = hiddenWidget.querySelector(
-        '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
-      );
-
-      if (!nextBtn) {
-        // No more pages
-        callback(allReviews);
-        return;
-      }
-
-      nextBtn.click();
-
-      // Wait for Judge.me to load the new page
-      // Watch for DOM changes in the review list
-      var pageLoaded = false;
-      var pageObserver = new MutationObserver(function() {
-        if (pageLoaded) return;
-        var items = hiddenWidget.querySelectorAll('.jm-review-item');
-        if (items.length > 0) {
-          pageLoaded = true;
-          pageObserver.disconnect();
-
-          // Wait 2 seconds for media to load (same timing fix as before)
-          setTimeout(function() {
-            var pageReviews = extractReviewsFromDOM();
-
-            // De-duplicate by name + body (in case of overlap)
-            pageReviews.forEach(function(newReview) {
-              var isDupe = allReviews.some(function(existing) {
-                return existing.name === newReview.name &&
-                       existing.body === newReview.body;
-              });
-              if (!isDupe) {
-                allReviews.push(newReview);
-              }
-            });
-
-            // Try next page
-            loadNextPage();
-          }, 2000);
-        }
-      });
-
-      pageObserver.observe(hiddenWidget, { childList: true, subtree: true });
-
-      // Fallback timeout — if page doesn't load within 5s, move on
-      setTimeout(function() {
-        if (!pageLoaded) {
-          pageLoaded = true;
-          pageObserver.disconnect();
-          callback(allReviews);
-        }
-      }, 5000);
-    }
-
-    loadNextPage();
-  }
-
-  // ── Final build with all reviews ──
-  function finishBuild(allReviews) {
-    // Get summary data
-    var totalCount = allReviews.length;
-    var avgRating = 0;
-    var summaryHeader = hiddenWidget.querySelector('.jm-review-widget-minimal-header');
-    if (summaryHeader) {
-      var text = summaryHeader.textContent || '';
-      var countMatch = text.match(/(\d+)\s*review/);
-      if (countMatch) totalCount = parseInt(countMatch[1]);
-      var ratingMatch = text.match(/([\d.]+)/);
-      if (ratingMatch) avgRating = parseFloat(ratingMatch[1]);
-    }
-    if (!avgRating && allReviews.length > 0) {
-      avgRating = allReviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / allReviews.length;
-    }
-
-    // Store for lightbox access
-    storedReviews = allReviews;
-
-    buildCarousel(allReviews, totalCount, avgRating);
-
-    // Build the photo strip (new feature)
-    buildPhotoStrip(allReviews);
-  }
-
-────────────────────────────────────────────────────────────────────────
-
-ALSO UPDATE the tryExtract() function to call the new extractAndRender:
-
-The existing tryExtract already calls extractAndRender(items).
-Change it to just call extractAndRender() with no arguments — the
-new version reads the DOM itself:
-
-  function tryExtract() {
-    if (hasRun) return;
-    var items = hiddenWidget.querySelectorAll('.jm-review-item');
-    if (items.length > 0) {
-      hasRun = true;
-      setTimeout(function() {
-        extractAndRender();
-      }, 2000);
-    }
-  }
-
-(Remove the `items` parameter from the extractAndRender call and
-from the function signature.)
+This approach is what Apple, Stripe, and Linear use for their pinned
+scroll sections. It's battle-tested.
 
 
 ================================================================================
-PART 2: PHOTO STRIP CAROUSEL
+COMPLETE FILE — COPY EVERYTHING BELOW THIS LINE
 ================================================================================
 
-A horizontal row of all user-submitted review photos/video thumbnails,
-displayed below the main review card carousel. Each image is a square
-thumbnail that can be clicked to open the lightbox modal.
 
-────────────────────────────────────────────────────────────────────────
-STEP A: ADD HTML CONTAINER
-────────────────────────────────────────────────────────────────────────
+{% comment %}
+  ══════════════════════════════════════════════════════════════
+  WHY AIRA — Animated scroll section
+  CSS sticky + GSAP animations (no ScrollTrigger pin)
+  ══════════════════════════════════════════════════════════════
+{% endcomment %}
 
-Add this HTML right AFTER the carousel navigation (.reviews-nav) and
-BEFORE the "Write a review" CTA button. It starts empty — JS fills it.
+{%- assign total_blocks = section.blocks.size -%}
 
-  <!-- Photo Strip -->
-  <div class="reviews-photo-strip" style="display:none;">
-    <div class="reviews-photo-strip__track">
-      <!-- JS populates with clickable thumbnails -->
+<style>
+/* ================================================================
+   WHY AIRA — Layout
+   ================================================================ */
+
+/* Wrapper: tall div that provides scroll distance.
+   Height = 100vh per slide. This is the scroll "runway." */
+.why-aira-wrapper {
+  position: relative;
+  width: 100%;
+  /* Each slide gets 100vh of scroll distance */
+  height: calc({{ total_blocks }} * 100vh);
+}
+
+/* Sticky container: locks to the viewport while you scroll
+   through the wrapper. Pure CSS — no JS needed for pinning. */
+.why-aira-sticky {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg-soft, #FAFAFA);
+  z-index: 5;
+}
+
+/* ================================================================
+   WHY AIRA — Slides
+   ================================================================ */
+.why-aira__slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+  transition: none; /* GSAP handles transitions */
+}
+
+.why-aira__slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.why-aira__slide-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 60px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 80px);
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .why-aira__slide-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 80px 24px 40px;
+    text-align: center;
+  }
+}
+
+/* ================================================================
+   WHY AIRA — Text Content
+   ================================================================ */
+.why-aira__text {
+  position: relative;
+  z-index: 2;
+}
+
+.why-aira__eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-highlight, #FF4000);
+  font-weight: 700;
+  margin-bottom: 24px;
+  opacity: 0;
+}
+
+.why-aira__number {
+  font-family: var(--font-heading, 'Satoshi', sans-serif);
+  font-size: clamp(80px, 12vw, 140px);
+  font-weight: 800;
+  line-height: 0.9;
+  margin-bottom: 24px;
+  background: linear-gradient(
+    135deg,
+    var(--color-main, #0A1A34) 0%,
+    var(--color-teal, #50A2A7) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0;
+}
+
+.why-aira__accent-line {
+  width: 0;
+  height: 3px;
+  background: var(--color-highlight, #FF4000);
+  border-radius: 2px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 768px) {
+  .why-aira__accent-line {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.why-aira__heading {
+  font-family: var(--font-heading, 'Satoshi', sans-serif);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  color: var(--color-main, #0A1A34);
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+/* Word-by-word reveal wrappers */
+.why-aira__heading .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  margin-right: 0.25em;
+}
+
+.why-aira__heading .word-inner {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+.why-aira__body {
+  font-size: clamp(15px, 1.5vw, 18px);
+  color: var(--color-copy, #555);
+  line-height: 1.75;
+  max-width: 440px;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@media (max-width: 768px) {
+  .why-aira__body {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+/* ================================================================
+   WHY AIRA — Image Side
+   ================================================================ */
+.why-aira__image-side {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .why-aira__image-side {
+    order: -1;
+    max-height: 35vh;
+  }
+}
+
+.why-aira__product-img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 20px;
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+@media (max-width: 768px) {
+  .why-aira__product-img {
+    max-width: 240px;
+    max-height: 30vh;
+    object-fit: contain;
+  }
+}
+
+/* ================================================================
+   WHY AIRA — Progress Indicator (right edge)
+   ================================================================ */
+.why-aira__progress {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  .why-aira__progress {
+    right: 12px;
+    gap: 8px;
+  }
+}
+
+.why-aira__progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-main, #0A1A34);
+  opacity: 0.15;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  cursor: pointer;
+}
+
+.why-aira__progress-dot.is-active {
+  opacity: 1;
+  transform: scale(1.4);
+}
+
+.why-aira__progress-line {
+  width: 2px;
+  height: 40px;
+  background: rgba(10, 26, 52, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.why-aira__progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: var(--color-highlight, #FF4000);
+  transition: height 0.4s ease;
+}
+
+/* ================================================================
+   WHY AIRA — Background decorative circle
+   ================================================================ */
+.why-aira__bg-circle {
+  position: absolute;
+  width: clamp(300px, 50vw, 700px);
+  height: clamp(300px, 50vw, 700px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(80, 162, 167, 0.06) 0%,
+    transparent 70%
+  );
+  top: 50%;
+  right: -10%;
+  transform: translate(0, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+</style>
+
+
+{%- comment -%} ═══ HTML ═══ {%- endcomment -%}
+
+<div class="why-aira-wrapper" data-why-aira>
+
+  <div class="why-aira-sticky">
+
+    <!-- Decorative background -->
+    <div class="why-aira__bg-circle"></div>
+
+    <!-- Progress indicator -->
+    <div class="why-aira__progress">
+      {%- for block in section.blocks -%}
+        <div class="why-aira__progress-dot{% if forloop.first %} is-active{% endif %}"
+             data-dot-index="{{ forloop.index0 }}"></div>
+        {%- unless forloop.last -%}
+          <div class="why-aira__progress-line">
+            <div class="why-aira__progress-fill"></div>
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
     </div>
-    <button class="reviews-photo-strip__arrow reviews-photo-strip__arrow--next" aria-label="Scroll photos">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </button>
+
+    <!-- Slides -->
+    {%- for block in section.blocks -%}
+      <div class="why-aira__slide{% if forloop.first %} is-active{% endif %}"
+           data-slide-index="{{ forloop.index0 }}"
+           {{ block.shopify_attributes }}>
+        <div class="why-aira__slide-inner">
+
+          <!-- Text side -->
+          <div class="why-aira__text">
+            {%- if forloop.first -%}
+              <p class="why-aira__eyebrow">
+                {{ section.settings.eyebrow | default: 'Why Aira' }}
+              </p>
+            {%- endif -%}
+
+            <div class="why-aira__number">
+              {{ forloop.index | prepend: '0' | slice: -2, 2 }}
+            </div>
+
+            <div class="why-aira__accent-line"></div>
+
+            <h2 class="why-aira__heading" data-split-text>
+              {{ block.settings.heading }}
+            </h2>
+
+            <p class="why-aira__body">
+              {{ block.settings.body }}
+            </p>
+          </div>
+
+          <!-- Image side -->
+          <div class="why-aira__image-side">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 900 | image_tag:
+                class: 'why-aira__product-img',
+                loading: 'lazy'
+              }}
+            {%- elsif section.settings.image != blank -%}
+              {{ section.settings.image | image_url: width: 900 | image_tag:
+                class: 'why-aira__product-img',
+                loading: 'lazy'
+              }}
+            {%- else -%}
+              <img class="why-aira__product-img"
+                   src="https://placehold.co/500x660/FAFAFA/0A1A34?text=Set+image+in+editor"
+                   alt="Product placeholder" />
+            {%- endif -%}
+          </div>
+
+        </div>
+      </div>
+    {%- endfor -%}
+
   </div>
 
+</div>
 
-────────────────────────────────────────────────────────────────────────
-STEP B: ADD CSS FOR PHOTO STRIP
-────────────────────────────────────────────────────────────────────────
 
-Add to the <style> block:
+{%- comment -%} ═══ JAVASCRIPT ═══ {%- endcomment -%}
 
-  /* ── Photo Strip Carousel ── */
-  .reviews-photo-strip {
-    position: relative;
-    margin-top: 32px;
-    margin-bottom: 32px;
-    overflow: hidden;
-  }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 
-  .reviews-photo-strip__track {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE */
-    padding: 4px 0;
-  }
-  .reviews-photo-strip__track::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
+<script>
+(function() {
+  'use strict';
 
-  .reviews-photo-strip__thumb {
-    flex-shrink: 0;
-    width: 140px;
-    height: 140px;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .reviews-photo-strip__thumb:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 16px rgba(10, 26, 52, 0.12);
-  }
-
-  .reviews-photo-strip__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* Video play overlay on thumbnails */
-  .reviews-photo-strip__thumb--video::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 36px;
-    height: 36px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230A1A34'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
-    background-size: 18px;
-    background-repeat: no-repeat;
-    background-position: center;
-    pointer-events: none;
-  }
-
-  /* Scroll arrow */
-  .reviews-photo-strip__arrow {
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 48px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(to right, transparent, var(--color-cream-light, rgb(248,245,240)) 50%);
-    color: var(--color-main, #0A1A34);
-    z-index: 2;
-    transition: opacity 0.2s;
-  }
-  .reviews-photo-strip__arrow:hover {
-    opacity: 0.8;
-  }
-
-  /* Mobile: smaller thumbnails */
-  @media (max-width: 768px) {
-    .reviews-photo-strip__thumb {
-      width: 110px;
-      height: 110px;
-      border-radius: 10px;
+  /* ────────────────────────────────────────────────
+     Wait for GSAP to load, then initialise
+     ──────────────────────────────────────────────── */
+  function boot() {
+    if (typeof gsap === 'undefined') {
+      setTimeout(boot, 80);
+      return;
     }
+    init();
   }
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 
-────────────────────────────────────────────────────────────────────────
-STEP C: ADD JS — buildPhotoStrip() FUNCTION
-────────────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────
+     Main init
+     ──────────────────────────────────────────────── */
+  function init() {
+    var wrapper = document.querySelector('[data-why-aira]');
+    if (!wrapper) return;
 
-Add this function inside the IIFE, after the buildCarousel() function:
+    var sticky    = wrapper.querySelector('.why-aira-sticky');
+    var slides    = wrapper.querySelectorAll('.why-aira__slide');
+    var dots      = wrapper.querySelectorAll('.why-aira__progress-dot');
+    var fills     = wrapper.querySelectorAll('.why-aira__progress-fill');
+    var total     = slides.length;
 
-  // ── Photo Strip: All user-submitted images ──
-  function buildPhotoStrip(reviews) {
-    var stripContainer = section.querySelector('.reviews-photo-strip');
-    var stripTrack = section.querySelector('.reviews-photo-strip__track');
-    var stripArrow = section.querySelector('.reviews-photo-strip__arrow--next');
+    if (total === 0) return;
 
-    if (!stripContainer || !stripTrack) return;
+    var current     = 0;
+    var isAnimating = false;
 
-    // Filter to reviews that have images
-    var mediaReviews = reviews.filter(function(r) { return !!r.image; });
-
-    // Need at least 2 photos to show the strip
-    if (mediaReviews.length < 2) return;
-
-    // Build thumbnails
-    stripTrack.innerHTML = '';
-    mediaReviews.forEach(function(review, idx) {
-      var thumb = document.createElement('div');
-      thumb.className = 'reviews-photo-strip__thumb' +
-        (review.isVideo ? ' reviews-photo-strip__thumb--video' : '');
-      thumb.setAttribute('data-review-index', reviews.indexOf(review));
-
-      thumb.innerHTML = '<img src="' + review.image + '" alt="Review by ' + review.name + '" loading="lazy" />';
-
-      stripTrack.appendChild(thumb);
+    /* ── Split headings into word spans ── */
+    slides.forEach(function(slide) {
+      var h = slide.querySelector('[data-split-text]');
+      if (!h) return;
+      var words = h.textContent.trim().split(/\s+/);
+      h.innerHTML = words.map(function(w) {
+        return '<span class="word"><span class="word-inner">' + w + '</span></span>';
+      }).join('');
     });
 
-    // Show the strip
-    stripContainer.style.display = 'block';
+    /* ── Animate first slide in on load ── */
+    animateIn(slides[0]);
 
-    // ── Click → open lightbox ──
-    stripTrack.addEventListener('click', function(e) {
-      var thumb = e.target.closest('.reviews-photo-strip__thumb');
-      if (!thumb) return;
-      var idx = parseInt(thumb.getAttribute('data-review-index'));
-      if (!isNaN(idx) && storedReviews[idx]) {
-        openLightbox(storedReviews[idx]);
+    /* ══════════════════════════════════════════════
+       SCROLL LISTENER — replaces ScrollTrigger
+       ══════════════════════════════════════════════
+
+       How it works:
+       - wrapper is 300vh tall (3 slides × 100vh)
+       - sticky container sticks to top:0 while you
+         scroll through the wrapper
+       - We calculate progress from wrapper position:
+           progress = 0  → wrapper top at viewport top
+           progress = 1  → wrapper bottom at viewport bottom
+
+       This is pure math on getBoundingClientRect().
+       No caching. No measurement. No DOM mutation.
+       Works on resize, refresh, monitor switch — always.
+       ══════════════════════════════════════════════ */
+
+    function onScroll() {
+      var rect         = wrapper.getBoundingClientRect();
+      var wrapperH     = wrapper.offsetHeight;
+      var viewH        = window.innerHeight;
+      var scrollDist   = wrapperH - viewH;
+
+      if (scrollDist <= 0) return;
+
+      /* How far the wrapper top has scrolled past viewport top */
+      var scrolled = -rect.top;
+      var progress = Math.max(0, Math.min(1, scrolled / scrollDist));
+
+      /* Which slide should be active? */
+      var target = Math.min(Math.floor(progress * total), total - 1);
+
+      if (target !== current && !isAnimating) {
+        switchSlide(target);
       }
-    });
 
-    // ── Scroll arrow ──
-    if (stripArrow) {
-      stripArrow.addEventListener('click', function() {
-        stripTrack.scrollBy({ left: 300, behavior: 'smooth' });
+      /* Update progress bar fills */
+      updateFills(progress);
+    }
+
+    /* Use passive scroll listener for performance */
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          onScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    /* Also run once on load to set correct initial state */
+    onScroll();
+
+    /* ── Slide transition ── */
+    function switchSlide(newIndex) {
+      if (isAnimating || newIndex === current) return;
+      isAnimating = true;
+
+      var outSlide = slides[current];
+      var inSlide  = slides[newIndex];
+
+      animateOut(outSlide, function() {
+        outSlide.classList.remove('is-active');
+        outSlide.style.opacity = '0';
+
+        inSlide.classList.add('is-active');
+        inSlide.style.opacity = '1';
+
+        current = newIndex;
+
+        animateIn(inSlide, function() {
+          isAnimating = false;
+        });
       });
 
-      // Hide arrow when scrolled to end
-      stripTrack.addEventListener('scroll', function() {
-        var atEnd = stripTrack.scrollLeft + stripTrack.clientWidth >= stripTrack.scrollWidth - 10;
-        stripArrow.style.opacity = atEnd ? '0' : '1';
-        stripArrow.style.pointerEvents = atEnd ? 'none' : 'auto';
+      /* Update dots */
+      dots.forEach(function(dot, i) {
+        dot.classList.toggle('is-active', i === newIndex);
       });
     }
 
-    // ── Touch swipe (native scroll handles it, but enable momentum) ──
-    stripTrack.style.webkitOverflowScrolling = 'touch';
-  }
+    /* ── Animate slide IN ── */
+    function animateIn(slide, done) {
+      var num      = slide.querySelector('.why-aira__number');
+      var line     = slide.querySelector('.why-aira__accent-line');
+      var words    = slide.querySelectorAll('.word-inner');
+      var body     = slide.querySelector('.why-aira__body');
+      var img      = slide.querySelector('.why-aira__product-img');
+      var eyebrow  = slide.querySelector('.why-aira__eyebrow');
+
+      var tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        onComplete: done || function() {}
+      });
+
+      if (eyebrow) {
+        tl.fromTo(eyebrow,
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          0
+        );
+      }
+
+      if (num) {
+        tl.fromTo(num,
+          { opacity: 0, scale: 0.8, y: 30 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.7 },
+          0.1
+        );
+      }
+
+      if (line) {
+        tl.fromTo(line,
+          { width: 0 },
+          { width: 56, duration: 0.6 },
+          0.3
+        );
+      }
+
+      if (words.length) {
+        tl.fromTo(words,
+          { y: '110%' },
+          { y: '0%', duration: 0.5, stagger: 0.05 },
+          0.35
+        );
+      }
+
+      if (body) {
+        tl.fromTo(body,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          0.55
+        );
+      }
+
+      if (img) {
+        tl.fromTo(img,
+          { opacity: 0, scale: 0.92, y: 20 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.8 },
+          0.15
+        );
+      }
+    }
+
+    /* ── Animate slide OUT ── */
+    function animateOut(slide, done) {
+      var num     = slide.querySelector('.why-aira__number');
+      var body    = slide.querySelector('.why-aira__body');
+      var img     = slide.querySelector('.why-aira__product-img');
+      var words   = slide.querySelectorAll('.word-inner');
+      var eyebrow = slide.querySelector('.why-aira__eyebrow');
+
+      var tl = gsap.timeline({
+        defaults: { ease: 'power2.in' },
+        onComplete: done || function() {}
+      });
+
+      if (body)    tl.to(body,    { opacity: 0, y: -10, duration: 0.2 }, 0);
+      if (words.length) tl.to(words, { y: '-110%', duration: 0.25, stagger: 0.02 }, 0);
+      if (num)     tl.to(num,     { opacity: 0, y: -20, duration: 0.25 }, 0.05);
+      if (img)     tl.to(img,     { opacity: 0, scale: 0.95, duration: 0.25 }, 0);
+      if (eyebrow) tl.to(eyebrow, { opacity: 0, duration: 0.15 }, 0);
+    }
+
+    /* ── Update progress fill bars ── */
+    function updateFills(progress) {
+      var segSize = 1 / total;
+      fills.forEach(function(fill, i) {
+        var segStart = segSize * i;
+        var segEnd   = segSize * (i + 1);
+        var segProg  = Math.max(0, Math.min(1,
+          (progress - segStart) / (segEnd - segStart)
+        ));
+        fill.style.height = (segProg * 100) + '%';
+      });
+    }
+
+    /* ── Dot click: scroll to that slide ── */
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        var idx      = parseInt(dot.getAttribute('data-dot-index'), 10);
+        var wrapperH = wrapper.offsetHeight;
+        var viewH    = window.innerHeight;
+        var scrollD  = wrapperH - viewH;
+        var wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
+
+        /* Target scroll: place progress at the midpoint of that slide's range */
+        var targetProgress = (idx + 0.5) / total;
+        var targetScroll   = wrapperTop + (targetProgress * scrollD);
+
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+      });
+    });
+
+  } /* end init */
+})();
+</script>
 
 
-────────────────────────────────────────────────────────────────────────
-
-IMPORTANT: The buildPhotoStrip() call is already included in the
-finishBuild() function from Part 1 above:
-
-  buildCarousel(allReviews, totalCount, avgRating);
-  buildPhotoStrip(allReviews);  // ← this line
+{% schema %}
+{
+  "name": "Why Aira (Animated)",
+  "tag": "section",
+  "class": "shopify-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Why Aira"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Default product image",
+      "info": "Shared across all slides unless a slide has its own image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Benefit heading"
+        },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Body text",
+          "default": "<p>Describe this benefit.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide image (optional)",
+          "info": "Overrides the default image for this slide only"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Why Aira (Animated)",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "heading": "Opens your airway instantly",
+            "body": "<p>The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow.</p>"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "heading": "Stays put all night",
+            "body": "<p>Medical-grade adhesive keeps the strip in place through any sleeping position — no slipping, no peeling, no fuss.</p>"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "heading": "Reusable for months",
+            "body": "<p>Unlike disposable strips, Aira's magnetic design lasts for months — better for your wallet and the planet.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
 
 
 ================================================================================
-VISUAL RESULT
-================================================================================
-
-After these changes:
-  - The main carousel shows ALL 13 reviews (7 slides of 2 on desktop)
-  - Below the carousel nav (dots + arrows), a horizontal strip of
-    square photo thumbnails appears
-  - Each thumbnail is 140x140px, rounded corners, hover scale effect
-  - Video thumbnails get a small play icon overlay
-  - Clicking any thumbnail opens the lightbox modal with the full
-    review details
-  - A gradient fade + arrow on the right edge hints at more photos
-  - On mobile, thumbnails shrink to 110x110px and scroll naturally
-    with touch
-
-
-================================================================================
-LOADING SEQUENCE (TIMING)
-================================================================================
-
-  1. Page loads → MutationObserver detects .jm-review-item (page 1)
-  2. Wait 2s → extract page 1 reviews (5 reviews)
-  3. Click "next page" in hidden widget
-  4. MutationObserver detects new items → wait 2s → extract page 2
-  5. Click "next page" again
-  6. Extract page 3 → no more pages
-  7. finishBuild() called with all 13 reviews
-  8. buildCarousel() renders 13 cards in the carousel
-  9. buildPhotoStrip() renders photo thumbnails for all image reviews
-
-Total load time: ~5-7 seconds from page load to full carousel.
-The skeleton loader stays visible until all pages are extracted.
-
-This is slower than before (single page was ~3s), but the user sees
-the skeleton animation during loading, and having all 13 reviews is
-worth the extra few seconds.
-
-
-================================================================================
-DO NOT CHANGE
-================================================================================
-- Card HTML template / styling (handled by previous briefs)
-- Lightbox modal code (already works — photo strip reuses it)
-- Section heading / eyebrow / summary
-- Hidden widget setup
-- Star SVGs
+END OF FILE
 ================================================================================

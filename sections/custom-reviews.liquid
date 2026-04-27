@@ -63,6 +63,94 @@
     transition: background-color 0.3s ease;
   }
 
+  /* ── Photo Strip Carousel ── */
+  .reviews-photo-strip {
+    position: relative;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .reviews-photo-strip__track {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 4px 0;
+  }
+  .reviews-photo-strip__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .reviews-photo-strip__thumb {
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .reviews-photo-strip__thumb:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 16px rgba(10, 26, 52, 0.12);
+  }
+
+  .reviews-photo-strip__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .reviews-photo-strip__thumb--video::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230A1A34'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
+    background-size: 18px;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+  }
+
+  .reviews-photo-strip__arrow {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, transparent, var(--color-cream-light, rgb(248,245,240)) 50%);
+    color: var(--color-main, #0A1A34);
+    z-index: 2;
+    transition: opacity 0.2s;
+  }
+  .reviews-photo-strip__arrow:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .reviews-photo-strip__thumb {
+      width: 110px;
+      height: 110px;
+      border-radius: 10px;
+    }
+  }
+
   /* ── Review Lightbox ── */
   .review-lightbox {
     position: fixed;
@@ -646,6 +734,16 @@
       </button>
     </div>
 
+    <!-- Photo Strip -->
+    <div class="reviews-photo-strip" style="display:none;">
+      <div class="reviews-photo-strip__track">
+        <!-- JS populates with clickable thumbnails -->
+      </div>
+      <button class="reviews-photo-strip__arrow reviews-photo-strip__arrow--next" aria-label="Scroll photos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+
     <!-- ── Write a review CTA ── -->
     <div class="text-center mt-8">
       <button class="reviews-write-cta inline-block bg-main text-secondary border-none rounded-xl px-10 py-4 text-sm font-medium tracking-wide cursor-pointer transition-colors duration-200 hover:bg-main/90"
@@ -742,7 +840,7 @@
       // CRITICAL: Wait 2 seconds for Judge.me to finish populating media
       // thumbnails. They are added in a second render pass after review items.
       setTimeout(function() {
-        extractAndRender(items);
+        extractAndRender();
       }, 2000);
     }
   }
@@ -766,16 +864,33 @@
   }, 500);
 
   // ── Phase 2: Extract review data from hidden widget DOM ──
-  function extractAndRender(items) {
+  function extractAndRender() {
     observer.disconnect();
     clearInterval(poll);
 
+    var reviews = extractReviewsFromDOM();
+
+    var nextPageBtn = hiddenWidget.querySelector(
+      '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
+    );
+
+    if (nextPageBtn) {
+      loadAllPages(reviews, function(allReviews) {
+        finishBuild(allReviews);
+      });
+    } else {
+      finishBuild(reviews);
+    }
+  }
+
+  // ── Extract reviews from whatever is currently in the DOM ──
+  function extractReviewsFromDOM() {
+    var items = hiddenWidget.querySelectorAll('.jm-review-item');
     var reviews = [];
 
     items.forEach(function(item) {
       var review = {};
 
-      // Star count from aria-label "X out of 5 stars"
       var starEl = item.querySelector('.jm-star-rating');
       review.stars = 5;
       if (starEl) {
@@ -784,13 +899,10 @@
         if (match) review.stars = parseInt(match[1]);
       }
 
-      // Reviewer name
       var nameEl = item.querySelector('.jm-reviewer-info__name');
       review.name = nameEl ? nameEl.textContent.trim() : 'Anonymous';
       review.initial = review.name.charAt(0).toUpperCase();
 
-      // Date — SECOND cluster child inside .jm-reviewer-info__details
-      // First cluster = name, second cluster = date
       review.date = '';
       var detailsEl = item.querySelector('.jm-reviewer-info__details');
       if (detailsEl) {
@@ -800,34 +912,26 @@
           if (dateSpan) review.date = dateSpan.textContent.trim();
         }
       }
-      // Safety: if date equals name, clear it
       if (review.date === review.name) review.date = '';
 
-      // Title — only present on some reviews
       var titleEl = item.querySelector('.jm-review-content__title-wrapper') ||
                     item.querySelector('.jm-review-content__title');
       review.title = titleEl ? titleEl.textContent.trim() : '';
 
-      // Body text
       var bodyEl = item.querySelector('.jm-review-content__body') ||
                    item.querySelector('.jm-review-body-wrapper');
       review.body = bodyEl ? bodyEl.textContent.trim() : '';
 
-      // Image — inside a SIBLING .jm-cluster of .jm-review-item__body
-      // Selector: .jm-media-thumbnail-list__thumbnail img
       var imgEl = item.querySelector('.jm-media-thumbnail-list__thumbnail img');
       review.image = null;
       review.isVideo = false;
       if (imgEl) {
-        // Use getAttribute('src') — .src property can be empty for lazy images
         review.image = imgEl.getAttribute('src') || imgEl.src || null;
-        // Detect video thumbnails
         if (review.image && review.image.indexOf('videodelivery.net') > -1) {
           review.isVideo = true;
         }
       }
 
-      // Fallback: try any img inside the card that isn't the avatar
       if (!review.image) {
         var allImgs = item.querySelectorAll('img');
         for (var ii = 0; ii < allImgs.length; ii++) {
@@ -843,28 +947,92 @@
       reviews.push(review);
     });
 
-    // Get total count and average from Judge.me's data object (product-specific)
-    var totalCount = reviews.length;
+    return reviews;
+  }
+
+  // ── Paginate through all pages ──
+  function loadAllPages(existingReviews, callback) {
+    var allReviews = existingReviews.slice();
+    var maxPages = 10;
+    var currentPage = 1;
+
+    function loadNextPage() {
+      currentPage++;
+      if (currentPage > maxPages) {
+        callback(allReviews);
+        return;
+      }
+
+      var nextBtn = hiddenWidget.querySelector(
+        '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
+      );
+
+      if (!nextBtn) {
+        callback(allReviews);
+        return;
+      }
+
+      nextBtn.click();
+
+      var pageLoaded = false;
+      var pageObserver = new MutationObserver(function() {
+        if (pageLoaded) return;
+        var items = hiddenWidget.querySelectorAll('.jm-review-item');
+        if (items.length > 0) {
+          pageLoaded = true;
+          pageObserver.disconnect();
+
+          setTimeout(function() {
+            var pageReviews = extractReviewsFromDOM();
+
+            pageReviews.forEach(function(newReview) {
+              var isDupe = allReviews.some(function(existing) {
+                return existing.name === newReview.name &&
+                       existing.body === newReview.body;
+              });
+              if (!isDupe) {
+                allReviews.push(newReview);
+              }
+            });
+
+            loadNextPage();
+          }, 2000);
+        }
+      });
+
+      pageObserver.observe(hiddenWidget, { childList: true, subtree: true });
+
+      setTimeout(function() {
+        if (!pageLoaded) {
+          pageLoaded = true;
+          pageObserver.disconnect();
+          callback(allReviews);
+        }
+      }, 5000);
+    }
+
+    loadNextPage();
+  }
+
+  // ── Final build with all reviews ──
+  function finishBuild(allReviews) {
+    var totalCount = allReviews.length;
     var avgRating = 0;
     var productId = section.getAttribute('data-product-id');
 
-    // Primary: read from jdgm.data.reviewWidget which has actual product stats
     if (typeof jdgm !== 'undefined' && jdgm.data && jdgm.data.reviewWidget && productId) {
       var widgetData = jdgm.data.reviewWidget[productId];
       if (widgetData) {
         if (widgetData.reviewCount != null) totalCount = widgetData.reviewCount;
         if (widgetData.averageRating != null) avgRating = parseFloat(widgetData.averageRating);
-        // Try alternate keys
         if (!totalCount && widgetData.review_count != null) totalCount = widgetData.review_count;
         if (!avgRating && widgetData.average_rating != null) avgRating = parseFloat(widgetData.average_rating);
       }
     }
 
-    // Fallback: parse from header star aria-label + count text
-    if (!avgRating || totalCount <= reviews.length) {
+    if (!avgRating || totalCount <= allReviews.length) {
       var summaryHeader = hiddenWidget.querySelector('.jm-review-widget-minimal-header');
       if (summaryHeader) {
-        // Average from star element aria-label: "X.X out of 5 stars"
         if (!avgRating) {
           var headerStars = summaryHeader.querySelector('.jm-star-rating');
           if (headerStars) {
@@ -873,8 +1041,7 @@
             if (avgMatch) avgRating = parseFloat(avgMatch[1]);
           }
         }
-        // Count from text: look for "X reviews" but ignore shop-wide counts
-        if (totalCount <= reviews.length) {
+        if (totalCount <= allReviews.length) {
           var countEls = summaryHeader.querySelectorAll('.jm-text');
           countEls.forEach(function(el) {
             var t = el.textContent.trim();
@@ -885,13 +1052,14 @@
       }
     }
 
-    // Last resort: calculate from visible reviews
-    if (!avgRating && reviews.length > 0) {
-      avgRating = reviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / reviews.length;
+    if (!avgRating && allReviews.length > 0) {
+      avgRating = allReviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / allReviews.length;
     }
 
-    buildCarousel(reviews, totalCount, avgRating);
-    storedReviews = reviews;
+    storedReviews = allReviews;
+
+    buildCarousel(allReviews, totalCount, avgRating);
+    buildPhotoStrip(allReviews);
   }
 
   // ── Phase 3: Build the carousel ──
@@ -968,6 +1136,56 @@
 
     // Setup carousel navigation
     setupCarousel(reviews.length);
+  }
+
+  // ── Photo Strip: All user-submitted images ──
+  function buildPhotoStrip(reviews) {
+    var stripContainer = section.querySelector('.reviews-photo-strip');
+    var stripTrack = section.querySelector('.reviews-photo-strip__track');
+    var stripArrow = section.querySelector('.reviews-photo-strip__arrow--next');
+
+    if (!stripContainer || !stripTrack) return;
+
+    var mediaReviews = reviews.filter(function(r) { return !!r.image; });
+
+    if (mediaReviews.length < 2) return;
+
+    stripTrack.innerHTML = '';
+    mediaReviews.forEach(function(review) {
+      var thumb = document.createElement('div');
+      thumb.className = 'reviews-photo-strip__thumb' +
+        (review.isVideo ? ' reviews-photo-strip__thumb--video' : '');
+      thumb.setAttribute('data-review-index', reviews.indexOf(review));
+
+      thumb.innerHTML = '<img src="' + review.image + '" alt="Review by ' + review.name + '" loading="lazy" />';
+
+      stripTrack.appendChild(thumb);
+    });
+
+    stripContainer.style.display = 'block';
+
+    stripTrack.addEventListener('click', function(e) {
+      var thumb = e.target.closest('.reviews-photo-strip__thumb');
+      if (!thumb) return;
+      var idx = parseInt(thumb.getAttribute('data-review-index'));
+      if (!isNaN(idx) && storedReviews[idx]) {
+        openLightbox(storedReviews[idx]);
+      }
+    });
+
+    if (stripArrow) {
+      stripArrow.addEventListener('click', function() {
+        stripTrack.scrollBy({ left: 300, behavior: 'smooth' });
+      });
+
+      stripTrack.addEventListener('scroll', function() {
+        var atEnd = stripTrack.scrollLeft + stripTrack.clientWidth >= stripTrack.scrollWidth - 10;
+        stripArrow.style.opacity = atEnd ? '0' : '1';
+        stripArrow.style.pointerEvents = atEnd ? 'none' : 'auto';
+      });
+    }
+
+    stripTrack.style.webkitOverflowScrolling = 'touch';
   }
 
   // ── Phase 4: Carousel navigation ──
