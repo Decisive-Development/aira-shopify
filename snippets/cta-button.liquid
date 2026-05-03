@@ -4,7 +4,7 @@
 	Parameters:
 	  label         {String}  Button text (required)
 	  url           {String}  href — used when element is 'a' (default: '#')
-	  variant       {String}  'primary' | 'accent' | 'ghost' | 'inverse' | 'blue'  (default: 'primary')
+	  variant       {String}  'primary' | 'accent' | 'ghost' | 'ghost-light' | 'inverse' | 'blue' | 'blue-light'  (default: 'primary')
 	  size          {String}  'sm' | 'md' | 'lg'              (default: 'md')
 	  element       {String}  'a' | 'button'                  (default: 'a')
 	  button_type   {String}  'button' | 'submit' | 'reset'   (default: 'button')
@@ -28,10 +28,14 @@
 			assign btn_colors = 'bg-highlight text-white'
 		when 'ghost'
 			assign btn_colors = 'border-2 border-main text-main'
+		when 'ghost-light'
+			assign btn_colors = 'border border-secondary/50 text-secondary hover:bg-secondary/10'
 		when 'inverse'
 			assign btn_colors = 'bg-secondary text-main'
 		when 'blue'
 			assign btn_colors = 'bg-highlight-blue text-white'
+		when 'blue-light'
+			assign btn_colors = 'bg-tertiary-light text-main'
 	endcase
 
 	case btn_size

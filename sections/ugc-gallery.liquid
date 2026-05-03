@@ -1,5 +1,28 @@
 {%- assign ugc_blocks = section.blocks | where: "type", "testimonial" -%}
 
+{%- liquid
+	assign theme = section.settings.theme | default: 'dark'
+	if theme == 'light'
+		assign bg_class = 'bg-cream-light'
+		assign bg_style = ''
+		assign heading_color = 'text-title'
+		assign progress_track = 'bg-bg-muted'
+		assign progress_fill = 'bg-main'
+		assign border_color = 'border-bg-muted'
+		assign handle_color = 'text-main'
+		assign cta_color = 'text-copy'
+	else
+		assign bg_class = 'bg-main'
+		assign bg_style = 'background-image: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%), radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);'
+		assign heading_color = 'text-secondary'
+		assign progress_track = 'bg-white/10'
+		assign progress_fill = 'bg-secondary'
+		assign border_color = 'border-white/10'
+		assign handle_color = 'text-secondary'
+		assign cta_color = 'text-secondary opacity-75'
+	endif
+-%}
+
 {%- if ugc_blocks.size > 0 -%}
 
 <style>
@@ -17,8 +40,8 @@
 </style>
 
 <section
-	class="py-16 md:py-24 bg-main"
-	style="background-image: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%), radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);"
+	class="py-16 md:py-24 {{ bg_class }}"
+	style="{{ bg_style }}"
 	data-ugc-section="{{ section.id }}"
 >
 	<div class="container-contained">
@@ -29,7 +52,7 @@
 					<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ section.settings.eyebrow }}</p>
 				{%- endif -%}
 				{%- if section.settings.heading != blank -%}
-					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight text-secondary">{{ section.settings.heading }}</h2>
+					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight {{ heading_color }}">{{ section.settings.heading }}</h2>
 				{%- endif -%}
 			</div>
 		{%- endif -%}
@@ -67,17 +90,29 @@
 		</div>
 
 		{%- comment -%} Scroll progress bar {%- endcomment -%}
-		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full bg-white/10 overflow-hidden">
-			<div class="h-full rounded-full bg-secondary transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
+		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full {{ progress_track }} overflow-hidden">
+			<div class="h-full rounded-full {{ progress_fill }} transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
 		</div>
 
+		{%- comment -%} Optional shop CTA (rendered when label is set) {%- endcomment -%}
+		{%- if section.settings.shop_cta_label != blank -%}
+			<div class="mt-12 md:mt-16 flex justify-center">
+				<a
+					href="{{ section.settings.shop_cta_url | default: '#' }}"
+					class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight text-white px-10 py-4 w-full md:w-auto text-center"
+				>
+					{{ section.settings.shop_cta_label }}
+				</a>
+			</div>
+		{%- endif -%}
+
 		{%- comment -%} Divider + CTA {%- endcomment -%}
-		<div class="border-t border-white/10 mt-6 pt-6 text-center">
+		<div class="border-t {{ border_color }} mt-6 pt-6 text-center">
 			{%- if section.settings.handle != blank -%}
-				<p class="text-lg font-semibold text-secondary">{{ section.settings.handle }}</p>
+				<p class="text-lg font-semibold {{ handle_color }}">{{ section.settings.handle }}</p>
 			{%- endif -%}
 			{%- if section.settings.cta_text != blank -%}
-				<p class="text-base text-secondary opacity-75 mt-1">{{ section.settings.cta_text }}</p>
+				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text }}</p>
 			{%- endif -%}
 		</div>
 
@@ -199,6 +234,31 @@
 			"id": "cta_text",
 			"label": "Bottom text",
 			"default": "Share your experience — tag @aira.breathing"
+		},
+		{
+			"type": "select",
+			"id": "theme",
+			"label": "Theme",
+			"options": [
+				{ "value": "dark",  "label": "Dark (navy)" },
+				{ "value": "light", "label": "Light (cream)" }
+			],
+			"default": "dark"
+		},
+		{
+			"type": "header",
+			"content": "Shop CTA (optional)"
+		},
+		{
+			"type": "text",
+			"id": "shop_cta_label",
+			"label": "Button label",
+			"info": "Leave blank to hide the shop button."
+		},
+		{
+			"type": "url",
+			"id": "shop_cta_url",
+			"label": "Button link"
 		}
 	],
 	"blocks": [

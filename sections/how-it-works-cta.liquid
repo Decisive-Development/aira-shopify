@@ -1,0 +1,110 @@
+{%- comment -%}
+	How it works — Final CTA
+	Dark navy band with eyebrow / h2 / lead and two CTAs (orange filled + cream outline).
+{%- endcomment -%}
+
+<section class="w-full py-12 md:py-20" style="background: #0A1A34;">
+	<div class="container-contained text-center">
+
+		{%- if section.settings.eyebrow != blank -%}
+			<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+		{%- endif -%}
+
+		{%- if section.settings.heading != blank -%}
+			<h2 class="font-heading heading-weight text-3xl md:text-5xl tracking-tight text-secondary mb-3">{{ section.settings.heading }}</h2>
+		{%- endif -%}
+
+		{%- if section.settings.lead != blank -%}
+			<p class="text-secondary/60 text-base md:text-lg max-w-xl mx-auto mb-8">{{ section.settings.lead }}</p>
+		{%- endif -%}
+
+		<div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+			{%- if section.settings.primary_label != blank -%}
+				{%- render 'cta-button',
+					label: section.settings.primary_label,
+					url: section.settings.primary_url,
+					variant: 'accent',
+					size: 'lg'
+				-%}
+			{%- endif -%}
+			{%- if section.settings.secondary_label != blank -%}
+				{%- render 'cta-button',
+					label: section.settings.secondary_label,
+					url: section.settings.secondary_url,
+					variant: 'ghost-light',
+					size: 'lg'
+				-%}
+			{%- endif -%}
+		</div>
+
+	</div>
+</section>
+
+{%- comment -%}
+	Page-level JS: reveal-on-scroll + sticky step-rail active state.
+	Scoped to elements that exist on this page; safe to ship as-is.
+{%- endcomment -%}
+<script>
+(function () {
+	/* ── Reveal-on-scroll ── */
+	var revealEls = document.querySelectorAll('.reveal');
+	if (revealEls.length) {
+		if (!('IntersectionObserver' in window)) {
+			revealEls.forEach(function (el) { el.classList.add('in'); });
+		} else {
+			var io = new IntersectionObserver(function (entries) {
+				entries.forEach(function (e) {
+					if (e.isIntersecting) {
+						e.target.classList.add('in');
+						io.unobserve(e.target);
+					}
+				});
+			}, { threshold: 0.12 });
+			revealEls.forEach(function (el) { io.observe(el); });
+		}
+	}
+
+	/* ── Sticky step-rail active state ── */
+	var stepSections = document.querySelectorAll('[data-step-section]');
+	if (stepSections.length && 'IntersectionObserver' in window) {
+		function setActive(stepNum) {
+			document.querySelectorAll('.step-link').forEach(function (link) {
+				var s = link.getAttribute('data-step');
+				link.classList.toggle('is-active', s === String(stepNum));
+			});
+		}
+		var stepObserver = new IntersectionObserver(function (entries) {
+			/* Pick the entry closest to the top with the largest intersection ratio */
+			var best = null;
+			entries.forEach(function (e) {
+				if (!e.isIntersecting) return;
+				if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+			});
+			if (best) setActive(best.target.getAttribute('data-step-section'));
+		}, { rootMargin: '-30% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
+		stepSections.forEach(function (s) { stepObserver.observe(s); });
+	}
+})();
+</script>
+
+{% schema %}
+{
+	"name": "How it works — Final CTA",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "Ready when you are" },
+		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Three steps. One better night." },
+		{ "type": "textarea", "id": "lead",    "label": "Lead",    "default": "Every Aira Kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month." },
+		{ "type": "header", "content": "Primary CTA (orange)" },
+		{ "type": "text", "id": "primary_label", "label": "Label", "default": "Shop Aira Kit" },
+		{ "type": "url",  "id": "primary_url",   "label": "URL" },
+		{ "type": "header", "content": "Secondary CTA (ghost light)" },
+		{ "type": "text", "id": "secondary_label", "label": "Label", "default": "Re-watch tutorial" },
+		{ "type": "url",  "id": "secondary_url",   "label": "URL", "info": "Use #tutorialVideo to anchor back to the hero video." }
+	],
+	"presets": [
+		{ "name": "How it works — Final CTA" }
+	]
+}
+{% endschema %}

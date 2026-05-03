@@ -10,7 +10,8 @@
       "Bash(shopify theme:*)",
       "WebFetch(domain:www.intakebreathing.com)",
       "Bash(ls /c/code/aira-shopify/snippets/*.liquid)",
-      "Bash(xargs -n1 basename)"
+      "Bash(xargs -n1 basename)",
+      "Bash(dir \"c:\\\\Users\\\\tompe\\\\.claude\\\\projects\\\\c--code-aira-shopify\\\\memory\\\\\" 2>&1)"
     ]
   }
 }

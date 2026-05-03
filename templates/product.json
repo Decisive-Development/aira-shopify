@@ -148,7 +148,7 @@
         "eyebrow": "How it works",
         "heading": "3 steps to better breathing.",
         "tutorial_label": "For a more detailed guide, watch our short tutorial video.",
-        "tutorial_url": ""
+        "tutorial_url": "/pages/how-it-works"
       }
     },
     "benefits_grid": {
@@ -157,22 +157,19 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "heading": "Opens your airway instantly",
-            "description": "The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow."
+            "heading": "Opens your airway instantly"
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "heading": "Stays put all night",
-            "description": "Medical-grade adhesive holds through any sleeping position. The band weighs under 2 grams — most people forget it's there."
+            "heading": "Stays put all night"
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
-            "heading": "Reusable for months",
-            "description": "The magnetic bands last for months of nightly use. Only the adhesive tabs need replacing — keeping costs low."
+            "heading": "Reusable for months"
           }
         }
       },
@@ -182,8 +179,7 @@
         "benefit_3"
       ],
       "settings": {
-        "eyebrow": "Why Aira",
-        "heading": "Why Aira works."
+        "eyebrow": "Why Aira"
       }
     },
     "product_features_grid": {
@@ -329,7 +325,7 @@
         "eyebrow": "The science of sleep",
         "heading": "Better breathing, deeper sleep, better life.",
         "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
-        "cta_label": "Shop Starter Kit",
+        "cta_label": "Shop Aira Kit",
         "cta_url": "/products/aira-starter-kit",
         "left_heading": "The problem",
         "right_heading": "With better breathing"
@@ -425,7 +421,7 @@
           "type": "question",
           "settings": {
             "question": "Is it comfortable to sleep with and what if it falls off during the night?",
-            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Starter Pack </em>includes a simple application guide to help you get it right from night one.</p>"
+            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Aira Kit </em>includes a simple application guide to help you get it right from night one.</p>"
           }
         },
         "faq_3": {
@@ -496,7 +492,7 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop Starter Kit",
+        "button_label": "Shop Aira Kit",
         "button_url": "/products/aira-starter-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"

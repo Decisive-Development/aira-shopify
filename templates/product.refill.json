@@ -103,7 +103,7 @@
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "starter_link_label": "Need a starter kit? Start here →",
+        "starter_link_label": "Need a Aira Kit? Start here →",
         "starter_link_url": "/products/aira-starter-kit"
       }
     },
@@ -276,7 +276,7 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop Starter Kit",
+        "button_label": "Shop Aira Kit",
         "button_url": "/products/aira-starter-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"

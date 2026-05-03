@@ -1,724 +1,336 @@
-================================================================================
-AIRA — "WHY AIRA" SECTION: COMPLETE REWRITE (V3)
-================================================================================
-Date: 13 April 2026
-File: sections/benefits-grid.liquid
-================================================================================
+==============================================================================
+AIRA — HOW IT WORKS PAGE — DESIGN REFINEMENTS BRIEF
+==============================================================================
+Page:       /pages/how-it-works
+Hero ID:    shopify-section-template--28140890718590__hero
+Reference:  /pages/our-story (use as the visual reference for hero gradient
+            + highlight color treatment — they should feel like a family)
 
-FULL REPLACEMENT. Delete everything in benefits-grid.liquid and paste
-this entire file. Do NOT try to merge with the existing code.
+Total changes: 8 across 4 sections (Hero, Step 01, Step 02, Pro Tips)
 
-WHY A REWRITE:
-The GSAP ScrollTrigger pin:true approach is fundamentally fragile.
-It manipulates the DOM (creates pin-spacers), depends on exact pixel
-measurements of all content above, and breaks on resize / refresh /
-monitor switch. Three rounds of patches couldn't fix it.
+==============================================================================
+SECTION 1 — HERO (3 changes)
+==============================================================================
 
-NEW APPROACH:
-  - CSS position:sticky for pinning (native browser, zero DOM mutation)
-  - A tall wrapper div provides the scroll distance (normal document flow)
-  - Plain scroll listener calculates progress (simple math, no caching)
-  - GSAP used ONLY for slide animations, NOT for scroll observation
-  - The section is fully self-contained — nothing leaks outside
+────────────────────────────────────────────────
+1.1  Replace the orange-tinted background with the soft light-blue gradient
+     used on the Our Story hero.
+────────────────────────────────────────────────
+PROBLEM: The hero currently uses two custom classes — `hiw-hero-bg` and
+         `hiw-hero-halo` — that produce an orange tint at the top edge.
+         This breaks visual consistency with /pages/our-story (which uses
+         a soft blue radial gradient over navy).
 
-This approach is what Apple, Stripe, and Linear use for their pinned
-scroll sections. It's battle-tested.
+WHAT TO DO:
 
+OPTION A (cleanest — recommended):
+  Match Our Story's hero exactly. Replace the hero section wrapper classes
+  on the how-it-works page so it uses the same treatment:
 
-================================================================================
-COMPLETE FILE — COPY EVERYTHING BELOW THIS LINE
-================================================================================
+  CURRENT wrapper class (on the inner <section> inside the hero):
+    class="relative overflow-hidden hiw-hero-bg hiw-hero-halo
+           pt-28 md:pt-36 pb-16 md:pb-24"
 
+  REPLACE WITH (matching Our Story):
+    class="relative overflow-hidden bg-main text-secondary
+           pt-32 md:pt-40 pb-16 md:pb-25"
 
-{% comment %}
-  ══════════════════════════════════════════════════════════════
-  WHY AIRA — Animated scroll section
-  CSS sticky + GSAP animations (no ScrollTrigger pin)
-  ══════════════════════════════════════════════════════════════
-{% endcomment %}
+  This drops the custom `hiw-hero-bg` + `hiw-hero-halo` and inherits the
+  Our Story navy + soft glow treatment. Look at how Our Story renders — that
+  exact look is what we want.
 
-{%- assign total_blocks = section.blocks.size -%}
+OPTION B (if Option A loses too much character):
+  Keep the custom classes but rewrite their CSS to remove the orange tint
+  and replace with light-blue radial gradients. Find the CSS rules for
+  `.hiw-hero-bg` and `.hiw-hero-halo` (likely in a <style> block at the top
+  of the hero section's .liquid file, or in assets/section-hero.css).
 
-<style>
-/* ================================================================
-   WHY AIRA — Layout
-   ================================================================ */
+  Replace any orange/amber color stops (likely #FF4000, #ff8a4a, or similar
+  warm hex codes) with light blue values matching the brand:
+    - Use `text-tertiary-light` token if defined, OR
+    - Use rgba(160, 195, 230, 0.15) for the soft halo glow
+    - Background base stays `bg-main` (navy)
 
-/* Wrapper: tall div that provides scroll distance.
-   Height = 100vh per slide. This is the scroll "runway." */
-.why-aira-wrapper {
-  position: relative;
-  width: 100%;
-  /* Each slide gets 100vh of scroll distance */
-  height: calc({{ total_blocks }} * 100vh);
-}
+  The radial gradients should sit lightly OVER the navy, not replace it.
 
-/* Sticky container: locks to the viewport while you scroll
-   through the wrapper. Pure CSS — no JS needed for pinning. */
-.why-aira-sticky {
-  position: sticky;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--color-bg-soft, #FAFAFA);
-  z-index: 5;
-}
+RECOMMENDATION: Go with Option A unless you specifically want the hero to
+feel different from Our Story (e.g., to telegraph "this is the action page,
+not the brand page"). Default to Option A — visual family > visual variety
+across closely-linked pages.
 
-/* ================================================================
-   WHY AIRA — Slides
-   ================================================================ */
-.why-aira__slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  will-change: opacity;
-  transition: none; /* GSAP handles transitions */
-}
+────────────────────────────────────────────────
+1.2  Remove the "Tutorial" pill label
+────────────────────────────────────────────────
+PROBLEM: The hero shows a small pill with an orange dot reading "Tutorial".
+         Now that the page is named "How it works" (not "Tutorials"), this
+         label is redundant AND it carries the orange color we're trying to
+         remove from the hero.
 
-.why-aira__slide.is-active {
-  opacity: 1;
-  pointer-events: auto;
-}
+WHAT TO DO:
+  Find this block in the hero section:
 
-.why-aira__slide-inner {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 clamp(20px, 4vw, 60px);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(32px, 6vw, 80px);
-  align-items: center;
-}
+    <span class="pill mb-6">
+      <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+        <circle cx="5" cy="5" r="4" fill="#FF4000"></circle>
+      </svg>
+      Tutorial
+    </span>
 
-@media (max-width: 768px) {
-  .why-aira__slide-inner {
-    grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 80px 24px 40px;
-    text-align: center;
-  }
-}
+  DELETE the entire <span class="pill mb-6">...</span> block.
 
-/* ================================================================
-   WHY AIRA — Text Content
-   ================================================================ */
-.why-aira__text {
-  position: relative;
-  z-index: 2;
-}
+  Adjust spacing if needed — the H1 may need a small mt-* adjustment now
+  that the pill is gone (preview and fine-tune visually).
 
-.why-aira__eyebrow {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--color-highlight, #FF4000);
-  font-weight: 700;
-  margin-bottom: 24px;
-  opacity: 0;
-}
+────────────────────────────────────────────────
+1.3  Add the highlight-color treatment to part of the H1 (match Our Story)
+────────────────────────────────────────────────
+REFERENCE: On /pages/our-story, the H1 reads:
+    "What if [breathing well] was the easiest part of your day?"
+  where "breathing well" is wrapped in a span with class
+  `text-tertiary-light/85` to give it a soft, lighter blue treatment.
 
-.why-aira__number {
-  font-family: var(--font-heading, 'Satoshi', sans-serif);
-  font-size: clamp(80px, 12vw, 140px);
-  font-weight: 800;
-  line-height: 0.9;
-  margin-bottom: 24px;
-  background: linear-gradient(
-    135deg,
-    var(--color-main, #0A1A34) 0%,
-    var(--color-teal, #50A2A7) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  opacity: 0;
-}
+WHAT TO DO:
+  Pick the most evocative 2-3 words in the How It Works H1 and wrap them
+  in the same highlight span. The current H1 is:
 
-.why-aira__accent-line {
-  width: 0;
-  height: 3px;
-  background: var(--color-highlight, #FF4000);
-  border-radius: 2px;
-  margin-bottom: 28px;
-}
+    "Three steps to life-changing breathing."
 
-@media (max-width: 768px) {
-  .why-aira__accent-line {
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
+  RECOMMENDED highlight: wrap "life-changing breathing" in the span:
 
-.why-aira__heading {
-  font-family: var(--font-heading, 'Satoshi', sans-serif);
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 700;
-  color: var(--color-main, #0A1A34);
-  line-height: 1.15;
-  margin-bottom: 20px;
-}
+    <h1 class="font-heading heading-weight text-secondary text-4xl
+               md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mt-2">
+      Three steps to
+      <span class="text-tertiary-light/85">life-changing breathing</span>.
+    </h1>
 
-/* Word-by-word reveal wrappers */
-.why-aira__heading .word {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  margin-right: 0.25em;
-}
+  ALTERNATIVE wording option (shorter highlight):
+    "Three steps to <span class="text-tertiary-light/85">better breathing</span>."
+  (also consider rewriting the H1 to match — "life-changing" feels slightly
+  out of voice for AIRA's calm/grounded tone; "better breathing" is more
+  on-brand. Pick whichever Marie prefers.)
 
-.why-aira__heading .word-inner {
-  display: inline-block;
-  transform: translateY(110%);
-}
+==============================================================================
+SECTION 2 — STEP 01 (3 changes)
+==============================================================================
 
-.why-aira__body {
-  font-size: clamp(15px, 1.5vw, 18px);
-  color: var(--color-copy, #555);
-  line-height: 1.75;
-  max-width: 440px;
-  opacity: 0;
-  transform: translateY(20px);
-}
+────────────────────────────────────────────────
+2.1  Darken the body text below each step title
+────────────────────────────────────────────────
+PROBLEM: The step description text (e.g. "can find your fit on night one.")
+         is too pale on the cream background — fails contrast and reads as
+         secondary information when it should be primary instruction.
 
-@media (max-width: 768px) {
-  .why-aira__body {
-    max-width: 100%;
-    margin: 0 auto;
-  }
-}
+WHAT TO DO:
+  Find the body text wrapper(s) in Step 01 (and apply the same fix to all
+  three steps for consistency).
 
-/* ================================================================
-   WHY AIRA — Image Side
-   ================================================================ */
-.why-aira__image-side {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  Likely current class includes something like `text-main/60` or
+  `text-secondary/60` (the /60 = 60% opacity).
 
-@media (max-width: 768px) {
-  .why-aira__image-side {
-    order: -1;
-    max-height: 35vh;
-  }
-}
+  CHANGE the opacity modifier:
+    FROM:  text-main/60   (or whatever opacity is currently used)
+    TO:    text-main/85   (better contrast, still soft)
 
-.why-aira__product-img {
-  width: 100%;
-  max-width: 480px;
-  border-radius: 20px;
-  opacity: 0;
-  transform: scale(0.92);
-}
+  If a different color token is in use, prefer increasing the opacity to
+  85% rather than going to 100% — full opacity will look harsh against
+  cream.
 
-@media (max-width: 768px) {
-  .why-aira__product-img {
-    max-width: 240px;
-    max-height: 30vh;
-    object-fit: contain;
-  }
-}
+  APPLY THIS GLOBALLY across Steps 01, 02, AND 03 body text — they all
+  likely have the same problem.
 
-/* ================================================================
-   WHY AIRA — Progress Indicator (right edge)
-   ================================================================ */
-.why-aira__progress {
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  z-index: 10;
-}
+────────────────────────────────────────────────
+2.2  "Quick rule of thumb" tile — split sleep/sport into two lines
+────────────────────────────────────────────────
+PROBLEM: Currently reads as one continuous sentence:
+  "Sleep — start a size up for wider airflow. Sport — size down so the
+   tabs hold under sweat & movement."
+  The two halves are logically distinct (one rule for sleep, one for sport)
+  and should be visually separated for scannability.
 
-@media (max-width: 768px) {
-  .why-aira__progress {
-    right: 12px;
-    gap: 8px;
-  }
-}
+WHAT TO DO:
+  Find the body text inside the "Quick rule of thumb" tile.
 
-.why-aira__progress-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-main, #0A1A34);
-  opacity: 0.15;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  cursor: pointer;
-}
+  CHANGE the markup so each rule is on its own line:
 
-.why-aira__progress-dot.is-active {
-  opacity: 1;
-  transform: scale(1.4);
-}
+    CURRENT (one line):
+      <p>Sleep — start a size up for wider airflow. Sport — size down so the tabs hold under sweat & movement.</p>
 
-.why-aira__progress-line {
-  width: 2px;
-  height: 40px;
-  background: rgba(10, 26, 52, 0.08);
-  position: relative;
-  overflow: hidden;
-}
+    REPLACE WITH:
+      <ul class="space-y-1.5 list-none p-0 m-0">
+        <li>Sleep — start a size up for wider airflow.</li>
+        <li>Sport — size down so the tabs hold under sweat &amp; movement.</li>
+      </ul>
 
-.why-aira__progress-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 0%;
-  background: var(--color-highlight, #FF4000);
-  transition: height 0.4s ease;
-}
+  Or if you prefer non-list approach:
+      <p class="m-0">Sleep — start a size up for wider airflow.</p>
+      <p class="mt-1.5 mb-0">Sport — size down so the tabs hold under sweat &amp; movement.</p>
 
-/* ================================================================
-   WHY AIRA — Background decorative circle
-   ================================================================ */
-.why-aira__bg-circle {
-  position: absolute;
-  width: clamp(300px, 50vw, 700px);
-  height: clamp(300px, 50vw, 700px);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(80, 162, 167, 0.06) 0%,
-    transparent 70%
-  );
-  top: 50%;
-  right: -10%;
-  transform: translate(0, -50%);
-  pointer-events: none;
-  z-index: 0;
-}
-</style>
+  Either works. List version is slightly cleaner semantically.
 
+────────────────────────────────────────────────
+2.3  "Get all four sizes in the Aira Kit" tile — move CTA below, not beside
+────────────────────────────────────────────────
+PROBLEM: Currently the "Shop Aira Kit →" CTA sits to the RIGHT of the
+         tile copy on desktop. This crams the layout, makes the CTA feel
+         like an afterthought, and the headline+subheadline get visually
+         constrained.
 
-{%- comment -%} ═══ HTML ═══ {%- endcomment -%}
+WHAT TO DO:
+  Restructure the tile so:
+    - Headline + subhead stack vertically and span the full tile width
+    - CTA sits BELOW the text, left-aligned (matching the headline's left edge)
 
-<div class="why-aira-wrapper" data-why-aira>
+  The change is from a horizontal flex (text on left, CTA on right) to a
+  vertical stack:
 
-  <div class="why-aira-sticky">
-
-    <!-- Decorative background -->
-    <div class="why-aira__bg-circle"></div>
-
-    <!-- Progress indicator -->
-    <div class="why-aira__progress">
-      {%- for block in section.blocks -%}
-        <div class="why-aira__progress-dot{% if forloop.first %} is-active{% endif %}"
-             data-dot-index="{{ forloop.index0 }}"></div>
-        {%- unless forloop.last -%}
-          <div class="why-aira__progress-line">
-            <div class="why-aira__progress-fill"></div>
-          </div>
-        {%- endunless -%}
-      {%- endfor -%}
-    </div>
-
-    <!-- Slides -->
-    {%- for block in section.blocks -%}
-      <div class="why-aira__slide{% if forloop.first %} is-active{% endif %}"
-           data-slide-index="{{ forloop.index0 }}"
-           {{ block.shopify_attributes }}>
-        <div class="why-aira__slide-inner">
-
-          <!-- Text side -->
-          <div class="why-aira__text">
-            {%- if forloop.first -%}
-              <p class="why-aira__eyebrow">
-                {{ section.settings.eyebrow | default: 'Why Aira' }}
-              </p>
-            {%- endif -%}
-
-            <div class="why-aira__number">
-              {{ forloop.index | prepend: '0' | slice: -2, 2 }}
-            </div>
-
-            <div class="why-aira__accent-line"></div>
-
-            <h2 class="why-aira__heading" data-split-text>
-              {{ block.settings.heading }}
-            </h2>
-
-            <p class="why-aira__body">
-              {{ block.settings.body }}
-            </p>
-          </div>
-
-          <!-- Image side -->
-          <div class="why-aira__image-side">
-            {%- if block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 900 | image_tag:
-                class: 'why-aira__product-img',
-                loading: 'lazy'
-              }}
-            {%- elsif section.settings.image != blank -%}
-              {{ section.settings.image | image_url: width: 900 | image_tag:
-                class: 'why-aira__product-img',
-                loading: 'lazy'
-              }}
-            {%- else -%}
-              <img class="why-aira__product-img"
-                   src="https://placehold.co/500x660/FAFAFA/0A1A34?text=Set+image+in+editor"
-                   alt="Product placeholder" />
-            {%- endif -%}
-          </div>
-
+    CURRENT structure (likely):
+      <div class="flex justify-between items-center gap-6">
+        <div>
+          <h3>Get all four sizes in the Aira Kit.</h3>
+          <p>Try every band on night one — keep the one that fits.</p>
         </div>
+        <a href="...">Shop Aira Kit →</a>
       </div>
-    {%- endfor -%}
 
-  </div>
+    REPLACE WITH:
+      <div class="flex flex-col items-start gap-4">
+        <div>
+          <h3>Get all four sizes in the Aira Kit.</h3>
+          <p>Try every band on night one — keep the one that fits.</p>
+        </div>
+        <a href="...">Shop Aira Kit →</a>
+      </div>
 
-</div>
+  Keep the CTA's existing class names — only the parent flex direction
+  changes (from row to column).
 
+==============================================================================
+SECTION 3 — STEP 02 (1 change)
+==============================================================================
 
-{%- comment -%} ═══ JAVASCRIPT ═══ {%- endcomment -%}
+────────────────────────────────────────────────
+3.1  "Running low on tabs?" CTA — promote to button style (match nav)
+────────────────────────────────────────────────
+PROBLEM: Currently the "Shop Refill Tabs →" link inside the "Running low
+         on tabs?" tile is a plain text link. This is the most commerce-
+         driving CTA on this page (refills are repeat revenue) and deserves
+         the same visual weight as the nav button.
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+WHAT TO DO:
+  Change the CTA from a text link to a solid button matching the nav
+  "Shop Aira Kit" button style.
 
-<script>
-(function() {
-  'use strict';
+  CURRENT (plain text link):
+    <a href="/products/aira-refill-tabs"
+       class="...text-link-style-classes-here...">
+      Shop Refill Tabs →
+    </a>
 
-  /* ────────────────────────────────────────────────
-     Wait for GSAP to load, then initialise
-     ──────────────────────────────────────────────── */
-  function boot() {
-    if (typeof gsap === 'undefined') {
-      setTimeout(boot, 80);
-      return;
-    }
-    init();
-  }
+  REPLACE WITH (orange button matching nav):
+    <a href="/products/aira-refill-tabs"
+       class="inline-block rounded-xl text-sm font-semibold tracking-wide
+              transition-opacity hover:opacity-90 bg-highlight text-white
+              px-8 py-3 whitespace-nowrap">
+      Shop Refill Tabs
+    </a>
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
-  }
+  Notes:
+  - Drop the "→" arrow — buttons don't need it (the button itself is the
+    visual affordance)
+  - Use `bg-highlight` token (your orange highlight) — same as the nav
+  - `whitespace-nowrap` prevents the button text from wrapping awkwardly
+  - The parent tile may need a layout adjustment (likely a flex with the
+    button right-aligned or stacked) — preview and tune
 
-  /* ────────────────────────────────────────────────
-     Main init
-     ──────────────────────────────────────────────── */
-  function init() {
-    var wrapper = document.querySelector('[data-why-aira]');
-    if (!wrapper) return;
+  CONSISTENCY CHECK: While you're at it, check whether the same pattern
+  applies to the "See how others got it right" / "Read reviews →" CTA at
+  the end of the Common Pitfalls section. That one I'd keep as a text link
+  (reviews are educational, not transactional). Only Refills and Starter
+  Kit deserve the orange-button treatment.
 
-    var sticky    = wrapper.querySelector('.why-aira-sticky');
-    var slides    = wrapper.querySelectorAll('.why-aira__slide');
-    var dots      = wrapper.querySelectorAll('.why-aira__progress-dot');
-    var fills     = wrapper.querySelectorAll('.why-aira__progress-fill');
-    var total     = slides.length;
+==============================================================================
+SECTION 4 — PRO TIPS (1 change)
+==============================================================================
 
-    if (total === 0) return;
+────────────────────────────────────────────────
+4.1  Background gradient — make the radial blue glows larger and lighter
+────────────────────────────────────────────────
+PROBLEM: The Pro Tips section uses navy background with two small radial
+         gradient "glows" that read as two small isolated circles rather
+         than soft ambient light. Too small, too defined, looks like a
+         design accident rather than an atmospheric effect.
 
-    var current     = 0;
-    var isAnimating = false;
+WHAT TO DO:
+  Find the CSS for the Pro Tips section background. It likely has two
+  `radial-gradient(...)` declarations stacked via comma-separated background
+  shorthand — each with a fixed radius/position that's too small.
 
-    /* ── Split headings into word spans ── */
-    slides.forEach(function(slide) {
-      var h = slide.querySelector('[data-split-text]');
-      if (!h) return;
-      var words = h.textContent.trim().split(/\s+/);
-      h.innerHTML = words.map(function(w) {
-        return '<span class="word"><span class="word-inner">' + w + '</span></span>';
-      }).join('');
-    });
+  FIX: Increase the gradient size, soften the falloff, push the centers
+  further apart, and make sure ONLY light blue is used (no orange/warm
+  tones — Tom flagged this specifically).
 
-    /* ── Animate first slide in on load ── */
-    animateIn(slides[0]);
+  EXAMPLE updated background CSS:
 
-    /* ══════════════════════════════════════════════
-       SCROLL LISTENER — replaces ScrollTrigger
-       ══════════════════════════════════════════════
+    background:
+      radial-gradient(
+        ellipse 1200px 800px at 15% 30%,
+        rgba(160, 195, 230, 0.18) 0%,
+        rgba(160, 195, 230, 0) 60%
+      ),
+      radial-gradient(
+        ellipse 1100px 700px at 85% 70%,
+        rgba(140, 180, 220, 0.15) 0%,
+        rgba(140, 180, 220, 0) 65%
+      ),
+      var(--color-main);  /* navy base — keep */
 
-       How it works:
-       - wrapper is 300vh tall (3 slides × 100vh)
-       - sticky container sticks to top:0 while you
-         scroll through the wrapper
-       - We calculate progress from wrapper position:
-           progress = 0  → wrapper top at viewport top
-           progress = 1  → wrapper bottom at viewport bottom
+  Key changes vs current:
+    - SIZE: ellipse with px values in the 700-1200px range (vs whatever
+      small px the current uses) — these glows should be enormous and barely
+      perceptible at the edges, not visible as discrete "circles"
+    - FALLOFF: gradient runs from 0% to 60-65% (long soft falloff vs hard edge)
+    - POSITIONING: 15% 30% and 85% 70% — diagonal, asymmetric, ambient
+    - OPACITY: 0.15-0.18 max — should feel like distant light, not a spotlight
+    - COLOR: only light blue tones (rgba 140-160, 180-195, 220-230) — NO orange
 
-       This is pure math on getBoundingClientRect().
-       No caching. No measurement. No DOM mutation.
-       Works on resize, refresh, monitor switch — always.
-       ══════════════════════════════════════════════ */
+  ALTERNATIVE if you want a single ambient glow instead of two:
+    background:
+      radial-gradient(
+        ellipse 1600px 1000px at 50% 30%,
+        rgba(160, 195, 230, 0.20) 0%,
+        rgba(160, 195, 230, 0) 70%
+      ),
+      var(--color-main);
 
-    function onScroll() {
-      var rect         = wrapper.getBoundingClientRect();
-      var wrapperH     = wrapper.offsetHeight;
-      var viewH        = window.innerHeight;
-      var scrollDist   = wrapperH - viewH;
+  Test on a 1440px desktop AND on mobile (320px width) — radial gradients
+  in CSS scale by viewport, so a glow that looks ambient on desktop can
+  look tiny and isolated on mobile. Use `vw` or `vmax` units if needed for
+  responsive sizing:
 
-      if (scrollDist <= 0) return;
+    radial-gradient(
+      ellipse 80vw 60vh at 15% 30%,
+      rgba(160, 195, 230, 0.18) 0%,
+      rgba(160, 195, 230, 0) 60%
+    )
 
-      /* How far the wrapper top has scrolled past viewport top */
-      var scrolled = -rect.top;
-      var progress = Math.max(0, Math.min(1, scrolled / scrollDist));
+==============================================================================
+QA CHECKLIST AFTER ALL CHANGES
+==============================================================================
 
-      /* Which slide should be active? */
-      var target = Math.min(Math.floor(progress * total), total - 1);
+[ ] Hero background matches Our Story hero (no orange tint, soft blue glow)
+[ ] "Tutorial" pill is removed; H1 is centered and well-spaced without it
+[ ] H1 has the light-blue highlight on chosen phrase ("life-changing
+    breathing" or "better breathing")
+[ ] Step 01-03 body copy is darker / more readable on cream
+[ ] "Quick rule of thumb" tile shows Sleep and Sport on separate lines
+[ ] "Get all four sizes" tile has CTA stacked below text, not beside it
+[ ] "Running low on tabs?" CTA is now an orange button (matches nav button)
+[ ] Pro Tips section gradients are large, soft, ambient — no visible
+    "two small circles" effect
+[ ] Pro Tips section uses ONLY light blue tones (no orange)
+[ ] Mobile (375px) review: all changes hold up — gradients scale, button
+    doesn't break layout, text remains readable
 
-      if (target !== current && !isAnimating) {
-        switchSlide(target);
-      }
-
-      /* Update progress bar fills */
-      updateFills(progress);
-    }
-
-    /* Use passive scroll listener for performance */
-    var ticking = false;
-    window.addEventListener('scroll', function() {
-      if (!ticking) {
-        requestAnimationFrame(function() {
-          onScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-
-    /* Also run once on load to set correct initial state */
-    onScroll();
-
-    /* ── Slide transition ── */
-    function switchSlide(newIndex) {
-      if (isAnimating || newIndex === current) return;
-      isAnimating = true;
-
-      var outSlide = slides[current];
-      var inSlide  = slides[newIndex];
-
-      animateOut(outSlide, function() {
-        outSlide.classList.remove('is-active');
-        outSlide.style.opacity = '0';
-
-        inSlide.classList.add('is-active');
-        inSlide.style.opacity = '1';
-
-        current = newIndex;
-
-        animateIn(inSlide, function() {
-          isAnimating = false;
-        });
-      });
-
-      /* Update dots */
-      dots.forEach(function(dot, i) {
-        dot.classList.toggle('is-active', i === newIndex);
-      });
-    }
-
-    /* ── Animate slide IN ── */
-    function animateIn(slide, done) {
-      var num      = slide.querySelector('.why-aira__number');
-      var line     = slide.querySelector('.why-aira__accent-line');
-      var words    = slide.querySelectorAll('.word-inner');
-      var body     = slide.querySelector('.why-aira__body');
-      var img      = slide.querySelector('.why-aira__product-img');
-      var eyebrow  = slide.querySelector('.why-aira__eyebrow');
-
-      var tl = gsap.timeline({
-        defaults: { ease: 'power3.out' },
-        onComplete: done || function() {}
-      });
-
-      if (eyebrow) {
-        tl.fromTo(eyebrow,
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          0
-        );
-      }
-
-      if (num) {
-        tl.fromTo(num,
-          { opacity: 0, scale: 0.8, y: 30 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.7 },
-          0.1
-        );
-      }
-
-      if (line) {
-        tl.fromTo(line,
-          { width: 0 },
-          { width: 56, duration: 0.6 },
-          0.3
-        );
-      }
-
-      if (words.length) {
-        tl.fromTo(words,
-          { y: '110%' },
-          { y: '0%', duration: 0.5, stagger: 0.05 },
-          0.35
-        );
-      }
-
-      if (body) {
-        tl.fromTo(body,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6 },
-          0.55
-        );
-      }
-
-      if (img) {
-        tl.fromTo(img,
-          { opacity: 0, scale: 0.92, y: 20 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.8 },
-          0.15
-        );
-      }
-    }
-
-    /* ── Animate slide OUT ── */
-    function animateOut(slide, done) {
-      var num     = slide.querySelector('.why-aira__number');
-      var body    = slide.querySelector('.why-aira__body');
-      var img     = slide.querySelector('.why-aira__product-img');
-      var words   = slide.querySelectorAll('.word-inner');
-      var eyebrow = slide.querySelector('.why-aira__eyebrow');
-
-      var tl = gsap.timeline({
-        defaults: { ease: 'power2.in' },
-        onComplete: done || function() {}
-      });
-
-      if (body)    tl.to(body,    { opacity: 0, y: -10, duration: 0.2 }, 0);
-      if (words.length) tl.to(words, { y: '-110%', duration: 0.25, stagger: 0.02 }, 0);
-      if (num)     tl.to(num,     { opacity: 0, y: -20, duration: 0.25 }, 0.05);
-      if (img)     tl.to(img,     { opacity: 0, scale: 0.95, duration: 0.25 }, 0);
-      if (eyebrow) tl.to(eyebrow, { opacity: 0, duration: 0.15 }, 0);
-    }
-
-    /* ── Update progress fill bars ── */
-    function updateFills(progress) {
-      var segSize = 1 / total;
-      fills.forEach(function(fill, i) {
-        var segStart = segSize * i;
-        var segEnd   = segSize * (i + 1);
-        var segProg  = Math.max(0, Math.min(1,
-          (progress - segStart) / (segEnd - segStart)
-        ));
-        fill.style.height = (segProg * 100) + '%';
-      });
-    }
-
-    /* ── Dot click: scroll to that slide ── */
-    dots.forEach(function(dot) {
-      dot.addEventListener('click', function() {
-        var idx      = parseInt(dot.getAttribute('data-dot-index'), 10);
-        var wrapperH = wrapper.offsetHeight;
-        var viewH    = window.innerHeight;
-        var scrollD  = wrapperH - viewH;
-        var wrapperTop = wrapper.getBoundingClientRect().top + window.scrollY;
-
-        /* Target scroll: place progress at the midpoint of that slide's range */
-        var targetProgress = (idx + 0.5) / total;
-        var targetScroll   = wrapperTop + (targetProgress * scrollD);
-
-        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-      });
-    });
-
-  } /* end init */
-})();
-</script>
-
-
-{% schema %}
-{
-  "name": "Why Aira (Animated)",
-  "tag": "section",
-  "class": "shopify-section",
-  "settings": [
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow text",
-      "default": "Why Aira"
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Default product image",
-      "info": "Shared across all slides unless a slide has its own image"
-    }
-  ],
-  "blocks": [
-    {
-      "type": "benefit",
-      "name": "Benefit slide",
-      "settings": [
-        {
-          "type": "text",
-          "id": "heading",
-          "label": "Heading",
-          "default": "Benefit heading"
-        },
-        {
-          "type": "richtext",
-          "id": "body",
-          "label": "Body text",
-          "default": "<p>Describe this benefit.</p>"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Slide image (optional)",
-          "info": "Overrides the default image for this slide only"
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Why Aira (Animated)",
-      "blocks": [
-        {
-          "type": "benefit",
-          "settings": {
-            "heading": "Opens your airway instantly",
-            "body": "<p>The magnetic band gently lifts your nasal passages from the outside — no inserts, no discomfort, just immediate airflow.</p>"
-          }
-        },
-        {
-          "type": "benefit",
-          "settings": {
-            "heading": "Stays put all night",
-            "body": "<p>Medical-grade adhesive keeps the strip in place through any sleeping position — no slipping, no peeling, no fuss.</p>"
-          }
-        },
-        {
-          "type": "benefit",
-          "settings": {
-            "heading": "Reusable for months",
-            "body": "<p>Unlike disposable strips, Aira's magnetic design lasts for months — better for your wallet and the planet.</p>"
-          }
-        }
-      ]
-    }
-  ]
-}
-{% endschema %}
-
-
-================================================================================
-END OF FILE
-================================================================================
+==============================================================================
+END OF BRIEF
+==============================================================================

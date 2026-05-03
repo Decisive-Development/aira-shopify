@@ -36,8 +36,8 @@ html {
   --color-highlight: #FF4000;
   --color-highlight-green: #28965A;
   --color-highlight-blue: #087CA7;
-  --color-title: #212121;
-  --color-copy: #40464F;
+  --color-title: #2A3142;
+  --color-copy: #5C6470;
   --color-bg: #FFFFFF;
   --color-bg-soft: #FAFAFA;
   --color-bg-muted: #F2F2F2;
@@ -97,6 +97,235 @@ html {
 
   .heading-weight {
     font-weight: 400;
+  }
+
+  /* ────────────────────────────────────────────────────────────
+     "How it works" page components
+     ──────────────────────────────────────────────────────────── */
+
+  /* Pill (eyebrow chip on dark surfaces) */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(155, 183, 212, 0.18);
+    color: var(--color-tertiary-light);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(155, 183, 212, 0.30);
+  }
+
+  /* Tutorial video frame */
+  .video-frame {
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 16 / 9;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+  .video-frame .video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a2c4d;
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0 12px, rgba(255, 255, 255, 0) 12px 24px);
+    color: rgba(255, 255, 255, 0.55);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 1rem;
+  }
+  .video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 50%);
+    pointer-events: none;
+  }
+  .video-controls {
+    position: absolute;
+    inset: auto 1rem 1rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 5;
+  }
+  .video-play-big {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    background: rgba(0, 0, 0, 0.10);
+    cursor: pointer;
+    transition: background 0.25s, opacity 0.25s;
+    border: none;
+  }
+  .video-play-big:hover { background: rgba(0, 0, 0, 0.25); }
+  .video-play-big .ring {
+    width: 84px;
+    height: 84px;
+    border-radius: 9999px;
+    background: rgba(241, 235, 225, 0.92);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-main);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s;
+  }
+  .video-play-big:hover .ring { transform: scale(1.06); }
+  .video-cinema-mark {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  /* Sticky step rail (Steps 01/02/03) */
+  .step-rail {
+    position: sticky;
+    top: 6rem;
+  }
+  .step-link {
+    display: flex;
+    gap: 1rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .step-link:hover { background: rgba(10, 26, 52, 0.04); }
+  .step-link.is-active { background: rgba(155, 183, 212, 0.18); }
+  .step-num {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    background: rgba(10, 26, 52, 0.08);
+    color: var(--color-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  .step-link.is-active .step-num {
+    background: var(--color-main);
+    color: var(--color-secondary);
+    box-shadow: 0 0 0 4px rgba(255, 64, 0, 0.35);
+  }
+
+  /* Size grid card (Step 1) */
+  .size-card {
+    background: var(--color-bg);
+    border: 1px solid rgba(10, 26, 52, 0.08);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  }
+  .size-card:hover {
+    border-color: var(--color-tertiary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(155, 183, 212, 0.20);
+  }
+
+  /* Inline mid-page CTA */
+  .inline-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(155, 183, 212, 0.18) 0%, rgba(155, 183, 212, 0.06) 100%);
+    border: 1px solid rgba(155, 183, 212, 0.35);
+  }
+  .inline-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-main);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .inline-cta-link svg { transition: transform 0.2s; }
+  .inline-cta-link:hover svg { transform: translateX(3px); }
+
+  /* Stacked variant — CTA sits below the text instead of beside it */
+  .inline-cta.inline-cta-stack {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Compare card + Do/Don't tags (Pitfalls section) */
+  .checktile {
+    background: var(--color-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(10, 26, 52, 0.04), 0 8px 24px rgba(10, 26, 52, 0.06);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .tag-do   { background: rgba(40, 150, 90, 0.12);  color: var(--color-highlight-green); }
+  .tag-dont { background: rgba(255, 64, 0, 0.12);   color: var(--color-highlight); }
+
+  /* Photo placeholders (cream + dark variants) */
+  .ph {
+    background-color: #2a3654;
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0 12px, rgba(255, 255, 255, 0) 12px 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.55);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 1rem;
+  }
+  .ph-light {
+    background-color: #e8e3da;
+    color: rgba(10, 26, 52, 0.5);
+    background-image: repeating-linear-gradient(135deg, rgba(10, 26, 52, 0.05) 0 12px, rgba(10, 26, 52, 0) 12px 24px);
+  }
+
+  /* Reveal-on-scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

@@ -1,0 +1,87 @@
+{%- comment -%}
+	How it works — Intro strip
+	Cream band that introduces the two-part system (band + tabs).
+{%- endcomment -%}
+
+<section class="bg-secondary py-12 md:py-20">
+	<div class="container-contained">
+		<div class="grid md:grid-cols-12 gap-8 md:gap-12 items-start">
+
+			{%- comment -%} Left: eyebrow + h2 {%- endcomment -%}
+			<div class="md:col-span-5 reveal">
+				{%- if section.settings.eyebrow != blank -%}
+					<p class="text-xs font-bold uppercase tracking-widest" style="color: #5B7DA0;">
+						{{ section.settings.eyebrow }}
+					</p>
+				{%- endif -%}
+				{%- if section.settings.heading != blank -%}
+					<h2 class="font-heading heading-weight text-3xl md:text-4xl lg:text-5xl text-title mt-3 leading-tight">
+						{{ section.settings.heading }}
+					</h2>
+				{%- endif -%}
+			</div>
+
+			{%- comment -%} Right: body + 2 mini-cards {%- endcomment -%}
+			<div class="md:col-span-7 md:pt-2 reveal">
+				{%- if section.settings.body != blank -%}
+					<div class="font-body text-base md:text-lg text-copy leading-relaxed flex flex-col gap-4">
+						{{ section.settings.body }}
+					</div>
+				{%- endif -%}
+
+				<div class="grid grid-cols-2 gap-3 mt-8">
+					<div class="rounded-xl bg-bg p-4 md:p-5">
+						<div class="text-xs font-bold uppercase tracking-widest text-copy/60">{{ section.settings.card1_label | default: 'The band' }}</div>
+						<p class="font-heading font-semibold text-main mt-1.5">{{ section.settings.card1_title | default: 'Reusable. Magnetic.' }}</p>
+						<p class="text-sm text-copy/80 leading-snug mt-1.5">{{ section.settings.card1_body | default: 'Lasts months. Holds the structural pull.' }}</p>
+					</div>
+					<div class="rounded-xl bg-bg p-4 md:p-5">
+						<div class="text-xs font-bold uppercase tracking-widest text-copy/60">{{ section.settings.card2_label | default: 'The tabs' }}</div>
+						<p class="font-heading font-semibold text-main mt-1.5">{{ section.settings.card2_title | default: 'Daily. Adhesive.' }}</p>
+						<p class="text-sm text-copy/80 leading-snug mt-1.5">{{ section.settings.card2_body | default: 'One pair per night. Replace as you go.' }}</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "How it works — Intro",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "The basics"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "A two-part system. No drugs, nothing inside your nose."
+		},
+		{
+			"type": "richtext",
+			"id": "body",
+			"label": "Body",
+			"default": "<p>Aira sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>"
+		},
+		{ "type": "header", "content": "Card 1 (band)" },
+		{ "type": "text", "id": "card1_label", "label": "Label",       "default": "The band" },
+		{ "type": "text", "id": "card1_title", "label": "Title",       "default": "Reusable. Magnetic." },
+		{ "type": "text", "id": "card1_body",  "label": "Description", "default": "Lasts months. Holds the structural pull." },
+		{ "type": "header", "content": "Card 2 (tabs)" },
+		{ "type": "text", "id": "card2_label", "label": "Label",       "default": "The tabs" },
+		{ "type": "text", "id": "card2_title", "label": "Title",       "default": "Daily. Adhesive." },
+		{ "type": "text", "id": "card2_body",  "label": "Description", "default": "One pair per night. Replace as you go." }
+	],
+	"presets": [
+		{ "name": "How it works — Intro" }
+	]
+}
+{% endschema %}

@@ -4,7 +4,7 @@
 	and supporting copy + meta row below.
 {%- endcomment -%}
 
-<section class="relative overflow-hidden bg-main text-secondary py-16 md:py-25">
+<section class="relative overflow-hidden bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-25">
 
 	{%- comment -%} Atmospheric radial washes (top-right blue, bottom-left teal) {%- endcomment -%}
 	<div
@@ -37,11 +37,22 @@
 			endif
 		-%}
 		<h1
-			class="font-heading font-normal text-[38px] md:text-[clamp(40px,5.4vw,76px)] leading-[1.08] md:leading-[1.05] tracking-[-0.025em] text-secondary text-center text-balance mx-auto mb-10 md:mb-16"
+			class="font-heading font-normal text-[38px] md:text-[clamp(40px,5.4vw,76px)] leading-[1.08] md:leading-[1.05] tracking-[-0.025em] text-secondary text-center text-balance mx-auto mb-8 md:mb-10"
 			style="max-width: 18ch;"
 		>
 			{{ hl_html }}
 		</h1>
+
+		{%- comment -%} Soft scroll cue — gives the hero question direction without breaking calm tone {%- endcomment -%}
+		<div class="mb-10 md:mb-16 flex justify-center">
+			<a
+				href="#story-tiles"
+				class="font-body text-sm font-medium tracking-widest uppercase text-secondary/70 hover:text-secondary transition-colors inline-flex items-center gap-2 group"
+			>
+				See how it works
+				<span class="transition-transform group-hover:translate-y-0.5">↓</span>
+			</a>
+		</div>
 
 		{%- comment -%} Landscape photograph (21:9 desktop / 4:5 mobile) {%- endcomment -%}
 		<div

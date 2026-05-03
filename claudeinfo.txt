@@ -17,8 +17,8 @@ Design aesthetic: minimalistic, calming, luxury.
 | highlight    | #FF4000   | Orange — primary CTA, highlights        |
 | highlight-green | #28965A| Green — niche                           |
 | highlight-blue | #087CA7 | Blue — niche                            |
-| title        | #212121   | Headings                                 |
-| copy         | #40464F   | Body text                                |
+| title        | #2A3142   | Headings (softened from #212121 in S27)  |
+| copy         | #5C6470   | Body text (softened from #40464F in S27) |
 | bg           | #FFFFFF   | Page background                          |
 | bg-soft      | #FAFAFA   | Soft background                          |
 | bg-muted     | #F2F2F2   | Muted background                         |
@@ -96,7 +96,7 @@ Parameters:
 |---------------|-----------------------------------|------------|
 | `label`       | String (required)                 | —          |
 | `url`         | String                            | `#`        |
-| `variant`     | `primary` / `accent` / `ghost` / `inverse` / `blue` | `primary`  |
+| `variant`     | `primary` / `accent` / `ghost` / `ghost-light` / `inverse` / `blue` | `primary`  |
 | `size`        | `sm` / `md` / `lg`               | `md`       |
 | `element`     | `a` / `button`                    | `a`        |
 | `button_type` | `button` / `submit` / `reset`     | `button`   |
@@ -104,7 +104,7 @@ Parameters:
 
 Sizes: `sm` = `px-6 py-2.5`, `md` = `px-8 py-3`, `lg` = `px-10 py-4`
 Rounding: always `rounded-xl` (soft, not pill)
-Variants: `primary` = bg-main/text-secondary, `accent` = bg-highlight/text-white, `ghost` = border-2/border-main/text-main, `inverse` = bg-secondary/text-main, `blue` = bg-highlight-blue/text-white
+Variants: `primary` = bg-main/text-secondary, `accent` = bg-highlight/text-white, `ghost` = border-2/border-main/text-main, `ghost-light` = border-secondary/50/text-secondary/hover-bg-secondary/10 (cream outline on dark surfaces), `inverse` = bg-secondary/text-main, `blue` = bg-highlight-blue/text-white
 
 Default size is `md`. Only specify `size` when intentionally deviating.
 
@@ -175,7 +175,7 @@ Reusable product card for collection/shop pages. Used by `sections/collection.li
 Removed during cleanup. Was unused.
 
 ### sections/featured-products.liquid — DELETED (Session 19)
-Removed during cleanup. Homepage no longer shows dual product cards (per UX brief — homepage sells starter kit only).
+Removed during cleanup. Homepage no longer shows dual product cards (per UX brief — homepage sells Aira Kit only).
 
 ### sections/collection.liquid
 - Dark navy header banner (`bg-main pt-32 pb-16`) for transparent nav compatibility.
@@ -203,12 +203,11 @@ Drag comparison slider. Section heading (via `section-heading` snippet) above a 
 
 ### sections/health-effects.liquid
 Grid layout (50/50 on lg): focus panel left, 2×2 card grid right. Heading centered.
-- **Focus panel** (left): image `flex-1`, solid `bg-main` block at bottom with title + description + optional link. No icon. Stacked layers per block, crossfade via opacity (500ms).
+- **Focus panel** (left): image `flex-1`, solid `bg-main` block at bottom with title + description + optional link. No icon. Stacked layers per block, crossfade via opacity (500ms). Mobile: tighter padding (`px-6 py-5`), smaller title (`text-lg`) + body (`text-sm`) so the image gets more room.
 - **Card grid** (right): 2×2 `aspect-square` cards. Each card uses its block image as full background with title in overlay div at bottom (`bg-linear-to-t from-black/70 via-black/40 to-transparent`). Icons removed.
-- Active card hidden from grid. "Next" card gets `@property --border-progress` conic-gradient sweep animation (5s, clockwise from 12 o'clock, orange #FF4000).
-- **Hover** = preview (shows content in focus panel, grid unchanged). **Click** = lock (swaps grid positions). Prevents hover-spam bug.
+- **Initial state**: Liquid loop finds the block whose title contains "snoring" (case-insensitive) and uses that as the initial focus + hides its card from the grid. Falls back to index 0 if no match.
+- **Interaction model**: manual-only. Hover = preview (shows content in focus panel, grid unchanged). Click = lock (swaps grid positions). No auto-rotate timer, no conic-gradient sweep, no `is-next` indicator — those were removed in Session 26.
 - Newly appearing cards animate in (scale 0.92→1, opacity 0→1, 350ms).
-- Auto-rotate timer (5s `setTimeout`). Pauses on grid hover (sweep animation pauses too via `animation-play-state`).
 - Scroll-in animation via IntersectionObserver.
 - Blocks: `effect` type — icon, title, subtitle, image_picker, richtext description, link_label, link_url.
 - Defaults: 5 blocks (High blood pressure, Snoring, Dry mouth, Poor sleep quality, Facial development).
@@ -277,7 +276,7 @@ Full-width problem-vs-solution stats section over a background image.
 - `formatMoney()` uses `toLocaleString` with shop currency from Liquid.
 
 ### sections/final-cta.liquid
-- Simple last-chance CTA section before footer: heading + "Shop Starter Kit" button, dark background.
+- Simple last-chance CTA section before footer: heading + "Shop Aira Kit" button, dark background.
 - Negative margins to close gap with footer.
 
 ### sections/faq.liquid
@@ -288,13 +287,73 @@ Full-width problem-vs-solution stats section over a background image.
 - Items divided by `divide-y divide-bg-muted` borders.
 - Scroll-in animation via IntersectionObserver.
 - CMS: eyebrow, heading, subheading, heading_size, background_color, container_width, padding_vertical.
+- Reused on the How it works page — settings + blocks defined directly in `templates/page.how-it-works.json`.
+
+### sections/how-it-works-hero.liquid (S27)
+- Dark navy hero matching the Our Story hero treatment (`bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-25` + dual radial washes — soft blue top-right, teal bottom-left).
+- H1 supports a `headline_accent` setting; matching phrase is wrapped in `<span class="text-tertiary-light/85">` via Liquid `replace` (same pattern as Our Story hero — uses two text fields, NOT inline_richtext).
+- Tutorial video frame: `aspect-ratio 16/9`, `rounded-2xl`, deep shadow. `<video>` element rendered when `video_url` set (preload metadata, playsinline, optional poster image); placeholder div otherwise. Big play overlay button hides on click and triggers `video.play()`. Mute pill toggles `video.muted`. Cinema-mark pill displays duration label top-left.
+- **localStorage persistence** of playback position keyed `aira.howItWorks.video.t`. Restored on `loadedmetadata`, written throttled to ~1s on `timeupdate`.
+- Chapter strip: 3 buttons under the video. Each block has `timestamp` (display string), `time_seconds` (seek target), `title`, `subtitle` (md+ only). Click sets `video.currentTime` + `play()`, hides the play overlay, gives the active button a tinted background.
+- Trust strip: 4 blocks with select-driven inline SVG icons (`star`/`moon`/`clock`/`check`) + label. Dot separators hidden on mobile.
+- Earlier orange-tinted `.hiw-hero-bg` + `.hiw-hero-halo` CSS classes were removed in the S27 refinements pass — section now relies entirely on the inlined washes.
+- Schema: headline + headline_accent + lead + video_url + video_poster + duration_label; blocks: chapter (limit 3), trust (limit 6).
+
+### sections/how-it-works-intro.liquid (S27)
+- Cream `bg-secondary` band, 5/7 column split at md+. Left = eyebrow (`#5B7DA0` light blue, NOT orange) + h2. Right = richtext body + 2 mini-cards labelling "The band" / "The tabs".
+- Eyebrow color is inline-styled because the slightly-darker blue (#5B7DA0) reads better on cream than `text-tertiary-light` (#9BB7D4) which is the on-dark variant.
+- Mini-cards hardcoded as 2 (band/tabs) — each has label / title / body schema fields.
+
+### sections/how-it-works-step.liquid (S27)
+- Single section, three rendering variants — `variant` setting drives layout:
+  - **`size`** (Step 01): 5-col grid with 4:5 visual placeholder left, 2x2 size-card grid + tip panel + inline CTA right.
+  - **`prep`** (Step 02): single 3-col grid where each block stacks "title + body above 1:1 image". Uses `flex flex-col h-full` + `grow` on text + `mt-auto` on image so all images bottom-align when captions vary in line count. Earlier two-grid layout (all images then all captions) was abandoned because mobile collapsed images and captions into separate stacks, breaking the pairing.
+  - **`apply`** (Step 03): 3-col grid of 4:5 image + caption + body, plus a "Rub it in" callout with eyebrow / heading / body and two stat blocks (e.g. `10s per tab` / `2x wear time`) separated by a thin vertical rule.
+- All variants render the sticky left rail via `{% render 'step-rail', active_step: <n> %}`.
+- Step body text uses `text-main/85` (NOT `text-copy` — explicitly darkened in S27 refinements pass for cream/white surface readability). Eyebrow color toggleable via `eyebrow_color` setting (`orange` default = `text-highlight`, `blue` = inline-styled `#5B7DA0` for Step 02 alternation).
+- `tip_body` is `richtext` so multi-paragraph content renders cleanly. Wrapper is `<div class="... [&_p+p]:mt-1.5">{{ tip_body }}</div>` — Tailwind v4 arbitrary selector adds inter-paragraph spacing without nesting `<p>` inside `<p>`.
+- Quick-rule-of-thumb tile (size variant) stacks the info icon above the title on mobile (`flex flex-col md:flex-row`), goes side-by-side at md+. Sensitive-skin tile (prep variant) does NOT yet have the same mobile stacking.
+- Inline mid-step CTA supports three styles via `cta_style` setting:
+  - `link` (default) — text link with arrow
+  - `button` — orange `bg-highlight text-white px-8 py-3 rounded-xl` (matches nav)
+  - `button-blue` — blue `bg-highlight-blue text-white px-8 py-3 rounded-xl`
+- Size-variant CTA wrapper uses `inline-cta inline-cta-stack` (CSS modifier flips flex-direction to column and aligns left) so the headline + sub stack full-width and the CTA sits below.
+- `data-step-section="<n>"` attribute on the section root drives the page-level sticky-rail active-state observer (see how-it-works-cta).
+
+### snippets/step-rail.liquid (S27)
+- Sticky left-rail navigation shared by all three "How it works" step sections.
+- `position: sticky; top: 6rem` (CSS), `hidden md:block md:col-span-3`.
+- Three step links hardcoded; each takes a title + subtitle from snippet params, defaulting to the design copy. `active_step` param controls which link gets `is-active` class (renders dark step-num with orange ring + light-blue tinted background).
+- Subtitle text: `text-main/70` (darkened from `text-copy/60` in S27 follow-up). Active state no longer overrides color or weight (the orange ring + tinted bg are enough signal).
+- Active step-number ring color: `rgba(255, 64, 0, 0.35)` (highlight orange) — was light blue earlier in S27, swapped on user feedback.
+- Snippet params: `active_step` (required), plus `step1_title/sub`, `step2_title/sub`, `step3_title/sub` (all optional, design defaults baked in).
+
+### sections/how-it-works-pitfalls.liquid (S27)
+- Cream `bg-secondary` band. Centered eyebrow + h2 + lead, then 2x2 grid of "checktile" compare cards.
+- Each card block: 16:9 photo placeholder up top, body underneath with a Do/Don't pill tag (green or orange via `tag-do` / `tag-dont` CSS classes) + title + description.
+- Tag selection driven by block setting `tag` (`do` / `dont`), inlines a check or X SVG accordingly.
+- Closing inline CTA below the grid (`max-w-3xl`, the same `.inline-cta` component). Per Tom's brief, this stays as a text link — only Refills and Aira Kit warrant the orange-button treatment.
+
+### sections/how-it-works-pro-tips.liquid (S27)
+- Dark navy `bg-main` band with two large viewport-relative radial gradients (light blue only — orange originally appeared here, removed in S27 refinements).
+- Gradient sizing: `ellipse 80vw 60vh at 15% 30%` (rgba(160,195,230,0.18)) + `ellipse 75vw 55vh at 85% 70%` (rgba(140,180,220,0.15)). Long soft falloff (0%→60-65%) so the glows feel ambient at any viewport width.
+- 3-up grid of cards on translucent cream surfaces (`background: rgba(241,235,225,0.06); border: 1px solid rgba(241,235,225,0.10)`).
+- Each block: cream rounded-square icon container + title (cream, weight 600) + body (cream/65 opacity).
+- Icon select options: `bolt` / `clock` / `home` / `sparkle` (inline SVGs via Liquid `case`).
+- Eyebrow uses `text-tertiary-light` (#9BB7D4 — the on-dark light-blue token).
+
+### sections/how-it-works-cta.liquid (S27)
+- Final dark navy band (`#0A1A34`), centered. Eyebrow + h2 + lead, then two CTAs: orange filled (`variant: 'accent'`) + cream outline (`variant: 'ghost-light'`).
+- Secondary CTA URL defaults to `#tutorialVideo` so "Re-watch tutorial" smooth-scrolls back to the hero video frame's id.
+- **Hosts the page-level JS** for the entire How it works page: reveal-on-scroll IntersectionObserver (`.reveal` → `.in`, threshold 0.12, unobserves on first entry) and the sticky step-rail active-state observer (`[data-step-section]` IntersectionObserver with `rootMargin: '-30% 0px -50% 0px'`, picks the entry with the highest intersectionRatio and toggles `is-active` on matching `.step-link[data-step]`).
+- Both observers self-scope via element existence checks — safe to ship even though the script renders only on this page.
 
 ---
 
 ## Products
 
 Two products currently:
-- **Aira Starter Kit** — includes 4 sized nasal strips (XS/S/M/L) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
+- **Aira Aira Kit** — includes 4 sized nasal strips (XS/S/M/L) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
 - **Aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
 
 Navigation: "Shop" links to /products/aira-starter-kit, "Refills" links to /products/aira-refill-tabs (direct product pages, not collections).
@@ -354,7 +413,7 @@ Shopify collection notes:
 - Variant JS: embedded JSON, swatch/pill active state toggling, price/availability/image updates on selection
 - Fixed variant image swap: clear srcset + sizes before setting src (browsers prioritise srcset over src attribute)
 - Variant images must be assigned to individual variants in Shopify admin (not just added to product media gallery) for variant.featured_image to return a value
-- Products: Aira Starter Kit (Colour: Black/Beige), Aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
+- Products: Aira Aira Kit (Colour: Black/Beige), Aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
 - templates/index.json wired with featured_products section after before_after_slider
 
 [Session 11] Health effects section
@@ -437,9 +496,9 @@ Shopify collection notes:
 
 [Session 19] UX brief implementation — cart drawer, product page rework, footer, cleanup
 - Full UX brief (UXbreif.txt) implementation completing all code tasks.
-- **Hero text**: Updated super-heading ("SLEEP. BREATHE. RECOVER."), headline, body copy, CTAs ("Shop Starter Kit" + "How it works").
+- **Hero text**: Updated super-heading ("SLEEP. BREATHE. RECOVER."), headline, body copy, CTAs ("Shop Aira Kit" + "How it works").
 - **Cart drawer** (snippets/cart-drawer.liquid): Built complete AJAX slide-out cart from scratch. Floating design (12px margin, rounded-2xl), responsive via CSS min(). Intercepts all add-to-cart forms site-wide. Refill upsell auto-hidden when refills in cart. Instant open with parallel fetch. All interactives cursor-pointer. "Continue shopping" close button.
-- **Product page nav/hero rework**: Removed hero from product pages (starter kit + refill). Transparent nav gets `bg-main` (blue) on product pages via `request.page_type == 'product'` check. Sticky mobile ATC bar restyled: bg-secondary (beige), accent CTA.
+- **Product page nav/hero rework**: Removed hero from product pages (Aira Kit + refill). Transparent nav gets `bg-main` (blue) on product pages via `request.page_type == 'product'` check. Sticky mobile ATC bar restyled: bg-secondary (beige), accent CTA.
 - **Footer**: Shop links updated to direct product pages. Social icons (Instagram + TikTok) set in footer-group.json. Copyright bar z-index fix.
 - **Cleanup**: Deleted 10 unused files (sections: collections, custom-section, featured-products, imageHero, section-wrapper; templates: list-collections.json; snippets: card, product-card-subscription; assets: icon-cart.svg, icon-account.svg). All references audited before deletion.
 - **Page hero**: Mobile height reduced to min-h-[20vh], heading padding-top reduced to pt-24.
@@ -448,7 +507,7 @@ Shopify collection notes:
 
 [Session 20] Product page V2 — buy box, refill page rework, cart drawer
 
-**Starter kit buy box (sections/product.liquid):**
+**Aira Kit buy box (sections/product.liquid):**
 - Accordion "Benefits" section now auto-opens on all devices (removed desktop-only `window.innerWidth >= 1024` check).
 - Accordion bullet icons refactored from CSS `::before` pseudo-elements to JS-injected `<img>` tags using `aira-logo-only-dark.svg`. Skips `<li>` items containing `<strong>` (numbered steps). Ensures visual consistency with product tile bullet icons.
 - One-time Purchase card bullets updated: reordered, added "Magnetic placement tool" and "Instruction manual".
@@ -465,10 +524,10 @@ Shopify collection notes:
 - `selectCard()` JS handles mutual exclusion across all 5 cards, sets/clears selling plan input.
 - Gallery column made sticky: `lg:sticky lg:top-24 lg:self-start`.
 - Trust badges added (Research Backed, High Success Rate, Doctor Recommended) with SVG icons.
-- Accordions: Benefits (tab-specific content), How to use (numbered steps), Shipping & Returns. Benefits auto-opens. Bullet icon injection matches starter kit.
+- Accordions: Benefits (tab-specific content), How to use (numbered steps), Shipping & Returns. Benefits auto-opens. Bullet icon injection matches Aira Kit.
 - Free shipping micro-copy below Add to Cart.
-- Starter link: "Need a starter kit? Start here →".
-- Added sticky mobile add-to-cart bar (matching starter kit): slides up when main ATC scrolls out of view, price updates on variant/plan selection via `selectCard()`.
+- Starter link: "Need a Aira Kit? Start here →".
+- Added sticky mobile add-to-cart bar (matching Aira Kit): slides up when main ATC scrolls out of view, price updates on variant/plan selection via `selectCard()`.
 
 **Refill template (templates/product.refill.json):**
 - Badge: "Best value", Title: "Monthly Refill Plan | 30 tabs", Save text: "Save 20% on refills".
@@ -510,14 +569,14 @@ Shopify collection notes:
 - Reviews section: heading changed to "Trusted by better breathers." — removed "hundreds of" (both templates).
 
 **Refill page section parity (templates/product.refill.json):**
-- Added benefits_slider (same 5 slides as starter kit).
-- Added social_proof (same 8 research stat blocks as starter kit).
+- Added benefits_slider (same 5 slides as Aira Kit).
+- Added social_proof (same 8 research stat blocks as Aira Kit).
 - Added ugc_gallery (4 testimonial blocks).
-- Added faq (same 6 questions as starter kit).
+- Added faq (same 6 questions as Aira Kit).
 - Added final_cta ("Ready to breathe better?").
 - Section order: main → benefits_slider → social_proof → ugc_gallery → judgeme_reviews → faq → final_cta.
 
-**Starter kit template order (templates/product.json):**
+**Aira Kit template order (templates/product.json):**
 - Updated to: main → how_to_use → benefits_grid → ugc_gallery → benefits_slider → social_proof → judgeme_reviews → faq → final_cta.
 - cross_sell removed from order.
 
@@ -528,7 +587,7 @@ Shopify collection notes:
 
 **Refill page star rating link (sections/product-refill.liquid):**
 - Rating wrapped in `<a href="#reviews-section" class="scroll-link">` — was previously a plain div with no link.
-- Added smooth scroll JS (`scrollIntoView({ behavior: 'smooth' })`) matching the starter kit implementation.
+- Added smooth scroll JS (`scrollIntoView({ behavior: 'smooth' })`) matching the Aira Kit implementation.
 
 **Global smooth scrolling (assets/critical.source.css):**
 - Added `html { scroll-behavior: smooth; }` so all anchor links scroll smoothly.
@@ -659,3 +718,225 @@ Shopify collection notes:
 - **Upsell "Add" button**: solid navy → ghost/outline (`border-2 border-main text-main`), fills navy on hover. Makes Checkout the dominant CTA; Add is clearly secondary.
 - **Remove button**: replaced "Remove" text with 14px SVG trash icon at `text-copy/40` opacity, hover turns `text-highlight` orange. Cleaner, less prominent in a buy-focused UI.
 - **Trust badge**: added lock icon + "Secure checkout · Free UAE delivery" at `text-copy/30` opacity below upsell card. Fills the empty gap when cart is sparse while reinforcing shipping/security.
+
+### Session 25 — Our Story page + homepage background rhythm + atmospheric washes (28 April 2026)
+
+**Our Story page (new): templates/page.our-story.json + 3 sections**
+
+Built from `design_handoff_our_story` design files (HTML/JSX prototype). Maps the design tokens to existing brand system (no new fonts introduced — JetBrains Mono in the prototype substituted with `font-body` uppercase + tracked-out, matching existing eyebrow pattern):
+- `T.navy`     → `bg-main`
+- `T.cream`    → `bg-secondary`
+- `T.creamSoft`→ `bg-cream-light` (existing token)
+- `T.blue`     → `text-tertiary-light` (#9BB7D4 — exact match)
+- `T.orange`   → `bg-highlight` via existing `cta-button` snippet (variant: accent)
+- `T.border`   → arbitrary `border-[#E6DFD2]` (cream-toned, distinct from generic `border-border` #D4D4D4)
+
+**sections/our-story-hero.liquid** (navy hero):
+- Eyebrow row: centered flex with 32px hairlines either side (`bg-tertiary-light/70`)
+- Headline: `font-heading font-normal` (Satoshi 400 — editorial weight, overrides default 600 via `font-normal`), text-balance, `max-width: 18ch`
+- Photograph: aspect-4/5 mobile / aspect-21/9 desktop. CMS `image_picker` with hatched cream-soft fallback. Caption bottom-right via CMS setting.
+- Supporting copy + meta row: `lg:grid-cols-[1.4fr_1fr]` gap-8 lg:gap-20. Mobile = stacked rows with translucent dividers (`border-secondary/12`); desktop = 3-col `repeat(3,auto)` grid.
+- Atmospheric washes: blue top-right (#9BB7D4 @ 10%) + teal bottom-left (#50A2A7 @ 12%) via inline `background-image: radial-gradient(...)` on the section.
+- Hero top padding split: `pt-32 md:pt-40 pb-16 md:pb-25` (was `py-16 md:py-25`) — gives the eyebrow ~128/160px clearance from the floating nav.
+
+**sections/our-story-tiles.liquid** (cream tile rhythm):
+- Three image/copy tiles, alternating sides via per-block `reverse` checkbox (toggles `lg:order-1`/`lg:order-2`).
+- Image: aspect-4/5, `0X` index marker top-left in `text-tertiary-light` (the editorial blue numeral).
+- Tile eyebrows: `text-highlight` (orange) — matches the existing brand eyebrow pattern from `section-heading.liquid`. (Originally tried `text-tertiary-light`, then `text-main`, settled on `text-highlight` for brand consistency.)
+- Heading: Satoshi 400, `text-balance`, `max-width: 18ch`. Body: max-width 46ch.
+- Schema: 3-tile preset with default copy from the brief. CMS richtext for body paragraphs.
+
+**sections/our-story-closing.liquid** (navy closing):
+- Mirrors the hero's eyebrow-with-hairlines pattern.
+- Accent CTA `bg-highlight` (size: lg) + cream text-link with hover-darkening bottom border.
+
+**Headline accent pattern (key learning):**
+- Shopify's `inline_richtext` field strips `class` attributes on `<span>` — so the design's "wrap accent words in blue span" can't be done with a single richtext field.
+- Solution: TWO `text` settings — `headline` (full string) + `headline_accent` (substring). Liquid wraps the substring in a span at render time:
+  ```liquid
+  {%- if hl_text contains hl_accent -%}
+    {%- assign wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>' -%}
+    {%- assign hl_html = hl_text | replace: hl_accent, wrapped -%}
+  {%- endif -%}
+  ```
+- Merchant edits plain text in admin UI. No HTML knowledge required, no schema validator complaints.
+
+**templates/page.our-story.json:**
+- Alternate page template — Shopify admin: page handle `our-story` + Theme template = `our-story`.
+- Section order: hero → tiles → closing → ugc (added later in same session).
+
+**Homepage section-background rhythm (Option A — flat colors, no atmospheric washes):**
+
+Goal: alternating cream/paper/cream-soft/navy rhythm so the page reads as paced rather than monotone. Tried atmospheric radial-gradient washes per-section first, then reverted in favor of flat color changes.
+
+**templates/index.json — three CMS background colors updated:**
+- `before_after_slider.background_color`: `#ffffff` → `#f1ebe1` (cream)
+- `health_effects.background_color`:      `#fafafa` → `#f8f5f0` (cream-light)
+- `benefits_slider.background_color`:     `#fafafa` → `#ffffff` (paper)
+- `faq.background_color`: unchanged `#fafafa`
+
+**sections/how-to-use.liquid:** root `bg-secondary` → `bg-bg` (white).
+
+**sections/ugc-gallery.liquid — full navy invert (then made theme-toggleable):**
+- Section root `bg-bg` → `bg-main`.
+- Section heading inlined directly in the section file rather than via the shared `section-heading` snippet — the snippet hardcodes `text-title` (#212121) which would be invisible on navy. Inlining keeps the snippet untouched site-wide while letting this one section use `text-secondary` on navy.
+- Progress track: `bg-bg-muted` → `bg-white/10`; fill: `bg-main` → `bg-secondary`.
+- Bottom divider: `border-bg-muted` → `border-white/10`; handle text → `text-secondary`; CTA copy → `text-secondary opacity-75`.
+- Eyebrow stayed `text-highlight` (orange reads on both surfaces).
+
+**sections/custom-reviews.liquid — surface flip:**
+- Root `bg-cream-light` → `bg-secondary` (cream).
+- Review cards `bg-bg-soft` → `bg-bg` (pure white) for clean contrast against the new cream section bg.
+
+**Atmospheric washes on flat-navy sections:**
+- Both `sections/ugc-gallery.liquid` (now via theme toggle) and `sections/final-cta.liquid` carry the same dual-radial wash as the Our Story hero.
+- final-cta: bottom teal radial removed (`radial-gradient at 15% 90%, rgba(80,162,167,0.12)`) — the soft fade was creating a visible edge where the section met the footer's hard navy. Only the top-right blue wash remains.
+
+**UGC theme toggle (single section, two surfaces):**
+- Added `theme` select schema setting (`dark` default, `light` opt-in).
+- Liquid `case` block at the top assigns `bg_class`, `bg_style`, `heading_color`, `progress_track`, `progress_fill`, `border_color`, `handle_color`, `cta_color` based on `section.settings.theme`. Markup uses the variables.
+- `dark` = `bg-main` + radial washes + cream text + `bg-white/10` chrome (homepage default — unchanged behavior).
+- `light` = `bg-cream-light` + no wash + dark text + `bg-bg-muted` chrome.
+- Homepage `templates/index.json` keeps default (dark). Our Story page sets `"theme": "light"` for the UGC section appended after Closing.
+
+**Bug fix — sections/custom-reviews.liquid:**
+- The custom-reviews JS used a fallback selector `document.querySelector('.bg-cream-light')` to find the section if `document.currentScript.closest('section')` returned null. When the section root class was renamed to `bg-secondary`, the fallback broke — Judge.me reviews intermittently failed to populate.
+- Fix: changed fallback to `[data-custom-reviews]` (the existing data attribute on the section root). Robust to any future bg class changes.
+
+**Page-template-only background pattern:**
+- `templates/page.our-story.json` uses `"theme": "light"` for the UGC block to render the same section on the cream-tinted Our Story page rather than the navy homepage version. No section duplication needed — schema toggle handles per-page styling.
+
+**Key learnings:**
+- Shopify `inline_richtext` is restrictive — it allows only a tag whitelist, no `class`/`style` attributes. For inline emphasis spans in headlines, prefer a two-field pattern (`headline` + `headline_accent`) with Liquid `replace`, NOT `inline_richtext` with embedded HTML.
+- When a shared snippet hardcodes color tokens (`text-title`, `text-copy`), inverting a single section is cleaner via inline markup than forking the snippet — avoids cross-section regressions.
+- Tailwind v4: arbitrary values like `aspect-[4/5]` and `rounded-[4px]` have canonical equivalents (`aspect-4/5`, `rounded-sm`) — the IDE's `suggestCanonicalClasses` lint catches these. v4 also supports any integer in spacing utilities (`py-22`, `py-25`, `py-35`) via `calc(var(--spacing) * n)`.
+- For atmospheric radial gradient overlays on existing sections, use `background-image: radial-gradient(...)` rather than `background:` shorthand. `background-image` is independent of `background-color`, so the gradient layers on top of an existing class-based or CMS-controlled base color without overriding it.
+- JS that resolves its own section via `document.currentScript` should always have a `[data-...]` attribute fallback, not a styling class — class names are visual concerns and will get refactored.
+
+### Session 26 — Why Aira animated rebuild + Health Effects manual-only (3 May 2026)
+
+**Why Aira section rebuild (sections/benefits-grid.liquid) — full replacement:**
+
+Iterated through four design briefs to land on the final approach. Replaced the static 2-col image+text grid with a pinned full-viewport scroll experience.
+
+- **Final architecture: CSS sticky + GSAP animations** (no GSAP ScrollTrigger pin).
+- A tall `.why-aira-wrapper` div provides scroll distance (`height: calc(N * 100vh)` where N = block count). A `.why-aira-sticky` child with `position: sticky; top: 0; height: 100vh` pins to the viewport while the user scrolls through the wrapper.
+- A vanilla scroll listener on `window` calculates `progress = -wrapper.getBoundingClientRect().top / (wrapperH - viewH)`. Pure math on `getBoundingClientRect` — no caching, no DOM mutation, works on resize/refresh/monitor switch.
+- GSAP is loaded from CDN (`cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js`, defer) and used **only** for slide-in/out timeline animations — no ScrollTrigger plugin, no pin spacers.
+- Each slide is `position: absolute; inset: 0` stacked in the sticky container. Active slide has `opacity: 1`, others fade.
+- Animation choreography per slide: eyebrow (slide 1 only) fade in, gradient number (`80px–140px clamp`, navy→teal `-webkit-background-clip: text` gradient) scale+fade, orange accent line grows from 0 to 56px, heading reveals **word by word** (each word wrapped in `.word > .word-inner` spans, JS splits text on whitespace, GSAP staggers 50ms), body fades up, product image scales 0.92→1.0.
+- Out animation: words slide up out of frame (`y: -110%`), elements fade and shift up.
+- Right-edge progress indicator: dots (one per block) connected by progress lines whose orange fill animates per-segment based on overall scroll progress.
+- Background decorative circle: navy/teal radial gradient at 6% alpha, drifts on infinite GSAP yoyo tween (no scroll dependency — earlier ScrollTrigger version conflicted with the pin trigger).
+- Dot click → smooth-scrolls to that slide's midpoint progress.
+- Mobile: switches to single-column, image moves above text (`order: -1`), text-aligns center, padding reduced.
+- Schema: section settings (eyebrow, default product image), `benefit` blocks (heading, richtext body, optional per-slide image override).
+- Section background: `bg-bg-soft` so adjacent page sections don't bleed through during the pin.
+
+**Iteration history (kept here for context — final form is the V3 above):**
+- V1: Sticky image + scrolling benefits (CSS sticky on a 40% column, IntersectionObserver fade-in on benefit blocks). Replaced because the brief escalated.
+- V2: GSAP ScrollTrigger `pin: true` with manual scroll-space wrapper. Pin worked but: container had no background (bleed-through from sections below), grid columns rendered 560px instead of 1fr, conflicting bg-circle ScrollTrigger, broken on resize/mid-scroll refresh. Patched four bugs but the approach was structurally fragile.
+- V3 (final): Abandoned ScrollTrigger pin entirely. CSS `position: sticky` for pinning + plain scroll listener for progress + GSAP only for animations. Battle-tested pattern (used by Apple/Stripe/Linear).
+
+**Health Effects manual-only (sections/health-effects.liquid):**
+
+- Removed auto-rotate timer (`ROTATE_MS`, `setTimeout`, `rotateNext`, `resetTimer`, `paused` flag, grid hover pause/resume listeners).
+- Removed conic-gradient sweep visual (`@property --border-progress`, `@keyframes he-sweep`, `.he-card.is-next`, `.sweep-paused`) — those existed only as a countdown indicator for auto-advance.
+- Initial focus card now defaults to "Snoring": Liquid loop at the top of the section iterates blocks, sets `assign initial_index = forloop.index0` when `block.settings.title | downcase` contains `'snoring'`, falls back to 0 if no match.
+- Both the focus panel `opacity-100` and the grid `hidden` class are gated on `forloop.index0 == initial_index` (was `forloop.first`).
+- JS `lockedIndex` initialised from Liquid: `var lockedIndex = {{ initial_index }};`.
+- Kept: hover-preview, click-lock, card-entering scale animation when a card reappears in the grid, IntersectionObserver scroll-in.
+
+**Health Effects focus panel mobile sizing:**
+- Padding `p-8 lg:p-10` → `px-6 py-5 lg:p-10` (tighter horizontal + much shorter vertical on mobile).
+- Title `text-2xl lg:text-3xl` → `text-lg lg:text-3xl`.
+- Body description `text-base` → `text-sm lg:text-base`.
+- Gap `gap-3` → `gap-2 lg:gap-3`.
+- Net effect: more of the focus image is visible on mobile because the navy text block takes less vertical space.
+
+**Key learnings:**
+- GSAP ScrollTrigger `pin: true` is fundamentally fragile for full-viewport pinned sections — it mutates the DOM (creates pin-spacers), depends on cached pixel measurements, and breaks on resize / mid-scroll refresh / monitor switch. Three rounds of patches (`invalidateOnRefresh`, manual resize handlers, `addEventListener('refresh', ...)`) couldn't fully fix the edge cases. The CSS `position: sticky` + manual scroll-listener pattern is what production sites (Apple, Stripe, Linear) actually use.
+- When you need GSAP for animation quality but want robust pinning, separate the concerns: CSS for pinning, scroll listener for progress math, GSAP only for the visual animations themselves.
+- Auto-rotate carousels with countdown indicators feel pushy on educational/health content — manual-only with hover-preview reads as "explore at your own pace" and is what users actually want when they're absorbing information rather than browsing.
+- Liquid's `forloop.index0` + a CMS-content-aware initial state (matching by title substring) is more flexible than hardcoding "the first block is special" — the merchant can reorder blocks freely without breaking the default focus.
+
+### Session 27 — Our Story CTAs, /pages/tutorials → /pages/how-it-works rename, full How it works page build (3 May 2026)
+
+Three connected briefs back-to-back: (1) place CTAs across the Our Story page, (2) clean up the theme after the page rename from /pages/tutorials to /pages/how-it-works, (3) build the new How it works page from a design handoff bundle, then refine it.
+
+**Our Story CTAs (5 placements):**
+- `sections/our-story-hero.liquid`: added "See how it works ↓" ghost text link below the H1, anchored to `#story-tiles`.
+- `sections/our-story-tiles.liquid`: section root gained `id="story-tiles"`. Added per-block `cta_label` + `cta_url` schema settings; renders as a quiet text link with arrow-span at end of each tile body. Tile-1 left empty (origin/empathy moment, pitching breaks trust).
+- `sections/our-story-closing.liquid`: secondary CTA rendering switched from inline-text to the arrow-span pattern (`inline-flex items-center gap-2 group` + `<span class="transition-transform group-hover:translate-x-1">→</span>`). Schema default updated and noted that the arrow is appended automatically.
+- `sections/ugc-gallery.liquid`: added optional `shop_cta_label` + `shop_cta_url` settings rendering as orange `bg-highlight` button below the tile grid. Defaults blank so homepage UGC is unaffected; only Our Story enables it ("Start your better breath" → `/products/aira-starter-kit`).
+- `templates/page.our-story.json`: wired all CTA settings, kept `theme: light` on UGC.
+
+**/pages/tutorials → /pages/how-it-works cleanup (theme code only — admin work flagged separately):**
+- `sections/how-to-use.liquid` line 89: hardcoded `'Watch tutorial'` button label → `'Watch how it works'`.
+- `templates/index.json`: `tutorial_url` `/pages/tutorials` → `/pages/how-it-works`.
+- `templates/product.json`: `tutorial_url` was empty `""` (the broken-link bug Tom flagged on the Aira Kit product page — same `how-to-use` section as homepage, just with no URL set). Wired to `/pages/how-it-works`.
+- `sections/footer.liquid` line 99: was hardcoded `<a href="/pages/how-to-use">How to use</a>` (a live 404). Brief framed it as admin nav work but the footer is hardcoded, so fixed in code → `<a href="/pages/how-it-works">How it works</a>`.
+- `sections/footer.liquid` line 110: "Affiliate Program" Title Case → "Affiliate program" sentence case (matches other footer items per Tom's recommendation). URL untouched — the `/pages/affiliate` vs `/pages/affilliate-program` (header typo) reconciliation needs admin verification of which page actually exists.
+- `templates/page.our-story.json`: both Our Story CTAs (tile-2 + closing secondary) retargeted from `/pages/tutorials` → `/pages/how-it-works`.
+- Body copy left untouched per brief's judgment-call rule: `tutorial_label` prose ("See the full tutorial →" homepage, "watch our short tutorial video" product page), accordion headings "How to use" on starter-kit + refill product templates (instructional UX copy at the right moment).
+- Verified zero `/pages/tutorials`, `/pages/how-to-use`, or `Watch tutorial` matches outside `Brief.txt` and `claudeinfo.txt`.
+
+**How it works page — full build from design handoff (`C:\Users\tompe\Downloads\Aira Two\design_handoff_how_it_works`):**
+
+Created 6 new sections + 1 new snippet + 1 new page template + extended 1 existing snippet + softened 2 site-wide tokens. Reused existing `header.liquid`, `footer.liquid` (via header/footer-group.json — no duplication), and `faq.liquid`.
+
+Site-wide token softening per the README's explicit instruction:
+- `--color-title`: `#212121` → `#2A3142`
+- `--color-copy`: `#40464F` → `#5C6470`
+- These affect every page on the theme. The README called this out as intentional ("a teammate-requested change to reduce visual heaviness").
+
+Extended `snippets/cta-button.liquid` with a `ghost-light` variant (`border border-secondary/50 text-secondary hover:bg-secondary/10`) for the cream-outline-on-dark "Re-watch tutorial" button on the final CTA section.
+
+New CSS components in `assets/critical.source.css` `@layer components` (compiled to `critical.css` via `npm run build:css`):
+- `.pill` (light-blue tinted eyebrow chip on dark surfaces — kept after S27 refinements removed the hero pill but tutorial-video chrome still uses it for the duration mark and CC/mute pills)
+- `.video-frame` + `.video-placeholder` + `.video-overlay` + `.video-controls` + `.video-play-big` (+ `.ring`) + `.video-cinema-mark`
+- `.step-rail` + `.step-link` (+ `.step-num`, `.step-sub`, `.is-active` states)
+- `.size-card` (border + soft light-blue glow on hover)
+- `.inline-cta` + `.inline-cta-link` (+ `.inline-cta-stack` modifier added in refinements pass)
+- `.checktile` (compare card) + `.tag` + `.tag-do` (green) + `.tag-dont` (orange)
+- `.ph` + `.ph-light` (diagonal-stripe placeholder pattern in two surface colors)
+- `.reveal` (opacity 0 + translateY 24px → in)
+- `.hiw-hero-bg` + `.hiw-hero-halo` were added during the initial build then removed during the S27 refinements pass (Option A: match Our Story exactly, drop the orange-tinted custom backdrop).
+
+`templates/page.how-it-works.json` wires all 9 sections in order: hero → intro → step_1 (size) → step_2 (prep) → step_3 (apply) → pitfalls → pro_tips → faq → final_cta. Full default copy from the design baked in.
+
+Page-level JS (reveal observer + sticky-rail active-state observer) lives in `sections/how-it-works-cta.liquid` rather than a global asset — both observers self-scope via element existence checks.
+
+**Refinements pass (8 changes from second design brief):**
+- Hero: dropped `.hiw-hero-bg` + `.hiw-hero-halo` classes, replaced with `bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-25` + Our Story's exact dual-radial inline backdrop. Deleted the orange-dot "Tutorial" pill block (and its `pill_label` schema setting). Added `headline_accent` setting wrapping "life-changing breathing" in `text-tertiary-light/85` span.
+- Steps 01-03: all body copy moved from `text-copy` to `text-main/85` (lead, size-card descriptions + tier labels, prep card body, apply card body, callout body, tip body, CTA sub-copy). The site-wide `text-copy` softening still applies everywhere outside the steps.
+- Step 01 tip body: schema setting changed `textarea` → `richtext`, render wrapper `<p>` → `<div class="... [&_p+p]:mt-1.5">`. JSON now ships `<p>Sleep — start a size up...</p><p>Sport — size down...</p>` so the two rules are visually separated.
+- Step 01 CTA: added `inline-cta-stack` modifier (CSS `flex-direction: column; align-items: flex-start`) so the headline + sub stack full-width and the CTA sits below.
+- Step 02 CTA: introduced `cta_style` schema setting (`link` / `button` / `button-blue`) supported by both size and prep variants. Step 01 now uses `button` (orange, matches nav). Step 02 uses `button-blue` (`bg-highlight-blue` = `#087CA7`). Pitfalls "Read reviews →" stays a text link per the brief's consistency note (only Refills + Aira Kit warrant the button treatment).
+- Pro Tips: replaced two small fixed-px gradients (one orange, one blue) with two large viewport-relative ellipses, both light blue. Long soft falloff so the glows feel ambient on any viewport. Removed orange entirely.
+- Removed orphaned `.hiw-hero-bg` + `.hiw-hero-halo` from `critical.source.css` after Option A swap.
+
+**Subsequent micro-tweaks (chronological):**
+- Quick rule of thumb tile (size variant): `flex` → `flex flex-col md:flex-row gap-3 md:gap-4`. Icon now stacks above the text on mobile.
+- Step 02 mobile bug: image grid + caption grid were rendered as two separate grids. On desktop the columns aligned visually; on mobile both collapsed to single columns producing image1/image2/image3 then caption1/caption2/caption3 — disconnecting captions from images. Refactored to a single grid where each block is a `flex flex-col h-full` cell containing title + body + image. Mobile gets clean caption→image pairing.
+- Step 02 desktop image alignment: a 3-line caption ("Skip the lotion") was pushing its image below the others. Added `grow` on the text wrapper + `mt-auto` on the image div, and `items-stretch` on the grid, so images bottom-align regardless of caption line count.
+- Step rail: subtitle text darkened from `text-copy/60` to `text-main/70` (the supporting "Four bands in every kit" / "Clean & dry" / "Shark fins up" copy was reading too pale on cream).
+- Active step state: removed the `.step-link.is-active .step-sub` rule entirely (was setting `text-tertiary-light` light-blue + `font-weight: 600` — now inherits the inactive `text-main/70` styling). Active state still telegraphed via the orange ring + tinted background.
+- Active step-num ring: `box-shadow` color changed from light-blue `rgba(155, 183, 212, 0.35)` to highlight orange `rgba(255, 64, 0, 0.35)`.
+
+**Admin tasks left for the user (cannot be done from theme code):**
+- Create the Shopify page in admin: Online Store → Pages → Add page titled "How it works", template = `page.how-it-works`. Slug should already be `/pages/how-it-works` from the earlier rename.
+- 301 redirect: Online Store → Navigation → URL Redirects → confirm/create `/pages/tutorials` → `/pages/how-it-works`.
+- Header nav menu: any "Tutorials" item still in the header (admin-driven nav, not in `header.liquid` markup) needs to be repointed to `/pages/how-it-works` and renamed to "How it works".
+- Affiliate URL reconciliation: header has `/pages/affilliate-program` (typo: 2x "l"), footer has `/pages/affiliate`. Only one page exists in admin — verify which and repoint the other via the page picker.
+- 11 placeholder slots on the How it works page (1 hero video + 10 stills) — wire actual photography + video through section settings (image pickers on every step block + `video_url` setting on the hero).
+
+**Key learnings:**
+- Site-wide token softening (`--color-copy`, `--color-title`) is a one-line change in `critical.source.css` `@theme {}` and a Tailwind rebuild — but the blast radius is every page on the theme. Worth eyeballing all surfaces before shipping (cream sections especially can read too light on retina displays).
+- For configurable per-step CTA styling, a `select` schema setting with three named variants (`link` / `button` / `button-blue`) is cleaner than per-instance Tailwind classes in JSON. Render branches via Liquid `if`/`elsif`/`else`. The schema option labels educate the merchant on visual intent ("Orange button (matches nav)") rather than bg-class names.
+- Tailwind v4 arbitrary variants like `[&_p+p]:mt-1.5` let you style richtext-rendered HTML inside a wrapper div without forking schemas or building a custom prose component. Pairs well with Shopify's `richtext` setting type.
+- Two-grid "row of images on top, row of captions below" layouts ALWAYS break on mobile when both grids collapse to single columns. Default to single-grid + per-cell `flex flex-col` instead — works at every viewport without media-query gymnastics.
+- For desktop image-row alignment when captions vary in line count: `items-stretch` on the grid (default) + `flex flex-col h-full` on each cell + `grow` on the variable-height text wrapper + `mt-auto` on the fixed-position element (image). No JS, no row-template tricks.
+- Page-level JS belongs in the LAST section of the page rather than a global asset — it's auto-scoped via element existence checks (`if (els.length)`), gets shipped only when the page renders, and stays alongside the markup it operates on.
+- For inline emphasis spans in headlines, the two-field pattern (`headline` + `headline_accent` + Liquid `replace`) is reusable across hero variants. Used by Our Story hero, Our Story closing, and now How it works hero — all three share the same liquid block at the top of the section.
+- Rebuild Tailwind (`npm run build:css`) after every CSS edit to `critical.source.css`. The compiled `critical.css` ships, the source file does not (it's `.shopifyignore`d).

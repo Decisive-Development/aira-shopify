@@ -801,7 +801,7 @@
 (function() {
   var section = document.currentScript.closest('section') ||
                 document.currentScript.parentElement.closest('section') ||
-                document.querySelector('.bg-cream-light');
+                document.querySelector('[data-custom-reviews]');
   if (!section) return;
 
   var hiddenWidget = section.querySelector('.jdgm-widget-hidden');

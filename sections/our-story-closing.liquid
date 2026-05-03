@@ -65,9 +65,10 @@
 			{%- if section.settings.secondary_cta_label != blank -%}
 				<a
 					href="{{ section.settings.secondary_cta_url | default: '/' }}"
-					class="font-body text-[15px] font-medium text-secondary py-1 px-2 border-b border-secondary/40 hover:border-secondary transition-colors"
+					class="font-body text-[15px] font-medium text-secondary py-1 px-2 border-b border-secondary/40 hover:border-secondary transition-colors inline-flex items-center gap-2 group"
 				>
 					{{ section.settings.secondary_cta_label }}
+					<span class="transition-transform group-hover:translate-x-1">→</span>
 				</a>
 			{%- endif -%}
 
@@ -116,7 +117,7 @@
 			"type": "text",
 			"id": "primary_cta_label",
 			"label": "Label",
-			"default": "Shop the starter kit"
+			"default": "Shop the Aira Kit"
 		},
 		{
 			"type": "url",
@@ -131,7 +132,8 @@
 			"type": "text",
 			"id": "secondary_cta_label",
 			"label": "Label",
-			"default": "Back to home →"
+			"info": "An arrow → is appended automatically. Don't include it in the label.",
+			"default": "How to use it"
 		},
 		{
 			"type": "url",

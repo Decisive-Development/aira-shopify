@@ -15,10 +15,11 @@
         "eyebrow": "SLEEP. BREATHE. RECOVER.",
         "heading": "Breathe, the way you were meant to.",
         "subheading": "One magnetic strip. Quieter nights, deeper sleep, and mornings that actually feel like mornings.",
-        "button_label": "Shop Starter Kit",
+        "button_label": "Shop Aira Kit",
         "button_url": "/products/aira-starter-kit",
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
+        "foreground_image": "shopify://shop_images/DSCF3185.jpg",
         "use_gradient": true,
         "overlay_color": "#0a1a34",
         "overlay_opacity": 30,
@@ -84,7 +85,7 @@
         "eyebrow": "How it works",
         "heading": "3 simple steps.",
         "tutorial_label": "See the full tutorial →",
-        "tutorial_url": "/pages/tutorials"
+        "tutorial_url": "/pages/how-it-works"
       }
     },
     "health_effects": {
@@ -166,7 +167,7 @@
         "background_color": "#f8f5f0",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
-        "cta_label": "Shop Starter Kit",
+        "cta_label": "Shop Aira Kit",
         "cta_url": "/products/aira-starter-kit",
         "container_width": "contained",
         "padding_vertical": "lg"
@@ -272,7 +273,7 @@
         "eyebrow": "The science of sleep",
         "heading": "Better breathing, deeper sleep, better life.",
         "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
-        "cta_label": "Shop Starter Kit",
+        "cta_label": "Shop Aira Kit",
         "cta_url": "/products/aira-starter-kit",
         "left_heading": "The problem",
         "right_heading": "With better breathing"
@@ -387,7 +388,8 @@
         "eyebrow": "The Aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
-        "cta_text": "Share your experience — tag @aira.breathing"
+        "cta_text": "Share your experience — tag @aira.breathing",
+        "theme": "dark"
       }
     },
     "custom_reviews": {
@@ -413,7 +415,7 @@
           "type": "question",
           "settings": {
             "question": "Is it comfortable to sleep with and what if it falls off during the night?",
-            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Starter Pack </em>includes a simple application guide to help you get it right from night one.</p>"
+            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Aira Kit </em>includes a simple application guide to help you get it right from night one.</p>"
           }
         },
         "faq_3": {
@@ -441,7 +443,7 @@
           "type": "question",
           "settings": {
             "question": "How do I know which size is right for me?",
-            "answer": "<p>We've made finding your size easy. The Aira starter pack includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
+            "answer": "<p>We've made finding your size easy. The Aira Kit includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
           }
         },
         "faq_5": {
@@ -483,7 +485,7 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop Starter Kit",
+        "button_label": "Shop Aira Kit",
         "button_url": "/products/aira-starter-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"

@@ -1,0 +1,187 @@
+{
+  "sections": {
+    "hero": {
+      "type": "how-it-works-hero",
+      "blocks": {
+        "ch-1": { "type": "chapter", "settings": { "timestamp": "00:00", "time_seconds": 0,  "title": "Find your size",    "subtitle": "S2 · M1 · M2 · L1" } },
+        "ch-2": { "type": "chapter", "settings": { "timestamp": "00:32", "time_seconds": 32, "title": "Prep your skin",    "subtitle": "Clean, dry, gentle" } },
+        "ch-3": { "type": "chapter", "settings": { "timestamp": "00:58", "time_seconds": 58, "title": "Apply tabs & band", "subtitle": "Shark fins up" } },
+        "tr-1": { "type": "trust",   "settings": { "icon": "star",  "label": "Hypoallergenic" } },
+        "tr-2": { "type": "trust",   "settings": { "icon": "moon",  "label": "Drug-free" } },
+        "tr-3": { "type": "trust",   "settings": { "icon": "clock", "label": "Sets up in 60 seconds" } },
+        "tr-4": { "type": "trust",   "settings": { "icon": "check", "label": "Reusable band" } }
+      },
+      "block_order": ["ch-1", "ch-2", "ch-3", "tr-1", "tr-2", "tr-3", "tr-4"],
+      "settings": {
+        "headline": "Three steps to life-changing breathing.",
+        "headline_accent": "life-changing breathing",
+        "lead": "Watch the 90-second tutorial, then walk through each step at your own pace. The whole routine takes under a minute once you've got it.",
+        "duration_label": "0:00 / 1:32"
+      }
+    },
+
+    "intro": {
+      "type": "how-it-works-intro",
+      "settings": {
+        "eyebrow": "The basics",
+        "heading": "A two-part system. No drugs, nothing inside your nose.",
+        "body": "<p>Aira sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>",
+        "card1_label": "The band",
+        "card1_title": "Reusable. Magnetic.",
+        "card1_body": "Lasts months. Holds the structural pull.",
+        "card2_label": "The tabs",
+        "card2_title": "Daily. Adhesive.",
+        "card2_body": "One pair per night. Replace as you go."
+      }
+    },
+
+    "step_1": {
+      "type": "how-it-works-step",
+      "blocks": {
+        "size-1": { "type": "size", "settings": { "code": "S2", "tier": "Small",  "description": "For narrower nose bridges. Lower-impact wear and sleep." } },
+        "size-2": { "type": "size", "settings": { "code": "M1", "tier": "Medium", "description": "Most popular for sport & high-impact use. Slightly tighter pull." } },
+        "size-3": { "type": "size", "settings": { "code": "M2", "tier": "Medium", "description": "Most popular for sleep. Wider opening, longer wear." } },
+        "size-4": { "type": "size", "settings": { "code": "L1", "tier": "Large",  "description": "For wider noses. Maximum airflow at rest." } }
+      },
+      "block_order": ["size-1", "size-2", "size-3", "size-4"],
+      "settings": {
+        "variant": "size",
+        "step_number": 1,
+        "bg": "bg-bg",
+        "eyebrow": "Step 01",
+        "eyebrow_color": "orange",
+        "heading": "Find your size.",
+        "lead": "The right band rests with its tips on the outer edges of your nostrils — without pinching them or pressing them shut. Every Aira Kit ships with four sizes so you can find your fit on night one.",
+        "visual_label": "Sizing photo — band on nose, callouts pointing to nostril edges",
+        "tip_title": "Quick rule of thumb",
+        "tip_body": "<p>Sleep — start a size up for wider airflow.</p><p>Sport — size down so the tabs hold under sweat &amp; movement.</p>",
+        "cta_title": "Get all four sizes in the Aira Kit.",
+        "cta_body": "Try every band on night one — keep the one that fits.",
+        "cta_label": "Shop Aira Kit",
+        "cta_url": "/products/aira-starter-kit",
+        "cta_style": "button"
+      }
+    },
+
+    "step_2": {
+      "type": "how-it-works-step",
+      "blocks": {
+        "prep-1": { "type": "prep", "settings": { "title": "Clean",           "image_label": "Clean — soap & water on the bridge",     "body": "Use a gentle cleanser to remove makeup, oils, and dirt from the bridge of your nose." } },
+        "prep-2": { "type": "prep", "settings": { "title": "Dry",             "image_label": "Dry — pat with a towel",                 "body": "Pat — don't rub. Even a little moisture stops adhesive from settling properly." } },
+        "prep-3": { "type": "prep", "settings": { "title": "Skip the lotion", "image_label": "Skip moisturiser & oils on the bridge",  "body": "Moisturisers, serums, and oils are the #1 reason tabs lift early. Apply Aira first, skincare around it." } }
+      },
+      "block_order": ["prep-1", "prep-2", "prep-3"],
+      "settings": {
+        "variant": "prep",
+        "step_number": 2,
+        "bg": "bg-cream-light",
+        "eyebrow": "Step 02",
+        "eyebrow_color": "blue",
+        "heading": "Prep your skin.",
+        "lead": "Adhesive sticks to clean, dry skin. Twenty seconds of prep is the difference between tabs that hold for a full night and ones that wander off at 4am.",
+        "tip_title": "Sensitive skin?",
+        "tip_body": "<p>Run a 24-hour patch test with a single tab before your first full night. Discontinue if you notice irritation.</p>",
+        "cta_title": "Running low on tabs?",
+        "cta_body": "30, 60 or 90-pair refills — free shipping over £50.",
+        "cta_label": "Shop Refill Tabs",
+        "cta_url": "/products/aira-refill-tabs",
+        "cta_style": "button-blue"
+      }
+    },
+
+    "step_3": {
+      "type": "how-it-works-step",
+      "blocks": {
+        "apply-1": { "type": "apply", "settings": { "title": "A · Peel daintily", "image_label": "A · Peel a tab daintily by the edge",        "body": "Pinch the tab by its outer edge. The less you touch the adhesive, the longer it holds." } },
+        "apply-2": { "type": "apply", "settings": { "title": "B · Place as shown", "image_label": "B · Place tab just above each nostril",      "body": "One tab on each side of your nose, just above the nostril — steel disc facing outward." } },
+        "apply-3": { "type": "apply", "settings": { "title": "C · Shark fins up",  "image_label": "C · Apply band, magnetic ends up",            "body": "Bring the band in and let the magnets click. The fin tips face the sky — never down." } }
+      },
+      "block_order": ["apply-1", "apply-2", "apply-3"],
+      "settings": {
+        "variant": "apply",
+        "step_number": 3,
+        "bg": "bg-bg",
+        "eyebrow": "Step 03",
+        "eyebrow_color": "orange",
+        "heading": "Apply tabs & band.",
+        "lead": "This is the part everyone gets wrong on the first try. Take it slow — the band needs to sit symmetrically, with the magnetic ends pointing up.",
+        "callout_eyebrow": "Don't skip",
+        "callout_title": "Rub it in.",
+        "callout_body": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear.",
+        "stat1_value": "10s",
+        "stat1_label": "per tab",
+        "stat2_value": "2x",
+        "stat2_label": "wear time"
+      }
+    },
+
+    "pitfalls": {
+      "type": "how-it-works-pitfalls",
+      "blocks": {
+        "pf-1": { "type": "card", "settings": { "tag": "dont", "title": "Place tabs on the bridge",   "image_label": "Tab placed too high — on bridge",      "body": "Too high and the band can't pull outward. Tabs go at the soft fleshy part — just above each nostril." } },
+        "pf-2": { "type": "card", "settings": { "tag": "do",   "title": "Place above the nostril",   "image_label": "Tab placed correctly — just above nostril", "body": "On the soft tissue where the nostril meets the cheek — that's where the pull does its work." } },
+        "pf-3": { "type": "card", "settings": { "tag": "dont", "title": "Wear the band upside down", "image_label": "Band fins pointing down",              "body": "If the magnetic ends point down, the band's curve fights you. The fins should face the sky." } },
+        "pf-4": { "type": "card", "settings": { "tag": "do",   "title": "Shark fins up",             "image_label": "Band correctly worn — fins up",        "body": "Magnetic ends pointing up. The band arcs above your nostrils like a smile, not a frown." } }
+      },
+      "block_order": ["pf-1", "pf-2", "pf-3", "pf-4"],
+      "settings": {
+        "eyebrow": "Common pitfalls",
+        "heading": "Get it right the first time.",
+        "lead": "A few small things make the difference between Aira working brilliantly and slipping by 3am.",
+        "cta_title": "See how others got it right.",
+        "cta_body": "9,000+ verified reviews from Aira wearers around the world.",
+        "cta_label": "Read reviews",
+        "cta_url": "/#reviews"
+      }
+    },
+
+    "pro_tips": {
+      "type": "how-it-works-pro-tips",
+      "blocks": {
+        "tip-1": { "type": "tip", "settings": { "icon": "bolt",  "title": "Pair sizes for activity", "body": "Use a smaller band for sport (less pull on the tabs) and a larger band for sleep (wider airflow). Many wearers keep both bedside." } },
+        "tip-2": { "type": "tip", "settings": { "icon": "clock", "title": "Give it 3–4 nights",      "body": "Your body adapts to nasal breathing over a few nights. The first night feels different — by night four it just feels right." } },
+        "tip-3": { "type": "tip", "settings": { "icon": "home",  "title": "Goggles & glasses",       "body": "Aira fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch." } }
+      },
+      "block_order": ["tip-1", "tip-2", "tip-3"],
+      "settings": {
+        "eyebrow": "Pro tips",
+        "heading": "Once you've got the basics.",
+        "lead": "A few things experienced wearers do differently. Worth a try once you're comfortable with the routine."
+      }
+    },
+
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "Will it stay on if I move around in my sleep?", "answer": "<p>Yes — Aira was originally engineered for high-impact sport, so a side-sleeper is a low bar. The most common cause of slippage is missed prep: oily skin or skipping the 10-second press. Get those right and most wearers get a full 8 hours.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "How many tabs do I get per kit?",               "answer": "<p>Your Aira Kit ships with the four bands plus 30 pairs of tabs — a full month of nightly wear. Refill packs come in 30, 60, or 90 pairs.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "Can I reuse a tab if I take it off mid-night?", "answer": "<p>Once a tab leaves the skin its adhesive picks up oils and lint, which weakens the next stick. You can re-press a tab the same night if it lifts, but each pair is designed for a single use.</p>" } },
+        "q4": { "type": "question", "settings": { "question": "Is there anything I shouldn't do before applying?", "answer": "<p>Skip moisturisers, oils, and serums on the bridge of the nose for at least 5 minutes before. Apply Aira first, then your skincare around it.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4"],
+      "settings": {
+        "eyebrow": "Quick answers",
+        "heading": "Still have questions?",
+        "subheading": "",
+        "heading_size": "lg",
+        "background_color": "#FAFAFA",
+        "container_width": "contained",
+        "padding_vertical": "lg"
+      }
+    },
+
+    "final_cta": {
+      "type": "how-it-works-cta",
+      "settings": {
+        "eyebrow": "Ready when you are",
+        "heading": "Three steps. One better night.",
+        "lead": "Every Aira Kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month.",
+        "primary_label": "Shop Aira Kit",
+        "primary_url": "/products/aira-starter-kit",
+        "secondary_label": "Re-watch tutorial",
+        "secondary_url": "#tutorialVideo"
+      }
+    }
+  },
+  "order": ["hero", "intro", "step_1", "step_2", "step_3", "pitfalls", "pro_tips", "faq", "final_cta"]
+}

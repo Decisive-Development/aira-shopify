@@ -1,0 +1,391 @@
+{%- comment -%}
+	How it works — Step section
+	Renders one step (01 / 02 / 03) with sticky left rail.
+	Step variant ('size' / 'prep' / 'apply') drives the right-column layout.
+{%- endcomment -%}
+
+{%- liquid
+	assign variant = section.settings.variant | default: 'size'
+	assign step_n  = section.settings.step_number | default: 1
+
+	assign bg_class = section.settings.bg | default: 'bg-bg'
+	assign anchor_id = 'step-' | append: step_n
+
+	assign eyebrow_color = 'text-highlight'
+	if section.settings.eyebrow_color == 'blue'
+		assign eyebrow_style = 'color: #5B7DA0;'
+		assign eyebrow_color = ''
+	else
+		assign eyebrow_style = ''
+	endif
+-%}
+
+<section id="{{ anchor_id }}" class="{{ bg_class }} py-16 md:py-28" data-step-section="{{ step_n }}">
+	<div class="container-contained">
+		<div class="grid md:grid-cols-12 gap-10 lg:gap-16">
+
+			{%- render 'step-rail', active_step: step_n -%}
+
+			<div class="md:col-span-9">
+
+				{%- comment -%} Header {%- endcomment -%}
+				<div class="reveal">
+					{%- if section.settings.eyebrow != blank -%}
+						<p class="text-xs font-bold uppercase tracking-widest {{ eyebrow_color }}" style="{{ eyebrow_style }}">
+							{{ section.settings.eyebrow }}
+						</p>
+					{%- endif -%}
+					{%- if section.settings.heading != blank -%}
+						<h2 class="font-heading heading-weight text-3xl md:text-4xl lg:text-5xl text-title mt-3 leading-tight">
+							{{ section.settings.heading }}
+						</h2>
+					{%- endif -%}
+					{%- if section.settings.lead != blank -%}
+						<p class="text-base md:text-lg text-main/85 leading-relaxed mt-4 max-w-2xl">
+							{{ section.settings.lead }}
+						</p>
+					{%- endif -%}
+				</div>
+
+				{%- comment -%} ───── Variant: SIZE (Step 01) ───── {%- endcomment -%}
+				{%- if variant == 'size' -%}
+					{%- assign size_blocks = section.blocks | where: 'type', 'size' -%}
+
+					<div class="grid lg:grid-cols-5 gap-6 lg:gap-8 mt-10">
+						<div class="lg:col-span-2 reveal">
+							<div class="rounded-2xl overflow-hidden ph ph-light" style="aspect-ratio: 4 / 5;">
+								{%- if section.settings.visual_image != blank -%}
+									{{
+										section.settings.visual_image
+										| image_url: width: 1000
+										| image_tag:
+											loading: 'lazy',
+											class: 'w-full h-full object-cover',
+											widths: '400, 600, 800, 1000',
+											alt: section.settings.visual_alt
+									}}
+								{%- else -%}
+									{{ section.settings.visual_label | default: 'Sizing photo' }}
+								{%- endif -%}
+							</div>
+						</div>
+
+						<div class="lg:col-span-3 reveal">
+							{%- if size_blocks.size > 0 -%}
+								<div class="grid grid-cols-2 gap-3 md:gap-4">
+									{%- for block in size_blocks -%}
+										<div class="size-card" {{ block.shopify_attributes }}>
+											<div class="flex items-baseline justify-between">
+												<span class="font-heading font-bold text-3xl text-main">{{ block.settings.code }}</span>
+												<span class="text-xs font-semibold uppercase tracking-widest text-main/55">{{ block.settings.tier }}</span>
+											</div>
+											<p class="text-sm text-main/85 mt-2 leading-snug">{{ block.settings.description }}</p>
+										</div>
+									{%- endfor -%}
+								</div>
+							{%- endif -%}
+
+							{%- if section.settings.tip_title != blank or section.settings.tip_body != blank -%}
+								<div class="mt-6 rounded-xl bg-bg-muted p-5 flex flex-col md:flex-row gap-3 md:gap-4">
+									<svg class="shrink-0 md:mt-0.5" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1A34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<circle cx="12" cy="12" r="10"/>
+										<path d="M12 16v-4M12 8h.01"/>
+									</svg>
+									<div>
+										{%- if section.settings.tip_title != blank -%}
+											<p class="font-heading font-semibold text-main">{{ section.settings.tip_title }}</p>
+										{%- endif -%}
+										{%- if section.settings.tip_body != blank -%}
+											<div class="text-sm text-main/85 mt-1 leading-relaxed [&_p+p]:mt-1.5">{{ section.settings.tip_body }}</div>
+										{%- endif -%}
+									</div>
+								</div>
+							{%- endif -%}
+
+							{%- if section.settings.cta_title != blank -%}
+								<div class="inline-cta inline-cta-stack mt-6">
+									<div class="min-w-[200px]">
+										<p class="font-heading font-semibold text-main">{{ section.settings.cta_title }}</p>
+										{%- if section.settings.cta_body != blank -%}
+											<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ section.settings.cta_body }}</p>
+										{%- endif -%}
+									</div>
+									{%- if section.settings.cta_style == 'button' -%}
+										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight text-white px-8 py-3 whitespace-nowrap">
+											{{ section.settings.cta_label }}
+										</a>
+									{%- elsif section.settings.cta_style == 'button-blue' -%}
+										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight-blue text-white px-8 py-3 whitespace-nowrap">
+											{{ section.settings.cta_label }}
+										</a>
+									{%- else -%}
+										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-cta-link">
+											{{ section.settings.cta_label }}
+											<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+												<line x1="5" y1="12" x2="19" y2="12"/>
+												<polyline points="12 5 19 12 12 19"/>
+											</svg>
+										</a>
+									{%- endif -%}
+								</div>
+							{%- endif -%}
+						</div>
+					</div>
+
+				{%- comment -%} ───── Variant: PREP (Step 02) ───── {%- endcomment -%}
+				{%- elsif variant == 'prep' -%}
+					{%- assign prep_blocks = section.blocks | where: 'type', 'prep' -%}
+
+					{%- if prep_blocks.size > 0 -%}
+						<div class="grid md:grid-cols-3 gap-6 md:gap-5 mt-10 reveal items-stretch">
+							{%- for block in prep_blocks -%}
+								<div class="flex flex-col h-full" {{ block.shopify_attributes }}>
+									<div class="px-1 pb-3 grow">
+										<p class="font-heading font-semibold text-main">{{ block.settings.title }}</p>
+										{%- if block.settings.body != blank -%}
+											<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ block.settings.body }}</p>
+										{%- endif -%}
+									</div>
+									<div class="rounded-2xl overflow-hidden ph ph-light mt-auto" style="aspect-ratio: 1 / 1;">
+										{%- if block.settings.image != blank -%}
+											{{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', alt: block.settings.title }}
+										{%- else -%}
+											{{ block.settings.image_label | default: block.settings.title }}
+										{%- endif -%}
+									</div>
+								</div>
+							{%- endfor -%}
+						</div>
+					{%- endif -%}
+
+					{%- if section.settings.tip_title != blank or section.settings.tip_body != blank -%}
+						<div class="mt-8 rounded-2xl border border-bg-muted p-5 md:p-6 flex gap-4 items-start reveal">
+							<div class="shrink-0 w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-main">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M9 11.5a2.5 2.5 0 1 1 5 0c0 2-2.5 3-2.5 5"/>
+									<circle cx="11.5" cy="18.5" r="0.5" fill="currentColor"/>
+								</svg>
+							</div>
+							<div>
+								{%- if section.settings.tip_title != blank -%}
+									<p class="font-heading font-semibold text-main">{{ section.settings.tip_title }}</p>
+								{%- endif -%}
+								{%- if section.settings.tip_body != blank -%}
+									<div class="text-sm text-main/85 mt-1 leading-relaxed [&_p+p]:mt-1.5">{{ section.settings.tip_body }}</div>
+								{%- endif -%}
+							</div>
+						</div>
+					{%- endif -%}
+
+					{%- if section.settings.cta_title != blank -%}
+						<div class="inline-cta mt-6 reveal">
+							<div class="flex-1 min-w-[200px]">
+								<p class="font-heading font-semibold text-main">{{ section.settings.cta_title }}</p>
+								{%- if section.settings.cta_body != blank -%}
+									<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ section.settings.cta_body }}</p>
+								{%- endif -%}
+							</div>
+							{%- if section.settings.cta_style == 'button' -%}
+								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight text-white px-8 py-3 whitespace-nowrap">
+									{{ section.settings.cta_label }}
+								</a>
+							{%- elsif section.settings.cta_style == 'button-blue' -%}
+								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight-blue text-white px-8 py-3 whitespace-nowrap">
+									{{ section.settings.cta_label }}
+								</a>
+							{%- else -%}
+								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-cta-link">
+									{{ section.settings.cta_label }}
+									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<line x1="5" y1="12" x2="19" y2="12"/>
+										<polyline points="12 5 19 12 12 19"/>
+									</svg>
+								</a>
+							{%- endif -%}
+						</div>
+					{%- endif -%}
+
+				{%- comment -%} ───── Variant: APPLY (Step 03) ───── {%- endcomment -%}
+				{%- elsif variant == 'apply' -%}
+					{%- assign apply_blocks = section.blocks | where: 'type', 'apply' -%}
+
+					{%- if apply_blocks.size > 0 -%}
+						<div class="grid md:grid-cols-3 gap-4 md:gap-6 mt-10">
+							{%- for block in apply_blocks -%}
+								<div class="reveal" {{ block.shopify_attributes }}>
+									<div class="rounded-2xl overflow-hidden ph ph-light mb-4" style="aspect-ratio: 4 / 5;">
+										{%- if block.settings.image != blank -%}
+											{{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', alt: block.settings.title }}
+										{%- else -%}
+											{{ block.settings.image_label | default: block.settings.title }}
+										{%- endif -%}
+									</div>
+									<p class="font-heading font-semibold text-main">{{ block.settings.title }}</p>
+									{%- if block.settings.body != blank -%}
+										<p class="text-sm text-main/85 mt-1.5 leading-relaxed">{{ block.settings.body }}</p>
+									{%- endif -%}
+								</div>
+							{%- endfor -%}
+						</div>
+					{%- endif -%}
+
+					{%- comment -%} "Rub it in" callout {%- endcomment -%}
+					{%- if section.settings.callout_title != blank -%}
+						<div class="mt-10 rounded-2xl bg-secondary p-6 md:p-8 reveal">
+							<div class="flex flex-col md:flex-row gap-6 md:items-center">
+								<div class="md:flex-1">
+									{%- if section.settings.callout_eyebrow != blank -%}
+										<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ section.settings.callout_eyebrow }}</p>
+									{%- endif -%}
+									<h3 class="font-heading heading-weight text-2xl md:text-3xl text-title mt-2">{{ section.settings.callout_title }}</h3>
+									{%- if section.settings.callout_body != blank -%}
+										<p class="text-sm md:text-base text-main/85 leading-relaxed mt-3 max-w-lg">{{ section.settings.callout_body }}</p>
+									{%- endif -%}
+								</div>
+								<div class="flex items-center justify-center gap-6 md:gap-10">
+									<div class="text-center">
+										<div class="font-heading font-bold text-main text-4xl md:text-5xl leading-none">{{ section.settings.stat1_value | default: '10s' }}</div>
+										<div class="text-xs uppercase tracking-widest text-copy/60 mt-2">{{ section.settings.stat1_label | default: 'per tab' }}</div>
+									</div>
+									<div class="w-px h-10 bg-main/15"></div>
+									<div class="text-center">
+										<div class="font-heading font-bold text-main text-4xl md:text-5xl leading-none">{{ section.settings.stat2_value | default: '2x' }}</div>
+										<div class="text-xs uppercase tracking-widest text-copy/60 mt-2">{{ section.settings.stat2_label | default: 'wear time' }}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{%- endif -%}
+
+				{%- endif -%}
+
+			</div>
+		</div>
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "How it works — Step",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "select",
+			"id": "variant",
+			"label": "Step variant",
+			"options": [
+				{ "value": "size",  "label": "Step 01 — Find your size" },
+				{ "value": "prep",  "label": "Step 02 — Prep your skin" },
+				{ "value": "apply", "label": "Step 03 — Apply tabs & band" }
+			],
+			"default": "size"
+		},
+		{
+			"type": "number",
+			"id": "step_number",
+			"label": "Step number (for sticky-rail active state)",
+			"default": 1
+		},
+		{
+			"type": "select",
+			"id": "bg",
+			"label": "Background",
+			"options": [
+				{ "value": "bg-bg",          "label": "White" },
+				{ "value": "bg-cream-light", "label": "Cream light" },
+				{ "value": "bg-secondary",   "label": "Cream" }
+			],
+			"default": "bg-bg"
+		},
+		{ "type": "header", "content": "Section header" },
+		{ "type": "text",     "id": "eyebrow",        "label": "Eyebrow",        "default": "Step 01" },
+		{
+			"type": "select",
+			"id": "eyebrow_color",
+			"label": "Eyebrow colour",
+			"options": [
+				{ "value": "orange", "label": "Orange (highlight)" },
+				{ "value": "blue",   "label": "Blue (#5B7DA0) — alternates on Step 02" }
+			],
+			"default": "orange"
+		},
+		{ "type": "text",     "id": "heading",        "label": "Heading",        "default": "Find your size." },
+		{ "type": "textarea", "id": "lead",           "label": "Lead paragraph" },
+
+		{ "type": "header", "content": "Visual (Size variant only)" },
+		{ "type": "image_picker", "id": "visual_image", "label": "Visual image (4:5)" },
+		{ "type": "text",         "id": "visual_alt",   "label": "Visual alt text" },
+		{ "type": "text",         "id": "visual_label", "label": "Placeholder caption", "default": "Sizing photo — band on nose, callouts pointing to nostril edges" },
+
+		{ "type": "header", "content": "Tip / info panel (Size & Prep variants)" },
+		{ "type": "text",     "id": "tip_title", "label": "Title" },
+		{ "type": "richtext", "id": "tip_body",  "label": "Body", "info": "Use one or more <p> tags. Multiple paragraphs render as separate lines." },
+
+		{ "type": "header", "content": "Inline mid-step CTA (Size & Prep variants)" },
+		{ "type": "text", "id": "cta_title", "label": "CTA headline" },
+		{ "type": "text", "id": "cta_body",  "label": "CTA sub-copy" },
+		{ "type": "text", "id": "cta_label", "label": "CTA button label", "default": "Shop Aira Kit" },
+		{ "type": "url",  "id": "cta_url",   "label": "CTA URL" },
+		{
+			"type": "select",
+			"id": "cta_style",
+			"label": "CTA style",
+			"options": [
+				{ "value": "link",        "label": "Text link with arrow" },
+				{ "value": "button",      "label": "Orange button (matches nav)" },
+				{ "value": "button-blue", "label": "Blue button" }
+			],
+			"default": "link"
+		},
+
+		{ "type": "header", "content": "Callout (Apply variant only — \"Rub it in\")" },
+		{ "type": "text",     "id": "callout_eyebrow", "label": "Eyebrow", "default": "Don't skip" },
+		{ "type": "text",     "id": "callout_title",   "label": "Title",   "default": "Rub it in." },
+		{ "type": "textarea", "id": "callout_body",    "label": "Body",    "default": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear." },
+		{ "type": "text",     "id": "stat1_value",     "label": "Stat 1 value", "default": "10s" },
+		{ "type": "text",     "id": "stat1_label",     "label": "Stat 1 label", "default": "per tab" },
+		{ "type": "text",     "id": "stat2_value",     "label": "Stat 2 value", "default": "2x" },
+		{ "type": "text",     "id": "stat2_label",     "label": "Stat 2 label", "default": "wear time" }
+	],
+	"blocks": [
+		{
+			"type": "size",
+			"name": "Size card (Step 01)",
+			"limit": 6,
+			"settings": [
+				{ "type": "text",     "id": "code",        "label": "Code",        "default": "S2" },
+				{ "type": "text",     "id": "tier",        "label": "Tier label",  "default": "Small" },
+				{ "type": "textarea", "id": "description", "label": "Description", "default": "For narrower nose bridges. Lower-impact wear and sleep." }
+			]
+		},
+		{
+			"type": "prep",
+			"name": "Prep card (Step 02)",
+			"limit": 6,
+			"settings": [
+				{ "type": "image_picker", "id": "image",       "label": "Image (1:1)" },
+				{ "type": "text",         "id": "image_label", "label": "Placeholder caption" },
+				{ "type": "text",         "id": "title",       "label": "Title",        "default": "Clean" },
+				{ "type": "textarea",     "id": "body",        "label": "Body",         "default": "Use a gentle cleanser to remove makeup, oils, and dirt from the bridge of your nose." }
+			]
+		},
+		{
+			"type": "apply",
+			"name": "Apply step (Step 03)",
+			"limit": 6,
+			"settings": [
+				{ "type": "image_picker", "id": "image",       "label": "Image (4:5)" },
+				{ "type": "text",         "id": "image_label", "label": "Placeholder caption" },
+				{ "type": "text",         "id": "title",       "label": "Title",        "default": "A · Peel daintily" },
+				{ "type": "textarea",     "id": "body",        "label": "Body",         "default": "Pinch the tab by its outer edge. The less you touch the adhesive, the longer it holds." }
+			]
+		}
+	],
+	"presets": [
+		{ "name": "How it works — Step (size)", "settings": { "variant": "size",  "step_number": 1, "eyebrow": "Step 01", "heading": "Find your size." } },
+		{ "name": "How it works — Step (prep)", "settings": { "variant": "prep",  "step_number": 2, "eyebrow": "Step 02", "heading": "Prep your skin.",   "eyebrow_color": "blue", "bg": "bg-cream-light" } },
+		{ "name": "How it works — Step (apply)","settings": { "variant": "apply", "step_number": 3, "eyebrow": "Step 03", "heading": "Apply tabs & band." } }
+	]
+}
+{% endschema %}

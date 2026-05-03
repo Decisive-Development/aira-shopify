@@ -1,0 +1,123 @@
+{%- comment -%}
+	How it works — Common pitfalls / Do · Don't compare grid
+{%- endcomment -%}
+
+{%- assign cards = section.blocks | where: 'type', 'card' -%}
+
+<section class="bg-secondary py-16 md:py-24">
+	<div class="container-contained">
+
+		<div class="text-center mb-10 md:mb-14 reveal max-w-2xl mx-auto">
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ section.settings.eyebrow }}</p>
+			{%- endif -%}
+			{%- if section.settings.heading != blank -%}
+				<h2 class="font-heading heading-weight text-3xl md:text-5xl text-title mt-3 leading-tight">{{ section.settings.heading }}</h2>
+			{%- endif -%}
+			{%- if section.settings.lead != blank -%}
+				<p class="text-base md:text-lg text-copy leading-relaxed mt-4">{{ section.settings.lead }}</p>
+			{%- endif -%}
+		</div>
+
+		{%- if cards.size > 0 -%}
+			<div class="grid md:grid-cols-2 gap-4 md:gap-6">
+				{%- for block in cards -%}
+					{%- assign tag_class = 'tag-do' -%}
+					{%- if block.settings.tag == 'dont' -%}{%- assign tag_class = 'tag-dont' -%}{%- endif -%}
+					<div class="checktile reveal" {{ block.shopify_attributes }}>
+						<div class="ph ph-light" style="aspect-ratio: 16 / 9;">
+							{%- if block.settings.image != blank -%}
+								{{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', alt: block.settings.title }}
+							{%- else -%}
+								{{ block.settings.image_label | default: block.settings.title }}
+							{%- endif -%}
+						</div>
+						<div class="p-5 md:p-6">
+							<span class="tag {{ tag_class }}">
+								{%- if block.settings.tag == 'do' -%}
+									<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<polyline points="20 6 9 17 4 12"/>
+									</svg>
+									Do
+								{%- else -%}
+									<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+										<line x1="18" y1="6" x2="6" y2="18"/>
+										<line x1="6" y1="6" x2="18" y2="18"/>
+									</svg>
+									Don't
+								{%- endif -%}
+							</span>
+							<p class="font-heading font-semibold text-main mt-3">{{ block.settings.title }}</p>
+							{%- if block.settings.body != blank -%}
+								<p class="text-sm text-copy mt-1.5 leading-relaxed">{{ block.settings.body }}</p>
+							{%- endif -%}
+						</div>
+					</div>
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
+
+		{%- if section.settings.cta_title != blank -%}
+			<div class="inline-cta mt-10 max-w-3xl mx-auto">
+				<div class="flex-1 min-w-[200px]">
+					<p class="font-heading font-semibold text-main">{{ section.settings.cta_title }}</p>
+					{%- if section.settings.cta_body != blank -%}
+						<p class="text-sm text-copy/85 mt-1 leading-relaxed">{{ section.settings.cta_body }}</p>
+					{%- endif -%}
+				</div>
+				<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-cta-link">
+					{{ section.settings.cta_label }}
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<line x1="5" y1="12" x2="19" y2="12"/>
+						<polyline points="12 5 19 12 12 19"/>
+					</svg>
+				</a>
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "How it works — Pitfalls",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "Common pitfalls" },
+		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Get it right the first time." },
+		{ "type": "textarea", "id": "lead",    "label": "Lead",    "default": "A few small things make the difference between Aira working brilliantly and slipping by 3am." },
+		{ "type": "header", "content": "Inline CTA" },
+		{ "type": "text", "id": "cta_title", "label": "CTA headline" },
+		{ "type": "text", "id": "cta_body",  "label": "CTA sub-copy" },
+		{ "type": "text", "id": "cta_label", "label": "CTA button label", "default": "Read reviews" },
+		{ "type": "url",  "id": "cta_url",   "label": "CTA URL" }
+	],
+	"blocks": [
+		{
+			"type": "card",
+			"name": "Compare card",
+			"limit": 8,
+			"settings": [
+				{
+					"type": "select",
+					"id": "tag",
+					"label": "Tag",
+					"options": [
+						{ "value": "do",   "label": "Do (green)" },
+						{ "value": "dont", "label": "Don't (orange)" }
+					],
+					"default": "dont"
+				},
+				{ "type": "image_picker", "id": "image",       "label": "Image (16:9)" },
+				{ "type": "text",         "id": "image_label", "label": "Placeholder caption" },
+				{ "type": "text",         "id": "title",       "label": "Title", "default": "Place tabs on the bridge" },
+				{ "type": "textarea",     "id": "body",        "label": "Body",  "default": "Too high and the band can't pull outward. Tabs go at the soft fleshy part — just above each nostril." }
+			]
+		}
+	],
+	"presets": [
+		{ "name": "How it works — Pitfalls" }
+	]
+}
+{% endschema %}

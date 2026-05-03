@@ -5,7 +5,7 @@
 	Mobile is always image-on-top.
 {%- endcomment -%}
 
-<section class="bg-secondary py-18 md:py-35">
+<section id="story-tiles" class="bg-secondary py-18 md:py-35">
 	<div class="container-contained max-w-[1200px] flex flex-col gap-20 md:gap-[140px]">
 
 		{%- for block in section.blocks -%}
@@ -79,6 +79,18 @@
 							</div>
 						{%- endif -%}
 
+						{%- if block.settings.cta_label != blank -%}
+							<div class="mt-6">
+								<a
+									href="{{ block.settings.cta_url | default: '#' }}"
+									class="font-body text-[15px] font-medium text-main py-1 px-2 border-b border-main/40 hover:border-main transition-colors inline-flex items-center gap-2 group"
+								>
+									{{ block.settings.cta_label }}
+									<span class="transition-transform group-hover:translate-x-1">→</span>
+								</a>
+							</div>
+						{%- endif -%}
+
 					</div>
 
 				</article>
@@ -142,6 +154,21 @@
 					"id": "reverse",
 					"label": "Image on right (desktop)",
 					"default": false
+				},
+				{
+					"type": "header",
+					"content": "Tile CTA (optional)"
+				},
+				{
+					"type": "text",
+					"id": "cta_label",
+					"label": "CTA label",
+					"info": "Quiet text link rendered after the body. Leave blank to hide."
+				},
+				{
+					"type": "url",
+					"id": "cta_url",
+					"label": "CTA link"
 				}
 			]
 		}

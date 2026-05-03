@@ -1,0 +1,50 @@
+{%- comment -%}
+	Step Rail — sticky left-rail navigation shared by all three "How it works" step sections.
+
+	Parameters:
+	  active_step  {Number}  The currently-active step (1, 2, or 3). Required.
+	  step1_title  {String}  Step 01 title (default: "Find your size")
+	  step1_sub    {String}  Step 01 subtitle (default: "Four bands in every kit")
+	  step2_title  {String}  Step 02 title
+	  step2_sub    {String}  Step 02 subtitle
+	  step3_title  {String}  Step 03 title
+	  step3_sub    {String}  Step 03 subtitle
+
+	Usage:
+	  {% render 'step-rail', active_step: 1 %}
+{%- endcomment -%}
+
+{%- liquid
+	assign s1_title = step1_title | default: 'Find your size'
+	assign s1_sub   = step1_sub   | default: 'Four bands in every kit'
+	assign s2_title = step2_title | default: 'Prep your skin'
+	assign s2_sub   = step2_sub   | default: 'Clean & dry'
+	assign s3_title = step3_title | default: 'Apply tabs & band'
+	assign s3_sub   = step3_sub   | default: 'Shark fins up'
+-%}
+
+<aside class="hidden md:block md:col-span-3">
+	<nav class="step-rail flex flex-col gap-1" aria-label="How it works steps">
+		<a href="#step-1" class="step-link{% if active_step == 1 %} is-active{% endif %}" data-step="1">
+			<span class="step-num">01</span>
+			<span class="flex flex-col leading-tight">
+				<span class="font-heading font-semibold text-main">{{ s1_title }}</span>
+				<span class="step-sub text-xs text-main/70 mt-0.5">{{ s1_sub }}</span>
+			</span>
+		</a>
+		<a href="#step-2" class="step-link{% if active_step == 2 %} is-active{% endif %}" data-step="2">
+			<span class="step-num">02</span>
+			<span class="flex flex-col leading-tight">
+				<span class="font-heading font-semibold text-main">{{ s2_title }}</span>
+				<span class="step-sub text-xs text-main/70 mt-0.5">{{ s2_sub }}</span>
+			</span>
+		</a>
+		<a href="#step-3" class="step-link{% if active_step == 3 %} is-active{% endif %}" data-step="3">
+			<span class="step-num">03</span>
+			<span class="flex flex-col leading-tight">
+				<span class="font-heading font-semibold text-main">{{ s3_title }}</span>
+				<span class="step-sub text-xs text-main/70 mt-0.5">{{ s3_sub }}</span>
+			</span>
+		</a>
+	</nav>
+</aside>

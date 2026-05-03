@@ -54,7 +54,9 @@
             "heading": "We engineer for nights, not first impressions.",
             "body": "<p>We didn't set out to sell tape. We set out to fix something almost everyone takes for granted — and almost no one does well.</p><p>We don't chase trends. We pay attention to physiology, materials, and the small details that make a product disappear into your routine.</p>",
             "image_label": "Materials · detail",
-            "reverse": true
+            "reverse": true,
+            "cta_label": "Watch how it works",
+            "cta_url": "/pages/how-it-works"
           }
         },
         "tile-3": {
@@ -64,7 +66,9 @@
             "heading": "Built to last. Honest about what it is.",
             "body": "<p>A reusable magnetic band, replaceable adhesive tabs — designed for months of use, not landfill cycles.</p><p>A strip helps you breathe. It isn't a cure. We won't pretend otherwise, or invent stats to sell harder. Tested in heat, made for the GCC.</p>",
             "image_label": "Product · still life",
-            "reverse": false
+            "reverse": false,
+            "cta_label": "Try AIRA",
+            "cta_url": "/products/aira-starter-kit"
           }
         }
       },
@@ -78,12 +82,31 @@
         "headline": "One product, done properly. Then the next.",
         "headline_accent": "Then the next.",
         "body": "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for.",
-        "primary_cta_label": "Shop the starter kit",
+        "primary_cta_label": "Shop the Aira Kit",
         "primary_cta_url": "/products/aira-starter-kit",
-        "secondary_cta_label": "Back to home →",
-        "secondary_cta_url": "/"
+        "secondary_cta_label": "How to use it",
+        "secondary_cta_url": "/pages/how-it-works"
+      }
+    },
+    "ugc": {
+      "type": "ugc-gallery",
+      "blocks": {
+        "ugc-1": { "type": "testimonial", "settings": { "quote": "I sleep so much better now",                       "name": "Sarah M." } },
+        "ugc-2": { "type": "testimonial", "settings": { "quote": "My partner noticed the difference immediately",    "name": "James K." } },
+        "ugc-3": { "type": "testimonial", "settings": { "quote": "Game changer for my workouts",                     "name": "Aisha R." } },
+        "ugc-4": { "type": "testimonial", "settings": { "quote": "Finally stopped mouth breathing at night",         "name": "Omar D." } }
+      },
+      "block_order": ["ugc-1", "ugc-2", "ugc-3", "ugc-4"],
+      "settings": {
+        "eyebrow": "The Aira community",
+        "heading": "See it in action.",
+        "handle": "@aira.breathing",
+        "cta_text": "Share your experience — tag @aira.breathing",
+        "theme": "light",
+        "shop_cta_label": "Start your better breath",
+        "shop_cta_url": "/products/aira-starter-kit"
       }
     }
   },
-  "order": ["hero", "tiles", "closing"]
+  "order": ["hero", "tiles", "closing", "ugc"]
 }
