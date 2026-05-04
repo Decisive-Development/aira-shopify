@@ -11,7 +11,9 @@
       "WebFetch(domain:www.intakebreathing.com)",
       "Bash(ls /c/code/aira-shopify/snippets/*.liquid)",
       "Bash(xargs -n1 basename)",
-      "Bash(dir \"c:\\\\Users\\\\tompe\\\\.claude\\\\projects\\\\c--code-aira-shopify\\\\memory\\\\\" 2>&1)"
+      "Bash(dir \"c:\\\\Users\\\\tompe\\\\.claude\\\\projects\\\\c--code-aira-shopify\\\\memory\\\\\" 2>&1)",
+      "Bash(node -e \"['contact','returns','affiliate','faq','science'].forEach\\(p => { try { JSON.parse\\(require\\('fs'\\).readFileSync\\('templates/page.'+p+'.json','utf8'\\)\\); console.log\\(p,'OK'\\); } catch\\(e\\) { console.log\\(p,'FAIL',e.message\\); } }\\); try { JSON.parse\\(require\\('fs'\\).readFileSync\\('templates/policies.json','utf8'\\)\\); console.log\\('policies OK'\\); } catch\\(e\\) { console.log\\('policies FAIL',e.message\\); } try { JSON.parse\\(require\\('fs'\\).readFileSync\\('config/settings_schema.json','utf8'\\)\\); console.log\\('settings_schema OK'\\); } catch\\(e\\) { console.log\\('settings_schema FAIL',e.message\\); }\")",
+      "Bash(node -e ' *)"
     ]
   }
 }

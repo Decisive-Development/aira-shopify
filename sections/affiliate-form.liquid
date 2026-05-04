@@ -1,0 +1,160 @@
+{%- comment -%}
+	Affiliate — Application form (scaffold).
+	Wrapped in <div id="affiliate-form-mount"> so a future platform tool
+	embed (Shopify Collabs / GoAffPro / Refersion / etc.) can swap in
+	cleanly without other sections needing to change.
+
+	Routes via Shopify's built-in {% form 'contact' %} to the partnerships
+	mailbox configured in Theme settings → Support & contact. Replace
+	with a Klaviyo embed or platform tool when the affiliate stack is set.
+{%- endcomment -%}
+
+<section id="affiliate-form" class="bg-secondary py-16 md:py-24">
+	<div class="container mx-auto px-4 max-w-[640px]">
+
+		<header class="text-center mb-10">
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+			{%- endif -%}
+			{%- if section.settings.heading != blank -%}
+				<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ section.settings.heading }}</h2>
+			{%- endif -%}
+			{%- if section.settings.subheading != blank -%}
+				<p class="text-copy/80 text-base mt-3">{{ section.settings.subheading }}</p>
+			{%- endif -%}
+		</header>
+
+		<div id="affiliate-form-mount">
+			{%- form 'contact', id: 'affiliate-application-form', class: 'flex flex-col gap-5' -%}
+				{%- if form.posted_successfully? -%}
+					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "Thanks for applying to partner with AIRA. We review every application within 5 business days." }}</div>
+				{%- endif -%}
+
+				{%- if form.errors -%}
+					<div class="rounded-xl bg-highlight/10 p-5 text-sm text-highlight">{{ form.errors | default_errors }}</div>
+				{%- endif -%}
+
+				<input type="hidden" name="contact[subject]" value="Affiliate application">
+				<input type="hidden" name="contact[tags]"    value="affiliate">
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Full name</span>
+					<input type="text" name="contact[name]" required autocomplete="name" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Email</span>
+					<input type="email" name="contact[email]" required autocomplete="email" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Country</span>
+					<select name="contact[country]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+						<option value="">Select country</option>
+						<option value="UAE">UAE</option>
+						<option value="KSA">KSA</option>
+						<option value="Qatar">Qatar</option>
+						<option value="Kuwait">Kuwait</option>
+						<option value="Bahrain">Bahrain</option>
+						<option value="Oman">Oman</option>
+						<option value="Other">Other</option>
+					</select>
+				</label>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+					<label class="flex flex-col gap-1.5">
+						<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Platform</span>
+						<select name="contact[platform]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+							<option value="">Select platform</option>
+							<option value="Instagram">Instagram</option>
+							<option value="TikTok">TikTok</option>
+							<option value="YouTube">YouTube</option>
+							<option value="Twitter">Twitter</option>
+							<option value="Other">Other</option>
+						</select>
+					</label>
+
+					<label class="flex flex-col gap-1.5">
+						<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Handle</span>
+						<input type="text" name="contact[handle]" required placeholder="@yourhandle" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+					</label>
+				</div>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Audience size</span>
+					<select name="contact[audience_size]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+						<option value="">Select size</option>
+						<option value="<1k">Under 1k</option>
+						<option value="1k-10k">1k – 10k</option>
+						<option value="10k-50k">10k – 50k</option>
+						<option value="50k-200k">50k – 200k</option>
+						<option value="200k+">200k+</option>
+					</select>
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Niche</span>
+					<select name="contact[niche]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+						<option value="">Select niche</option>
+						<option value="Wellness">Wellness</option>
+						<option value="Sports">Sports</option>
+						<option value="Lifestyle">Lifestyle</option>
+						<option value="Beauty">Beauty</option>
+						<option value="Parenting">Parenting</option>
+						<option value="Other">Other</option>
+					</select>
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Why AIRA?</span>
+					<textarea name="contact[why_aira]" rows="5" required maxlength="300" data-char-counter class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main resize-y"></textarea>
+					<span class="text-xs text-copy/50" data-char-count>0 / 300</span>
+				</label>
+
+				{%- if settings.partnerships_email != blank -%}
+					<input type="hidden" name="contact[route_to]" value="{{ settings.partnerships_email }}">
+				{%- endif -%}
+
+				<div class="pt-2">
+					{%- render 'cta-button',
+						label: 'Submit application',
+						element: 'button',
+						button_type: 'submit',
+						variant: 'primary',
+						extra_classes: 'w-full md:w-auto text-center'
+					-%}
+				</div>
+			{%- endform -%}
+		</div>
+	</div>
+</section>
+
+<script>
+	(function () {
+		var ta = document.querySelector('[data-char-counter]');
+		if (!ta) return;
+		var counter = ta.parentElement.querySelector('[data-char-count]');
+		if (!counter) return;
+		var max = ta.getAttribute('maxlength') || 300;
+
+		function update() {
+			counter.textContent = ta.value.length + ' / ' + max;
+		}
+
+		ta.addEventListener('input', update);
+		update();
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Affiliate - Form",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",         "label": "Eyebrow",        "default": "Apply" },
+		{ "type": "text",     "id": "heading",         "label": "Heading",        "default": "Apply to partner" },
+		{ "type": "textarea", "id": "subheading",      "label": "Subheading",     "default": "Two minutes. We review every application within five business days." },
+		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "Thanks for applying to partner with AIRA. We review every application within 5 business days." }
+	],
+	"presets": [{ "name": "Affiliate - Form" }]
+}
+{% endschema %}

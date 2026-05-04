@@ -1,0 +1,61 @@
+{%- comment -%}
+	Returns — Damaged-on-arrival flow (scaffold).
+	Off-ramp for "the kit arrived damaged" cases that bypass the
+	14-day / unused / sealed eligibility gate. Routes the customer
+	straight to WhatsApp with photo evidence.
+{%- endcomment -%}
+
+{%- liquid
+	assign wa_number  = settings.support_whatsapp_number
+	assign wa_prefill = section.settings.whatsapp_prefill | default: 'Hi AIRA team — my order arrived damaged. Order number: '
+	assign wa_link    = ''
+	if wa_number != blank
+		assign wa_encoded = wa_prefill | url_encode
+		assign wa_link    = 'https://wa.me/' | append: wa_number | append: '?text=' | append: wa_encoded
+	endif
+-%}
+
+<section class="bg-bg py-12 md:py-16">
+	<div class="container mx-auto px-4 max-w-3xl">
+
+		<div class="rounded-2xl border border-main/15 bg-secondary p-6 md:p-8 flex flex-col md:flex-row items-start gap-5">
+			<div class="shrink-0 w-10 h-10 rounded-full bg-highlight/10 text-highlight flex items-center justify-center">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3v.008m-9.193 1.992h18.386c1.54 0 2.502-1.667 1.732-3L13.732 4.5c-.77-1.333-2.694-1.333-3.464 0L1.075 14.25c-.77 1.333.192 3 1.732 3z"/>
+				</svg>
+			</div>
+			<div class="flex-1">
+				<h3 class="font-heading text-lg font-medium text-title m-0 mb-2">{{ section.settings.heading | default: 'Did your order arrive damaged?' }}</h3>
+				<p class="text-sm text-copy/80 m-0 mb-4">{{ section.settings.body | default: "Skip the eligibility check above — message us on WhatsApp with a photo of the damage and your order number. We'll replace it without sending anything back." }}</p>
+				{%- if wa_link != blank -%}
+					{%- render 'cta-button',
+						label: 'Message support on WhatsApp',
+						url:   wa_link,
+						variant: 'primary',
+						size: 'sm'
+					-%}
+				{%- elsif settings.support_email != blank -%}
+					{%- render 'cta-button',
+						label: 'Email support',
+						url:   'mailto:' | append: settings.support_email,
+						variant: 'primary',
+						size: 'sm'
+					-%}
+				{%- endif -%}
+			</div>
+		</div>
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Returns - Damaged flow",
+	"settings": [
+		{ "type": "text",     "id": "heading",          "label": "Heading",                     "default": "Did your order arrive damaged?" },
+		{ "type": "textarea", "id": "body",             "label": "Body",                        "default": "Skip the eligibility check above — message us on WhatsApp with a photo of the damage and your order number. We'll replace it without sending anything back." },
+		{ "type": "text",     "id": "whatsapp_prefill", "label": "WhatsApp pre-filled message", "default": "Hi AIRA team — my order arrived damaged. Order number: " }
+	],
+	"presets": [{ "name": "Returns - Damaged flow" }]
+}
+{% endschema %}

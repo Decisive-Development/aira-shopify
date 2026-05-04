@@ -1,0 +1,147 @@
+{%- comment -%}
+	Returns — Request form (scaffold).
+	Wrapped in <div id="returns-form-mount"> so a future returns-app
+	embed (Loop, Returnly, AfterShip Returns…) can swap in cleanly
+	without other sections having to change.
+
+	Routes via Shopify's built-in {% form 'contact' %} to the support
+	mailbox configured in Theme settings → Support & contact. Replace
+	with a Klaviyo embed when Klaviyo flows are configured.
+{%- endcomment -%}
+
+<section class="bg-secondary py-16 md:py-24">
+	<div class="container mx-auto px-4 max-w-[640px]">
+
+		{%- if section.settings.heading != blank -%}
+			<header class="text-center mb-10">
+				{%- if section.settings.eyebrow != blank -%}
+					<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+				{%- endif -%}
+				<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ section.settings.heading }}</h2>
+				{%- if section.settings.subheading != blank -%}
+					<p class="text-copy/80 text-base mt-3">{{ section.settings.subheading }}</p>
+				{%- endif -%}
+			</header>
+		{%- endif -%}
+
+		<div id="returns-form-mount" class="transition-opacity">
+			{%- form 'contact', id: 'returns-request-form', class: 'flex flex-col gap-5' -%}
+				{%- if form.posted_successfully? -%}
+					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "We've received your return request. Our team will review and email you a return label within 2 business days." }}</div>
+				{%- endif -%}
+
+				{%- if form.errors -%}
+					<div class="rounded-xl bg-highlight/10 p-5 text-sm text-highlight">{{ form.errors | default_errors }}</div>
+				{%- endif -%}
+
+				{%- comment -%} Tag the email subject so support can filter. {%- endcomment -%}
+				<input type="hidden" name="contact[subject]" value="Return request">
+				<input type="hidden" name="contact[tags]"    value="returns">
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Full name</span>
+					<input type="text" name="contact[name]" required autocomplete="name" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Email</span>
+					<input type="email" name="contact[email]" required autocomplete="email" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Order number</span>
+					<input type="text" name="contact[order_number]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Country</span>
+					<select name="contact[country]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+						<option value="">Select country</option>
+						<option value="UAE">UAE</option>
+						<option value="KSA">KSA</option>
+						<option value="Qatar">Qatar</option>
+						<option value="Kuwait">Kuwait</option>
+						<option value="Bahrain">Bahrain</option>
+						<option value="Oman">Oman</option>
+						<option value="Other">Other</option>
+					</select>
+				</label>
+
+				<label class="flex flex-col gap-1.5">
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Reason</span>
+					<select name="contact[reason]" required data-reason-select class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
+						<option value="">Select reason</option>
+						<option value="Wrong size">Wrong size</option>
+						<option value="No longer needed">No longer needed</option>
+						<option value="Found different solution">Found different solution</option>
+						<option value="Other">Other</option>
+					</select>
+				</label>
+
+				<label class="flex flex-col gap-1.5" data-reason-other hidden>
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Tell us more</span>
+					<textarea name="contact[reason_other]" rows="4" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main resize-y"></textarea>
+				</label>
+
+				<label class="flex items-start gap-3 cursor-pointer">
+					<input type="checkbox" name="contact[sealed_confirm]" required class="mt-1">
+					<span class="text-sm text-copy/80">I confirm the product is unused and the original packaging is sealed.</span>
+				</label>
+
+				{%- comment -%} Audit-trail hidden inputs populated by the eligibility gate JS. {%- endcomment -%}
+				<input type="hidden" id="eligibility_within_window" name="contact[eligibility_within_window]" value="">
+				<input type="hidden" id="eligibility_unused"        name="contact[eligibility_unused]"        value="">
+				<input type="hidden" id="eligibility_sealed"        name="contact[eligibility_sealed]"        value="">
+
+				{%- if settings.support_email != blank -%}
+					<input type="hidden" name="contact[route_to]" value="{{ settings.support_email }}">
+				{%- endif -%}
+
+				<div class="pt-2">
+					{%- render 'cta-button',
+						label: 'Submit return request',
+						element: 'button',
+						button_type: 'submit',
+						variant: 'primary',
+						extra_classes: 'w-full md:w-auto text-center'
+					-%}
+				</div>
+			{%- endform -%}
+		</div>
+	</div>
+</section>
+
+<script>
+	(function () {
+		var mount = document.getElementById('returns-form-mount');
+		if (!mount) return;
+
+		var reason   = mount.querySelector('[data-reason-select]');
+		var otherRow = mount.querySelector('[data-reason-other]');
+		if (!reason || !otherRow) return;
+
+		var otherTextarea = otherRow.querySelector('textarea');
+
+		function syncOther() {
+			var show = reason.value === 'Other';
+			otherRow.hidden = !show;
+			if (otherTextarea) otherTextarea.required = show;
+		}
+
+		reason.addEventListener('change', syncOther);
+		syncOther();
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Returns - Form",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",         "label": "Eyebrow",        "default": "Step 2" },
+		{ "type": "text",     "id": "heading",         "label": "Heading",        "default": "Tell us about the order" },
+		{ "type": "textarea", "id": "subheading",      "label": "Subheading",     "default": "We'll review and email a prepaid return label within two business days." },
+		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "We've received your return request. Our team will review and email you a return label within 2 business days." }
+	],
+	"presets": [{ "name": "Returns - Form" }]
+}
+{% endschema %}

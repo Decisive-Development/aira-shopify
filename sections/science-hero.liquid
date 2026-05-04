@@ -1,0 +1,152 @@
+{%- comment -%}
+	Backed by Science — Hero.
+
+	Reference: design_handoff_backed_by_science/Backed by science.html §1.
+
+	Navy gradient background, faint anatomical line-art overlay, eyebrow,
+	two-line H1 with italic accent on the second line, lede paragraph,
+	row of trust pills with light-blue dot separators, scroll cue.
+{%- endcomment -%}
+
+<section
+	class="science-hero relative overflow-hidden pt-32 md:pt-40 pb-24 md:pb-32"
+	data-screen-label="01 Hero"
+>
+	<div class="science-hero__anatomy" aria-hidden="true"></div>
+
+	<div class="container-contained relative z-10">
+		<div class="max-w-[800px] mx-auto text-center reveal">
+			<span class="eyebrow text-tertiary-light">{{ section.settings.eyebrow | default: 'Our Approach' }}</span>
+
+			<h1 class="font-heading heading-weight text-secondary text-4xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mt-4">
+				{{ section.settings.heading_line_1 | default: 'Backed by science.' }}<br>
+				<span class="font-heading italic text-tertiary-light" style="font-weight: 400;">
+					{{- section.settings.heading_line_2 | default: 'Built around your body.' -}}
+				</span>
+			</h1>
+
+			{%- if section.settings.lede != blank -%}
+				<p class="text-secondary/90 text-base md:text-xl leading-relaxed max-w-2xl mx-auto mt-6">
+					{{ section.settings.lede }}
+				</p>
+			{%- endif -%}
+
+			{%- if section.blocks.size > 0 -%}
+				<div class="mt-12 flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-secondary/75 text-xs tracking-widest uppercase">
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'pill' -%}
+							<span {{ block.shopify_attributes }}>{{ block.settings.label }}</span>
+							{%- unless forloop.last -%}
+								<span class="w-1 h-1 rounded-full bg-tertiary-light/70" aria-hidden="true"></span>
+							{%- endunless -%}
+						{%- endif -%}
+					{%- endfor -%}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+
+	<div class="absolute left-1/2 -translate-x-1/2 bottom-6 text-secondary/65 flex flex-col items-center gap-2 z-10">
+		<span class="text-[10px] tracking-[0.3em] uppercase">{{ section.settings.scroll_label | default: 'Scroll to read' }}</span>
+		<svg width="14" height="20" viewBox="0 0 14 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+			<rect x="1" y="1" width="12" height="18" rx="6"/>
+			<line x1="7" y1="6" x2="7" y2="10" stroke-linecap="round"/>
+		</svg>
+	</div>
+</section>
+
+<style>
+	.science-hero {
+		background:
+			radial-gradient(ellipse 75% 55% at 50% 30%, rgba(155,183,212,0.22) 0%, rgba(10,26,52,0) 65%),
+			radial-gradient(ellipse 110% 80% at 50% 110%, rgba(184,68,0,0.08) 0%, rgba(10,26,52,0) 60%),
+			linear-gradient(180deg, #0A1A34 0%, #0d2247 50%, #0A1A34 100%);
+	}
+	.science-hero__anatomy {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0.10;
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' fill='none' stroke='%239BB7D4' stroke-width='1' stroke-linecap='round'><path d='M120 280 C 280 200, 420 220, 520 320 S 640 480, 720 460' /><path d='M180 360 C 320 320, 440 340, 540 410 S 640 540, 700 530' /><path d='M820 320 C 920 280, 1060 300, 1160 360 S 1300 460, 1340 470' /><path d='M860 400 C 960 360, 1080 380, 1180 440 S 1280 500, 1320 510' /><circle cx='720' cy='460' r='3' fill='%239BB7D4'/><circle cx='820' cy='320' r='3' fill='%239BB7D4'/><path d='M720 460 L 820 320' stroke-dasharray='2 4' /></svg>");
+		background-size: cover;
+		background-position: center;
+	}
+	.science-hero .eyebrow {
+		display: inline-block;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+	.reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform .8s ease; }
+	.reveal.in { opacity: 1; transform: translateY(0); }
+	@media (prefers-reduced-motion: reduce) {
+		.reveal { opacity: 1; transform: none; transition: none; }
+	}
+</style>
+
+<noscript>
+	<style>.reveal { opacity: 1 !important; transform: none !important; }</style>
+</noscript>
+
+<script>
+	(function () {
+		function init() {
+			var els = document.querySelectorAll('.reveal');
+			if (!els.length) return;
+			if (!('IntersectionObserver' in window)) {
+				els.forEach(function (el) { el.classList.add('in'); });
+				return;
+			}
+			var io = new IntersectionObserver(function (entries) {
+				entries.forEach(function (e) {
+					if (e.isIntersecting) {
+						e.target.classList.add('in');
+						io.unobserve(e.target);
+					}
+				});
+			}, { threshold: 0.12 });
+			els.forEach(function (el) { io.observe(el); });
+		}
+		// Inline scripts execute mid-parse, so sections below the hero aren't
+		// in the DOM yet. Wait for the full body to parse, otherwise sections
+		// 2–6 stay at .reveal { opacity: 0 } forever.
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', init);
+		} else {
+			init();
+		}
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Science — Hero",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",         "label": "Eyebrow",        "default": "Our Approach" },
+		{ "type": "text",     "id": "heading_line_1",  "label": "Heading line 1", "default": "Backed by science." },
+		{ "type": "text",     "id": "heading_line_2",  "label": "Heading line 2 (italic accent)", "default": "Built around your body." },
+		{ "type": "textarea", "id": "lede",            "label": "Lede paragraph", "default": "Aira isn't a clinical device pretending to be wellness, or a wellness product pretending to be science. It's a precise, research-grounded tool designed to support what your body already knows how to do: breathe better." },
+		{ "type": "text",     "id": "scroll_label",    "label": "Scroll cue label", "default": "Scroll to read" }
+	],
+	"blocks": [
+		{
+			"type": "pill",
+			"name": "Trust pill",
+			"settings": [
+				{ "type": "text", "id": "label", "label": "Label", "default": "Peer-reviewed research" }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Science — Hero",
+			"blocks": [
+				{ "type": "pill", "settings": { "label": "Peer-reviewed research" } },
+				{ "type": "pill", "settings": { "label": "Mechanical, not pharmacological" } },
+				{ "type": "pill", "settings": { "label": "Skin-safe materials" } }
+			]
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+{%- comment -%}
+	Contact — Business info (scaffold).
+	Renders legal entity name, license number, business address, and
+	hours from theme settings (Theme settings → Support & contact).
+{%- endcomment -%}
+
+<section class="bg-secondary py-12 md:py-16 border-t border-main/10">
+	<div class="container mx-auto px-4 max-w-3xl">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+
+			<div>
+				<h3 class="text-xs font-bold uppercase tracking-widest text-copy/60 mb-3">Business</h3>
+				{%- if settings.legal_entity_name != blank -%}
+					<p class="text-sm text-copy m-0">{{ settings.legal_entity_name }}</p>
+				{%- endif -%}
+				{%- if settings.legal_license_number != blank -%}
+					<p class="text-sm text-copy/70 m-0 mt-1">License {{ settings.legal_license_number }}</p>
+				{%- endif -%}
+				{%- if settings.legal_business_address != blank -%}
+					<p class="text-sm text-copy/70 m-0 mt-3 whitespace-pre-line">{{ settings.legal_business_address }}</p>
+				{%- endif -%}
+			</div>
+
+			<div>
+				<h3 class="text-xs font-bold uppercase tracking-widest text-copy/60 mb-3">Hours</h3>
+				{%- if settings.business_hours_label != blank -%}
+					<p class="text-sm text-copy m-0">{{ settings.business_hours_label }}</p>
+				{%- endif -%}
+				{%- if settings.support_email != blank -%}
+					<p class="text-sm text-copy/70 m-0 mt-3">
+						<a href="mailto:{{ settings.support_email }}" class="text-highlight underline underline-offset-2">{{ settings.support_email }}</a>
+					</p>
+				{%- endif -%}
+			</div>
+
+		</div>
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Contact - Business info",
+	"settings": [
+		{ "type": "paragraph", "content": "All values pulled from Theme settings → Support & contact." }
+	],
+	"presets": [{ "name": "Contact - Business info" }]
+}
+{% endschema %}

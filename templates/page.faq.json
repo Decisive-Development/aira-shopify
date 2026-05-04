@@ -1,0 +1,48 @@
+{
+	"sections": {
+		"hero": {
+			"type": "faq-hero",
+			"settings": {
+				"eyebrow": "Help",
+				"heading": "Frequently asked questions",
+				"subheading": "Everything you'd want to know about AIRA — sizing, materials, sleep, sport, and more."
+			}
+		},
+		"search": {
+			"type": "faq-search",
+			"settings": {}
+		},
+		"categories": {
+			"type": "faq-categories",
+			"blocks": {
+				"cat-sizing":   { "type": "category", "settings": { "title": "Sizing" } },
+				"q-sizing-1":   { "type": "faq_item", "settings": { "category": "Sizing",    "question": "How do I find my size?",          "answer": "<p>Every Aira Kit ships with all four band sizes. Try them on night one and keep the one that fits.</p>" } },
+				"q-sizing-2":   { "type": "faq_item", "settings": { "category": "Sizing",    "question": "Which size for sleep vs sport?",   "answer": "<p>Start a size up for sleep (wider airflow) and a size down for sport (so the tabs hold under sweat).</p>" } },
+
+				"cat-materials":{ "type": "category", "settings": { "title": "Materials" } },
+				"q-mat-1":      { "type": "faq_item", "settings": { "category": "Materials", "question": "Is the adhesive hypoallergenic?", "answer": "<p>Yes — medical-grade adhesive, latex-free. Run a 24-hour patch test if you have very sensitive skin.</p>" } },
+				"q-mat-2":      { "type": "faq_item", "settings": { "category": "Materials", "question": "How long does the band last?",    "answer": "<p>Months of nightly use. The band is reusable; the adhesive tabs are single-use.</p>" } },
+
+				"cat-using":    { "type": "category", "settings": { "title": "Using AIRA" } },
+				"q-use-1":      { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Will it stay on through the night?", "answer": "<p>Yes — get the prep right (clean, dry, no moisturiser) and most wearers get a full 8 hours, even on side-sleepers.</p>" } },
+				"q-use-2":      { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Can I wear it during sport?",        "answer": "<p>It was originally engineered for high-impact sport. Size down so the tabs hold tight under sweat and movement.</p>" } },
+
+				"cat-orders":   { "type": "category", "settings": { "title": "Orders & shipping" } },
+				"q-ord-1":      { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "How long does shipping take?", "answer": "<p>Within the GCC: 2–4 business days. International: 7–14 business days.</p>" } },
+				"q-ord-2":      { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Can I return it?",             "answer": "<p>Unused, sealed kits within 14 days. <a href=\"/pages/returns\">Start a return</a>.</p>" } }
+			},
+			"block_order": [
+				"cat-sizing", "q-sizing-1", "q-sizing-2",
+				"cat-materials", "q-mat-1", "q-mat-2",
+				"cat-using", "q-use-1", "q-use-2",
+				"cat-orders", "q-ord-1", "q-ord-2"
+			],
+			"settings": {}
+		},
+		"final_cta": {
+			"type": "faq-final-cta",
+			"settings": {}
+		}
+	},
+	"order": ["hero", "search", "categories", "final_cta"]
+}

@@ -1,0 +1,47 @@
+{%- comment -%}
+	Policy template — shared across all four /policies/* URLs.
+	Shopify policy pages don't support JSON templates, so this is a
+	plain Liquid template. Renders the active policy with brand styling.
+{%- endcomment -%}
+
+<section class="relative bg-secondary text-main pt-32 md:pt-40 pb-24 md:pb-32">
+
+	{%- comment -%} Soft halo cue, matches the navy hero family palette {%- endcomment -%}
+	<div
+		class="absolute inset-x-0 top-0 h-64 pointer-events-none opacity-60"
+		style="background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(155,183,212,0.18), transparent 70%);"
+	></div>
+
+	<div class="relative z-10 container mx-auto px-4">
+		<div class="max-w-[720px] mx-auto">
+
+			<header class="mb-10 md:mb-14 text-center">
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-4">Legal</p>
+				<h1 class="font-heading heading-weight text-4xl md:text-5xl leading-tight tracking-tight text-title">
+					{{ policy.title }}
+				</h1>
+				{%- if policy.updated_at -%}
+					<p class="text-xs text-copy/60 mt-4">
+						Last updated {{ policy.updated_at | date: '%B %-d, %Y' }}
+					</p>
+				{%- endif -%}
+			</header>
+
+			<div class="policy-prose font-body text-base md:text-[17px] leading-[1.7] text-copy">
+				{{ policy.body }}
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<style>
+	.policy-prose h2 { font-family: var(--font-heading, inherit); font-weight: 600; font-size: 1.5rem; line-height: 1.3; color: var(--color-title, #0A1A34); margin: 2.25rem 0 0.75rem; }
+	.policy-prose h3 { font-weight: 600; font-size: 1.15rem; line-height: 1.35; color: var(--color-title, #0A1A34); margin: 1.75rem 0 0.5rem; }
+	.policy-prose p  { margin: 0 0 1.1rem; }
+	.policy-prose ul, .policy-prose ol { margin: 0 0 1.1rem 1.25rem; padding-left: 1rem; }
+	.policy-prose li { margin: 0.35rem 0; }
+	.policy-prose a  { color: var(--color-highlight, #FF4500); text-decoration: underline; text-underline-offset: 2px; }
+	.policy-prose strong { font-weight: 600; }
+	.policy-prose hr { border: 0; border-top: 1px solid rgba(10,26,52,0.12); margin: 2rem 0; }
+</style>

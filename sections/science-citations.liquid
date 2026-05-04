@@ -1,0 +1,164 @@
+{%- comment -%}
+	Backed by Science — §6 Citations & bibliography.
+
+	Reference: design_handoff_backed_by_science/Backed by science.html §6.
+
+	Navy background (same hero gradient + anatomy overlay).
+	Numbered <ol> with CSS counters — each <li> has id="cite-N" so
+	the <a class="fn" href="#cite-N">[N]</a> superscripts elsewhere
+	on the page anchor here. Closing line with research email.
+{%- endcomment -%}
+
+<section class="science-citations py-20 md:py-28 relative overflow-hidden" data-screen-label="07 Citations">
+	<div class="science-citations__anatomy" aria-hidden="true"></div>
+
+	<div class="container-contained relative z-10">
+		<div class="max-w-[800px] mx-auto reveal">
+
+			<div class="mb-10">
+				<span class="eyebrow text-tertiary-light">{{ section.settings.eyebrow | default: 'References' }}</span>
+				<h2 class="font-heading heading-weight text-secondary text-2xl md:text-3xl mt-3 leading-tight tracking-tight">
+					{{ section.settings.heading_lead | default: 'Citations &' }}
+					<span class="font-heading italic text-tertiary-light" style="font-weight: 400;">
+						{{- section.settings.heading_accent | default: 'bibliography.' -}}
+					</span>
+				</h2>
+				{%- if section.settings.lede != blank -%}
+					<p class="text-secondary/80 text-sm mt-3">{{ section.settings.lede }}</p>
+				{%- endif -%}
+			</div>
+
+			{%- if section.blocks.size > 0 -%}
+				<ol class="cite-list">
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'citation' -%}
+							{%- assign cite_id = block.settings.ref_id | default: forloop.index -%}
+							<li id="cite-{{ cite_id }}" {{ block.shopify_attributes }}>
+								<span>
+									{{ block.settings.body }}
+									{%- if block.settings.url != blank -%}
+										&nbsp;<a href="{{ block.settings.url }}" target="_blank" rel="noopener">[{{ block.settings.url_label | default: 'DOI / URL' }}]</a>
+									{%- endif -%}
+								</span>
+							</li>
+						{%- endif -%}
+					{%- endfor -%}
+				</ol>
+			{%- endif -%}
+
+			{%- if section.settings.research_email != blank -%}
+				<p class="text-secondary/65 text-xs mt-8 leading-relaxed">
+					{{ section.settings.closing_lead | default: 'For research questions or to request the full bibliography in academic format, contact' }}
+					<a href="mailto:{{ section.settings.research_email }}" class="underline text-secondary">{{ section.settings.research_email }}</a>.
+				</p>
+			{%- endif -%}
+
+		</div>
+	</div>
+</section>
+
+<style>
+	.science-citations {
+		background:
+			radial-gradient(ellipse 75% 55% at 50% 30%, rgba(155,183,212,0.22) 0%, rgba(10,26,52,0) 65%),
+			radial-gradient(ellipse 110% 80% at 50% 110%, rgba(184,68,0,0.08) 0%, rgba(10,26,52,0) 60%),
+			linear-gradient(180deg, #0A1A34 0%, #0d2247 50%, #0A1A34 100%);
+	}
+	.science-citations__anatomy {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0.10;
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' fill='none' stroke='%239BB7D4' stroke-width='1' stroke-linecap='round'><path d='M120 280 C 280 200, 420 220, 520 320 S 640 480, 720 460' /><path d='M180 360 C 320 320, 440 340, 540 410 S 640 540, 700 530' /><path d='M820 320 C 920 280, 1060 300, 1160 360 S 1300 460, 1340 470' /></svg>");
+		background-size: cover;
+		background-position: center;
+	}
+	.science-citations .eyebrow {
+		display: inline-block;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+	.science-citations .cite-list {
+		counter-reset: cite;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.science-citations .cite-list li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		gap: 0.75rem;
+		padding: 0.875rem 0;
+		border-top: 1px solid rgba(241,235,225,0.12);
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: #F1EBE1;
+		opacity: 0.85;
+		counter-increment: cite;
+		scroll-margin-top: 100px;
+	}
+	.science-citations .cite-list li:last-child {
+		border-bottom: 1px solid rgba(241,235,225,0.12);
+	}
+	.science-citations .cite-list li::before {
+		content: counter(cite) ".";
+		font-family: var(--font-heading, "Satoshi", "Nunito Sans", sans-serif);
+		font-style: italic;
+		font-size: 1rem;
+		color: #9BB7D4;
+		font-weight: 500;
+	}
+	.science-citations .cite-list li a {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		text-decoration-color: rgba(241,235,225,0.30);
+	}
+	.science-citations .cite-list li a:hover {
+		text-decoration-color: #F1EBE1;
+	}
+</style>
+
+{% schema %}
+{
+	"name": "Science — Citations",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",        "label": "Eyebrow",                  "default": "References" },
+		{ "type": "text",     "id": "heading_lead",   "label": "Heading lead",             "default": "Citations &" },
+		{ "type": "text",     "id": "heading_accent", "label": "Heading accent (italic)",  "default": "bibliography." },
+		{ "type": "textarea", "id": "lede",           "label": "Lede",                     "default": "All claims on this page reference peer-reviewed published research. Footnote numbers above link here." },
+		{ "type": "header",   "content": "Closing line" },
+		{ "type": "textarea", "id": "closing_lead",   "label": "Closing lead text",        "default": "For research questions or to request the full bibliography in academic format, contact" },
+		{ "type": "text",     "id": "research_email", "label": "Research email",           "default": "research@aira.com" }
+	],
+	"blocks": [
+		{
+			"type": "citation",
+			"name": "Citation",
+			"settings": [
+				{ "type": "text",     "id": "ref_id",    "label": "Reference id (e.g. 1)", "info": "Footnotes link to #cite-<id>.", "default": "1" },
+				{ "type": "richtext", "id": "body",      "label": "Citation body (richtext)", "default": "<p>Lundberg, J.O.N., et al. (1995). High nitric oxide production in human paranasal sinuses. <em>Acta Physiologica Scandinavica</em>, 154(4), 431–434.</p>" },
+				{ "type": "url",      "id": "url",       "label": "DOI / URL" },
+				{ "type": "text",     "id": "url_label", "label": "URL label",              "default": "DOI / URL" }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Science — Citations",
+			"blocks": [
+				{ "type": "citation", "settings": { "ref_id": "1", "body": "<p>Lundberg, J.O.N., et al. (1995). High nitric oxide production in human paranasal sinuses. <em>Acta Physiologica Scandinavica</em>, 154(4), 431–434.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "2", "body": "<p>[Author], et al. (2018). [Study title on nasal-only breathing and sleep quality after 30 days]. <em>Journal of Clinical Sleep Medicine</em>.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "3", "body": "<p>[Author], et al. ([Year]). [Study title on nasal patency and external mechanical dilation]. <em>[Journal name]</em>.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "4", "body": "<p>[Author], et al. ([Year]). [Study title — REM cycles and nasal breathing]. <em>[Journal name]</em>.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "5", "body": "<p>[Author], et al. ([Year]). [Study title — HRV recovery and nasal breathing in athletes]. <em>[Journal name]</em>.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "6", "body": "<p>[Author], et al. ([Year]). [Study title — external nasal dilators and snoring reduction]. <em>[Journal name]</em>.</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "7", "body": "<p>[Independent testing report — Aira mechanical performance]. ([Year]). [Lab / institution].</p>" } },
+				{ "type": "citation", "settings": { "ref_id": "8", "body": "<p>[Independent testing report — adhesion and durability]. ([Year]). [Lab / institution].</p>" } }
+			]
+		}
+	]
+}
+{% endschema %}

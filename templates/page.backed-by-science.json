@@ -1,0 +1,114 @@
+{
+	"sections": {
+		"hero": {
+			"type": "science-hero",
+			"blocks": {
+				"pill-1": { "type": "pill", "settings": { "label": "Peer-reviewed research" } },
+				"pill-2": { "type": "pill", "settings": { "label": "Mechanical, not pharmacological" } },
+				"pill-3": { "type": "pill", "settings": { "label": "Skin-safe materials" } }
+			},
+			"block_order": ["pill-1", "pill-2", "pill-3"],
+			"settings": {
+				"eyebrow": "Our Approach",
+				"heading_line_1": "Backed by science.",
+				"heading_line_2": "Built around your body.",
+				"lede": "Aira isn't a clinical device pretending to be wellness, or a wellness product pretending to be science. It's a precise, research-grounded tool designed to support what your body already knows how to do: breathe better.",
+				"scroll_label": "Scroll to read"
+			}
+		},
+
+		"nasal_breathing": {
+			"type": "science-nasal-breathing",
+			"blocks": {
+				"stat-1":  { "type": "stat_card",   "settings": { "number": "01", "title": "Snoring",           "caption": "Reduced soft-palate vibration during sleep.",           "citation_ref": "6" } },
+				"stat-2":  { "type": "stat_card",   "settings": { "number": "02", "title": "Sleep quality",     "caption": "Deeper REM cycles, fewer night-time wakings.",          "citation_ref": "4" } },
+				"stat-3":  { "type": "stat_card",   "settings": { "number": "03", "title": "Athletic recovery", "caption": "Faster heart-rate-variability return after exercise.", "citation_ref": "5" } },
+				"ed-1":    { "type": "editorial",   "settings": { "heading": "Why nasal breathing matters", "body": "<p>When you breathe through your nose, your body does work that mouth breathing simply can't replicate. The nasal cavity warms, humidifies, and filters incoming air. It produces nitric oxide<a href=\"#cite-1\">[1]</a> — a molecule that improves oxygen uptake in the lungs by up to 18%. And it sets the nervous system on a different course: nasal breathing is associated with deeper sleep, better focus, and more efficient recovery.</p>" } },
+				"banner":  { "type": "stat_banner", "settings": { "figure": "+18%", "caption": "Increase in oxygen uptake from nasal-produced nitric oxide vs. mouth breathing.", "citation_ref": "1" } },
+				"ed-2":    { "type": "editorial",   "settings": { "heading": "The cost of mouth breathing", "body": "<p>Chronic mouth breathing has been linked to disrupted sleep, lower daytime energy, dental issues, and reduced athletic performance. In one 2018 study published in the <em>Journal of Clinical Sleep Medicine</em>, participants who switched to nasal-only breathing reported significantly improved sleep quality after 30 days.<a href=\"#cite-2\">[2]</a></p>" } },
+				"ed-3":    { "type": "editorial",   "settings": { "heading": "What \"nasal patency\" actually means", "body": "<p>Nasal patency is the medical term for how open your nasal airway is. People with low patency — narrow nasal valves, deviated septums, congestion from allergies — work harder to breathe through their nose. Many give up and switch to mouth breathing without realising it.</p><p>Improving nasal patency, even mechanically and externally, restores the body's preferred breathing pattern.<a href=\"#cite-3\">[3]</a></p>" } },
+				"ed-4":    { "type": "editorial",   "settings": { "heading": "What better breathing actually changes", "body": "<p>The downstream effects of improved nasal breathing are well-documented in sleep medicine and sports science: deeper REM cycles, reduced snoring, faster heart rate variability recovery after exercise, and improved daytime focus.</p>" } }
+			},
+			"block_order": ["stat-1", "stat-2", "stat-3", "ed-1", "banner", "ed-2", "ed-3", "ed-4"],
+			"settings": {
+				"eyebrow": "The foundation",
+				"heading": "Why nasal breathing matters more than you think."
+			}
+		},
+
+		"mechanism": {
+			"type": "science-mechanism",
+			"blocks": {
+				"step-1": { "type": "step", "settings": { "number": "01", "title": "Soft contact",       "body": "Skin-safe, hypoallergenic adhesive secures the strip across the bridge of your nose." } },
+				"step-2": { "type": "step", "settings": { "number": "02", "title": "Sustained dilation", "body": "Two precision-engineered magnets create a gentle outward pull on the nasal walls, opening the airway without pinching." } },
+				"step-3": { "type": "step", "settings": { "number": "03", "title": "All-night flow",     "body": "The strip stays in place through workouts, sleep, and side-sleeping — keeping your airway open without active effort." } }
+			},
+			"block_order": ["step-1", "step-2", "step-3"],
+			"settings": {
+				"eyebrow": "The mechanism",
+				"heading": "How Aira works.",
+				"lede": "Aira gently expands the external nasal valve — the narrowest point of your nasal airway — and holds it open so air can flow freely. The mechanism is mechanical, not pharmacological.",
+				"honest_eyebrow": "Honestly",
+				"honest_does_label": "What Aira does:",
+				"honest_does": "it improves nasal patency mechanically.",
+				"honest_doesnt_label": "What it doesn't do:",
+				"honest_doesnt": "replace medical treatment for sleep apnea, chronic congestion, or structural issues. If you suspect any of these, see your doctor."
+			}
+		},
+
+		"medical_advisor": {
+			"type": "science-medical-advisor",
+			"settings": {
+				"is_published": false,
+				"eyebrow": "Reviewed by",
+				"heading_lead": "Our medical",
+				"heading_accent": "advisor.",
+				"plaque_label": "Specialty",
+				"plaque_value": "ENT / Sleep Medicine",
+				"advisor_name": "Dr. [Advisor Name]",
+				"advisor_role": "[Specialty], [Hospital / Practice]",
+				"advisor_location": "[City, Country]"
+			}
+		},
+
+		"clinical_claims": {
+			"type": "science-clinical-claims",
+			"blocks": {
+				"claim-1": { "type": "claim", "settings": { "figure": "+[XX]%",  "body": "[Specific numerical result — e.g., increase in measured nasal airflow over baseline in n=[X] adult subjects]", "citation_ref": "7" } },
+				"claim-2": { "type": "claim", "settings": { "figure": "[XX] hrs", "body": "[Specific numerical result — e.g., average sustained adhesion through a full night of side-sleeping]",        "citation_ref": "8" } }
+			},
+			"block_order": ["claim-1", "claim-2"],
+			"settings": {
+				"is_published": false,
+				"eyebrow": "Verified results",
+				"heading": "Independently tested.",
+				"lede": "When we make a numerical claim about Aira, it comes from third-party testing. Every figure below is cited.",
+				"disclaimer": "Aira does not make claims about treating sleep apnea or any other medical condition. Every claim above refers to mechanical performance only."
+			}
+		},
+
+		"citations": {
+			"type": "science-citations",
+			"blocks": {
+				"cite-1": { "type": "citation", "settings": { "ref_id": "1", "body": "<p>Lundberg, J.O.N., et al. (1995). High nitric oxide production in human paranasal sinuses. <em>Acta Physiologica Scandinavica</em>, 154(4), 431–434.</p>" } },
+				"cite-2": { "type": "citation", "settings": { "ref_id": "2", "body": "<p>[Author], et al. (2018). [Study title on nasal-only breathing and sleep quality after 30 days]. <em>Journal of Clinical Sleep Medicine</em>.</p>" } },
+				"cite-3": { "type": "citation", "settings": { "ref_id": "3", "body": "<p>[Author], et al. ([Year]). [Study title on nasal patency and external mechanical dilation]. <em>[Journal name]</em>.</p>" } },
+				"cite-4": { "type": "citation", "settings": { "ref_id": "4", "body": "<p>[Author], et al. ([Year]). [Study title — REM cycles and nasal breathing]. <em>[Journal name]</em>.</p>" } },
+				"cite-5": { "type": "citation", "settings": { "ref_id": "5", "body": "<p>[Author], et al. ([Year]). [Study title — HRV recovery and nasal breathing in athletes]. <em>[Journal name]</em>.</p>" } },
+				"cite-6": { "type": "citation", "settings": { "ref_id": "6", "body": "<p>[Author], et al. ([Year]). [Study title — external nasal dilators and snoring reduction]. <em>[Journal name]</em>.</p>" } },
+				"cite-7": { "type": "citation", "settings": { "ref_id": "7", "body": "<p>[Independent testing report — Aira mechanical performance]. ([Year]). [Lab / institution].</p>" } },
+				"cite-8": { "type": "citation", "settings": { "ref_id": "8", "body": "<p>[Independent testing report — adhesion and durability]. ([Year]). [Lab / institution].</p>" } }
+			},
+			"block_order": ["cite-1", "cite-2", "cite-3", "cite-4", "cite-5", "cite-6", "cite-7", "cite-8"],
+			"settings": {
+				"eyebrow": "References",
+				"heading_lead": "Citations &",
+				"heading_accent": "bibliography.",
+				"lede": "All claims on this page reference peer-reviewed published research. Footnote numbers above link here.",
+				"closing_lead": "For research questions or to request the full bibliography in academic format, contact",
+				"research_email": "research@aira.com"
+			}
+		}
+	},
+	"order": ["hero", "nasal_breathing", "mechanism", "medical_advisor", "clinical_claims", "citations"]
+}

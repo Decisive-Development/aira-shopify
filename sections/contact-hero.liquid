@@ -1,0 +1,38 @@
+{%- comment -%}
+	Contact — Hero (scaffold).
+	Navy bg-main + light-blue radial halo, matches /pages/our-story family.
+{%- endcomment -%}
+
+<section class="relative overflow-hidden bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-24">
+
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background:
+			radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%),
+			radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);"
+	></div>
+
+	<div class="relative z-10 container mx-auto px-4 max-w-[720px] text-center">
+		{%- if section.settings.eyebrow != blank -%}
+			<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light mb-4">{{ section.settings.eyebrow }}</p>
+		{%- endif -%}
+		<h1 class="text-4xl md:text-5xl font-medium mb-4 text-balance">
+			{{ section.settings.heading | default: 'Get in touch' }}
+		</h1>
+		{%- if section.settings.subheading != blank -%}
+			<p class="text-lg text-secondary/80 max-w-xl mx-auto">{{ section.settings.subheading }}</p>
+		{%- endif -%}
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Contact - Hero",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",    "label": "Eyebrow",    "default": "We're here to help" },
+		{ "type": "text",     "id": "heading",    "label": "Heading",    "default": "Get in touch" },
+		{ "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Message us on WhatsApp for the fastest response, or use one of the channels below." }
+	],
+	"presets": [{ "name": "Contact - Hero" }]
+}
+{% endschema %}

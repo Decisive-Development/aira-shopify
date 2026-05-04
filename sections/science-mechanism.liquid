@@ -1,0 +1,182 @@
+{%- comment -%}
+	Backed by Science — §3 How Aira works.
+
+	White background, two-column 5/6 grid (lg+):
+	  - Left: cream-filled placeholder card, 4:5 aspect. Optional image
+	          picker — when set, the image fills the card; otherwise the
+	          card stays as an empty cream block.
+	  - Right: eyebrow, h2, lede, three numbered step rows, honest card.
+
+	The step number uses a scoped class (`.science-mechanism__num`) on
+	purpose — the global `.step-num` rule in critical.css is a 36×36
+	soft-navy circle used by the sticky step rail elsewhere in the
+	theme, which would render as a circle behind these numbers if we
+	reused that class.
+
+	Steps render from blocks of type "step".
+{%- endcomment -%}
+
+<section class="science-mechanism py-20 md:py-32" data-screen-label="03 How Aira works" style="background: #fff;">
+	<div class="container-contained">
+		<div class="grid lg:grid-cols-[5fr_6fr] gap-10 lg:gap-16 items-center">
+
+			{%- comment -%} Diagram placeholder (left on desktop, second on mobile) {%- endcomment -%}
+			<div class="reveal order-2 lg:order-1">
+				<div class="science-mechanism__placeholder">
+					{%- if section.settings.diagram_image != blank -%}
+						{{
+							section.settings.diagram_image
+							| image_url: width: 1200
+							| image_tag:
+								loading: 'lazy',
+								class: 'absolute inset-0 w-full h-full object-cover',
+								widths: '480, 720, 960, 1200, 1600',
+								alt: section.settings.diagram_alt
+						}}
+					{%- endif -%}
+				</div>
+			</div>
+
+			{%- comment -%} Copy + steps + honest card (right) {%- endcomment -%}
+			<div class="reveal order-1 lg:order-2">
+				<span class="eyebrow text-main/60">{{ section.settings.eyebrow | default: 'The mechanism' }}</span>
+				<h2 class="font-heading heading-weight text-main text-3xl md:text-5xl mt-3 leading-tight tracking-tight">
+					{{ section.settings.heading | default: 'How Aira works.' }}
+				</h2>
+				{%- if section.settings.lede != blank -%}
+					<p class="text-main/75 text-base md:text-lg leading-relaxed mt-5 max-w-xl">
+						{{ section.settings.lede }}
+					</p>
+				{%- endif -%}
+
+				{%- assign steps = section.blocks | where: 'type', 'step' -%}
+				{%- if steps.size > 0 -%}
+					<div class="science-mechanism__steps mt-10">
+						{%- for block in steps -%}
+							<div class="science-mechanism__row" {{ block.shopify_attributes }}>
+								<div class="science-mechanism__num">{{ block.settings.number | default: forloop.index | prepend: '0' | slice: -2, 2 }}</div>
+								<div>
+									<h4 class="font-heading text-main text-lg md:text-xl font-semibold mb-1.5">{{ block.settings.title }}</h4>
+									<p class="text-main/70 text-base leading-relaxed m-0">{{ block.settings.body }}</p>
+								</div>
+							</div>
+						{%- endfor -%}
+					</div>
+				{%- endif -%}
+
+				{%- if section.settings.honest_does != blank or section.settings.honest_doesnt != blank -%}
+					<div class="honest-card mt-8">
+						<div class="text-[10px] tracking-[0.18em] uppercase text-highlight font-bold mb-2">{{ section.settings.honest_eyebrow | default: 'Honestly' }}</div>
+						<p class="text-main text-base md:text-[1.0625rem] leading-relaxed m-0">
+							{%- if section.settings.honest_does != blank -%}
+								<strong class="font-semibold">{{ section.settings.honest_does_label | default: 'What Aira does:' }}</strong> {{ section.settings.honest_does }}
+							{%- endif -%}
+							{%- if section.settings.honest_doesnt != blank -%}
+								<span class="block mt-2"><strong class="font-semibold">{{ section.settings.honest_doesnt_label | default: "What it doesn't do:" }}</strong> {{ section.settings.honest_doesnt }}</span>
+							{%- endif -%}
+						</p>
+					</div>
+				{%- endif -%}
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<style>
+	.science-mechanism .eyebrow {
+		display: inline-block;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+
+	.science-mechanism__placeholder {
+		position: relative;
+		background: #F1EBE1;
+		border-radius: 1.25rem;
+		aspect-ratio: 4 / 5;
+		overflow: hidden;
+	}
+
+	.science-mechanism__row {
+		display: grid;
+		grid-template-columns: 64px 1fr;
+		gap: 1.25rem;
+		align-items: baseline;
+		padding: 1.5rem 0;
+		border-top: 1px solid rgba(10,26,52,0.10);
+	}
+	.science-mechanism__row:last-child {
+		border-bottom: 1px solid rgba(10,26,52,0.10);
+	}
+	@media (min-width: 768px) {
+		.science-mechanism__row {
+			grid-template-columns: 80px 1fr;
+			gap: 1.5rem;
+		}
+	}
+
+	.science-mechanism__num {
+		font-family: var(--font-heading, "Satoshi", "Nunito Sans", sans-serif);
+		font-style: italic;
+		font-weight: 400;
+		font-size: 2rem;
+		color: #9BB7D4;
+		line-height: 1;
+		letter-spacing: -0.02em;
+	}
+	@media (min-width: 768px) {
+		.science-mechanism__num { font-size: 2.5rem; }
+	}
+
+	.science-mechanism .honest-card {
+		background: #fff;
+		border: 1px solid rgba(10,26,52,0.08);
+		border-left: 3px solid #FF4000;
+		border-radius: 0.875rem;
+		padding: 1.5rem 1.75rem;
+	}
+</style>
+
+{% schema %}
+{
+	"name": "Science — Mechanism",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",             "label": "Eyebrow", "default": "The mechanism" },
+		{ "type": "text",     "id": "heading",             "label": "Heading", "default": "How Aira works." },
+		{ "type": "textarea", "id": "lede",                "label": "Lede",    "default": "Aira gently expands the external nasal valve — the narrowest point of your nasal airway — and holds it open so air can flow freely. The mechanism is mechanical, not pharmacological." },
+		{ "type": "header",   "content": "Diagram (left column)" },
+		{ "type": "image_picker", "id": "diagram_image",   "label": "Diagram image (optional — empty cream placeholder shown when blank)" },
+		{ "type": "text",     "id": "diagram_alt",         "label": "Diagram alt text", "default": "How Aira works diagram" },
+		{ "type": "header",   "content": "Honestly card" },
+		{ "type": "text",     "id": "honest_eyebrow",      "label": "Eyebrow",     "default": "Honestly" },
+		{ "type": "text",     "id": "honest_does_label",   "label": "Left label",  "default": "What Aira does:" },
+		{ "type": "textarea", "id": "honest_does",         "label": "Left body",   "default": "it improves nasal patency mechanically." },
+		{ "type": "text",     "id": "honest_doesnt_label", "label": "Right label", "default": "What it doesn't do:" },
+		{ "type": "textarea", "id": "honest_doesnt",       "label": "Right body",  "default": "replace medical treatment for sleep apnea, chronic congestion, or structural issues. If you suspect any of these, see your doctor." }
+	],
+	"blocks": [
+		{
+			"type": "step",
+			"name": "Step",
+			"settings": [
+				{ "type": "text",     "id": "number", "label": "Step number", "default": "01" },
+				{ "type": "text",     "id": "title",  "label": "Title",       "default": "Soft contact" },
+				{ "type": "textarea", "id": "body",   "label": "Body",        "default": "Skin-safe, hypoallergenic adhesive secures the strip across the bridge of your nose." }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Science — Mechanism",
+			"blocks": [
+				{ "type": "step", "settings": { "number": "01", "title": "Soft contact",       "body": "Skin-safe, hypoallergenic adhesive secures the strip across the bridge of your nose." } },
+				{ "type": "step", "settings": { "number": "02", "title": "Sustained dilation", "body": "Two precision-engineered magnets create a gentle outward pull on the nasal walls, opening the airway without pinching." } },
+				{ "type": "step", "settings": { "number": "03", "title": "All-night flow",     "body": "The strip stays in place through workouts, sleep, and side-sleeping — keeping your airway open without active effort." } }
+			]
+		}
+	]
+}
+{% endschema %}

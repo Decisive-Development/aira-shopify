@@ -1,0 +1,37 @@
+{
+	"sections": {
+		"hero": {
+			"type": "contact-hero",
+			"settings": {
+				"eyebrow": "We're here to help",
+				"heading": "Get in touch",
+				"subheading": "Message us on WhatsApp for the fastest response, or use one of the channels below."
+			}
+		},
+		"channels": {
+			"type": "contact-channels",
+			"settings": {}
+		},
+		"form": {
+			"type": "contact-form",
+			"settings": {}
+		},
+		"quick_links": {
+			"type": "contact-quick-links",
+			"blocks": {
+				"ql-1": { "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, and use.",     "url": "/pages/faq" } },
+				"ql-2": { "type": "link", "settings": { "title": "Start a return", "body": "Eligibility, timing, and how to send something back.",  "url": "/pages/returns" } },
+				"ql-3": { "type": "link", "settings": { "title": "Order tracking", "body": "Check the status of an order in flight.",                "url": "/pages/order-tracking" } }
+			},
+			"block_order": ["ql-1", "ql-2", "ql-3"],
+			"settings": {
+				"heading": "Quick answers"
+			}
+		},
+		"business_info": {
+			"type": "contact-business-info",
+			"settings": {}
+		}
+	},
+	"order": ["hero", "channels", "form", "quick_links", "business_info"]
+}

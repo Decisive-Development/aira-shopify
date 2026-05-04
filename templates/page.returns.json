@@ -1,0 +1,46 @@
+{
+	"sections": {
+		"hero": {
+			"type": "returns-hero",
+			"settings": {
+				"eyebrow": "Returns",
+				"heading": "Start a return",
+				"subheading": "We accept returns of unused, sealed Aira Kits within 14 days. Open packs aren't eligible for hygiene reasons."
+			}
+		},
+		"eligibility_gate": {
+			"type": "returns-eligibility-gate",
+			"blocks": {
+				"q-1": { "type": "question", "settings": { "question": "Was the order placed within the last 14 days?",  "field_id": "eligibility_within_window" } },
+				"q-2": { "type": "question", "settings": { "question": "Are the products unused?",                        "field_id": "eligibility_unused" } },
+				"q-3": { "type": "question", "settings": { "question": "Is the original packaging sealed and undamaged?", "field_id": "eligibility_sealed" } }
+			},
+			"block_order": ["q-1", "q-2", "q-3"],
+			"settings": {
+				"eyebrow":    "Step 1",
+				"heading":    "Check eligibility",
+				"subheading": "Three quick questions before you continue."
+			}
+		},
+		"damaged_flow": {
+			"type": "returns-damaged-flow",
+			"settings": {}
+		},
+		"form": {
+			"type": "returns-form",
+			"settings": {}
+		},
+		"policy_summary": {
+			"type": "returns-policy-summary",
+			"blocks": {
+				"f-1": { "type": "fact", "settings": { "label": "Window",    "body": "14 days from delivery." } },
+				"f-2": { "type": "fact", "settings": { "label": "Condition", "body": "Unused. Original packaging sealed." } },
+				"f-3": { "type": "fact", "settings": { "label": "Refund",    "body": "Full refund to original payment method." } },
+				"f-4": { "type": "fact", "settings": { "label": "Damaged?",  "body": "Skip the gate — message support directly." } }
+			},
+			"block_order": ["f-1", "f-2", "f-3", "f-4"],
+			"settings": {}
+		}
+	},
+	"order": ["hero", "eligibility_gate", "damaged_flow", "form", "policy_summary"]
+}

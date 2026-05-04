@@ -1,0 +1,53 @@
+{%- comment -%}
+	FAQ — Final CTA (scaffold).
+	When the FAQ doesn't answer it, route customers to support.
+{%- endcomment -%}
+
+{%- liquid
+	assign wa_number  = settings.support_whatsapp_number
+	assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi AIRA team,'
+	assign wa_link    = ''
+	if wa_number != blank
+		assign wa_encoded = wa_prefill | url_encode
+		assign wa_link    = 'https://wa.me/' | append: wa_number | append: '?text=' | append: wa_encoded
+	endif
+-%}
+
+<section class="bg-secondary py-16 md:py-20">
+	<div class="container mx-auto px-4 max-w-3xl text-center">
+
+		{%- if section.settings.heading != blank -%}
+			<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0 mb-3">{{ section.settings.heading }}</h2>
+		{%- endif -%}
+		{%- if section.settings.body != blank -%}
+			<p class="text-base text-copy/80 max-w-xl mx-auto mb-6">{{ section.settings.body }}</p>
+		{%- endif -%}
+
+		<div class="flex flex-wrap items-center justify-center gap-3">
+			{%- if wa_link != blank -%}
+				{%- render 'cta-button',
+					label: 'Message on WhatsApp',
+					url:   wa_link,
+					variant: 'primary'
+				-%}
+			{%- endif -%}
+			{%- render 'cta-button',
+				label: 'Contact support',
+				url:   '/pages/contact',
+				variant: 'ghost'
+			-%}
+		</div>
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "FAQ - Final CTA",
+	"settings": [
+		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Still have a question?" },
+		{ "type": "textarea", "id": "body",    "label": "Body",    "default": "Reach out — we usually reply within an hour during business hours." }
+	],
+	"presets": [{ "name": "FAQ - Final CTA" }]
+}
+{% endschema %}

@@ -1,336 +1,690 @@
-==============================================================================
-AIRA — HOW IT WORKS PAGE — DESIGN REFINEMENTS BRIEF
-==============================================================================
-Page:       /pages/how-it-works
-Hero ID:    shopify-section-template--28140890718590__hero
-Reference:  /pages/our-story (use as the visual reference for hero gradient
-            + highlight color treatment — they should feel like a family)
+================================================================================
+AIRA — PAGES SETUP & STRUCTURE BRIEF  (FOR VSC / DEV AGENT)
+================================================================================
+Date:     3 May 2026
+Audience: VSC / dev coding agent
+Purpose:  Get all the structural code, scaffolding, Shopify config, theme
+          settings, schema, and form handlers ready BEFORE the visual designs
+          arrive. When designs land, the dev work should be a content/style
+          fill-in, not a foundation build.
 
-Total changes: 8 across 4 sections (Hero, Step 01, Step 02, Pro Tips)
+Pages in scope:
+  Built-in Shopify policies (3):
+    /policies/terms-of-service
+    /policies/privacy-policy
+    /policies/refund-policy
+    /policies/shipping-policy   (also required by Shopify checkout)
 
-==============================================================================
-SECTION 1 — HERO (3 changes)
-==============================================================================
+  Custom pages (5):
+    /pages/returns      — returns request page
+    /pages/affiliate    — affiliate / partner program
+    /pages/contact      — contact support
+    /pages/faq          — standalone FAQ (may already exist)
+    /pages/science      — Backed by Science page
 
-────────────────────────────────────────────────
-1.1  Replace the orange-tinted background with the soft light-blue gradient
-     used on the Our Story hero.
-────────────────────────────────────────────────
-PROBLEM: The hero currently uses two custom classes — `hiw-hero-bg` and
-         `hiw-hero-halo` — that produce an orange tint at the top edge.
-         This breaks visual consistency with /pages/our-story (which uses
-         a soft blue radial gradient over navy).
+What is NOT in this brief:
+  - Visual design (hero treatments, cards, animations) → see per-page
+    design briefs (AIRA_<Page>_Page_Design_Brief.txt)
+  - Final copy → also in design briefs
+  - Navbar changes → none, see section 8
 
-WHAT TO DO:
+================================================================================
+0. CRITICAL CONTEXT FOR VSC
+================================================================================
 
-OPTION A (cleanest — recommended):
-  Match Our Story's hero exactly. Replace the hero section wrapper classes
-  on the how-it-works page so it uses the same treatment:
+- Theme is Shopify Liquid (not Hydrogen). Existing patterns use
+  `templates/*.json` + `sections/*.liquid` per the Reviews/HowItWorks
+  briefs. Match those conventions.
 
-  CURRENT wrapper class (on the inner <section> inside the hero):
-    class="relative overflow-hidden hiw-hero-bg hiw-hero-halo
-           pt-28 md:pt-36 pb-16 md:pb-24"
+- Visual family: all custom pages must use the same hero treatment as
+  /pages/our-story (navy bg-main + light-blue radial halo). Designers
+  will spec the exact composition; VSC's job is to scaffold the section
+  files so designers have a foundation to fill.
 
-  REPLACE WITH (matching Our Story):
-    class="relative overflow-hidden bg-main text-secondary
-           pt-32 md:pt-40 pb-16 md:pb-25"
+- DO NOT add anything to the main navbar. All new pages live in the
+  footer.
 
-  This drops the custom `hiw-hero-bg` + `hiw-hero-halo` and inherits the
-  Our Story navy + soft glow treatment. Look at how Our Story renders — that
-  exact look is what we want.
+- DO NOT edit copy or design choices. Use placeholder copy from this
+  brief; final copy comes from the design briefs.
 
-OPTION B (if Option A loses too much character):
-  Keep the custom classes but rewrite their CSS to remove the orange tint
-  and replace with light-blue radial gradients. Find the CSS rules for
-  `.hiw-hero-bg` and `.hiw-hero-halo` (likely in a <style> block at the top
-  of the hero section's .liquid file, or in assets/section-hero.css).
+- DO NOT touch the homepage, product pages, How-it-works, Our Story,
+  or Reviews sections. Those have their own briefs.
 
-  Replace any orange/amber color stops (likely #FF4000, #ff8a4a, or similar
-  warm hex codes) with light blue values matching the brand:
-    - Use `text-tertiary-light` token if defined, OR
-    - Use rgba(160, 195, 230, 0.15) for the soft halo glow
-    - Background base stays `bg-main` (navy)
 
-  The radial gradients should sit lightly OVER the navy, not replace it.
-
-RECOMMENDATION: Go with Option A unless you specifically want the hero to
-feel different from Our Story (e.g., to telegraph "this is the action page,
-not the brand page"). Default to Option A — visual family > visual variety
-across closely-linked pages.
-
-────────────────────────────────────────────────
-1.2  Remove the "Tutorial" pill label
-────────────────────────────────────────────────
-PROBLEM: The hero shows a small pill with an orange dot reading "Tutorial".
-         Now that the page is named "How it works" (not "Tutorials"), this
-         label is redundant AND it carries the orange color we're trying to
-         remove from the hero.
-
-WHAT TO DO:
-  Find this block in the hero section:
-
-    <span class="pill mb-6">
-      <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-        <circle cx="5" cy="5" r="4" fill="#FF4000"></circle>
-      </svg>
-      Tutorial
-    </span>
-
-  DELETE the entire <span class="pill mb-6">...</span> block.
-
-  Adjust spacing if needed — the H1 may need a small mt-* adjustment now
-  that the pill is gone (preview and fine-tune visually).
+================================================================================
+1. SHOPIFY BUILT-IN POLICY PAGES — CONFIGURATION
+================================================================================
+These four pages live in Shopify's native policy system and are NOT
+custom-built. They are configured in Settings → Policies.
 
 ────────────────────────────────────────────────
-1.3  Add the highlight-color treatment to part of the H1 (match Our Story)
+1.1  Paste policy content into Shopify Admin
 ────────────────────────────────────────────────
-REFERENCE: On /pages/our-story, the H1 reads:
-    "What if [breathing well] was the easiest part of your day?"
-  where "breathing well" is wrapped in a span with class
-  `text-tertiary-light/85` to give it a soft, lighter blue treatment.
+LOCATION: Shopify Admin → Settings → Policies
 
-WHAT TO DO:
-  Pick the most evocative 2-3 words in the How It Works H1 and wrap them
-  in the same highlight span. The current H1 is:
+ACTION (Tom does this — VSC verifies):
+  Refund policy        → /policies/refund-policy
+  Privacy policy       → /policies/privacy-policy
+  Terms of service     → /policies/terms-of-service
+  Shipping policy      → /policies/shipping-policy
 
-    "Three steps to life-changing breathing."
-
-  RECOMMENDED highlight: wrap "life-changing breathing" in the span:
-
-    <h1 class="font-heading heading-weight text-secondary text-4xl
-               md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mt-2">
-      Three steps to
-      <span class="text-tertiary-light/85">life-changing breathing</span>.
-    </h1>
-
-  ALTERNATIVE wording option (shorter highlight):
-    "Three steps to <span class="text-tertiary-light/85">better breathing</span>."
-  (also consider rewriting the H1 to match — "life-changing" feels slightly
-  out of voice for AIRA's calm/grounded tone; "better breathing" is more
-  on-brand. Pick whichever Marie prefers.)
-
-==============================================================================
-SECTION 2 — STEP 01 (3 changes)
-==============================================================================
+Save. Shopify auto-renders these on the policies template.
 
 ────────────────────────────────────────────────
-2.1  Darken the body text below each step title
+1.2  Verify policy template styling
 ────────────────────────────────────────────────
-PROBLEM: The step description text (e.g. "can find your fit on night one.")
-         is too pale on the cream background — fails contrast and reads as
-         secondary information when it should be primary instruction.
+After content is pasted, view all four URLs in incognito and check:
+  - Header & footer render correctly (matching site-wide chrome)
+  - Body text uses brand body font (not Shopify default Helvetica)
+  - Headings use the navy h1/h2 treatment
+  - Max-width container around prose (cap ~720px on desktop)
+  - Bottom margin / padding before footer (min 80px)
 
-WHAT TO DO:
-  Find the body text wrapper(s) in Step 01 (and apply the same fix to all
-  three steps for consistency).
+IF the default policy template styling is broken or off-brand:
+  Create a custom policy template at:
+    templates/page.policy.json    (Online Store 2.0)
+    OR
+    templates/page.policies.liquid (vintage)
 
-  Likely current class includes something like `text-main/60` or
-  `text-secondary/60` (the /60 = 60% opacity).
+  The custom template should:
+    - Use site-wide header & footer
+    - Single-column prose layout
+    - Brand typography (Inter or current body font)
+    - Navy-on-cream color scheme
+    - max-w-[720px] centered container
+    - Generous vertical rhythm
 
-  CHANGE the opacity modifier:
-    FROM:  text-main/60   (or whatever opacity is currently used)
-    TO:    text-main/85   (better contrast, still soft)
+  This is shared across all four policy pages. Do NOT create per-policy
+  templates.
 
-  If a different color token is in use, prefer increasing the opacity to
-  85% rather than going to 100% — full opacity will look harsh against
-  cream.
 
-  APPLY THIS GLOBALLY across Steps 01, 02, AND 03 body text — they all
-  likely have the same problem.
+================================================================================
+2. CUSTOM PAGE SCAFFOLDING — CREATE PAGES + TEMPLATES + SECTION FILES
+================================================================================
+For each of the five custom pages, create:
+  (a) The page itself in Shopify Admin → Online Store → Pages
+  (b) A custom JSON template that the page uses
+  (c) Empty section files for each major section the design brief
+      will eventually fill
 
-────────────────────────────────────────────────
-2.2  "Quick rule of thumb" tile — split sleep/sport into two lines
-────────────────────────────────────────────────
-PROBLEM: Currently reads as one continuous sentence:
-  "Sleep — start a size up for wider airflow. Sport — size down so the
-   tabs hold under sweat & movement."
-  The two halves are logically distinct (one rule for sleep, one for sport)
-  and should be visually separated for scannability.
-
-WHAT TO DO:
-  Find the body text inside the "Quick rule of thumb" tile.
-
-  CHANGE the markup so each rule is on its own line:
-
-    CURRENT (one line):
-      <p>Sleep — start a size up for wider airflow. Sport — size down so the tabs hold under sweat & movement.</p>
-
-    REPLACE WITH:
-      <ul class="space-y-1.5 list-none p-0 m-0">
-        <li>Sleep — start a size up for wider airflow.</li>
-        <li>Sport — size down so the tabs hold under sweat &amp; movement.</li>
-      </ul>
-
-  Or if you prefer non-list approach:
-      <p class="m-0">Sleep — start a size up for wider airflow.</p>
-      <p class="mt-1.5 mb-0">Sport — size down so the tabs hold under sweat &amp; movement.</p>
-
-  Either works. List version is slightly cleaner semantically.
+Naming convention: match the existing repo. If the existing pattern is
+`templates/page.our-story.json` and `sections/our-story-hero.liquid`,
+follow that. If it differs, match what's already there.
 
 ────────────────────────────────────────────────
-2.3  "Get all four sizes in the Aira Kit" tile — move CTA below, not beside
+2.1  /pages/returns
 ────────────────────────────────────────────────
-PROBLEM: Currently the "Shop Aira Kit →" CTA sits to the RIGHT of the
-         tile copy on desktop. This crams the layout, makes the CTA feel
-         like an afterthought, and the headline+subheadline get visually
-         constrained.
+SHOPIFY ADMIN:
+  Title:    "Start a Return"
+  Handle:   returns
+  Template: page.returns
 
-WHAT TO DO:
-  Restructure the tile so:
-    - Headline + subhead stack vertically and span the full tile width
-    - CTA sits BELOW the text, left-aligned (matching the headline's left edge)
+TEMPLATE FILE: templates/page.returns.json
+SECTION FILES (empty scaffolds, schema only — design fills the markup):
+  sections/returns-hero.liquid
+  sections/returns-eligibility-gate.liquid
+  sections/returns-form.liquid
+  sections/returns-damaged-flow.liquid
+  sections/returns-policy-summary.liquid
 
-  The change is from a horizontal flex (text on left, CTA on right) to a
-  vertical stack:
+NOTES:
+  - returns-form.liquid must wrap its form markup in
+    <div id="returns-form-mount"> so a future returns app embed can
+    swap in cleanly.
+  - eligibility-gate uses vanilla JS or Alpine.js to toggle the form
+    enabled/disabled state. NO React.
 
-    CURRENT structure (likely):
-      <div class="flex justify-between items-center gap-6">
-        <div>
-          <h3>Get all four sizes in the Aira Kit.</h3>
-          <p>Try every band on night one — keep the one that fits.</p>
-        </div>
-        <a href="...">Shop Aira Kit →</a>
+────────────────────────────────────────────────
+2.2  /pages/affiliate
+────────────────────────────────────────────────
+SHOPIFY ADMIN:
+  Title:    "Partner with AIRA"
+  Handle:   affiliate
+  Template: page.affiliate
+
+TEMPLATE FILE: templates/page.affiliate.json
+SECTION FILES:
+  sections/affiliate-hero.liquid
+  sections/affiliate-who-its-for.liquid
+  sections/affiliate-benefits.liquid
+  sections/affiliate-how-it-works.liquid
+  sections/affiliate-form.liquid
+  sections/affiliate-faq.liquid
+  sections/affiliate-final-cta.liquid
+
+NOTES:
+  - affiliate-form.liquid must wrap its form markup in
+    <div id="affiliate-form-mount"> for future platform-tool swap
+    (Shopify Collabs / GoAffPro / Refersion / etc.)
+  - affiliate-faq.liquid can reuse the existing faq.liquid section
+    if its block schema supports it. If not, build a slim variant.
+
+────────────────────────────────────────────────
+2.3  /pages/contact
+────────────────────────────────────────────────
+SHOPIFY ADMIN:
+  Title:    "Contact Us"
+  Handle:   contact
+  Template: page.contact
+
+  NOTE: Shopify has a built-in "contact" page template. We're
+  overriding it because we need WhatsApp-first layout, not just
+  a generic contact form.
+
+TEMPLATE FILE: templates/page.contact.json
+SECTION FILES:
+  sections/contact-hero.liquid
+  sections/contact-channels.liquid
+  sections/contact-form.liquid
+  sections/contact-quick-links.liquid
+  sections/contact-business-info.liquid
+
+NOTES:
+  - contact-channels.liquid renders WhatsApp + Email cards. Both card
+    targets (WhatsApp number, support email) must come from theme
+    settings (see section 5), not hardcoded.
+
+────────────────────────────────────────────────
+2.4  /pages/faq
+────────────────────────────────────────────────
+DEV TASK FIRST: Visit /pages/faq in current site.
+  - If page exists with content → keep, refresh per design brief.
+  - If page exists but empty / using homepage FAQ section → populate
+    via the structure below.
+  - If page does NOT exist → create per below.
+
+SHOPIFY ADMIN:
+  Title:    "Frequently Asked Questions"
+  Handle:   faq
+  Template: page.faq
+
+TEMPLATE FILE: templates/page.faq.json
+SECTION FILES:
+  sections/faq-hero.liquid
+  sections/faq-search.liquid          (optional — see design brief)
+  sections/faq-categories.liquid       (renders accordion sections)
+  sections/faq-final-cta.liquid
+
+CRITICAL — JSON-LD SCHEMA:
+  The faq-categories.liquid section MUST inject a single
+  <script type="application/ld+json"> block at the bottom of its
+  output, dynamically generated from the section's block content.
+
+  Reference snippet (adapt to actual block schema):
+
+    {% if section.blocks.size > 0 %}
+      <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {%- assign faq_blocks = section.blocks | where: "type", "faq_item" -%}
+          {%- for block in faq_blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.question | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | json }}
+            }
+          }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+      </script>
+    {% endif %}
+
+  After deploy, run /pages/faq through Google's Rich Results Test
+  (https://search.google.com/test/rich-results) — must show
+  "FAQPage detected" with all questions parsed.
+
+────────────────────────────────────────────────
+2.5  /pages/science
+────────────────────────────────────────────────
+SHOPIFY ADMIN:
+  Title:    "Backed by Science"
+  Handle:   science
+  Template: page.science
+
+TEMPLATE FILE: templates/page.science.json
+SECTION FILES:
+  sections/science-hero.liquid
+  sections/science-nasal-breathing.liquid
+  sections/science-mechanism.liquid
+  sections/science-medical-advisor.liquid
+  sections/science-materials.liquid
+  sections/science-clinical-claims.liquid    (optional — see design brief)
+  sections/science-citations.liquid
+
+NOTES:
+  - science-citations.liquid renders the bibliography of cited studies
+    in a clean academic format. Block schema: { author, year, title,
+    journal, doi_or_url }.
+  - science-medical-advisor.liquid renders the in-house medical
+    advisor's photo + bio + quote. Block fields: { name, credentials,
+    photo, quote, signature_image }.
+
+────────────────────────────────────────────────
+2.6  Section file scaffold convention
+────────────────────────────────────────────────
+Each section file should be created with:
+  - A {% schema %} block defining the section's settings + blocks
+  - A minimal placeholder render (e.g., a section wrapper with
+    {{ section.settings.heading }}) so the page is visible during
+    the design phase without errors
+  - Standard Tailwind classes from the existing theme (do NOT introduce
+    new utility classes — match what /pages/our-story uses)
+
+Example minimum scaffold for sections/returns-hero.liquid:
+
+    <section class="relative overflow-hidden bg-main text-secondary
+                    pt-32 md:pt-40 pb-16 md:pb-25">
+      <div class="container mx-auto px-4 max-w-[720px] text-center">
+        <h1 class="text-4xl md:text-5xl font-medium mb-4">
+          {{ section.settings.heading | default: 'Start a return' }}
+        </h1>
+        {% if section.settings.subheading != blank %}
+          <p class="text-lg text-secondary/80">
+            {{ section.settings.subheading }}
+          </p>
+        {% endif %}
       </div>
+    </section>
 
-    REPLACE WITH:
-      <div class="flex flex-col items-start gap-4">
-        <div>
-          <h3>Get all four sizes in the Aira Kit.</h3>
-          <p>Try every band on night one — keep the one that fits.</p>
-        </div>
-        <a href="...">Shop Aira Kit →</a>
-      </div>
+    {% schema %}
+    {
+      "name": "Returns - Hero",
+      "settings": [
+        { "type": "text",     "id": "heading",    "label": "Heading",    "default": "Start a return" },
+        { "type": "textarea", "id": "subheading", "label": "Subheading" }
+      ],
+      "presets": [{ "name": "Returns - Hero" }]
+    }
+    {% endschema %}
 
-  Keep the CTA's existing class names — only the parent flex direction
-  changes (from row to column).
+Designs will replace the markup; the schema can be extended when blocks
+are spec'd in the design briefs.
 
-==============================================================================
-SECTION 3 — STEP 02 (1 change)
-==============================================================================
 
-────────────────────────────────────────────────
-3.1  "Running low on tabs?" CTA — promote to button style (match nav)
-────────────────────────────────────────────────
-PROBLEM: Currently the "Shop Refill Tabs →" link inside the "Running low
-         on tabs?" tile is a plain text link. This is the most commerce-
-         driving CTA on this page (refills are repeat revenue) and deserves
-         the same visual weight as the nav button.
+================================================================================
+3. SHARED FAQ COMPONENT (CROSS-PAGE)
+================================================================================
+Three pages render FAQ-style accordions:
+  /pages/faq               (full categorized FAQ)
+  /pages/affiliate         (mini-FAQ, 4-5 questions)
+  product pages            (existing — do not touch)
 
-WHAT TO DO:
-  Change the CTA from a text link to a solid button matching the nav
-  "Shop Aira Kit" button style.
+DEV TASK: Audit the existing FAQ section file (likely sections/faq.liquid).
+  - If its block schema supports a "category" tag per item AND can render
+    grouped or ungrouped → reuse for both /pages/faq and /pages/affiliate.
+  - If it cannot → create sections/faq-categorized.liquid (used by
+    /pages/faq) as a superset, and reuse the existing faq.liquid for
+    the affiliate mini-FAQ.
 
-  CURRENT (plain text link):
-    <a href="/products/aira-refill-tabs"
-       class="...text-link-style-classes-here...">
-      Shop Refill Tabs →
-    </a>
+DO NOT create a third variant. Two FAQ section files maximum.
 
-  REPLACE WITH (orange button matching nav):
-    <a href="/products/aira-refill-tabs"
-       class="inline-block rounded-xl text-sm font-semibold tracking-wide
-              transition-opacity hover:opacity-90 bg-highlight text-white
-              px-8 py-3 whitespace-nowrap">
-      Shop Refill Tabs
-    </a>
 
-  Notes:
-  - Drop the "→" arrow — buttons don't need it (the button itself is the
-    visual affordance)
-  - Use `bg-highlight` token (your orange highlight) — same as the nav
-  - `whitespace-nowrap` prevents the button text from wrapping awkwardly
-  - The parent tile may need a layout adjustment (likely a flex with the
-    button right-aligned or stacked) — preview and tune
-
-  CONSISTENCY CHECK: While you're at it, check whether the same pattern
-  applies to the "See how others got it right" / "Read reviews →" CTA at
-  the end of the Common Pitfalls section. That one I'd keep as a text link
-  (reviews are educational, not transactional). Only Refills and Starter
-  Kit deserve the orange-button treatment.
-
-==============================================================================
-SECTION 4 — PRO TIPS (1 change)
-==============================================================================
+================================================================================
+4. FORM HANDLERS
+================================================================================
+Three forms across the new pages:
+  /pages/returns      — returns request form
+  /pages/affiliate    — partner application form
+  /pages/contact      — fallback contact form
 
 ────────────────────────────────────────────────
-4.1  Background gradient — make the radial blue glows larger and lighter
+4.1  Routing strategy
 ────────────────────────────────────────────────
-PROBLEM: The Pro Tips section uses navy background with two small radial
-         gradient "glows" that read as two small isolated circles rather
-         than soft ambient light. Too small, too defined, looks like a
-         design accident rather than an atmospheric effect.
+PRIMARY: Klaviyo Form Submission flows.
+  Why: we already use Klaviyo for email. Centralizing form data in
+  Klaviyo means submissions appear in customer profiles, can trigger
+  flows (auto-acknowledgment emails), and are searchable in one place.
 
-WHAT TO DO:
-  Find the CSS for the Pro Tips section background. It likely has two
-  `radial-gradient(...)` declarations stacked via comma-separated background
-  shorthand — each with a fixed radius/position that's too small.
+FALLBACK: Shopify built-in {% form 'contact' %} liquid tag with hidden
+fields routed to dedicated email aliases.
+  Why: zero-cost, works without Klaviyo dependency, fine for low volume.
 
-  FIX: Increase the gradient size, soften the falloff, push the centers
-  further apart, and make sure ONLY light blue is used (no orange/warm
-  tones — Tom flagged this specifically).
+────────────────────────────────────────────────
+4.2  Email destinations (theme settings — see section 5)
+────────────────────────────────────────────────
+  returns       → support@aira.[tld]
+  affiliate     → partnerships@aira.[tld]
+  contact       → support@aira.[tld]
 
-  EXAMPLE updated background CSS:
+────────────────────────────────────────────────
+4.3  Required form fields (for VSC scaffolding)
+────────────────────────────────────────────────
+RETURNS FORM:
+  - full_name        (text, required)
+  - email            (email, required)
+  - order_number     (text, required)
+  - country          (select: UAE / KSA / Qatar / Kuwait / Bahrain / Oman / Other)
+  - reason           (select: Wrong size / No longer needed / Found different solution / Other)
+  - reason_other     (textarea, conditional — appears if reason == "Other")
+  - sealed_confirm   (checkbox, required)
+  - eligibility_*    (3 hidden fields populated by the gate JS — for audit trail)
 
-    background:
-      radial-gradient(
-        ellipse 1200px 800px at 15% 30%,
-        rgba(160, 195, 230, 0.18) 0%,
-        rgba(160, 195, 230, 0) 60%
-      ),
-      radial-gradient(
-        ellipse 1100px 700px at 85% 70%,
-        rgba(140, 180, 220, 0.15) 0%,
-        rgba(140, 180, 220, 0) 65%
-      ),
-      var(--color-main);  /* navy base — keep */
+AFFILIATE FORM:
+  - full_name        (text, required)
+  - email            (email, required)
+  - country          (select)
+  - platform         (select: Instagram / TikTok / YouTube / Twitter / Other)
+  - handle           (text, required)
+  - audience_size    (select: <1k / 1k-10k / 10k-50k / 50k-200k / 200k+)
+  - niche            (select: Wellness / Sports / Lifestyle / Beauty / Parenting / Other)
+  - why_aira         (textarea, max 300 chars, required)
 
-  Key changes vs current:
-    - SIZE: ellipse with px values in the 700-1200px range (vs whatever
-      small px the current uses) — these glows should be enormous and barely
-      perceptible at the edges, not visible as discrete "circles"
-    - FALLOFF: gradient runs from 0% to 60-65% (long soft falloff vs hard edge)
-    - POSITIONING: 15% 30% and 85% 70% — diagonal, asymmetric, ambient
-    - OPACITY: 0.15-0.18 max — should feel like distant light, not a spotlight
-    - COLOR: only light blue tones (rgba 140-160, 180-195, 220-230) — NO orange
+CONTACT FALLBACK FORM:
+  - name             (text, required)
+  - email            (email, required)
+  - order_number     (text, optional)
+  - subject          (text, required)
+  - message          (textarea, required)
 
-  ALTERNATIVE if you want a single ambient glow instead of two:
-    background:
-      radial-gradient(
-        ellipse 1600px 1000px at 50% 30%,
-        rgba(160, 195, 230, 0.20) 0%,
-        rgba(160, 195, 230, 0) 70%
-      ),
-      var(--color-main);
+────────────────────────────────────────────────
+4.4  Auto-acknowledgment emails
+────────────────────────────────────────────────
+Each form should trigger an immediate auto-reply to the submitter:
 
-  Test on a 1440px desktop AND on mobile (320px width) — radial gradients
-  in CSS scale by viewport, so a glow that looks ambient on desktop can
-  look tiny and isolated on mobile. Use `vw` or `vmax` units if needed for
-  responsive sizing:
+  RETURNS:    "We've received your return request. Our team will review
+               and email you a return label within 2 business days."
 
-    radial-gradient(
-      ellipse 80vw 60vh at 15% 30%,
-      rgba(160, 195, 230, 0.18) 0%,
-      rgba(160, 195, 230, 0) 60%
-    )
+  AFFILIATE:  "Thanks for applying to partner with AIRA. We review every
+               application within 5 business days."
 
-==============================================================================
-QA CHECKLIST AFTER ALL CHANGES
-==============================================================================
+  CONTACT:    "Thanks for reaching out. We respond within one business day."
 
-[ ] Hero background matches Our Story hero (no orange tint, soft blue glow)
-[ ] "Tutorial" pill is removed; H1 is centered and well-spaced without it
-[ ] H1 has the light-blue highlight on chosen phrase ("life-changing
-    breathing" or "better breathing")
-[ ] Step 01-03 body copy is darker / more readable on cream
-[ ] "Quick rule of thumb" tile shows Sleep and Sport on separate lines
-[ ] "Get all four sizes" tile has CTA stacked below text, not beside it
-[ ] "Running low on tabs?" CTA is now an orange button (matches nav button)
-[ ] Pro Tips section gradients are large, soft, ambient — no visible
-    "two small circles" effect
-[ ] Pro Tips section uses ONLY light blue tones (no orange)
-[ ] Mobile (375px) review: all changes hold up — gradients scale, button
-    doesn't break layout, text remains readable
+These can be configured in Klaviyo flows OR via Shopify's contact form
+auto-reply. Decision is Tom's based on Klaviyo setup status.
 
-==============================================================================
+
+================================================================================
+5. THEME SETTINGS (settings_schema.json ADDITIONS)
+================================================================================
+Add a "Support & Contact" section to the theme settings so the WhatsApp
+number, support emails, and business info are editable from Shopify
+Admin without code changes.
+
+Add to config/settings_schema.json:
+
+    {
+      "name": "Support & contact",
+      "settings": [
+        {
+          "type": "header",
+          "content": "WhatsApp"
+        },
+        {
+          "type": "text",
+          "id": "support_whatsapp_number",
+          "label": "WhatsApp Business number (no +, no spaces)",
+          "info": "e.g., 971501234567 for +971 50 123 4567",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "support_whatsapp_prefill",
+          "label": "Pre-filled WhatsApp message",
+          "default": "Hi AIRA team,"
+        },
+        {
+          "type": "header",
+          "content": "Email"
+        },
+        {
+          "type": "text",
+          "id": "support_email",
+          "label": "Customer support email",
+          "default": "support@aira.com"
+        },
+        {
+          "type": "text",
+          "id": "partnerships_email",
+          "label": "Partnerships / affiliate email",
+          "default": "partnerships@aira.com"
+        },
+        {
+          "type": "header",
+          "content": "Business hours"
+        },
+        {
+          "type": "text",
+          "id": "business_hours_label",
+          "label": "Hours label",
+          "default": "Mon-Fri 9am-6pm GST"
+        },
+        {
+          "type": "header",
+          "content": "Legal entity (footer + contact page)"
+        },
+        {
+          "type": "text",
+          "id": "legal_entity_name",
+          "label": "Registered business name"
+        },
+        {
+          "type": "text",
+          "id": "legal_license_number",
+          "label": "Trade license / CR number"
+        },
+        {
+          "type": "textarea",
+          "id": "legal_business_address",
+          "label": "Business address"
+        }
+      ]
+    }
+
+Reference these in:
+  - sections/contact-channels.liquid
+  - sections/contact-business-info.liquid
+  - footer (existing) — see section 6
+  - any section that renders a wa.me link
+
+
+================================================================================
+6. FOOTER NAVIGATION (SHOPIFY ADMIN MENU)
+================================================================================
+Footer links are managed via Shopify Admin → Online Store → Navigation,
+NOT hardcoded in the footer.liquid section.
+
+────────────────────────────────────────────────
+6.1  Audit existing footer menus
+────────────────────────────────────────────────
+Identify the existing Shopify Navigation menus that the footer renders.
+Likely names: "Footer Shop", "Footer About", "Footer Help", "Footer Legal".
+
+────────────────────────────────────────────────
+6.2  Update / create the four footer menus
+────────────────────────────────────────────────
+Final structure:
+
+  COLUMN 1 — Shop
+    - Starter Kit          → /products/starter-kit (or current slug)
+    - Refills              → /products/refills
+    - All Products         → /collections/all
+
+  COLUMN 2 — About
+    - Our Story            → /pages/our-story
+    - How It Works         → /pages/how-it-works
+    - Backed by Science    → /pages/science            ← NEW
+    - Reviews              → /pages/reviews (or anchor)
+    - Partner with Us      → /pages/affiliate          ← NEW
+
+  COLUMN 3 — Help
+    - Contact              → /pages/contact            ← NEW
+    - FAQ                  → /pages/faq                ← NEW (or refresh)
+    - Returns              → /pages/returns            ← NEW
+    - Order tracking       → /pages/order-tracking (or Shopify default)
+
+  COLUMN 4 — Legal
+    - Refund Policy        → /policies/refund-policy
+    - Shipping Policy      → /policies/shipping-policy
+    - Privacy Policy       → /policies/privacy-policy
+    - Terms of Service     → /policies/terms-of-service
+
+────────────────────────────────────────────────
+6.3  Footer social row
+────────────────────────────────────────────────
+Add WhatsApp icon to the social row (next to IG / TikTok / YouTube).
+The wa.me link must use the same theme settings as section 5 — DO NOT
+hardcode the number in footer.liquid.
+
+────────────────────────────────────────────────
+6.4  Footer legal block
+────────────────────────────────────────────────
+At the bottom of the footer, render the legal entity name + trade
+license / CR number from theme settings (see section 5):
+
+    {% if settings.legal_entity_name != blank %}
+      <p class="text-xs text-secondary/60">
+        {{ settings.legal_entity_name }}
+        {% if settings.legal_license_number != blank %}
+          — License {{ settings.legal_license_number }}
+        {% endif %}
+      </p>
+    {% endif %}
+
+This is required for trust + GCC consumer protection compliance.
+
+
+================================================================================
+7. WHATSAPP BUSINESS API SETUP (OPS — BLOCKING ITEM)
+================================================================================
+This is operational, not code, but it BLOCKS launch. Listed here so VSC
+knows to use the theme setting (section 5) and not hardcode anything.
+
+────────────────────────────────────────────────
+7.1  Why we need an API tool, not just the Business app
+────────────────────────────────────────────────
+Two founders working from different countries need a shared inbox.
+The free WhatsApp Business app does not support multi-agent operations
+(no thread assignment, no internal notes, no analytics). We need a
+Business API tool layered on top of one number.
+
+────────────────────────────────────────────────
+7.2  Recommended tool
+────────────────────────────────────────────────
+LAUNCH PICK: Zoko (https://www.zoko.io)
+  - Native Shopify app — order history shows in-thread
+  - ~$15-30/mo
+  - GCC-compatible
+  - Easy migration if we outgrow it later
+
+ALTERNATIVES (if Zoko doesn't fit):
+  - WATI (~$39/mo) — strong MENA presence
+  - Respond.io (~$79/mo) — multi-channel inbox
+  - Trengo (~$25/user/mo) — general teams
+
+────────────────────────────────────────────────
+7.3  Setup checklist (Tom owns this — VSC waits on output)
+────────────────────────────────────────────────
+  [ ] Acquire a dedicated business phone number (UAE virtual / eSIM ok)
+      CRITICAL: must NOT have been used on personal WhatsApp.
+  [ ] Apply for WhatsApp Business API access via Zoko
+  [ ] Wait for Meta business verification (1-2 weeks)
+  [ ] Configure Zoko: invite Tom + Marie, set hours, auto-replies,
+      message templates
+  [ ] Provide the verified number to VSC for theme setting input
+
+────────────────────────────────────────────────
+7.4  Cost note
+────────────────────────────────────────────────
+Beyond the Zoko subscription, Meta charges per conversation:
+  - Service (customer-initiated): first 1,000/mo free
+  - Marketing (we-initiated): ~$0.03-0.10 per conversation in MENA
+Estimated total at low launch volume: $50-200/mo.
+
+────────────────────────────────────────────────
+7.5  Interim
+────────────────────────────────────────────────
+Until the API number is verified, populate the WhatsApp theme setting
+with a temporary WhatsApp Business app number (Tom's interim line).
+Swap to the API number once Meta clears it — this is a one-line theme
+setting change, not a code change.
+
+
+================================================================================
+8. NAVBAR — DO NOT TOUCH
+================================================================================
+Confirmed: the main navbar gets no new links from this brief.
+
+DO NOT add: Affiliate, Contact, FAQ, Returns, Science. All five live
+in the footer.
+
+The navbar stays focused on purchase intent only.
+
+
+================================================================================
+9. ORDER OF WORK (RECOMMENDED SEQUENCE)
+================================================================================
+
+PHASE 1 — Setup, settings, and Shopify config (Day 1)
+  1.1 Add the "Support & contact" theme settings (section 5).
+  1.2 Update / create the four footer Shopify navigation menus
+      (section 6.2). Initially the new page links will 404 — that's
+      fine, they'll resolve as pages are created.
+  1.3 Add WhatsApp icon to footer social row (section 6.3).
+  1.4 Add legal entity block to footer (section 6.4).
+  1.5 Confirm or override the policy template (section 1.2).
+
+PHASE 2 — Page + template + section scaffolding (Day 1-2)
+  2.1 Create /pages/contact in Shopify Admin → scaffold template +
+      section files (section 2.3).
+  2.2 Create /pages/returns + scaffolds (section 2.1).
+  2.3 Create /pages/affiliate + scaffolds (section 2.2).
+  2.4 Create or refresh /pages/faq + scaffolds (section 2.4).
+      Implement FAQPage JSON-LD (section 2.4 schema snippet).
+  2.5 Create /pages/science + scaffolds (section 2.5).
+
+PHASE 3 — Form handlers (Day 2)
+  3.1 Wire up returns form → support email (section 4).
+  3.2 Wire up affiliate form → partnerships email.
+  3.3 Wire up contact fallback form → support email.
+  3.4 Configure auto-acknowledgment emails (section 4.4).
+
+PHASE 4 — Policy content paste + verify (15 min)
+  4.1 Tom pastes TOS, Privacy, Refund, Shipping content (section 1.1).
+  4.2 VSC verifies all four policy URLs render correctly.
+
+PHASE 5 — QA & validation (Day 2-3)
+  5.1 Visit each new page — confirm scaffolds render without errors.
+  5.2 Submit test entries through each form — confirm email routing.
+  5.3 Run /pages/faq through Google Rich Results Test (will only work
+      after FAQ content is filled by design phase, but scaffold should
+      still validate as empty FAQPage).
+  5.4 Test WhatsApp link from footer + contact page on mobile.
+
+WHEN PHASE 5 IS COMPLETE → hand off to design phase. VSC waits for
+per-page design briefs to be approved before filling in markup, copy,
+and styling.
+
+
+================================================================================
+10. OPEN QUESTIONS / BLOCKERS
+================================================================================
+Items that block specific phases:
+
+  BLOCKING PHASE 1:
+  [ ] Confirm legal entity name + trade license / CR number
+      (Tom — needed for footer + contact page)
+
+  BLOCKING PHASE 4:
+  [ ] Confirm policy content is drafted for all four:
+      Refund / Privacy / Terms / Shipping
+      (Tom — Tom said three are ready; shipping policy status
+      unconfirmed)
+
+  BLOCKING PHASE 5 (and launch):
+  [ ] WhatsApp Business API verification complete OR interim
+      number available
+  [ ] support@ and partnerships@ email addresses created and tested
+
+NOT BLOCKING but good to confirm before launch:
+  [ ] Confirm IG / TikTok / YouTube social URLs in theme settings
+  [ ] Decide auto-acknowledgment copy (defaults in section 4.4 are fine)
+
+
+================================================================================
 END OF BRIEF
-==============================================================================
+================================================================================

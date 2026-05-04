@@ -1,0 +1,64 @@
+{%- comment -%}
+	Contact — Quick links (scaffold).
+	Self-serve answer cards (FAQ, Returns, Order tracking) so support
+	traffic gets deflected to the right place before reaching us.
+{%- endcomment -%}
+
+<section class="bg-bg py-16 md:py-20">
+	<div class="container mx-auto px-4 max-w-5xl">
+
+		{%- if section.settings.heading != blank -%}
+			<header class="text-center mb-10">
+				<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0">{{ section.settings.heading }}</h2>
+			</header>
+		{%- endif -%}
+
+		{%- if section.blocks.size > 0 -%}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+				{%- for block in section.blocks -%}
+					<a
+						href="{{ block.settings.url | default: '#' }}"
+						class="group flex flex-col gap-2 rounded-xl bg-secondary p-6 transition-shadow hover:shadow-md"
+						{{ block.shopify_attributes }}
+					>
+						<h3 class="font-heading text-lg font-medium text-title m-0 group-hover:text-highlight transition-colors">{{ block.settings.title }}</h3>
+						{%- if block.settings.body != blank -%}
+							<p class="text-sm text-copy/70 m-0">{{ block.settings.body }}</p>
+						{%- endif -%}
+					</a>
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Contact - Quick links",
+	"settings": [
+		{ "type": "text", "id": "heading", "label": "Heading", "default": "Quick answers" }
+	],
+	"blocks": [
+		{
+			"type": "link",
+			"name": "Quick link",
+			"settings": [
+				{ "type": "text",     "id": "title", "label": "Title", "default": "FAQ" },
+				{ "type": "textarea", "id": "body",  "label": "Body",  "default": "Common questions about sizing, materials, and use." },
+				{ "type": "url",      "id": "url",   "label": "URL" }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Contact - Quick links",
+			"blocks": [
+				{ "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, and use." } },
+				{ "type": "link", "settings": { "title": "Start a return", "body": "Eligibility, timing, and how to send something back." } },
+				{ "type": "link", "settings": { "title": "Order tracking", "body": "Check the status of an order in flight." } }
+			]
+		}
+	]
+}
+{% endschema %}

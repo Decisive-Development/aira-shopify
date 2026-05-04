@@ -1,0 +1,196 @@
+{%- comment -%}
+	FAQ — Categorized accordion (scaffold).
+
+	A superset of the existing /sections/faq.liquid that adds:
+	  - block-level "category" tag, so questions group under headings
+	  - search-friendly data-* attributes for /sections/faq-search.liquid
+	  - FAQPage JSON-LD injected at the bottom (required for rich-results)
+
+	The plain /sections/faq.liquid is reused by:
+	  - product pages (existing — DO NOT TOUCH)
+	  - /pages/affiliate (mini-FAQ, ungrouped)
+{%- endcomment -%}
+
+<section
+	id="faq-categories-{{ section.id }}"
+	class="bg-bg py-12 md:py-20"
+>
+	<div class="container mx-auto px-4 max-w-3xl">
+
+		{%- if section.blocks.size == 0 -%}
+			<p class="text-center text-sm text-copy/60 italic">Add categories and questions to populate this FAQ.</p>
+		{%- endif -%}
+
+		{%- liquid
+			assign categories = ''
+			for block in section.blocks
+				if block.type == 'category' and block.settings.title != blank
+					assign cat_value = block.settings.title | downcase | handleize
+					if categories contains cat_value
+					else
+						if categories == ''
+							assign categories = cat_value
+						else
+							assign categories = categories | append: ',' | append: cat_value
+						endif
+					endif
+				endif
+			endfor
+		-%}
+
+		{%- if categories != '' -%}
+			{%- assign category_list = categories | split: ',' -%}
+			{%- for cat_handle in category_list -%}
+				{%- liquid
+					assign cat_title = ''
+					for block in section.blocks
+						if block.type == 'category'
+							assign this_handle = block.settings.title | downcase | handleize
+							if this_handle == cat_handle
+								assign cat_title = block.settings.title
+								break
+							endif
+						endif
+					endfor
+				-%}
+
+				<section class="mb-10" data-faq-search-group>
+					<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0 mb-4">{{ cat_title }}</h2>
+					<div class="flex flex-col divide-y divide-main/10 border-t border-main/10">
+						{%- for block in section.blocks -%}
+							{%- if block.type == 'faq_item' -%}
+								{%- assign block_cat_handle = block.settings.category | downcase | handleize -%}
+								{%- if block_cat_handle == cat_handle -%}
+									<details
+										class="group py-4"
+										data-faq-search-target
+										data-faq-search-text="{{ block.settings.question | append: ' ' | append: block.settings.answer | strip_html | escape }}"
+										{{ block.shopify_attributes }}
+									>
+										<summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+											<span class="font-heading text-base md:text-lg font-medium text-title">{{ block.settings.question }}</span>
+											<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform group-open:rotate-45" aria-hidden="true">
+												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+													<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+												</svg>
+											</span>
+										</summary>
+										<div class="pt-3 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
+											{{ block.settings.answer }}
+										</div>
+									</details>
+								{%- endif -%}
+							{%- endif -%}
+						{%- endfor -%}
+					</div>
+				</section>
+			{%- endfor -%}
+		{%- endif -%}
+
+		{%- comment -%} Items with no category — render at the bottom, ungrouped. {%- endcomment -%}
+		{%- assign uncategorized_count = 0 -%}
+		{%- for block in section.blocks -%}
+			{%- if block.type == 'faq_item' and block.settings.category == blank -%}
+				{%- assign uncategorized_count = uncategorized_count | plus: 1 -%}
+			{%- endif -%}
+		{%- endfor -%}
+
+		{%- if uncategorized_count > 0 -%}
+			<section class="mb-10" data-faq-search-group>
+				<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0 mb-4">{{ section.settings.uncategorized_heading | default: 'More questions' }}</h2>
+				<div class="flex flex-col divide-y divide-main/10 border-t border-main/10">
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'faq_item' and block.settings.category == blank -%}
+							<details
+								class="group py-4"
+								data-faq-search-target
+								data-faq-search-text="{{ block.settings.question | append: ' ' | append: block.settings.answer | strip_html | escape }}"
+								{{ block.shopify_attributes }}
+							>
+								<summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+									<span class="font-heading text-base md:text-lg font-medium text-title">{{ block.settings.question }}</span>
+									<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform group-open:rotate-45" aria-hidden="true">
+										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+										</svg>
+									</span>
+								</summary>
+								<div class="pt-3 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
+									{{ block.settings.answer }}
+								</div>
+							</details>
+						{%- endif -%}
+					{%- endfor -%}
+				</div>
+			</section>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{%- comment -%}
+	FAQPage JSON-LD — must reflect the rendered Q&A. Google's Rich Results
+	Test should report "FAQPage detected" with every question parsed.
+{%- endcomment -%}
+{%- assign faq_blocks = section.blocks | where: 'type', 'faq_item' -%}
+{%- if faq_blocks.size > 0 -%}
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{%- for block in faq_blocks -%}
+			{
+				"@type": "Question",
+				"name": {{ block.settings.question | json }},
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": {{ block.settings.answer | strip_html | json }}
+				}
+			}{%- unless forloop.last -%},{%- endunless -%}
+			{%- endfor -%}
+		]
+	}
+	</script>
+{%- endif -%}
+
+{% schema %}
+{
+	"name": "FAQ - Categories",
+	"settings": [
+		{ "type": "text", "id": "uncategorized_heading", "label": "Uncategorized group heading", "default": "More questions" },
+		{ "type": "paragraph", "content": "Each question's category must match a category block's title (case-insensitive)." }
+	],
+	"blocks": [
+		{
+			"type": "category",
+			"name": "Category",
+			"settings": [
+				{ "type": "text", "id": "title", "label": "Category title", "default": "Sizing" }
+			]
+		},
+		{
+			"type": "faq_item",
+			"name": "Question",
+			"settings": [
+				{ "type": "text",     "id": "category", "label": "Category", "info": "Must match a Category block's title.", "default": "Sizing" },
+				{ "type": "text",     "id": "question", "label": "Question", "default": "How do I find my size?" },
+				{ "type": "richtext", "id": "answer",   "label": "Answer",   "default": "<p>Every Aira Kit ships with all four band sizes — try them on night one and keep the one that fits.</p>" }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "FAQ - Categories",
+			"blocks": [
+				{ "type": "category",  "settings": { "title": "Sizing" } },
+				{ "type": "faq_item",  "settings": { "category": "Sizing", "question": "How do I find my size?",      "answer": "<p>Every Aira Kit ships with all four band sizes. Try them on night one and keep the one that fits.</p>" } },
+				{ "type": "faq_item",  "settings": { "category": "Sizing", "question": "Which size for sleep vs sport?", "answer": "<p>Start a size up for sleep (wider airflow) and a size down for sport (so the tabs hold under sweat).</p>" } },
+				{ "type": "category",  "settings": { "title": "Materials" } },
+				{ "type": "faq_item",  "settings": { "category": "Materials", "question": "Is the adhesive hypoallergenic?", "answer": "<p>Yes — medical-grade adhesive, latex-free. Run a 24-hour patch test if you have very sensitive skin.</p>" } },
+				{ "type": "faq_item",  "settings": { "category": "Materials", "question": "How long does the band last?",    "answer": "<p>Months of nightly use. The band is reusable; the adhesive tabs are single-use.</p>" } }
+			]
+		}
+	]
+}
+{% endschema %}

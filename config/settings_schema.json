@@ -111,5 +111,71 @@
         "default": 4
       }
     ]
+  },
+  {
+    "name": "Support & contact",
+    "settings": [
+      {
+        "type": "header",
+        "content": "WhatsApp"
+      },
+      {
+        "type": "text",
+        "id": "support_whatsapp_number",
+        "label": "WhatsApp Business number (no +, no spaces)",
+        "info": "e.g., 971501234567 for +971 50 123 4567"
+      },
+      {
+        "type": "text",
+        "id": "support_whatsapp_prefill",
+        "label": "Pre-filled WhatsApp message",
+        "default": "Hi AIRA team,"
+      },
+      {
+        "type": "header",
+        "content": "Email"
+      },
+      {
+        "type": "text",
+        "id": "support_email",
+        "label": "Customer support email",
+        "default": "support@aira.com"
+      },
+      {
+        "type": "text",
+        "id": "partnerships_email",
+        "label": "Partnerships / affiliate email",
+        "default": "partnerships@aira.com"
+      },
+      {
+        "type": "header",
+        "content": "Business hours"
+      },
+      {
+        "type": "text",
+        "id": "business_hours_label",
+        "label": "Hours label",
+        "default": "Mon-Fri 9am-6pm GST"
+      },
+      {
+        "type": "header",
+        "content": "Legal entity (footer + contact page)"
+      },
+      {
+        "type": "text",
+        "id": "legal_entity_name",
+        "label": "Registered business name"
+      },
+      {
+        "type": "text",
+        "id": "legal_license_number",
+        "label": "Trade license / CR number"
+      },
+      {
+        "type": "textarea",
+        "id": "legal_business_address",
+        "label": "Business address"
+      }
+    ]
   }
 ]

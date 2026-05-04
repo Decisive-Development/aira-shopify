@@ -1,0 +1,153 @@
+{%- comment -%}
+	Returns — Eligibility gate (scaffold).
+	Vanilla JS toggle that gates the returns form. Customer answers three
+	questions; only when all three pass is the form below revealed.
+	The gate writes its outcome into hidden inputs so the support team
+	has an audit trail of what was confirmed at submission time.
+
+	NO React. NO frameworks. The form mount expects this gate to populate
+	#eligibility_within_window, #eligibility_unused, #eligibility_sealed
+	in the form below.
+{%- endcomment -%}
+
+<section class="bg-bg py-16 md:py-20">
+	<div class="container mx-auto px-4 max-w-[640px]">
+
+		{%- if section.settings.heading != blank -%}
+			<header class="text-center mb-8">
+				{%- if section.settings.eyebrow != blank -%}
+					<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+				{%- endif -%}
+				<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0">{{ section.settings.heading }}</h2>
+				{%- if section.settings.subheading != blank -%}
+					<p class="text-copy/80 text-base mt-3">{{ section.settings.subheading }}</p>
+				{%- endif -%}
+			</header>
+		{%- endif -%}
+
+		<div data-eligibility-gate class="flex flex-col gap-4">
+
+			{%- for block in section.blocks -%}
+				{%- if block.type == 'question' -%}
+					<fieldset class="rounded-xl bg-secondary p-5" data-question="{{ block.settings.field_id }}" {{ block.shopify_attributes }}>
+						<legend class="text-sm font-semibold text-title mb-3">{{ block.settings.question }}</legend>
+						<div class="flex gap-2">
+							<label class="flex-1">
+								<input type="radio" name="{{ block.settings.field_id }}" value="yes" class="peer sr-only" data-pass>
+								<span class="block text-center rounded-lg border border-main/20 px-4 py-2 text-sm cursor-pointer peer-checked:bg-main peer-checked:text-secondary peer-checked:border-main">Yes</span>
+							</label>
+							<label class="flex-1">
+								<input type="radio" name="{{ block.settings.field_id }}" value="no" class="peer sr-only">
+								<span class="block text-center rounded-lg border border-main/20 px-4 py-2 text-sm cursor-pointer peer-checked:bg-main peer-checked:text-secondary peer-checked:border-main">No</span>
+							</label>
+						</div>
+					</fieldset>
+				{%- endif -%}
+			{%- endfor -%}
+
+			<div data-eligibility-status class="rounded-xl border border-main/15 px-5 py-4 text-sm text-copy/70" hidden>
+				<p class="m-0" data-status-pass hidden>{{ section.settings.pass_message | default: "You're eligible — please complete the form below." }}</p>
+				<p class="m-0" data-status-fail hidden>{{ section.settings.fail_message | default: "Based on your answers, this order isn't eligible for a return. If you believe something's damaged or wrong, message support and we'll review it directly." }}</p>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<script>
+	(function () {
+		var gate = document.currentScript.previousElementSibling.querySelector('[data-eligibility-gate]');
+		if (!gate) return;
+
+		var status     = gate.querySelector('[data-eligibility-status]');
+		var statusPass = gate.querySelector('[data-status-pass]');
+		var statusFail = gate.querySelector('[data-status-fail]');
+		var questions  = gate.querySelectorAll('[data-question]');
+
+		function evaluate() {
+			var totalQuestions = questions.length;
+			var answeredCount  = 0;
+			var passCount      = 0;
+			var values         = {};
+
+			questions.forEach(function (q) {
+				var name    = q.getAttribute('data-question');
+				var checked = q.querySelector('input[type="radio"]:checked');
+				if (checked) {
+					answeredCount++;
+					values[name] = checked.value;
+					if (checked.value === 'yes') passCount++;
+				}
+			});
+
+			// Mirror values into the form's hidden audit fields if it's mounted.
+			Object.keys(values).forEach(function (name) {
+				var hidden = document.getElementById(name);
+				if (hidden) hidden.value = values[name];
+			});
+
+			if (answeredCount < totalQuestions) {
+				status.hidden = true;
+				toggleForm(false);
+				return;
+			}
+
+			status.hidden     = false;
+			var allPass       = passCount === totalQuestions;
+			statusPass.hidden = !allPass;
+			statusFail.hidden = allPass;
+			toggleForm(allPass);
+		}
+
+		function toggleForm(enabled) {
+			var mount = document.getElementById('returns-form-mount');
+			if (!mount) return;
+			mount.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+				if (el.type === 'hidden') return;
+				el.disabled = !enabled;
+			});
+			mount.classList.toggle('opacity-50', !enabled);
+			mount.classList.toggle('pointer-events-none', !enabled);
+		}
+
+		gate.querySelectorAll('input[type="radio"]').forEach(function (r) {
+			r.addEventListener('change', evaluate);
+		});
+
+		// Start with the form mount disabled.
+		toggleForm(false);
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Returns - Eligibility",
+	"settings": [
+		{ "type": "text",     "id": "eyebrow",       "label": "Eyebrow",      "default": "Step 1" },
+		{ "type": "text",     "id": "heading",       "label": "Heading",      "default": "Check eligibility" },
+		{ "type": "textarea", "id": "subheading",    "label": "Subheading",   "default": "Three quick questions before you continue." },
+		{ "type": "textarea", "id": "pass_message",  "label": "Pass message", "default": "You're eligible — please complete the form below." },
+		{ "type": "textarea", "id": "fail_message",  "label": "Fail message", "default": "Based on your answers, this order isn't eligible for a return. If you believe something's damaged or wrong, message support and we'll review it directly." }
+	],
+	"blocks": [
+		{
+			"type": "question",
+			"name": "Question",
+			"settings": [
+				{ "type": "text", "id": "question", "label": "Question",            "default": "Was the order placed within the last 14 days?" },
+				{ "type": "text", "id": "field_id", "label": "Hidden field id",     "info": "Lowercase, snake_case. Mirrored into the form's audit fields.", "default": "eligibility_within_window" }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Returns - Eligibility",
+			"blocks": [
+				{ "type": "question", "settings": { "question": "Was the order placed within the last 14 days?",        "field_id": "eligibility_within_window" } },
+				{ "type": "question", "settings": { "question": "Are the products unused?",                              "field_id": "eligibility_unused" } },
+				{ "type": "question", "settings": { "question": "Is the original packaging sealed and undamaged?",       "field_id": "eligibility_sealed" } }
+			]
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,58 @@
+{%- comment -%} Affiliate — How it works (scaffold). {%- endcomment -%}
+
+<section class="bg-bg py-16 md:py-24">
+	<div class="container mx-auto px-4 max-w-5xl">
+
+		<header class="text-center mb-12">
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
+			{%- endif -%}
+			{%- if section.settings.heading != blank -%}
+				<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ section.settings.heading }}</h2>
+			{%- endif -%}
+		</header>
+
+		{%- if section.blocks.size > 0 -%}
+			<ol class="grid grid-cols-1 md:grid-cols-3 gap-6 m-0 p-0 list-none">
+				{%- for block in section.blocks -%}
+					<li class="flex flex-col gap-3" {{ block.shopify_attributes }}>
+						<span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-main text-secondary font-heading text-sm">{{ forloop.index }}</span>
+						<h3 class="font-heading text-lg font-medium text-title m-0">{{ block.settings.title }}</h3>
+						<p class="text-sm text-copy/80 m-0">{{ block.settings.body }}</p>
+					</li>
+				{%- endfor -%}
+			</ol>
+		{%- endif -%}
+
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Affiliate - How it works",
+	"settings": [
+		{ "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Three steps" },
+		{ "type": "text", "id": "heading", "label": "Heading", "default": "How it works" }
+	],
+	"blocks": [
+		{
+			"type": "step",
+			"name": "Step",
+			"settings": [
+				{ "type": "text",     "id": "title", "label": "Title", "default": "Apply" },
+				{ "type": "textarea", "id": "body",  "label": "Body",  "default": "Fill out the short form below — takes about two minutes." }
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Affiliate - How it works",
+			"blocks": [
+				{ "type": "step", "settings": { "title": "Apply",   "body": "Fill out the short form below — takes about two minutes." } },
+				{ "type": "step", "settings": { "title": "Get set up", "body": "We send your kit, link, and code within five business days of approval." } },
+				{ "type": "step", "settings": { "title": "Earn",    "body": "Share honestly. Get paid monthly on every sale through your link." } }
+			]
+		}
+	]
+}
+{% endschema %}

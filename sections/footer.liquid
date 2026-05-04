@@ -15,7 +15,7 @@
 			class="w-full max-w-7xl mx-auto bg-secondary rounded-2xl px-8 py-12 md:py-14"
 			style="box-shadow: 0 12px 40px rgba(10,26,52,0.35), 0 4px 16px rgba(255,255,255,0.15);"
 		>
-			<div class="grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 md:gap-6">
+			<div class="grid grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-10 md:gap-6">
 
 				{%- comment -%} Col 1: Brand — logo, newsletter, social {%- endcomment -%}
 				<div class="flex flex-col gap-6 col-span-2 md:col-span-1">
@@ -53,7 +53,7 @@
 						</div>
 					{%- endform -%}
 
-					{%- comment -%} Social icons {%- endcomment -%}
+					{%- comment -%} Social icons (incl. WhatsApp from theme settings) {%- endcomment -%}
 					<div class="flex items-center gap-4">
 						{%- if section.settings.social_instagram != blank -%}
 							<a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram" class="text-main transition-opacity hover:opacity-60">
@@ -79,6 +79,14 @@
 								</svg>
 							</a>
 						{%- endif -%}
+						{%- if settings.support_whatsapp_number != blank -%}
+							{%- assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi AIRA team,' | url_encode -%}
+							<a href="https://wa.me/{{ settings.support_whatsapp_number }}?text={{ wa_prefill }}" target="_blank" rel="noopener" aria-label="WhatsApp" class="text-main transition-opacity hover:opacity-60">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+									<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/>
+								</svg>
+							</a>
+						{%- endif -%}
 					</div>
 
 				</div>
@@ -87,40 +95,62 @@
 				<div>
 					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Shop</h4>
 					<ul class="flex flex-col gap-2.5">
-						<li><a href="/products/aira-starter-kit" class="text-sm text-main transition-colors">Aira Kit</a></li>
-						<li><a href="/products/aira-refill-tabs" class="text-sm text-main transition-colors">Refill Tabs</a></li>
+						<li><a href="/products/aira-starter-kit" class="text-sm text-main transition-opacity hover:opacity-70">Starter Kit</a></li>
+						<li><a href="/products/aira-refill-tabs" class="text-sm text-main transition-opacity hover:opacity-70">Refills</a></li>
+						<li><a href="/collections/all" class="text-sm text-main transition-opacity hover:opacity-70">All Products</a></li>
 					</ul>
 				</div>
 
-				{%- comment -%} Col 3: Resources {%- endcomment -%}
+				{%- comment -%} Col 3: About {%- endcomment -%}
 				<div>
-					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Resources</h4>
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">About</h4>
 					<ul class="flex flex-col gap-2.5">
-						<li><a href="/pages/how-it-works" class="text-sm text-main transition-colors">How it works</a></li>
-						<li><a href="/blogs/news" class="text-sm text-main transition-colors">Blog</a></li>
-						<li><a href="/policies/refund-policy" class="text-sm text-main transition-colors">Return</a></li>
-						<li><a href="/pages/faq" class="text-sm text-main transition-colors">FAQ</a></li>
+						<li><a href="/pages/our-story" class="text-sm text-main transition-opacity hover:opacity-70">Our Story</a></li>
+						<li><a href="/pages/how-it-works" class="text-sm text-main transition-opacity hover:opacity-70">How It Works</a></li>
+						<li><a href="/pages/backed-by-science" class="text-sm text-main transition-opacity hover:opacity-70">Backed by Science</a></li>
+						<li><a href="/pages/reviews" class="text-sm text-main transition-opacity hover:opacity-70">Reviews</a></li>
+						<li><a href="/pages/affiliate" class="text-sm text-main transition-opacity hover:opacity-70">Partner with Us</a></li>
 					</ul>
 				</div>
 
-				{%- comment -%} Col 4: Company {%- endcomment -%}
-				<div class="col-span-2 md:col-span-1">
-					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Company</h4>
+				{%- comment -%} Col 4: Help {%- endcomment -%}
+				<div>
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Help</h4>
 					<ul class="flex flex-col gap-2.5">
-						<li><a href="/pages/affiliate" class="text-sm text-main transition-colors">Affiliate program</a></li>
-						<li><a href="/pages/our-story" class="text-sm text-main transition-colors">Our Story</a></li>
-						<li><a href="/pages/contact" class="text-sm text-main transition-colors">Contact Support</a></li>
+						<li><a href="/pages/contact" class="text-sm text-main transition-opacity hover:opacity-70">Contact</a></li>
+						<li><a href="/pages/faq" class="text-sm text-main transition-opacity hover:opacity-70">FAQ</a></li>
+						<li><a href="/pages/returns" class="text-sm text-main transition-opacity hover:opacity-70">Returns</a></li>
+						<li><a href="/pages/order-tracking" class="text-sm text-main transition-opacity hover:opacity-70">Order tracking</a></li>
+					</ul>
+				</div>
+
+				{%- comment -%} Col 5: Legal {%- endcomment -%}
+				<div class="col-span-2 md:col-span-1">
+					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">Legal</h4>
+					<ul class="flex flex-col gap-2.5">
+						<li><a href="/policies/refund-policy" class="text-sm text-main transition-opacity hover:opacity-70">Refund Policy</a></li>
+						<li><a href="/policies/shipping-policy" class="text-sm text-main transition-opacity hover:opacity-70">Shipping Policy</a></li>
+						<li><a href="/policies/privacy-policy" class="text-sm text-main transition-opacity hover:opacity-70">Privacy Policy</a></li>
+						<li><a href="/policies/terms-of-service" class="text-sm text-main transition-opacity hover:opacity-70">Terms of Service</a></li>
 					</ul>
 				</div>
 
 			</div>
 		</div>
 
-		{%- comment -%} Bottom copyright bar {%- endcomment -%}
-		<div class="relative z-10 flex flex-wrap justify-center items-center gap-x-6 gap-y-1 mt-6 pb-2 text-sm text-white">
-			<span>&copy; 2026 Aira Wellness.</span>
-			<a href="/policies/privacy-policy" class="text-white/70 hover:text-white transition-colors">Privacy Policy</a>
-			<a href="/policies/terms-of-service" class="text-white/70 hover:text-white transition-colors">Terms of Service</a>
+		{%- comment -%} Bottom legal + copyright bar {%- endcomment -%}
+		<div class="relative z-10 mt-6 pb-2 flex flex-col items-center gap-2">
+			{%- if settings.legal_entity_name != blank -%}
+				<p class="text-xs text-secondary/60 text-center m-0">
+					{{ settings.legal_entity_name }}
+					{%- if settings.legal_license_number != blank -%}
+						&nbsp;&mdash; License {{ settings.legal_license_number }}
+					{%- endif -%}
+				</p>
+			{%- endif -%}
+			<div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-1 text-sm text-white">
+				<span>&copy; {{ 'now' | date: '%Y' }} Aira Wellness.</span>
+			</div>
 		</div>
 
 	</div>
@@ -151,7 +181,15 @@
 		},
 		{
 			"type": "paragraph",
-			"content": "Colours are controlled in Theme settings → Brand colours."
+			"content": "WhatsApp icon is rendered automatically when the WhatsApp number is set in Theme settings → Support & contact."
+		},
+		{
+			"type": "paragraph",
+			"content": "Footer column links are hardcoded to match the navbar pattern. Edit them in sections/footer.liquid."
+		},
+		{
+			"type": "paragraph",
+			"content": "Brand colours and the legal entity block are controlled in Theme settings."
 		}
 	]
 }

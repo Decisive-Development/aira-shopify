@@ -1,0 +1,172 @@
+{%- comment -%}
+	Backed by Science — §4 Medical advisor (OPTIONAL — fills at launch).
+
+	Reference: design_handoff_backed_by_science/Backed by science.html §4.
+
+	Navy background (same hero gradient + anatomy overlay). Section root
+	carries data-optional="true" which renders the corner pill via the
+	::before rule. Set `is_published` in the section settings to drop the
+	flag once an advisor is signed.
+
+	5/7 grid: portrait placeholder (or uploaded image) + floating credential
+	plaque on the left; open-quote glyph + pull quote + signature on the right.
+{%- endcomment -%}
+
+{%- liquid
+	assign data_optional_value = 'true'
+	if section.settings.is_published
+		assign data_optional_value = 'false'
+	endif
+-%}
+
+<section
+	id="advisor"
+	class="science-advisor py-24 md:py-32 relative overflow-hidden"
+	data-screen-label="04 Medical advisor"
+	data-optional="{{ data_optional_value }}"
+>
+	<div class="science-advisor__anatomy" aria-hidden="true"></div>
+
+	<div class="container-contained relative z-10">
+		<div class="max-w-[1040px] mx-auto">
+
+			<div class="text-center mb-12 reveal">
+				<span class="eyebrow text-tertiary-light">{{ section.settings.eyebrow | default: 'Reviewed by' }}</span>
+				<h2 class="font-heading heading-weight text-secondary text-3xl md:text-5xl mt-3 leading-tight tracking-tight">
+					{{ section.settings.heading_lead | default: 'Our medical' }}
+					<span class="font-heading italic text-tertiary-light" style="font-weight: 400;">
+						{{- section.settings.heading_accent | default: 'advisor.' -}}
+					</span>
+				</h2>
+			</div>
+
+			<div class="grid md:grid-cols-[5fr_7fr] gap-10 md:gap-14 items-center reveal">
+
+				{%- comment -%} Portrait — placeholder until image uploaded. {%- endcomment -%}
+				<div class="relative">
+					<div class="science-advisor__portrait aspect-4/5 rounded-2xl overflow-hidden relative flex items-center justify-center">
+						{%- if section.settings.portrait != blank -%}
+							{{
+								section.settings.portrait
+								| image_url: width: 800
+								| image_tag:
+									loading: 'lazy',
+									class: 'absolute inset-0 w-full h-full object-cover',
+									widths: '320, 480, 640, 800, 1024',
+									alt: section.settings.advisor_name
+							}}
+						{%- else -%}
+							<div class="flex flex-col items-center gap-3 text-tertiary-light">
+								<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.6">
+									<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+									<circle cx="8.5" cy="8.5" r="1.5"/>
+									<polyline points="21 15 16 10 5 21"/>
+								</svg>
+								<div class="text-[10px] tracking-[0.22em] uppercase opacity-80 font-bold">Image placeholder</div>
+								<div class="text-[10px] tracking-[0.18em] uppercase opacity-60">Portrait — {{ section.settings.advisor_name | default: 'Dr. [Name]' }}</div>
+							</div>
+						{%- endif -%}
+					</div>
+
+					{%- comment -%} Credential plaque, floats over bottom-right corner of portrait. {%- endcomment -%}
+					<div class="science-advisor__plaque absolute -bottom-4 -right-4 bg-secondary rounded-xl px-4 py-3">
+						<div class="text-[9px] tracking-[0.18em] uppercase text-main/55 font-bold">{{ section.settings.plaque_label | default: 'Specialty' }}</div>
+						<div class="text-main font-heading font-semibold text-sm mt-0.5">{{ section.settings.plaque_value | default: 'ENT / Sleep Medicine' }}</div>
+					</div>
+				</div>
+
+				{%- comment -%} Quote + signature. {%- endcomment -%}
+				<div>
+					<svg width="32" height="24" viewBox="0 0 32 24" fill="none" class="mb-4 opacity-50" aria-hidden="true">
+						<path d="M0 24V14C0 5 5 0 14 0V6C9 6 7 8 7 14H14V24H0ZM18 24V14C18 5 23 0 32 0V6C27 6 25 8 25 14H32V24H18Z" fill="#9BB7D4"/>
+					</svg>
+
+					<p class="font-heading italic text-2xl md:text-3xl lg:text-[2rem] leading-[1.4] text-secondary m-0" style="font-weight: 400;">
+						{{ section.settings.quote }}
+					</p>
+
+					<div class="mt-8 pt-6 border-t border-tertiary-light/25">
+						<div class="font-heading text-secondary text-lg font-semibold">{{ section.settings.advisor_name | default: 'Dr. [Advisor Name]' }}</div>
+						<div class="text-secondary/80 text-sm mt-1">{{ section.settings.advisor_role | default: '[Specialty], [Hospital / Practice]' }}</div>
+						<div class="text-secondary/80 text-sm">{{ section.settings.advisor_location | default: '[City, Country]' }}</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.science-advisor {
+		background:
+			radial-gradient(ellipse 75% 55% at 50% 30%, rgba(155,183,212,0.22) 0%, rgba(10,26,52,0) 65%),
+			radial-gradient(ellipse 110% 80% at 50% 110%, rgba(184,68,0,0.08) 0%, rgba(10,26,52,0) 60%),
+			linear-gradient(180deg, #0A1A34 0%, #0d2247 50%, #0A1A34 100%);
+	}
+	.science-advisor__anatomy {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0.10;
+		background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' fill='none' stroke='%239BB7D4' stroke-width='1' stroke-linecap='round'><path d='M120 280 C 280 200, 420 220, 520 320 S 640 480, 720 460' /><path d='M180 360 C 320 320, 440 340, 540 410 S 640 540, 700 530' /><path d='M820 320 C 920 280, 1060 300, 1160 360 S 1300 460, 1340 470' /><path d='M860 400 C 960 360, 1080 380, 1180 440 S 1280 500, 1320 510' /></svg>");
+		background-size: cover;
+		background-position: center;
+	}
+	.science-advisor .eyebrow {
+		display: inline-block;
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+	}
+	.science-advisor__portrait {
+		background: rgba(241,235,225,0.05);
+		border: 1.5px dashed rgba(155,183,212,0.40);
+	}
+	.science-advisor__plaque {
+		box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+	}
+	.science-advisor[data-optional="true"]::before {
+		content: "OPTIONAL — fills at launch";
+		position: absolute;
+		top: 0.75rem;
+		right: 0.75rem;
+		font-size: 9px;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		color: #9BB7D4;
+		background: rgba(155,183,212,0.10);
+		padding: 4px 8px;
+		border-radius: 999px;
+		z-index: 5;
+	}
+</style>
+
+{% schema %}
+{
+	"name": "Science — Advisor",
+	"settings": [
+		{ "type": "checkbox", "id": "is_published", "label": "Published (hides the OPTIONAL pill)", "default": false },
+		{ "type": "text", "id": "eyebrow",        "label": "Eyebrow",                  "default": "Reviewed by" },
+		{ "type": "text", "id": "heading_lead",   "label": "Heading lead",             "default": "Our medical" },
+		{ "type": "text", "id": "heading_accent", "label": "Heading accent (italic)",  "default": "advisor." },
+
+		{ "type": "header",       "content": "Portrait" },
+		{ "type": "image_picker", "id": "portrait", "label": "Portrait image (optional — placeholder shown when empty)" },
+
+		{ "type": "header", "content": "Credential plaque" },
+		{ "type": "text",   "id": "plaque_label", "label": "Plaque label", "default": "Specialty" },
+		{ "type": "text",   "id": "plaque_value", "label": "Plaque value", "default": "ENT / Sleep Medicine" },
+
+		{ "type": "header",   "content": "Quote + signature" },
+		{ "type": "textarea", "id": "quote",            "label": "Pull quote",       "default": "\"Improving nasal patency externally is one of the simplest, lowest-risk interventions a person can make for their breathing — and the downstream effects on sleep and recovery are well-documented. Aira's mechanical approach is a thoughtful piece of design.\"" },
+		{ "type": "text",     "id": "advisor_name",     "label": "Advisor name",     "default": "Dr. [Advisor Name]" },
+		{ "type": "text",     "id": "advisor_role",     "label": "Role / practice",  "default": "[Specialty], [Hospital / Practice]" },
+		{ "type": "text",     "id": "advisor_location", "label": "Location",         "default": "[City, Country]" }
+	],
+	"presets": [
+		{ "name": "Science — Advisor" }
+	]
+}
+{% endschema %}

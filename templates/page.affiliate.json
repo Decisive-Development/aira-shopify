@@ -1,0 +1,74 @@
+{
+	"sections": {
+		"hero": {
+			"type": "affiliate-hero",
+			"settings": {
+				"eyebrow": "Partner program",
+				"heading": "Partner with AIRA",
+				"subheading": "We work with creators who care about sleep, sport, and breath. Apply once, earn on every order.",
+				"cta_label": "Apply now",
+				"cta_url": "#affiliate-form"
+			}
+		},
+		"who_its_for": {
+			"type": "affiliate-who-its-for",
+			"blocks": {
+				"f-1": { "type": "fit", "settings": { "title": "Wellness creators", "body": "Sleep, recovery, breathwork, mindfulness — anyone helping their audience live better." } },
+				"f-2": { "type": "fit", "settings": { "title": "Athletes",          "body": "Endurance, combat, lifting — nasal breathing is performance, not just sleep." } },
+				"f-3": { "type": "fit", "settings": { "title": "Lifestyle voices",  "body": "Honest reviews and real product use over scripted ads." } }
+			},
+			"block_order": ["f-1", "f-2", "f-3"],
+			"settings": {}
+		},
+		"benefits": {
+			"type": "affiliate-benefits",
+			"blocks": {
+				"b-1": { "type": "benefit", "settings": { "value": "15%",    "title": "Commission",     "body": "On every sale through your link." } },
+				"b-2": { "type": "benefit", "settings": { "value": "Free",   "title": "Starter Kit",    "body": "Sent to every approved partner." } },
+				"b-3": { "type": "benefit", "settings": { "value": "20%",    "title": "Audience code",  "body": "A discount code your audience can use." } },
+				"b-4": { "type": "benefit", "settings": { "value": "Net 30", "title": "Payouts",        "body": "Cleared monthly via bank transfer or PayPal." } }
+			},
+			"block_order": ["b-1", "b-2", "b-3", "b-4"],
+			"settings": {}
+		},
+		"how_it_works": {
+			"type": "affiliate-how-it-works",
+			"blocks": {
+				"s-1": { "type": "step", "settings": { "title": "Apply",      "body": "Fill out the short form below — takes about two minutes." } },
+				"s-2": { "type": "step", "settings": { "title": "Get set up", "body": "We send your kit, link, and code within five business days of approval." } },
+				"s-3": { "type": "step", "settings": { "title": "Earn",       "body": "Share honestly. Get paid monthly on every sale through your link." } }
+			},
+			"block_order": ["s-1", "s-2", "s-3"],
+			"settings": {}
+		},
+		"form": {
+			"type": "affiliate-form",
+			"settings": {}
+		},
+		"faq": {
+			"type": "faq",
+			"blocks": {
+				"q-1": { "type": "question", "settings": { "question": "How is commission tracked?",          "answer": "<p>Each approved partner gets a unique link. Sales are attributed via a 30-day cookie window.</p>" } },
+				"q-2": { "type": "question", "settings": { "question": "When do I get paid?",                 "answer": "<p>Net 30. Payouts run on the first business day of each month for the previous month's earnings.</p>" } },
+				"q-3": { "type": "question", "settings": { "question": "Is there a minimum follower count?",  "answer": "<p>No hard minimum. We review every application on audience fit and authenticity, not raw numbers.</p>" } },
+				"q-4": { "type": "question", "settings": { "question": "Can I post negative reviews?",        "answer": "<p>Yes — we'd rather have honest reviews than scripted ones. The product has to earn it.</p>" } }
+			},
+			"block_order": ["q-1", "q-2", "q-3", "q-4"],
+			"settings": {
+				"eyebrow": "Partner FAQ",
+				"heading": "Common questions",
+				"heading_size": "md",
+				"background_color": "#FAFAFA",
+				"container_width": "contained",
+				"padding_vertical": "lg"
+			}
+		},
+		"final_cta": {
+			"type": "affiliate-final-cta",
+			"settings": {
+				"cta_url": "#affiliate-form"
+			}
+		}
+	},
+	"order": ["hero", "who_its_for", "benefits", "how_it_works", "form", "faq", "final_cta"]
+}
