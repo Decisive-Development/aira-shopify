@@ -76,9 +76,9 @@
 							{%- endif -%}
 						</div>
 
-						{%- comment -%} Step number + title inline {%- endcomment -%}
+						{%- comment -%} Step number + title inline — number matches section heading size {%- endcomment -%}
 						<div class="flex items-baseline gap-3 mb-1">
-							<span class="font-heading font-bold text-xl text-tertiary-light leading-none tracking-wider">{{ block.settings.step_number | default: forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+							<span class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-tertiary-light leading-none tracking-wider">{{ block.settings.step_number | default: forloop.index | prepend: '00' | slice: -2, 2 }}</span>
 							<h3 class="font-heading heading-weight text-2xl md:text-3xl text-secondary leading-tight">{{ block.settings.step_heading }}</h3>
 						</div>
 						{%- if block.settings.step_description != blank -%}
@@ -107,39 +107,7 @@
 </section>
 
 <script>
-(function () {
-	var section = document.querySelector('[data-how-to-use]');
-	if (!section) return;
-	var track = section.querySelector('[data-htu-track]');
-	if (!track) return;
-
-	/* ── Touch snap ── */
-	function cardStep() {
-		var card = track.firstElementChild;
-		if (!card) return track.clientWidth;
-		var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
-		return card.getBoundingClientRect().width + gap;
-	}
-
-	function snapSettle() {
-		var max = track.scrollWidth - track.clientWidth;
-		if (track.scrollLeft <= 2 || track.scrollLeft >= max - 2) return;
-		var step = cardStep();
-		var nearest = Math.min(Math.round(track.scrollLeft / step) * step, max);
-		if (Math.abs(track.scrollLeft - nearest) > 2)
-			track.scrollTo({ left: nearest, behavior: 'smooth' });
-	}
-
-	if ('onscrollend' in window) {
-		track.addEventListener('scrollend', snapSettle, { passive: true });
-	} else {
-		var snapTimer;
-		track.addEventListener('scroll', function () {
-			clearTimeout(snapTimer);
-			snapTimer = setTimeout(snapSettle, 120);
-		}, { passive: true });
-	}
-})();
+/* Free-scroll carousel — no snap, user stops where they let go. */
 </script>
 
 {% schema %}

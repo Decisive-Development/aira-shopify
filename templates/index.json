@@ -19,7 +19,7 @@
         "button_url": "/products/aira-starter-kit",
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
-        "foreground_image": "shopify://shop_images/DSCF3185.jpg",
+        "foreground_image": "shopify://shop_images/IMG_4790.jpg",
         "use_gradient": true,
         "overlay_color": "#0a1a34",
         "overlay_opacity": 30,
@@ -109,7 +109,7 @@
             "icon": "😴",
             "title": "Snoring",
             "subtitle": "",
-            "image": "shopify://shop_images/How_to_Deal_with_Snoring_from_Seasonal_Allergies.jpg",
+            "image": "shopify://shop_images/DSCF3212-3.jpg",
             "description": "<p>When the nose is bypassed, the soft tissue at the back of the throat is more likely to vibrate during sleep — producing the sound of snoring. Nasal breathing stabilises this tissue and reduces vibration significantly.</p>",
             "link_label": "",
             "link_url": ""
@@ -133,7 +133,7 @@
             "icon": "🌙",
             "title": "Poor sleep quality",
             "subtitle": "",
-            "image": "shopify://shop_images/Screenshot_2026-04-05_at_19.38.03.png",
+            "image": "shopify://shop_images/AI.jpg",
             "description": "<p>Mouth breathing reduces oxygen uptake and disrupts sleep architecture — resulting in more time in lighter sleep stages. Switching to nasal breathing has been shown to improve deep sleep and morning energy levels.</p>",
             "link_label": "",
             "link_url": ""
@@ -285,7 +285,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/face-development.png",
+            "image": "shopify://shop_images/design.jpg",
             "heading": "Instantly Expands",
             "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
           }
@@ -293,7 +293,7 @@
         "slide_2": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/poor-sleep.png",
+            "image": "shopify://shop_images/photoshoot.jpg",
             "heading": "Sweat Resistant. Stays On.",
             "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
           }
@@ -301,7 +301,7 @@
         "slide_3": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/snoring.png",
+            "image": "shopify://shop_images/photoshoot.jpg",
             "heading": "Won't Collapse",
             "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
           }
@@ -309,7 +309,7 @@
         "slide_4": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/face-development.png",
+            "image": "shopify://shop_images/design.jpg",
             "heading": "Skin Safe. Medical Grade.",
             "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
           }
@@ -317,7 +317,7 @@
         "slide_5": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/poor-sleep.png",
+            "image": "shopify://shop_images/photoshoot.jpg",
             "heading": "Reusable Band",
             "description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
           }
@@ -389,7 +389,9 @@
         "heading": "See it in action.",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing",
-        "theme": "dark"
+        "theme": "dark",
+        "shop_cta_label": "",
+        "shop_cta_url": ""
       }
     },
     "custom_reviews": {

@@ -60,22 +60,22 @@
         "info_2": {
           "type": "product_faq",
           "settings": {
-            "question": "Benefits",
-            "answer": "<ul><li>Opens nasal passages instantly</li><li>Reduces snoring</li><li>Promotes nose breathing</li><li>Improves sleep quality</li><li>Reusable for months</li></ul>"
+            "question": "BENEFITS",
+            "answer": "<ul><li>Opens nostrils instantly</li><li>Significantly reduces snoring</li><li>Support nose breathing</li><li>Improves sleep quality</li><li>Sustainable solution: the strip is made to be reusable for months</li></ul>"
           }
         },
         "info_3": {
           "type": "product_faq",
           "settings": {
-            "question": "How to use",
-            "answer": "<ul><li><strong>1.</strong> Peel adhesive tab from backing</li><li><strong>2.</strong> Place tabs on either side of your nose bridge</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
+            "question": "HOW TO USE",
+            "answer": "<ul><li><strong>1.</strong> Peel an adhesive tab from the paper backing.</li><li><strong>2.</strong> Place one tab on each side of your nose, just above the nostril.</li><li><strong>3.</strong> Set the magnetic band on top. The magnets snap together and gently lift your nose open.</li><li><strong>4.</strong> You can refer to the lellet inside your Aira started kit for the detailed instructions.</li></ul>"
           }
         },
         "info_4": {
           "type": "product_faq",
           "settings": {
-            "question": "Shipping & Returns",
-            "answer": "<p>Free shipping across the GCC. Delivery in 3–5 business days (UAE) or 5–7 days (rest of GCC). 30-day satisfaction guarantee.</p>"
+            "question": "SHIPPING & RETURNS",
+            "answer": "<p>Free shipping across the Middle East. We deliver to [LIST OF COUNTRIES]. Your order arrives in <strong>3 to 5 working days </strong>within the UAE, and <strong>5 to 7 days</strong> everywhere else. Try Aira for 30 days. If it's not the right fit, send it back for a full <strong>refund</strong>.</p>"
           }
         }
       },
@@ -95,7 +95,7 @@
         "hero_image": "shopify://shop_images/IMG_4805.jpg",
         "hero_heading": "",
         "hero_eyebrow": "",
-        "product_subtitle": "Aira is a research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing and breathe your best.",
+        "product_subtitle": "Aira is a research-backed small magnetic nasal strip that gently opens the nose so air flows freely, reducing snoring, mouth breathing and supporting deeper sleep.",
         "image_badge": "",
         "show_rating": true,
         "review_snippet": "Best sleep purchase I've made",
@@ -106,6 +106,23 @@
         "plan_price": "",
         "refill_link_label": "Already have a strip? Buy refill tabs →",
         "refill_link_url": "/products/aira-refill-tabs"
+      }
+    },
+    "before_after_slider": {
+      "type": "before-after-slider",
+      "settings": {
+        "eyebrow": "Before & After",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways - without and with the Aira nasal strip.",
+        "heading_align": "center",
+        "heading_size": "md",
+        "before_label": "Without Aira",
+        "after_label": "With Aira",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "how_to_use": {
@@ -157,19 +174,22 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "heading": "Opens your airway instantly"
+            "heading": "Opens your airway instantly",
+            "body": "<p>Describe this benefit.</p>"
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "heading": "Stays put all night"
+            "heading": "Stays put all night",
+            "body": "<p>Describe this benefit.</p>"
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
-            "heading": "Reusable for months"
+            "heading": "Reusable for months",
+            "body": "<p>Describe this benefit.</p>"
           }
         }
       },
@@ -180,49 +200,6 @@
       ],
       "settings": {
         "eyebrow": "Why Aira"
-      }
-    },
-    "product_features_grid": {
-      "type": "product-features-grid",
-      "blocks": {
-        "feature_1": {
-          "type": "feature",
-          "settings": {
-            "title": "Instantly Expands",
-            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
-          }
-        },
-        "feature_2": {
-          "type": "feature",
-          "settings": {
-            "title": "Won't Collapse",
-            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
-          }
-        },
-        "feature_3": {
-          "type": "feature",
-          "settings": {
-            "title": "Sweat-Proof. Stays On.",
-            "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
-          }
-        },
-        "feature_4": {
-          "type": "feature",
-          "settings": {
-            "title": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
-          }
-        }
-      },
-      "block_order": [
-        "feature_1",
-        "feature_2",
-        "feature_3",
-        "feature_4"
-      ],
-      "settings": {
-        "eyebrow": "Product",
-        "heading": "Built for better breathing."
       }
     },
     "social_proof": {
@@ -331,6 +308,50 @@
         "right_heading": "With better breathing"
       }
     },
+    "product_features_grid": {
+      "type": "product-features-grid",
+      "blocks": {
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "image": "shopify://shop_images/IMG_3426.jpg",
+            "title": "Instantly Expands",
+            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "title": "Won't Collapse",
+            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "title": "Sweat-Proof. Stays On.",
+            "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "title": "Skin Safe. Medical Grade.",
+            "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
+          }
+        }
+      },
+      "block_order": [
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ],
+      "settings": {
+        "eyebrow": "Product",
+        "heading": "Built for better breathing."
+      }
+    },
     "ugc_gallery": {
       "type": "ugc-gallery",
       "blocks": {
@@ -395,7 +416,10 @@
         "eyebrow": "The Aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
-        "cta_text": "Share your experience — tag @aira.breathing"
+        "cta_text": "Share your experience — tag @aira.breathing",
+        "theme": "dark",
+        "shop_cta_label": "",
+        "shop_cta_url": ""
       }
     },
     "custom_reviews": {
@@ -467,23 +491,6 @@
         "subheading": "",
         "heading_size": "md",
         "background_color": "#fafafa",
-        "container_width": "contained",
-        "padding_vertical": "lg"
-      }
-    },
-    "before_after_slider": {
-      "type": "before-after-slider",
-      "settings": {
-        "eyebrow": "Before & After",
-        "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways - without and with the Aira nasal strip.",
-        "heading_align": "center",
-        "heading_size": "md",
-        "before_label": "Without Aira",
-        "after_label": "With Aira",
-        "background_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
       }

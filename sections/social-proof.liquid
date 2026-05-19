@@ -3,6 +3,11 @@
 	if section.settings.background_image != blank
 		assign has_bg_image = true
 	endif
+
+	assign has_bg_image_mobile = false
+	if section.settings.background_image_mobile != blank
+		assign has_bg_image_mobile = true
+	endif
 -%}
 
 <section
@@ -10,18 +15,34 @@
 	style="{% unless has_bg_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
 >
 
-	{%- comment -%} Background image {%- endcomment -%}
+	{%- comment -%} Background image — mobile variant via <picture> {%- endcomment -%}
 	{%- if has_bg_image -%}
 		<div class="absolute inset-0 w-full h-full -z-10">
-			{{
-				section.settings.background_image
-				| image_url: width: 2400
-				| image_tag:
-					loading: 'lazy',
-					class: 'w-full h-full object-cover',
-					widths: '375, 768, 1280, 1920, 2400',
-					draggable: 'false'
-			}}
+			<picture>
+				{%- if has_bg_image_mobile -%}
+					<source
+						media="(max-width: 767px)"
+						srcset="{{ section.settings.background_image_mobile | image_url: width: 750 }} 750w,
+						        {{ section.settings.background_image_mobile | image_url: width: 1125 }} 1125w,
+						        {{ section.settings.background_image_mobile | image_url: width: 1500 }} 1500w"
+						sizes="100vw"
+					>
+				{%- endif -%}
+				<img
+					src="{{ section.settings.background_image | image_url: width: 2400 }}"
+					srcset="{{ section.settings.background_image | image_url: width: 768 }} 768w,
+					        {{ section.settings.background_image | image_url: width: 1280 }} 1280w,
+					        {{ section.settings.background_image | image_url: width: 1920 }} 1920w,
+					        {{ section.settings.background_image | image_url: width: 2400 }} 2400w"
+					sizes="100vw"
+					alt="{{ section.settings.background_image.alt | escape }}"
+					width="{{ section.settings.background_image.width }}"
+					height="{{ section.settings.background_image.height }}"
+					loading="lazy"
+					draggable="false"
+					class="w-full h-full object-cover"
+				>
+			</picture>
 		</div>
 	{%- endif -%}
 
@@ -71,7 +92,7 @@
 
 			{%- comment -%} Column headings row {%- endcomment -%}
 			<div class="grid grid-cols-2 gap-4 mb-4">
-				<p class="font-heading font-bold text-highlight text-xs uppercase tracking-widest">
+				<p class="font-heading font-bold text-xs uppercase tracking-widest" style="color: #EF4444;">
 					{{- section.settings.left_heading | default: 'The problem' -}}
 				</p>
 				<p class="font-heading font-bold text-xs uppercase tracking-widest text-right" style="color: #4ADE80;">
@@ -113,7 +134,7 @@
 							{%- if p_counter == p_i and p_found == false -%}
 								{%- assign p_found = true -%}
 								<div class="flex flex-col gap-0.5">
-									<span class="font-heading font-bold text-highlight leading-none" style="font-size: clamp(1.5rem, 6vw, 2rem);">
+									<span class="font-heading font-bold leading-none" style="color: #EF4444; font-size: clamp(1.5rem, 6vw, 2rem);">
 										{{- block.settings.value -}}
 									</span>
 									{%- if block.settings.keyword != blank -%}
@@ -171,8 +192,8 @@
 				<div class="pl-10 xl:pl-16 pr-12">
 					{%- if section.settings.left_heading != blank -%}
 						<h3
-							class="font-heading font-bold text-highlight text-sm uppercase tracking-widest mb-0 transition-all duration-700 ease-out opacity-0 translate-y-6"
-							style="transition-delay: 200ms"
+							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 transition-all duration-700 ease-out opacity-0 translate-y-6"
+							style="color: #EF4444; transition-delay: 200ms"
 							data-sp-animate
 						>
 							{{- section.settings.left_heading -}}
@@ -218,7 +239,7 @@
 							{%- if block.type == 'problem' -%}
 								{%- if dt_p_counter == dt_p_i -%}
 									<div class="flex items-start gap-5" {{ block.shopify_attributes }}>
-										<span class="font-heading font-bold text-highlight leading-none shrink-0 w-24 text-right" style="font-size: clamp(2rem, 4vw, 3rem);">
+										<span class="font-heading font-bold leading-none shrink-0 w-24 text-right" style="color: #EF4444; font-size: clamp(2rem, 4vw, 3rem);">
 											{{- block.settings.value -}}
 										</span>
 										<div class="flex flex-col gap-1 pt-1">
@@ -340,7 +361,14 @@
 		{
 			"type": "image_picker",
 			"id": "background_image",
-			"label": "Background image"
+			"label": "Background image (desktop)",
+			"info": "Shown on tablet and desktop (≥768px). Used as fallback on mobile if no mobile image is uploaded."
+		},
+		{
+			"type": "image_picker",
+			"id": "background_image_mobile",
+			"label": "Background image (mobile)",
+			"info": "Optional. Shown on mobile (<768px). Recommended for portrait-cropped shots that work better on phones."
 		},
 		{
 			"type": "header",

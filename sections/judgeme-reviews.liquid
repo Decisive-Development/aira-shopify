@@ -2,6 +2,37 @@
 	assign review_product = section.settings.product
 -%}
 
+{%- comment -%}
+  CRITICAL — applied inline so it lands BEFORE Judge.me's widget JS hydrates.
+  The Judge.me widget injects review images client-side without width/height
+  attrs; without these rules the browser has to guess intrinsic size, which
+  causes layout shift when each image actually loads. Fixing thumbnail box
+  dimensions here means the browser reserves the right space immediately.
+{%- endcomment -%}
+<style>
+	#judgeme_product_reviews .jm-media-thumbnail-list__thumbnail,
+	.jm-media-thumbnail-list__thumbnail {
+		width: 180px;
+		height: 180px;
+		min-width: 180px;
+		border-radius: 10px;
+		overflow: hidden;
+	}
+	#judgeme_product_reviews .jm-media-thumbnail-list__thumbnail img,
+	.jm-media-thumbnail-list__thumbnail img,
+	#judgeme_product_reviews .jm-media-thumbnail-list__thumbnail video,
+	.jm-media-thumbnail-list__thumbnail video {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	/* Fallback aspect-ratio for any review image without an explicit thumbnail wrapper */
+	#judgeme_product_reviews .jm-review-item img {
+		aspect-ratio: 1 / 1;
+	}
+</style>
+
 <script>
 (function () {
 	/* Inject overrides AFTER Judge.me loads its CSS — uses MutationObserver

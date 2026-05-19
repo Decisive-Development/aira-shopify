@@ -57,48 +57,54 @@
     "name": "Brand colours",
     "settings": [
       {
+        "type": "paragraph",
+        "content": "Change these to instantly update colours across the whole site. Click a swatch and pick a colour — the preview updates live."
+      },
+      {
         "type": "header",
         "content": "Brand colours"
       },
       {
         "type": "color",
+        "id": "color_accent",
+        "label": "CTA / Accent colour",
+        "info": "Orange by default. Controls all call-to-action buttons (\"Shop Aira Kit\", \"Buy now\", etc.) and highlighted text.",
+        "default": "#FF4000"
+      },
+      {
+        "type": "color",
         "id": "color_primary",
-        "label": "Primary",
-        "info": "Deep navy — headings, buttons, backgrounds",
+        "label": "Primary (dark) colour",
+        "info": "Deep navy by default. Used for headings, dark section backgrounds, and the footer.",
         "default": "#0A1A34"
       },
       {
         "type": "color",
         "id": "color_secondary",
-        "label": "Secondary",
-        "info": "Warm cream — nav background, light surfaces",
+        "label": "Secondary (light) colour",
+        "info": "Warm cream by default. Used for light section backgrounds and text on dark backgrounds.",
         "default": "#F1EBE1"
       },
       {
         "type": "color",
-        "id": "color_accent",
-        "label": "Accent",
-        "info": "Orange — CTAs, highlights",
-        "default": "#FF4500"
-      },
-      {
-        "type": "color",
         "id": "color_text",
-        "label": "Body text",
+        "label": "Body text colour",
+        "info": "Default colour for paragraph text on light backgrounds.",
         "default": "#0A1A34"
       },
       {
         "type": "color",
         "id": "color_text_inverse",
-        "label": "Inverse text",
-        "info": "Text on dark backgrounds",
+        "label": "Inverse text colour",
+        "info": "Text colour used on top of dark backgrounds (e.g. hero, footer).",
         "default": "#F1EBE1"
       },
       {
         "type": "color",
         "id": "background_color",
         "default": "#FFFFFF",
-        "label": "Page background"
+        "label": "Page background colour",
+        "info": "The base page background, behind all sections."
       },
       {
         "type": "range",

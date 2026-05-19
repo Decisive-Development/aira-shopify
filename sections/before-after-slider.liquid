@@ -76,7 +76,7 @@
 
 		{%- comment -%} Comparison slider {%- endcomment -%}
 		<div
-			class="relative max-w-4xl mx-auto rounded-2xl overflow-hidden select-none touch-none aspect-[16/10]"
+			class="relative max-w-4xl mx-auto rounded-2xl overflow-hidden select-none aspect-[16/10]"
 			data-comparison-slider
 		>
 
@@ -146,17 +146,17 @@
 
 			</div>
 
-			{%- comment -%} Drag handle — centred on divider line via margin-left, no transform {%- endcomment -%}
+			{%- comment -%} Drag handle — parent is pointer-events-none so scroll passes through the vertical column; only the circle is interactive {%- endcomment -%}
 			<div
-				class="absolute inset-y-0 w-10 flex items-center justify-center cursor-grab z-10"
+				class="absolute inset-y-0 w-10 flex items-center justify-center z-10 pointer-events-none"
 				style="left: 50%; margin-left: -20px"
 				data-divider
 			>
-				{%- comment -%} Vertical line {%- endcomment -%}
-				<div class="absolute inset-y-0 left-1/2 w-0.5 -translate-x-px bg-white pointer-events-none"></div>
+				{%- comment -%} Vertical line — decorative {%- endcomment -%}
+				<div class="absolute inset-y-0 left-1/2 w-0.5 -translate-x-px bg-white"></div>
 
-				{%- comment -%} Circle handle {%- endcomment -%}
-				<div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center pointer-events-none">
+				{%- comment -%} Circle handle — the only interactive target {%- endcomment -%}
+				<div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center pointer-events-auto cursor-grab touch-none" data-divider-handle>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="18"
@@ -182,6 +182,7 @@
 		document.querySelectorAll('[data-comparison-slider]').forEach(function (slider) {
 			var beforePane = slider.querySelector('[data-before-pane]');
 			var divider    = slider.querySelector('[data-divider]');
+			var handle     = slider.querySelector('[data-divider-handle]');
 			var dragging   = false;
 
 			function setPosition(clientX) {
@@ -193,9 +194,9 @@
 				divider.style.marginLeft = '-20px';
 			}
 
-			divider.addEventListener('mousedown', function (e) {
+			handle.addEventListener('mousedown', function (e) {
 				dragging = true;
-				divider.style.cursor = 'grabbing';
+				handle.style.cursor = 'grabbing';
 				e.preventDefault();
 			});
 
@@ -205,10 +206,10 @@
 
 			window.addEventListener('mouseup', function () {
 				dragging = false;
-				divider.style.cursor = '';
+				handle.style.cursor = '';
 			});
 
-			divider.addEventListener('touchstart', function (e) {
+			handle.addEventListener('touchstart', function (e) {
 				dragging = true;
 				e.preventDefault();
 			}, { passive: false });

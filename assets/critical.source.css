@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-html {
-  scroll-behavior: smooth;
-}
+/*
+  Note: do NOT apply `scroll-behavior: smooth` to html.
+  Doing so turns the browser's invisible scroll-anchor corrections (which fire
+  whenever content above the viewport shifts size — e.g. late fonts, late CSS,
+  late images) into visible animated scrolls. If smooth scroll is needed for
+  in-page anchor links, use scrollIntoView({ behavior: 'smooth' }) in JS.
+*/
 @source "../layout/**/*.liquid";
 @source "../sections/**/*.liquid";
 @source "../snippets/**/*.liquid";

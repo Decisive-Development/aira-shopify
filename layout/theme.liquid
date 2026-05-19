@@ -13,8 +13,14 @@
     {% unless settings.type_primary_font.system? %}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
 
-      {% comment %} Preload the base font variant for initial page render {% endcomment %}
+      {% comment %}
+        Preload both the base AND bold variants. Body copy uses base; headings
+        and CTA buttons use bold. Preloading only the base variant caused the
+        bold variant to swap in mid-render and shift content above the fold —
+        which compounded with scroll-anchor corrections into a visible jump.
+      {% endcomment %}
       {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
     {% endunless %}
 
     {% # Load and preload the critical CSS %}
@@ -22,6 +28,61 @@
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
+
+    {%- comment -%}
+      Judge.me scroll-hijack guard.
+      The Judge.me reviews widget calls window.scrollTo({behavior:'smooth'})
+      twice on mount/rerender (once at ~4s, again at ~7s post-load), jerking
+      the page to its own anchor — even when the user is already scrolled
+      there. Since the `behavior` option is passed per-call, no amount of CSS
+      can stop it. This monkey-patch must run BEFORE Judge.me's bundle loads
+      (which arrives via content_for_header), so it sits here.
+
+      It only swallows calls whose stack trace points back into Judge.me's
+      bundle — own anchor links, scrollIntoView on user interactions, and
+      every other consumer of these APIs pass through unaffected.
+
+      Remove if Judge.me ships a setting to disable this, or if Judge.me is
+      uninstalled.
+    {%- endcomment -%}
+    <script>
+      (function () {
+        function fromJudgeme() {
+          try {
+            var s = new Error().stack || '';
+            return s.indexOf('judgeme') !== -1 || s.indexOf('ReviewWidget') !== -1;
+          } catch (e) { return false; }
+        }
+
+        var winScrollTo = window.scrollTo;
+        window.scrollTo = function () {
+          if (fromJudgeme()) return;
+          return winScrollTo.apply(window, arguments);
+        };
+
+        var winScroll = window.scroll;
+        window.scroll = function () {
+          if (fromJudgeme()) return;
+          return winScroll.apply(window, arguments);
+        };
+
+        if (Element.prototype.scrollTo) {
+          var elScrollTo = Element.prototype.scrollTo;
+          Element.prototype.scrollTo = function () {
+            if (fromJudgeme()) return;
+            return elScrollTo.apply(this, arguments);
+          };
+        }
+
+        if (Element.prototype.scrollIntoView) {
+          var elScrollIntoView = Element.prototype.scrollIntoView;
+          Element.prototype.scrollIntoView = function () {
+            if (fromJudgeme()) return;
+            return elScrollIntoView.apply(this, arguments);
+          };
+        }
+      })();
+    </script>
 
     {{ content_for_header }}
   </head>

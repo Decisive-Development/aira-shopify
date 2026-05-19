@@ -66,7 +66,6 @@
     --color-main: #0A1A34;
     --color-secondary: #F1EBE1;
     --color-cream-light: rgb(248, 245, 240);
-    --color-tertiary: #44092E;
     --color-tertiary-light: #9BB7D4;
     --color-highlight: #FF4000;
     --color-highlight-green: #28965A;
@@ -794,6 +793,10 @@
     --tw-translate-y: 100%;
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
+  .-scale-x-100 {
+    --tw-scale-x: calc(100% * -1);
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
@@ -1098,9 +1101,6 @@
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-secondary) 50%, transparent);
     }
-  }
-  .border-tertiary-light {
-    border-color: var(--color-tertiary-light);
   }
   .border-tertiary-light\/25 {
     border-color: color-mix(in srgb, #9BB7D4 25%, transparent);
@@ -1555,6 +1555,9 @@
   }
   .text-\[38px\] {
     font-size: 38px;
+  }
+  .text-\[42px\] {
+    font-size: 42px;
   }
   .leading-\[1\.1\] {
     --tw-leading: 1.1;
@@ -2233,13 +2236,6 @@
       }
     }
   }
-  .hover\:text-white {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-white);
-      }
-    }
-  }
   .hover\:underline {
     &:hover {
       @media (hover: hover) {
@@ -2272,13 +2268,6 @@
     &:hover {
       @media (hover: hover) {
         opacity: 90%;
-      }
-    }
-  }
-  .hover\:opacity-100 {
-    &:hover {
-      @media (hover: hover) {
-        opacity: 100%;
       }
     }
   }
@@ -2499,16 +2488,6 @@
       display: none;
     }
   }
-  .md\:inline {
-    @media (width >= 48rem) {
-      display: inline;
-    }
-  }
-  .md\:inline-block {
-    @media (width >= 48rem) {
-      display: inline-block;
-    }
-  }
   .md\:aspect-21\/9 {
     @media (width >= 48rem) {
       aspect-ratio: 21/9;
@@ -2583,11 +2562,6 @@
   .md\:grid-cols-\[1\.6fr_1fr_1fr_1fr_1fr\] {
     @media (width >= 48rem) {
       grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
-    }
-  }
-  .md\:grid-cols-\[2fr_1fr_1fr_1fr\] {
-    @media (width >= 48rem) {
-      grid-template-columns: 2fr 1fr 1fr 1fr;
     }
   }
   .md\:grid-cols-\[5fr_7fr\] {
@@ -3195,9 +3169,6 @@
     }
   }
 }
-html {
-  scroll-behavior: smooth;
-}
 @font-face {
   font-family: "Satoshi";
   src: url("satoshi-variable.woff2") format("woff2 supports variations"), url("satoshi-variable.woff2") format("woff2");
@@ -3533,6 +3504,21 @@ html {
   inherits: false;
   initial-value: 0;
 }
+@property --tw-scale-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+@property --tw-scale-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
 @property --tw-rotate-x {
   syntax: "*";
   inherits: false;
@@ -3789,27 +3775,15 @@ html {
   syntax: "*";
   inherits: false;
 }
-@property --tw-scale-x {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-@property --tw-scale-y {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
-@property --tw-scale-z {
-  syntax: "*";
-  inherits: false;
-  initial-value: 1;
-}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
       --tw-translate-x: 0;
       --tw-translate-y: 0;
       --tw-translate-z: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-scale-z: 1;
       --tw-rotate-x: initial;
       --tw-rotate-y: initial;
       --tw-rotate-z: initial;
@@ -3869,9 +3843,6 @@ html {
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
       --tw-ease: initial;
-      --tw-scale-x: 1;
-      --tw-scale-y: 1;
-      --tw-scale-z: 1;
     }
   }
 }

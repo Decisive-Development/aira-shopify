@@ -353,27 +353,10 @@
 		if (next) next.addEventListener('click', function () { go(1); });
 		track.addEventListener('scroll', updateArrows, { passive: true });
 
-		/* ─ Touch / fling snap (JS-only, no CSS scroll-snap) ─ */
-		function snapSettle() {
-			if (btnScrolling) { btnScrolling = false; return; }
-			var max = track.scrollWidth - track.clientWidth;
-			if (track.scrollLeft <= 2 || track.scrollLeft >= max - 2) return;
-			var step    = cardStep();
-			var nearest = Math.min(Math.round(track.scrollLeft / step) * step, max);
-			if (Math.abs(track.scrollLeft - nearest) > 2)
-				track.scrollTo({ left: nearest, behavior: 'smooth' });
-		}
-		if ('onscrollend' in window) {
-			track.addEventListener('scrollend', snapSettle, { passive: true });
-		} else {
-			var snapTimer;
-			track.addEventListener('scroll', function () {
-				clearTimeout(snapTimer);
-				snapTimer = setTimeout(snapSettle, 120);
-			}, { passive: true });
-		}
+		/* ─ Free-scroll: no snap. User stops where they let go. Prev/next arrows
+		     still scroll by one card via go(). ─ */
 
-		/* ─ Mouse drag ─ */
+		/* ─ Mouse drag — releases free, no snap-back ─ */
 		var dragging = false, startX = 0, startLeft = 0, hasDragged = false;
 
 		track.addEventListener('mousedown', function (e) {
@@ -390,11 +373,6 @@
 		window.addEventListener('mouseup', function () {
 			if (!dragging) return;
 			dragging = false;
-			if (hasDragged) {
-				var max     = track.scrollWidth - track.clientWidth;
-				var nearest = Math.min(Math.round(track.scrollLeft / cardStep()) * cardStep(), max);
-				track.scrollTo({ left: nearest, behavior: 'smooth' });
-			}
 		});
 		track.addEventListener('click', function (e) {
 			if (hasDragged) e.stopPropagation();

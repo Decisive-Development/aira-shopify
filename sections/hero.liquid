@@ -7,7 +7,7 @@
 		when 'md'
 			assign py = 'py-16 md:py-20'
 		when 'lg'
-			assign py = 'py-24 md:py-32'
+			assign py = 'pt-24 pb-6 md:py-32'
 		when 'xl'
 			assign py = 'py-32 md:py-48'
 	endcase
@@ -30,11 +30,16 @@
 	if section.settings.foreground_image != blank
 		assign has_fg_image = true
 	endif
+
+	assign has_fg_image_mobile = false
+	if section.settings.foreground_image_mobile != blank
+		assign has_fg_image_mobile = true
+	endif
 %}
 
 <section
 	data-hero
-	class="relative overflow-hidden w-full {% if section.settings.full_height %}min-h-screen flex items-center{% endif %}"
+	class="relative overflow-hidden w-full {% if section.settings.full_height %}min-h-screen flex items-end md:items-center{% endif %}"
 	style="{% if has_bg_image %}background-color: var(--color-primary);{% elsif section.settings.use_gradient %}background: linear-gradient(160deg, #0d2247 0%, #0A1A34 40%, #150d2a 72%, #2e0c1e 100%);{% else %}background-color: var(--color-primary);{% endif %}"
 >
 
@@ -60,14 +65,30 @@
 	{%- comment -%} Foreground image — full-cover background with parallax {%- endcomment -%}
 	<div class="absolute inset-0 w-full h-full" data-hero-parallax style="will-change: transform; height: 140%;">
 		{%- if has_fg_image -%}
-			{{
-				section.settings.foreground_image
-				| image_url: width: 2400
-				| image_tag:
-					loading: 'eager',
-					class: 'w-full h-full object-cover',
-					widths: '375, 768, 1280, 1920, 2400'
-			}}
+			<picture>
+				{%- if has_fg_image_mobile -%}
+					<source
+						media="(max-width: 767px)"
+						srcset="{{ section.settings.foreground_image_mobile | image_url: width: 750 }} 750w,
+						        {{ section.settings.foreground_image_mobile | image_url: width: 1125 }} 1125w,
+						        {{ section.settings.foreground_image_mobile | image_url: width: 1500 }} 1500w"
+						sizes="100vw"
+					>
+				{%- endif -%}
+				<img
+					src="{{ section.settings.foreground_image | image_url: width: 2400 }}"
+					srcset="{{ section.settings.foreground_image | image_url: width: 768 }} 768w,
+					        {{ section.settings.foreground_image | image_url: width: 1280 }} 1280w,
+					        {{ section.settings.foreground_image | image_url: width: 1920 }} 1920w,
+					        {{ section.settings.foreground_image | image_url: width: 2400 }} 2400w"
+					sizes="100vw"
+					alt="{{ section.settings.foreground_image.alt | escape }}"
+					width="{{ section.settings.foreground_image.width }}"
+					height="{{ section.settings.foreground_image.height }}"
+					loading="eager"
+					class="w-full h-full object-cover -scale-x-100"
+				>
+			</picture>
 		{%- else -%}
 			{% # theme-check-disable RemoteAsset %}
 			<img
@@ -97,7 +118,7 @@
 				{%- endif -%}
 
 				{%- if section.settings.heading != blank -%}
-					<h1 class="font-heading heading-weight text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
+					<h1 class="font-heading heading-weight text-[42px] md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
 						{{ section.settings.heading }}
 					</h1>
 				{%- endif -%}
@@ -224,8 +245,14 @@
 		{
 			"type": "image_picker",
 			"id": "foreground_image",
-			"label": "Image",
-			"info": "Upload an image to replace the placeholder."
+			"label": "Image (desktop)",
+			"info": "Shown on tablet and desktop (≥768px). Used as fallback on mobile if no mobile image is uploaded."
+		},
+		{
+			"type": "image_picker",
+			"id": "foreground_image_mobile",
+			"label": "Image (mobile)",
+			"info": "Optional. Shown on mobile (<768px). Recommended for portrait-cropped shots that work better on phones."
 		},
 		{
 			"type": "header",
