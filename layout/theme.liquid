@@ -26,6 +26,15 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
 
+    {% comment %}
+      Lenis smooth-scroll. Loaded on every page; smooth-scroll.js gates
+      itself to desktop (≥1024px, fine pointer) and bails under
+      prefers-reduced-motion. defer keeps lenis.min.js → smooth-scroll.js
+      execution order.
+    {% endcomment %}
+    <script src="{{ 'lenis.min.js' | asset_url }}" defer></script>
+    <script src="{{ 'smooth-scroll.js' | asset_url }}" defer></script>
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 

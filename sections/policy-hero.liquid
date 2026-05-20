@@ -1,0 +1,76 @@
+{%- comment -%}
+	Policy — Hero
+	Subtle navy hero for the custom legal pages (/pages/privacy-policy
+	etc.). Deliberately scaled down from the marketing heroes
+	(our-story / how-it-works) — this is a legal page, not a landing page.
+{%- endcomment -%}
+
+<section class="relative overflow-hidden bg-main text-secondary pt-32 md:pt-40 pb-12 md:pb-16">
+
+	{%- comment -%} Soft halo matching the our-story hero family {%- endcomment -%}
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background:
+			radial-gradient(ellipse 60% 50% at 50% 0%, rgba(155,183,212,0.14), transparent 70%),
+			radial-gradient(ellipse 70% 40% at 50% 100%, rgba(80,162,167,0.06), transparent 75%);"
+	></div>
+
+	<div class="relative z-10 container-contained">
+		<div class="max-w-[720px] mx-auto text-center">
+
+			{%- comment -%} Eyebrow with hairlines, identical pattern to our-story-hero {%- endcomment -%}
+			<div class="flex items-center justify-center gap-3 md:gap-3.5 mb-6 md:mb-8">
+				<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+				<p class="font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0">
+					{{ section.settings.eyebrow | default: 'Legal' }}
+				</p>
+				<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
+			</div>
+
+			<h1 class="font-heading font-normal text-[34px] md:text-[clamp(36px,4.4vw,56px)] leading-[1.1] tracking-[-0.02em] text-secondary text-balance mb-4">
+				{{ section.settings.heading | default: 'Privacy Policy' }}
+			</h1>
+
+			{%- assign updated_label = section.settings.last_updated -%}
+			{%- if updated_label != blank -%}
+				<p class="font-body text-sm md:text-[15px] text-secondary/60 m-0">
+					Last updated: {{ updated_label }}
+				</p>
+			{%- endif -%}
+
+		</div>
+	</div>
+
+</section>
+
+{% schema %}
+{
+	"name": "Policy — Hero",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "Legal"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Title",
+			"default": "Privacy Policy"
+		},
+		{
+			"type": "text",
+			"id": "last_updated",
+			"label": "Last updated date",
+			"default": "19 May 2026",
+			"info": "Shown beneath the page title. Update whenever the policy is revised. Leave blank to hide."
+		}
+	],
+	"presets": [
+		{ "name": "Policy — Hero" }
+	]
+}
+{% endschema %}

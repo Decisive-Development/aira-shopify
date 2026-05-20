@@ -1,0 +1,289 @@
+/*
+  Policy page — prose, tables, mobile scroll, and print styles.
+  Loaded only by templates/policies.liquid.
+
+  Color tokens come from snippets/css-variables.liquid:
+    --color-main, --color-secondary, --color-title, --color-copy,
+    --color-highlight, --color-border
+*/
+
+/* ─── prose typography ───────────────────────────────────────── */
+
+.policy-prose {
+  color: var(--color-copy, #5C6470);
+}
+
+.policy-prose > *:first-child {
+  margin-top: 0;
+}
+
+.policy-prose p {
+  margin: 0 0 1.1rem;
+  line-height: 1.7;
+}
+
+.policy-prose h2 {
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.3;
+  color: var(--color-title, #0A1A34);
+  margin: 3rem 0 1rem;
+  scroll-margin-top: 6rem;
+}
+
+@media (min-width: 768px) {
+  .policy-prose h2 {
+    font-size: 1.75rem;
+    margin-top: 3.5rem;
+  }
+}
+
+.policy-prose h2:first-child {
+  margin-top: 0;
+}
+
+.policy-prose h3 {
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  color: var(--color-title, #0A1A34);
+  margin: 1.75rem 0 0.5rem;
+}
+
+.policy-prose ul,
+.policy-prose ol {
+  margin: 0 0 1.1rem 1.25rem;
+  padding-left: 1rem;
+}
+
+.policy-prose ul { list-style: disc; }
+.policy-prose ol { list-style: decimal; }
+
+.policy-prose li {
+  margin: 0.35rem 0;
+  line-height: 1.65;
+}
+
+.policy-prose a {
+  color: var(--color-main, #0A1A34);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 0.15s ease;
+}
+
+.policy-prose a:hover {
+  opacity: 0.7;
+}
+
+.policy-prose strong {
+  font-weight: 600;
+  color: var(--color-title, #0A1A34);
+}
+
+.policy-prose em {
+  font-style: italic;
+}
+
+.policy-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+  background: rgba(10, 26, 52, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  color: var(--color-title, #0A1A34);
+}
+
+.policy-prose hr {
+  border: 0;
+  border-top: 1px solid rgba(10, 26, 52, 0.12);
+  margin: 2.5rem 0;
+}
+
+/* ─── tables ─────────────────────────────────────────────────── */
+
+.policy-table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem -1rem 1.75rem;
+  padding: 0 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  .policy-table-wrap {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+  }
+}
+
+.policy-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  min-width: 32rem;
+}
+
+@media (min-width: 768px) {
+  .policy-prose table {
+    font-size: 0.95rem;
+  }
+}
+
+.policy-prose thead th {
+  text-align: left;
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  color: var(--color-title, #0A1A34);
+  background: rgba(10, 26, 52, 0.05);
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid rgba(10, 26, 52, 0.2);
+  vertical-align: top;
+}
+
+.policy-prose tbody td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid rgba(10, 26, 52, 0.1);
+  vertical-align: top;
+  color: var(--color-copy, #5C6470);
+}
+
+.policy-prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.policy-prose tbody td code {
+  white-space: nowrap;
+}
+
+/* ─── table of contents ─────────────────────────────────────────
+   The TOC is built at runtime by assets/policy-page.js. Its markup is
+   styled here with plain CSS because the Tailwind build only scans
+   .liquid files — utility classes injected from JS never get compiled.
+*/
+
+.policy-toc__label {
+  font-family: var(--font-body, inherit);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--color-main, #0A1A34) 55%, transparent);
+  margin: 0 0 0.75rem;
+}
+
+.policy-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.policy-toc__item {
+  margin: 0 0 0.5rem;
+}
+
+.policy-toc__item:last-child {
+  margin-bottom: 0;
+}
+
+.policy-toc__link {
+  display: block;
+  font-family: var(--font-body, inherit);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--color-main, #0A1A34) 65%, transparent);
+  transition: color 0.15s ease;
+}
+
+.policy-toc__link:hover {
+  color: var(--color-main, #0A1A34);
+}
+
+.policy-toc__link.is-active {
+  color: var(--color-main, #0A1A34);
+  font-weight: 600;
+}
+
+/* ─── TOC focus + a11y ───────────────────────────────────────── */
+
+.policy-prose h2:focus,
+.policy-prose h3:focus {
+  outline: 2px solid var(--color-main, #0A1A34);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+.policy-prose h2:focus:not(:focus-visible),
+.policy-prose h3:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Remove the default <summary> disclosure triangle on mobile TOC */
+.policy-toc summary::-webkit-details-marker,
+details > summary.list-none::-webkit-details-marker {
+  display: none;
+}
+details > summary.list-none {
+  list-style: none;
+}
+
+/* ─── print ──────────────────────────────────────────────────── */
+
+@media print {
+  /* Hide chrome */
+  header, footer,
+  .policy-toc,
+  [data-policy-toc],
+  details.md\:hidden {
+    display: none !important;
+  }
+
+  /* Drop the navy hero / contact backgrounds for ink savings */
+  section { background: white !important; }
+  .policy-prose,
+  .policy-prose * {
+    color: black !important;
+  }
+
+  .policy-prose {
+    max-width: 100% !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  .policy-prose h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+    margin-top: 1.75rem;
+  }
+
+  .policy-prose h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .policy-prose tr,
+  .policy-prose table {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .policy-table-wrap {
+    overflow: visible !important;
+    margin: 0 0 1rem !important;
+    padding: 0 !important;
+  }
+
+  .policy-prose table {
+    min-width: 0;
+    font-size: 10pt;
+  }
+
+  .policy-prose a {
+    color: black !important;
+    text-decoration: underline;
+  }
+}

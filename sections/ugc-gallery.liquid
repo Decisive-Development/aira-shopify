@@ -58,9 +58,9 @@
 		{%- endif -%}
 
 		{%- comment -%} Image row {%- endcomment -%}
-		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 snap-x snap-mandatory ugc-track" data-ugc-track>
+		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
 			{%- for block in ugc_blocks -%}
-				<div class="relative shrink-0 w-[65%] md:w-[22%] rounded-2xl overflow-hidden snap-start" style="aspect-ratio: 9 / 16;" {{ block.shopify_attributes }}>
+				<div class="relative shrink-0 w-[65%] md:w-[22%] rounded-2xl overflow-hidden" style="aspect-ratio: 9 / 16;" {{ block.shopify_attributes }}>
 					{%- if block.settings.image != blank -%}
 						{{
 							block.settings.image
@@ -168,7 +168,7 @@
 		if (hasDragged) e.stopPropagation();
 	}, true);
 
-	/* ── Auto-scroll every 3 seconds ── */
+	/* ── Auto-scroll every 6 seconds ── */
 	var autoTimer = null;
 	var userTouching = false;
 
@@ -191,7 +191,7 @@
 
 	function resetAutoplay() {
 		clearInterval(autoTimer);
-		autoTimer = setInterval(autoScroll, 3000);
+		autoTimer = setInterval(autoScroll, 6000);
 	}
 
 	/* Pause on touch / hover */

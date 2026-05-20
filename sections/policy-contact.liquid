@@ -1,0 +1,79 @@
+{%- comment -%}
+	Policy — Contact
+	Closing navy callout: short prompt + mailto button. Used on every
+	/policies/* URL.
+{%- endcomment -%}
+
+<section class="relative overflow-hidden bg-main text-secondary py-16 md:py-20">
+
+	{%- comment -%} Soft halo, identical family to the policy hero {%- endcomment -%}
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background:
+			radial-gradient(ellipse 70% 50% at 50% 0%, rgba(155,183,212,0.10), transparent 70%),
+			radial-gradient(ellipse 70% 50% at 50% 100%, rgba(80,162,167,0.08), transparent 70%);"
+	></div>
+
+	<div class="relative z-10 container-contained max-w-[640px] text-center">
+
+		<h2 class="font-heading font-normal text-[26px] md:text-[32px] leading-[1.2] tracking-[-0.015em] text-secondary text-balance mb-4 md:mb-5">
+			{{ section.settings.heading | default: 'Questions about how we handle your data?' }}
+		</h2>
+
+		<p class="font-body text-[15px] md:text-[16.5px] leading-[1.65] text-secondary/75 mx-auto mb-8 md:mb-10">
+			{{ section.settings.body | default: "Email us and we'll respond within the timeframe required by applicable law (typically 30 days)." }}
+		</p>
+
+		{%- liquid
+			assign cta_email = section.settings.cta_email | default: 'contact@aira-breathing.com'
+			assign cta_label = section.settings.cta_label | default: 'Email our privacy team'
+			assign mailto_url = 'mailto:' | append: cta_email
+		-%}
+		{%- render 'cta-button',
+			label: cta_label,
+			url: mailto_url,
+			variant: 'inverse',
+			size: 'md'
+		-%}
+
+	</div>
+
+</section>
+
+{% schema %}
+{
+	"name": "Policy — Contact",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Questions about how we handle your data?"
+		},
+		{
+			"type": "textarea",
+			"id": "body",
+			"label": "Body",
+			"default": "Email us and we'll respond within the timeframe required by applicable law (typically 30 days)."
+		},
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "Button label",
+			"default": "Email us"
+		},
+		{
+			"type": "text",
+			"id": "cta_email",
+			"label": "Contact email",
+			"default": "contact@aira-breathing.com",
+			"info": "Swap to privacy@aira-breathing.com once that alias is set up."
+		}
+	],
+	"presets": [
+		{ "name": "Policy — Contact" }
+	]
+}
+{% endschema %}

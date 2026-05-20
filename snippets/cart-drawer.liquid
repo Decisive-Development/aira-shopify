@@ -36,8 +36,8 @@
 		</button>
 	</div>
 
-	{%- comment -%} Scrollable body {%- endcomment -%}
-	<div class="flex-1 overflow-y-auto px-6 py-5" data-cart-body>
+	{%- comment -%} Scrollable body — data-lenis-prevent keeps native scroll here (Lenis ignores it) {%- endcomment -%}
+	<div class="flex-1 overflow-y-auto px-6 py-5" data-cart-body data-lenis-prevent>
 
 		{%- comment -%} Empty state {%- endcomment -%}
 		<div data-cart-empty class="hidden flex-col items-center justify-center text-center py-16 gap-4">

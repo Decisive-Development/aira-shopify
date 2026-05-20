@@ -1,689 +1,732 @@
 ================================================================================
-AIRA — PAGES SETUP & STRUCTURE BRIEF  (FOR VSC / DEV AGENT)
+AIRA — PRIVACY POLICY + COOKIE BANNER BRIEF  (FOR VSC / DEV AGENT)
 ================================================================================
-Date:     3 May 2026
-Audience: VSC / dev coding agent
-Purpose:  Get all the structural code, scaffolding, Shopify config, theme
-          settings, schema, and form handlers ready BEFORE the visual designs
-          arrive. When designs land, the dev work should be a content/style
-          fill-in, not a foundation build.
+Date:      19 May 2026
+Audience:  VSC / dev coding agent
+Purpose:   (1) Publish the legally-reviewed Privacy Policy at the standard
+              Shopify URL /policies/privacy-policy, styled cleanly and on-brand
+              via a customised policy template.
+           (2) Enable Shopify's native cookie consent banner with the right
+              settings.
 
-Pages in scope:
-  Built-in Shopify policies (3):
-    /policies/terms-of-service
-    /policies/privacy-policy
-    /policies/refund-policy
-    /policies/shipping-policy   (also required by Shopify checkout)
+Scope decisions already made:
+  - URL:           /policies/privacy-policy (Shopify's built-in policy slot,
+                   NOT a custom /pages/* page)
+  - Cookie banner: Shopify's built-in (Settings → Customer privacy → Cookie
+                   banner), NOT a custom build
+  - Sibling pages: out of scope (Terms, Refund, Shipping stay as-is in their
+                   own policy slots)
 
-  Custom pages (5):
-    /pages/returns      — returns request page
-    /pages/affiliate    — affiliate / partner program
-    /pages/contact      — contact support
-    /pages/faq          — standalone FAQ (may already exist)
-    /pages/science      — Backed by Science page
-
-What is NOT in this brief:
-  - Visual design (hero treatments, cards, animations) → see per-page
-    design briefs (AIRA_<Page>_Page_Design_Brief.txt)
-  - Final copy → also in design briefs
-  - Navbar changes → none, see section 8
 
 ================================================================================
 0. CRITICAL CONTEXT FOR VSC
 ================================================================================
 
-- Theme is Shopify Liquid (not Hydrogen). Existing patterns use
-  `templates/*.json` + `sections/*.liquid` per the Reviews/HowItWorks
-  briefs. Match those conventions.
+- This OVERRIDES section 1 of AIRA_Pages_Setup_Structure_Brief_VSC.txt for
+  the Privacy Policy specifically — but the URL location stays the same
+  (/policies/privacy-policy). The only difference is that the policy
+  template gets a proper on-brand restyle instead of relying on the theme
+  default.
 
-- Visual family: all custom pages must use the same hero treatment as
-  /pages/our-story (navy bg-main + light-blue radial halo). Designers
-  will spec the exact composition; VSC's job is to scaffold the section
-  files so designers have a foundation to fill.
+- Tech stack reminders:
+    * Shopify Liquid (Online Store 2.0)
+    * Templates: templates/page.policy.json + sections/policy-content.liquid
+      (these may not yet exist in the theme — see section 2)
+    * Tailwind utility classes — match what /pages/our-story uses, do NOT
+      introduce new utilities
+    * Vanilla JS for the auto-generated TOC. NO React, NO heavy frameworks.
 
-- DO NOT add anything to the main navbar. All new pages live in the
-  footer.
+- Visual brief: "on-brand but clean and clear for the user reading."
+  Translation:
+    * Subtle navy hero (smaller than marketing heroes — this is a legal
+      page, not a landing page)
+    * Single-column prose body on warm cream background
+    * Navy headings, brand body font, generous vertical rhythm
+    * Anchor-linked TOC (sticky on desktop, collapsible on mobile)
+    * Styled tables (the policy contains three) that work on mobile + print
+    * It should feel like an Aesop or Byredo legal page — elegant, readable,
+      respectful of the reader's time. Not a wall of grey text.
 
-- DO NOT edit copy or design choices. Use placeholder copy from this
-  brief; final copy comes from the design briefs.
+- DO NOT paraphrase, summarise, or restructure the policy content. The
+  content in section 5 below is legally reviewed copy. Render it verbatim.
 
-- DO NOT touch the homepage, product pages, How-it-works, Our Story,
-  or Reviews sections. Those have their own briefs.
-
-
-================================================================================
-1. SHOPIFY BUILT-IN POLICY PAGES — CONFIGURATION
-================================================================================
-These four pages live in Shopify's native policy system and are NOT
-custom-built. They are configured in Settings → Policies.
-
-────────────────────────────────────────────────
-1.1  Paste policy content into Shopify Admin
-────────────────────────────────────────────────
-LOCATION: Shopify Admin → Settings → Policies
-
-ACTION (Tom does this — VSC verifies):
-  Refund policy        → /policies/refund-policy
-  Privacy policy       → /policies/privacy-policy
-  Terms of service     → /policies/terms-of-service
-  Shipping policy      → /policies/shipping-policy
-
-Save. Shopify auto-renders these on the policies template.
-
-────────────────────────────────────────────────
-1.2  Verify policy template styling
-────────────────────────────────────────────────
-After content is pasted, view all four URLs in incognito and check:
-  - Header & footer render correctly (matching site-wide chrome)
-  - Body text uses brand body font (not Shopify default Helvetica)
-  - Headings use the navy h1/h2 treatment
-  - Max-width container around prose (cap ~720px on desktop)
-  - Bottom margin / padding before footer (min 80px)
-
-IF the default policy template styling is broken or off-brand:
-  Create a custom policy template at:
-    templates/page.policy.json    (Online Store 2.0)
-    OR
-    templates/page.policies.liquid (vintage)
-
-  The custom template should:
-    - Use site-wide header & footer
-    - Single-column prose layout
-    - Brand typography (Inter or current body font)
-    - Navy-on-cream color scheme
-    - max-w-[720px] centered container
-    - Generous vertical rhythm
-
-  This is shared across all four policy pages. Do NOT create per-policy
-  templates.
+- DO NOT noindex the page. Privacy policies should be crawlable — search
+  engines and procurement teams look for them as a trust signal.
 
 
 ================================================================================
-2. CUSTOM PAGE SCAFFOLDING — CREATE PAGES + TEMPLATES + SECTION FILES
+1. SHOPIFY ADMIN — CONTENT + BANNER SETUP
 ================================================================================
-For each of the five custom pages, create:
-  (a) The page itself in Shopify Admin → Online Store → Pages
-  (b) A custom JSON template that the page uses
-  (c) Empty section files for each major section the design brief
-      will eventually fill
-
-Naming convention: match the existing repo. If the existing pattern is
-`templates/page.our-story.json` and `sections/our-story-hero.liquid`,
-follow that. If it differs, match what's already there.
 
 ────────────────────────────────────────────────
-2.1  /pages/returns
+1.1  Paste the policy content
 ────────────────────────────────────────────────
-SHOPIFY ADMIN:
-  Title:    "Start a Return"
-  Handle:   returns
-  Template: page.returns
+LOCATION: Shopify Admin → Settings → Policies → Privacy policy
 
-TEMPLATE FILE: templates/page.returns.json
-SECTION FILES (empty scaffolds, schema only — design fills the markup):
-  sections/returns-hero.liquid
-  sections/returns-eligibility-gate.liquid
-  sections/returns-form.liquid
-  sections/returns-damaged-flow.liquid
-  sections/returns-policy-summary.liquid
+ACTION:
+  1.  In the rich text editor toolbar, click the "<>" / "Show HTML" toggle
+      (switches to source/HTML view).
+  2.  Paste the full HTML block from section 5 of this brief.
+  3.  Save.
 
-NOTES:
-  - returns-form.liquid must wrap its form markup in
-    <div id="returns-form-mount"> so a future returns app embed can
-    swap in cleanly.
-  - eligibility-gate uses vanilla JS or Alpine.js to toggle the form
-    enabled/disabled state. NO React.
+WHY HTML, not plain text: the policy contains three tables and several
+inline links. Shopify's rich text editor mangles tables when you paste
+prose, but accepts clean HTML when entered via source view.
+
+VERIFY: navigate to /policies/privacy-policy. You should see the content
+render with H2 section headings, lists, links, and tables intact.
 
 ────────────────────────────────────────────────
-2.2  /pages/affiliate
+1.2  Enable Shopify's cookie consent banner
 ────────────────────────────────────────────────
-SHOPIFY ADMIN:
-  Title:    "Partner with AIRA"
-  Handle:   affiliate
-  Template: page.affiliate
+LOCATION: Shopify Admin → Settings → Customer privacy → Cookie banner
 
-TEMPLATE FILE: templates/page.affiliate.json
-SECTION FILES:
-  sections/affiliate-hero.liquid
-  sections/affiliate-who-its-for.liquid
-  sections/affiliate-benefits.liquid
-  sections/affiliate-how-it-works.liquid
-  sections/affiliate-form.liquid
-  sections/affiliate-faq.liquid
-  sections/affiliate-final-cta.liquid
+CONFIGURATION:
+  - Region visibility:           SHOW IN ALL REGIONS  (not the default —
+                                 default is EU/UK/CH/CA only; we want
+                                 universal because UAE PDPL + KSA PDPL are
+                                 tightening and our brand position favours
+                                 asking-first everywhere)
+  - Banner position:             Bottom
+  - Banner style:                If theme allows colour/typography overrides,
+                                 set bg to navy and text to cream to match
+                                 brand. If only "Light / Dark" is offered,
+                                 pick Dark.
+  - Privacy policy link:         /policies/privacy-policy
+  - Preference centre:           Enabled (so visitors can change choices
+                                 later)
 
-NOTES:
-  - affiliate-form.liquid must wrap its form markup in
-    <div id="affiliate-form-mount"> for future platform-tool swap
-    (Shopify Collabs / GoAffPro / Refersion / etc.)
-  - affiliate-faq.liquid can reuse the existing faq.liquid section
-    if its block schema supports it. If not, build a slim variant.
-
-────────────────────────────────────────────────
-2.3  /pages/contact
-────────────────────────────────────────────────
-SHOPIFY ADMIN:
-  Title:    "Contact Us"
-  Handle:   contact
-  Template: page.contact
-
-  NOTE: Shopify has a built-in "contact" page template. We're
-  overriding it because we need WhatsApp-first layout, not just
-  a generic contact form.
-
-TEMPLATE FILE: templates/page.contact.json
-SECTION FILES:
-  sections/contact-hero.liquid
-  sections/contact-channels.liquid
-  sections/contact-form.liquid
-  sections/contact-quick-links.liquid
-  sections/contact-business-info.liquid
-
-NOTES:
-  - contact-channels.liquid renders WhatsApp + Email cards. Both card
-    targets (WhatsApp number, support email) must come from theme
-    settings (see section 5), not hardcoded.
+LOCATION: Shopify Admin → Settings → Customer privacy → Data sale
+  - Confirm "Do not sell or share personal data": ON  (matches policy
+    section 5 — we do not sell data).
 
 ────────────────────────────────────────────────
-2.4  /pages/faq
+1.3  Footer Legal column
 ────────────────────────────────────────────────
-DEV TASK FIRST: Visit /pages/faq in current site.
-  - If page exists with content → keep, refresh per design brief.
-  - If page exists but empty / using homepage FAQ section → populate
-    via the structure below.
-  - If page does NOT exist → create per below.
+LOCATION: Shopify Admin → Online Store → Navigation → Footer Legal menu
 
-SHOPIFY ADMIN:
-  Title:    "Frequently Asked Questions"
-  Handle:   faq
-  Template: page.faq
+CONFIRM the Privacy Policy link points to /policies/privacy-policy (it
+should already, per AIRA_Pages_Setup_Structure_Brief_VSC.txt). No change
+required if it does.
 
-TEMPLATE FILE: templates/page.faq.json
-SECTION FILES:
-  sections/faq-hero.liquid
-  sections/faq-search.liquid          (optional — see design brief)
-  sections/faq-categories.liquid       (renders accordion sections)
-  sections/faq-final-cta.liquid
 
-CRITICAL — JSON-LD SCHEMA:
-  The faq-categories.liquid section MUST inject a single
-  <script type="application/ld+json"> block at the bottom of its
-  output, dynamically generated from the section's block content.
+================================================================================
+2. CUSTOM POLICY TEMPLATE — FILES TO CREATE / EDIT
+================================================================================
 
-  Reference snippet (adapt to actual block schema):
-
-    {% if section.blocks.size > 0 %}
-      <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {%- assign faq_blocks = section.blocks | where: "type", "faq_item" -%}
-          {%- for block in faq_blocks -%}
-          {
-            "@type": "Question",
-            "name": {{ block.settings.question | json }},
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": {{ block.settings.answer | strip_html | json }}
-            }
-          }{%- unless forloop.last -%},{%- endunless -%}
-          {%- endfor -%}
-        ]
-      }
-      </script>
-    {% endif %}
-
-  After deploy, run /pages/faq through Google's Rich Results Test
-  (https://search.google.com/test/rich-results) — must show
-  "FAQPage detected" with all questions parsed.
+This template is shared by all four /policies/* URLs (privacy, terms,
+refund, shipping). Build it once; all policy pages inherit the styling.
 
 ────────────────────────────────────────────────
-2.5  /pages/science
+2.1  Files
 ────────────────────────────────────────────────
-SHOPIFY ADMIN:
-  Title:    "Backed by Science"
-  Handle:   science
-  Template: page.science
-
-TEMPLATE FILE: templates/page.science.json
-SECTION FILES:
-  sections/science-hero.liquid
-  sections/science-nasal-breathing.liquid
-  sections/science-mechanism.liquid
-  sections/science-medical-advisor.liquid
-  sections/science-materials.liquid
-  sections/science-clinical-claims.liquid    (optional — see design brief)
-  sections/science-citations.liquid
-
-NOTES:
-  - science-citations.liquid renders the bibliography of cited studies
-    in a clean academic format. Block schema: { author, year, title,
-    journal, doi_or_url }.
-  - science-medical-advisor.liquid renders the in-house medical
-    advisor's photo + bio + quote. Block fields: { name, credentials,
-    photo, quote, signature_image }.
+  templates/page.policy.json              — Online Store 2.0 template
+  sections/policy-hero.liquid             — subtle branded hero
+  sections/policy-content.liquid          — TOC + prose body + tables
+  sections/policy-contact.liquid          — closing "questions?" block
+  assets/policy-page.js                   — vanilla JS: auto-TOC + sticky
+                                            behaviour + anchor smooth-scroll
+  assets/policy-page.css                  — page-only styles (tables, print)
 
 ────────────────────────────────────────────────
-2.6  Section file scaffold convention
+2.2  templates/page.policy.json
 ────────────────────────────────────────────────
-Each section file should be created with:
-  - A {% schema %} block defining the section's settings + blocks
-  - A minimal placeholder render (e.g., a section wrapper with
-    {{ section.settings.heading }}) so the page is visible during
-    the design phase without errors
-  - Standard Tailwind classes from the existing theme (do NOT introduce
-    new utility classes — match what /pages/our-story uses)
+    {
+      "sections": {
+        "hero":    { "type": "policy-hero" },
+        "content": { "type": "policy-content" },
+        "contact": { "type": "policy-contact" }
+      },
+      "order": ["hero", "content", "contact"]
+    }
 
-Example minimum scaffold for sections/returns-hero.liquid:
+Shopify automatically uses this template for all /policies/* URLs because
+the file is named page.policy.* — the platform resolves it for the policy
+resource. (Verify behaviour on first deploy; some themes require
+templates/page.policies.liquid for vintage themes.)
 
-    <section class="relative overflow-hidden bg-main text-secondary
-                    pt-32 md:pt-40 pb-16 md:pb-25">
-      <div class="container mx-auto px-4 max-w-[720px] text-center">
-        <h1 class="text-4xl md:text-5xl font-medium mb-4">
-          {{ section.settings.heading | default: 'Start a return' }}
-        </h1>
-        {% if section.settings.subheading != blank %}
-          <p class="text-lg text-secondary/80">
-            {{ section.settings.subheading }}
-          </p>
-        {% endif %}
-      </div>
-    </section>
 
+================================================================================
+3. SECTION SPECS
+================================================================================
+
+────────────────────────────────────────────────
+3.1  sections/policy-hero.liquid
+────────────────────────────────────────────────
+PURPOSE: Branded entry — subtle, NOT a marketing hero.
+
+LAYOUT:
+  - Full-width, bg-main (navy), text-secondary (cream)
+  - Light-blue radial halo behind the heading (REUSE the halo classes from
+    sections/our-story-hero.liquid — do NOT introduce a new gradient)
+  - Centered container, max-w-[720px], px-4
+  - Vertical rhythm: pt-32 md:pt-40, pb-12 md:pb-16
+    (intentionally shorter than /pages/our-story hero — this is a legal
+    page, the reader is here to read, not to be sold to)
+
+CONTENT (sourced from {{ page.title }} and a section setting):
+  - Eyebrow (uppercase, small, tracked):  "Legal"
+  - H1 (font-medium, text-4xl md:text-5xl):  {{ page.title }}
+  - Last updated (text-sm text-secondary/60, mt-3):
+      "Last updated: {{ section.settings.last_updated }}"
+
+SCHEMA:
     {% schema %}
     {
-      "name": "Returns - Hero",
+      "name": "Policy — Hero",
       "settings": [
-        { "type": "text",     "id": "heading",    "label": "Heading",    "default": "Start a return" },
-        { "type": "textarea", "id": "subheading", "label": "Subheading" }
+        { "type": "text", "id": "eyebrow",      "label": "Eyebrow",
+          "default": "Legal" },
+        { "type": "text", "id": "last_updated", "label": "Last updated date",
+          "default": "19 May 2026",
+          "info": "Update whenever any policy is revised." }
       ],
-      "presets": [{ "name": "Returns - Hero" }]
+      "presets": [{ "name": "Policy — Hero" }]
     }
     {% endschema %}
 
-Designs will replace the markup; the schema can be extended when blocks
-are spec'd in the design briefs.
-
-
-================================================================================
-3. SHARED FAQ COMPONENT (CROSS-PAGE)
-================================================================================
-Three pages render FAQ-style accordions:
-  /pages/faq               (full categorized FAQ)
-  /pages/affiliate         (mini-FAQ, 4-5 questions)
-  product pages            (existing — do not touch)
-
-DEV TASK: Audit the existing FAQ section file (likely sections/faq.liquid).
-  - If its block schema supports a "category" tag per item AND can render
-    grouped or ungrouped → reuse for both /pages/faq and /pages/affiliate.
-  - If it cannot → create sections/faq-categorized.liquid (used by
-    /pages/faq) as a superset, and reuse the existing faq.liquid for
-    the affiliate mini-FAQ.
-
-DO NOT create a third variant. Two FAQ section files maximum.
-
-
-================================================================================
-4. FORM HANDLERS
-================================================================================
-Three forms across the new pages:
-  /pages/returns      — returns request form
-  /pages/affiliate    — partner application form
-  /pages/contact      — fallback contact form
+NOTE: "Last updated" is a single setting reused across all policy pages.
+If the dates need to diverge per policy, promote it to a page metafield
+in a follow-up — out of scope here.
 
 ────────────────────────────────────────────────
-4.1  Routing strategy
+3.2  sections/policy-content.liquid
 ────────────────────────────────────────────────
-PRIMARY: Klaviyo Form Submission flows.
-  Why: we already use Klaviyo for email. Centralizing form data in
-  Klaviyo means submissions appear in customer profiles, can trigger
-  flows (auto-acknowledgment emails), and are searchable in one place.
+PURPOSE: Render {{ page.content }} (pasted in 1.1) inside a clean prose
+container with a sticky table of contents on desktop.
 
-FALLBACK: Shopify built-in {% form 'contact' %} liquid tag with hidden
-fields routed to dedicated email aliases.
-  Why: zero-cost, works without Klaviyo dependency, fine for low volume.
+LAYOUT (≥ md):
+    [ TOC column — w-1/3 max-w-[240px], sticky top-24, py-12 ]
+    [ Content column — flex-1 max-w-[720px], py-12, prose-style ]
+    Wrap both in a container mx-auto px-4 max-w-[1080px]
+
+LAYOUT (< md):
+    Single column, full width
+    TOC collapsed inside a <details><summary>"On this page ▾"</summary>
+
+CONTENT COLUMN MARKUP:
+    <article class="policy-prose">
+      {{ page.content }}
+    </article>
+
+POLICY-PROSE TYPOGRAPHY (applied via .policy-prose in assets/policy-page.css
+OR as Tailwind @apply rules — match the theme convention):
+
+    .policy-prose                  /* base reset                          */
+    .policy-prose p                /* leading-relaxed text-secondary/85 mb-4 */
+    .policy-prose h2               /* navy text-2xl md:text-3xl font-medium mt-12 mb-4 */
+    .policy-prose h3               /* navy text-lg font-medium mt-6 mb-2  */
+    .policy-prose ul               /* list-disc pl-6 mb-4 space-y-1       */
+    .policy-prose ol               /* list-decimal pl-6 mb-4 space-y-1    */
+    .policy-prose a                /* underline text-main hover:opacity-80 */
+    .policy-prose strong           /* font-medium text-main               */
+    .policy-prose code             /* font-mono text-sm bg-main/5 px-1.5 py-0.5 rounded */
+    .policy-prose table            /* w-full border-collapse text-sm md:text-base mb-6 */
+    .policy-prose th               /* text-left font-medium bg-main/5 py-2 px-3 border-b border-main/20 */
+    .policy-prose td               /* py-2 px-3 border-b border-main/10 align-top */
+
+TABLE WRAPPER (mobile horizontal scroll):
+  The pasted HTML wraps each table in <div class="policy-table-wrap">.
+  Style that wrapper:
+    .policy-table-wrap             /* overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6 */
+
+SECTION BACKGROUND:
+  Wrap the whole section in bg-secondary (warm cream) — this matches the
+  body of /pages/our-story below its hero. Confirm token name in theme.
+
+TOC COLUMN MARKUP (built client-side, see 3.2.1):
+    <nav class="policy-toc" aria-label="On this page" data-policy-toc>
+      <!-- populated by assets/policy-page.js -->
+    </nav>
+
+SCHEMA: empty (no admin-editable settings — content lives in {{ page.content }})
 
 ────────────────────────────────────────────────
-4.2  Email destinations (theme settings — see section 5)
+3.2.1  assets/policy-page.js (TOC generator)
 ────────────────────────────────────────────────
-  returns       → support@aira.[tld]
-  affiliate     → partnerships@aira.[tld]
-  contact       → support@aira.[tld]
+Build the TOC at runtime from the H2s inside .policy-prose. This avoids
+having to bake anchor IDs into the admin-pasted HTML (which Shopify's
+rich-text editor can strip if anyone later edits the policy via WYSIWYG).
 
-────────────────────────────────────────────────
-4.3  Required form fields (for VSC scaffolding)
-────────────────────────────────────────────────
-RETURNS FORM:
-  - full_name        (text, required)
-  - email            (email, required)
-  - order_number     (text, required)
-  - country          (select: UAE / KSA / Qatar / Kuwait / Bahrain / Oman / Other)
-  - reason           (select: Wrong size / No longer needed / Found different solution / Other)
-  - reason_other     (textarea, conditional — appears if reason == "Other")
-  - sealed_confirm   (checkbox, required)
-  - eligibility_*    (3 hidden fields populated by the gate JS — for audit trail)
+PSEUDOCODE:
 
-AFFILIATE FORM:
-  - full_name        (text, required)
-  - email            (email, required)
-  - country          (select)
-  - platform         (select: Instagram / TikTok / YouTube / Twitter / Other)
-  - handle           (text, required)
-  - audience_size    (select: <1k / 1k-10k / 10k-50k / 50k-200k / 200k+)
-  - niche            (select: Wellness / Sports / Lifestyle / Beauty / Parenting / Other)
-  - why_aira         (textarea, max 300 chars, required)
+    (function () {
+      const article = document.querySelector('.policy-prose');
+      const tocEl   = document.querySelector('[data-policy-toc]');
+      if (!article || !tocEl) return;
 
-CONTACT FALLBACK FORM:
-  - name             (text, required)
-  - email            (email, required)
-  - order_number     (text, optional)
-  - subject          (text, required)
-  - message          (textarea, required)
+      const headings = article.querySelectorAll('h2');
+      if (!headings.length) return;
 
-────────────────────────────────────────────────
-4.4  Auto-acknowledgment emails
-────────────────────────────────────────────────
-Each form should trigger an immediate auto-reply to the submitter:
+      // Heading label for the TOC
+      const heading = document.createElement('p');
+      heading.className = 'text-xs uppercase tracking-widest text-main/60 mb-3';
+      heading.textContent = 'On this page';
+      tocEl.appendChild(heading);
 
-  RETURNS:    "We've received your return request. Our team will review
-               and email you a return label within 2 business days."
+      const ol = document.createElement('ol');
+      ol.className = 'space-y-2 text-sm';
 
-  AFFILIATE:  "Thanks for applying to partner with AIRA. We review every
-               application within 5 business days."
+      headings.forEach((h, i) => {
+        // Slugify the heading text into an ID
+        const slug = h.textContent.trim().toLowerCase()
+                      .replace(/[^a-z0-9\s-]/g, '')
+                      .replace(/\s+/g, '-')
+                      .replace(/-+/g, '-')
+                      .slice(0, 60);
+        const id = h.id || ('section-' + (i + 1) + '-' + slug);
+        h.id = id;
+        h.setAttribute('tabindex', '-1'); // focusable target on anchor jump
 
-  CONTACT:    "Thanks for reaching out. We respond within one business day."
+        const li = document.createElement('li');
+        const a  = document.createElement('a');
+        a.href = '#' + id;
+        a.textContent = h.textContent;
+        a.className = 'block text-main/70 hover:text-main transition-colors';
+        a.dataset.tocLink = id;
+        li.appendChild(a);
+        ol.appendChild(li);
+      });
 
-These can be configured in Klaviyo flows OR via Shopify's contact form
-auto-reply. Decision is Tom's based on Klaviyo setup status.
+      tocEl.appendChild(ol);
 
-
-================================================================================
-5. THEME SETTINGS (settings_schema.json ADDITIONS)
-================================================================================
-Add a "Support & Contact" section to the theme settings so the WhatsApp
-number, support emails, and business info are editable from Shopify
-Admin without code changes.
-
-Add to config/settings_schema.json:
-
-    {
-      "name": "Support & contact",
-      "settings": [
-        {
-          "type": "header",
-          "content": "WhatsApp"
-        },
-        {
-          "type": "text",
-          "id": "support_whatsapp_number",
-          "label": "WhatsApp Business number (no +, no spaces)",
-          "info": "e.g., 971501234567 for +971 50 123 4567",
-          "default": ""
-        },
-        {
-          "type": "text",
-          "id": "support_whatsapp_prefill",
-          "label": "Pre-filled WhatsApp message",
-          "default": "Hi AIRA team,"
-        },
-        {
-          "type": "header",
-          "content": "Email"
-        },
-        {
-          "type": "text",
-          "id": "support_email",
-          "label": "Customer support email",
-          "default": "support@aira.com"
-        },
-        {
-          "type": "text",
-          "id": "partnerships_email",
-          "label": "Partnerships / affiliate email",
-          "default": "partnerships@aira.com"
-        },
-        {
-          "type": "header",
-          "content": "Business hours"
-        },
-        {
-          "type": "text",
-          "id": "business_hours_label",
-          "label": "Hours label",
-          "default": "Mon-Fri 9am-6pm GST"
-        },
-        {
-          "type": "header",
-          "content": "Legal entity (footer + contact page)"
-        },
-        {
-          "type": "text",
-          "id": "legal_entity_name",
-          "label": "Registered business name"
-        },
-        {
-          "type": "text",
-          "id": "legal_license_number",
-          "label": "Trade license / CR number"
-        },
-        {
-          "type": "textarea",
-          "id": "legal_business_address",
-          "label": "Business address"
+      // Smooth scroll + close mobile <details> on click
+      tocEl.addEventListener('click', e => {
+        const link = e.target.closest('a[data-toc-link]');
+        if (!link) return;
+        const target = document.getElementById(link.dataset.tocLink);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          target.focus({ preventScroll: true });
+          history.replaceState(null, '', link.getAttribute('href'));
+          const details = link.closest('details');
+          if (details) details.open = false;
         }
-      ]
-    }
+      });
 
-Reference these in:
-  - sections/contact-channels.liquid
-  - sections/contact-business-info.liquid
-  - footer (existing) — see section 6
-  - any section that renders a wa.me link
+      // Highlight current section via IntersectionObserver
+      const links = tocEl.querySelectorAll('a[data-toc-link]');
+      const obs   = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const link = tocEl.querySelector('a[data-toc-link="' + entry.target.id + '"]');
+          if (!link) return;
+          if (entry.isIntersecting) {
+            links.forEach(l => l.removeAttribute('aria-current'));
+            link.setAttribute('aria-current', 'true');
+            link.classList.add('text-main', 'font-medium');
+            link.classList.remove('text-main/70');
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px' });
+      headings.forEach(h => obs.observe(h));
+    })();
 
+LOAD: in theme.liquid (or layout/theme.liquid), add a conditional load so
+the JS only runs on /policies/* pages:
 
-================================================================================
-6. FOOTER NAVIGATION (SHOPIFY ADMIN MENU)
-================================================================================
-Footer links are managed via Shopify Admin → Online Store → Navigation,
-NOT hardcoded in the footer.liquid section.
-
-────────────────────────────────────────────────
-6.1  Audit existing footer menus
-────────────────────────────────────────────────
-Identify the existing Shopify Navigation menus that the footer renders.
-Likely names: "Footer Shop", "Footer About", "Footer Help", "Footer Legal".
-
-────────────────────────────────────────────────
-6.2  Update / create the four footer menus
-────────────────────────────────────────────────
-Final structure:
-
-  COLUMN 1 — Shop
-    - Starter Kit          → /products/starter-kit (or current slug)
-    - Refills              → /products/refills
-    - All Products         → /collections/all
-
-  COLUMN 2 — About
-    - Our Story            → /pages/our-story
-    - How It Works         → /pages/how-it-works
-    - Backed by Science    → /pages/science            ← NEW
-    - Reviews              → /pages/reviews (or anchor)
-    - Partner with Us      → /pages/affiliate          ← NEW
-
-  COLUMN 3 — Help
-    - Contact              → /pages/contact            ← NEW
-    - FAQ                  → /pages/faq                ← NEW (or refresh)
-    - Returns              → /pages/returns            ← NEW
-    - Order tracking       → /pages/order-tracking (or Shopify default)
-
-  COLUMN 4 — Legal
-    - Refund Policy        → /policies/refund-policy
-    - Shipping Policy      → /policies/shipping-policy
-    - Privacy Policy       → /policies/privacy-policy
-    - Terms of Service     → /policies/terms-of-service
-
-────────────────────────────────────────────────
-6.3  Footer social row
-────────────────────────────────────────────────
-Add WhatsApp icon to the social row (next to IG / TikTok / YouTube).
-The wa.me link must use the same theme settings as section 5 — DO NOT
-hardcode the number in footer.liquid.
-
-────────────────────────────────────────────────
-6.4  Footer legal block
-────────────────────────────────────────────────
-At the bottom of the footer, render the legal entity name + trade
-license / CR number from theme settings (see section 5):
-
-    {% if settings.legal_entity_name != blank %}
-      <p class="text-xs text-secondary/60">
-        {{ settings.legal_entity_name }}
-        {% if settings.legal_license_number != blank %}
-          — License {{ settings.legal_license_number }}
-        {% endif %}
-      </p>
+    {% if template contains 'page.policy' or request.path contains '/policies/' %}
+      <script src="{{ 'policy-page.js' | asset_url }}" defer></script>
+      <link rel="stylesheet" href="{{ 'policy-page.css' | asset_url }}">
     {% endif %}
 
-This is required for trust + GCC consumer protection compliance.
+────────────────────────────────────────────────
+3.2.2  Mobile TOC wrapper (in policy-content.liquid)
+────────────────────────────────────────────────
+On mobile, render the TOC inside a <details> so it collapses by default:
+
+    <details class="md:hidden mb-6 border-b border-main/15 pb-4">
+      <summary class="cursor-pointer text-sm font-medium text-main">
+        On this page
+      </summary>
+      <nav class="mt-3" aria-label="On this page" data-policy-toc></nav>
+    </details>
+
+    <aside class="hidden md:block md:w-1/3 md:max-w-[240px] md:sticky md:top-24 md:self-start">
+      <nav aria-label="On this page" data-policy-toc></nav>
+    </aside>
+
+NOTE: the JS in 3.2.1 finds the FIRST [data-policy-toc]. Since both the
+mobile and desktop nodes share the attribute, either tweak the JS to
+populate both, or render the TOC into a single node and use CSS to
+position it. Prefer the second approach for simplicity:
+
+  Single <nav data-policy-toc> rendered once; CSS shows it as a collapsible
+  <details> on mobile (using JS to wrap it on first paint) and as a sticky
+  sidebar on desktop. Pick whichever pattern fits the existing theme's
+  conventions cleanly.
+
+────────────────────────────────────────────────
+3.3  sections/policy-contact.liquid
+────────────────────────────────────────────────
+PURPOSE: Soft closer — "questions?" prompt, drives to email.
+
+LAYOUT:
+  - Full-width, bg-main (navy), text-secondary (cream)
+  - Centered, max-w-[640px], py-16 md:py-20
+  - H2: "Questions about how we handle your data?"
+  - Body: short reassurance
+  - Button: mailto link, primary button class (whatever /pages/contact uses)
+
+SCHEMA:
+    {% schema %}
+    {
+      "name": "Policy — Contact",
+      "settings": [
+        { "type": "text",     "id": "heading",   "label": "Heading",
+          "default": "Questions about how we handle your data?" },
+        { "type": "textarea", "id": "body",      "label": "Body",
+          "default": "Email us and we'll respond within the timeframe required by applicable law (typically 30 days)." },
+        { "type": "text",     "id": "cta_label", "label": "Button label",
+          "default": "Email our privacy team" },
+        { "type": "text",     "id": "cta_email", "label": "Contact email",
+          "default": "contact@aira-breathing.com",
+          "info": "Or use a dedicated alias like privacy@aira-breathing.com if you set one up." }
+      ],
+      "presets": [{ "name": "Policy — Contact" }]
+    }
+    {% endschema %}
+
+NOTE: For now hardcode the email default to contact@aira-breathing.com.
+If Tom sets up privacy@aira-breathing.com later, swap via theme settings
+(no code change needed).
+
+────────────────────────────────────────────────
+3.4  assets/policy-page.css — print + table styles
+────────────────────────────────────────────────
+Minimal file. Tailwind covers most of the prose typography via @apply or
+direct utility classes; this file is for what Tailwind can't do cleanly:
+
+    /* mobile horizontal table scroll, removed for print */
+    @media print {
+      .policy-table-wrap { overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+      .policy-toc, [data-policy-toc] { display: none !important; }
+      .policy-prose { max-width: 100% !important; }
+      .policy-prose h2 { break-after: avoid; }
+      .policy-prose table { font-size: 11pt; }
+    }
+
+    /* focus ring for keyboard navigation to a heading */
+    .policy-prose h2:focus,
+    .policy-prose h3:focus {
+      outline: 2px solid var(--color-main, #0a1f44);
+      outline-offset: 4px;
+    }
 
 
 ================================================================================
-7. WHATSAPP BUSINESS API SETUP (OPS — BLOCKING ITEM)
+4. ON SECTION 7 OF THE POLICY — DOES IT NEED EDITING?
 ================================================================================
-This is operational, not code, but it BLOCKS launch. Listed here so VSC
-knows to use the theme setting (section 5) and not hardcode anything.
 
-────────────────────────────────────────────────
-7.1  Why we need an API tool, not just the Business app
-────────────────────────────────────────────────
-Two founders working from different countries need a shared inbox.
-The free WhatsApp Business app does not support multi-agent operations
-(no thread assignment, no internal notes, no analytics). We need a
-Business API tool layered on top of one number.
+Section 7 of the policy text reads:
+  "You can manage cookies through your browser settings or, where
+   applicable, via the cookie consent banner on the Site. Disabling
+   strictly necessary cookies may break parts of the Site."
 
-────────────────────────────────────────────────
-7.2  Recommended tool
-────────────────────────────────────────────────
-LAUNCH PICK: Zoko (https://www.zoko.io)
-  - Native Shopify app — order history shows in-thread
-  - ~$15-30/mo
-  - GCC-compatible
-  - Easy migration if we outgrow it later
+This sentence is now true once Shopify's banner is enabled per 1.2 with
+"show in all regions." NO EDIT REQUIRED.
 
-ALTERNATIVES (if Zoko doesn't fit):
-  - WATI (~$39/mo) — strong MENA presence
-  - Respond.io (~$79/mo) — multi-channel inbox
-  - Trengo (~$25/user/mo) — general teams
-
-────────────────────────────────────────────────
-7.3  Setup checklist (Tom owns this — VSC waits on output)
-────────────────────────────────────────────────
-  [ ] Acquire a dedicated business phone number (UAE virtual / eSIM ok)
-      CRITICAL: must NOT have been used on personal WhatsApp.
-  [ ] Apply for WhatsApp Business API access via Zoko
-  [ ] Wait for Meta business verification (1-2 weeks)
-  [ ] Configure Zoko: invite Tom + Marie, set hours, auto-replies,
-      message templates
-  [ ] Provide the verified number to VSC for theme setting input
-
-────────────────────────────────────────────────
-7.4  Cost note
-────────────────────────────────────────────────
-Beyond the Zoko subscription, Meta charges per conversation:
-  - Service (customer-initiated): first 1,000/mo free
-  - Marketing (we-initiated): ~$0.03-0.10 per conversation in MENA
-Estimated total at low launch volume: $50-200/mo.
-
-────────────────────────────────────────────────
-7.5  Interim
-────────────────────────────────────────────────
-Until the API number is verified, populate the WhatsApp theme setting
-with a temporary WhatsApp Business app number (Tom's interim line).
-Swap to the API number once Meta clears it — this is a one-line theme
-setting change, not a code change.
+If Tom later decides to leave Shopify's banner on its default geo-targeting
+(EU/UK/CH/CA only), this sentence becomes mildly misleading for visitors
+outside those regions. Mitigation if that happens: change "via the cookie
+consent banner on the Site" to "via the cookie consent banner shown to
+visitors in regions where required by law." Don't make this change unless
+the geo decision changes.
 
 
 ================================================================================
-8. NAVBAR — DO NOT TOUCH
+5. THE POLICY CONTENT — VERBATIM HTML
 ================================================================================
-Confirmed: the main navbar gets no new links from this brief.
+Paste the block below into Shopify Admin → Settings → Policies → Privacy
+policy, using the HTML / source view of the rich-text editor.
 
-DO NOT add: Affiliate, Contact, FAQ, Returns, Science. All five live
-in the footer.
+DO NOT modify the wording. The "Last updated" date in the intro is also
+displayed in the hero via section settings — they should match.
 
-The navbar stays focused on purchase intent only.
+────────────────────────────────────────────────  BEGIN PASTE  ────────────────────────────────────────────────
+
+<p><em>Last updated: 19 May 2026</em></p>
+
+<p>This Privacy Policy describes how Aira ("we", "us", "our") collects, uses, stores, shares and protects personal information when you visit, use or make a purchase from aira-breathing.com (the "Site").</p>
+
+<p>By using the Site, you agree to the practices described in this Policy. If you do not agree, please do not use the Site.</p>
+
+<h2>1. Who we are (Data Controller)</h2>
+<p>The data controller responsible for your personal information is:</p>
+<ul>
+  <li><strong>Trading name:</strong> Aira</li>
+  <li><strong>Legal entity name:</strong> AIRA WELLNESS ECOM - FZCO</li>
+  <li><strong>Registered address:</strong> Building A1, Dubai Digital Park, Dubai Silicon Oasis, Dubai, United Arab Emirates</li>
+  <li><strong>Country of registration:</strong> United Arab Emirates</li>
+  <li><strong>Commercial registration / Trade licence number:</strong> 85942</li>
+  <li><strong>Contact email for privacy matters:</strong> <a href="mailto:contact@aira-breathing.com">contact@aira-breathing.com</a></li>
+</ul>
+<p>If you have questions about this Policy or how we handle your data, please contact us at the email above.</p>
+
+<h2>2. What information we collect</h2>
+<p>We collect personal information in three main ways:</p>
+
+<h3>a) Information you give us directly</h3>
+<p>When you create an account, place an order, sign up for our newsletter, or contact us, we collect:</p>
+<ul>
+  <li>Full name</li>
+  <li>Billing and shipping address</li>
+  <li>Email address</li>
+  <li>Phone number</li>
+  <li>Payment information (processed by our payment provider — see Section 5; we do not store full card numbers on our servers)</li>
+  <li>Order history and product preferences</li>
+  <li>Any messages, feedback or correspondence you send us</li>
+</ul>
+
+<h3>b) Information collected automatically when you browse</h3>
+<p>When you access the Site, our hosting platform (Shopify) and our analytics tools automatically receive:</p>
+<ul>
+  <li>IP address and approximate location derived from it</li>
+  <li>Device type, operating system and browser</li>
+  <li>Referring URL and pages visited on the Site</li>
+  <li>Date, time and duration of visit</li>
+  <li>Cookie identifiers (see Section 7)</li>
+</ul>
+
+<h3>c) Information from third parties</h3>
+<p>We may receive information about you from:</p>
+<ul>
+  <li>Payment processors (confirmation of payment status, fraud signals)</li>
+  <li>Shipping and logistics partners (delivery status, address verification)</li>
+  <li>Social media platforms, if you interact with our content or log in via a social account</li>
+</ul>
+
+<h2>3. Why we use your information and the legal basis</h2>
+<p>We only use your personal information for clearly defined purposes. The table below sets out each purpose and the legal basis under applicable data protection laws (including the GCC data protection laws applicable to us and, where relevant, the EU General Data Protection Regulation for customers in the EU/EEA).</p>
+
+<div class="policy-table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Purpose</th>
+        <th>Legal basis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Process and fulfil your orders, including delivery and returns</td><td>Performance of a contract with you</td></tr>
+      <tr><td>Verify your payment and prevent fraud</td><td>Legitimate interest in protecting our business and customers; legal obligation</td></tr>
+      <tr><td>Send order confirmations and shipping updates</td><td>Performance of a contract with you</td></tr>
+      <tr><td>Provide customer support and respond to your enquiries</td><td>Performance of a contract; legitimate interest</td></tr>
+      <tr><td>Send marketing emails about new products, offers or content</td><td>Your explicit consent (you can withdraw at any time)</td></tr>
+      <tr><td>Improve the Site, our products and customer experience</td><td>Legitimate interest in improving our service</td></tr>
+      <tr><td>Comply with legal, tax and regulatory obligations</td><td>Legal obligation</td></tr>
+      <tr><td>Defend our legal rights or respond to lawful requests by authorities</td><td>Legal obligation; legitimate interest</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p>We do not use your personal information for automated decision-making that produces legal or similarly significant effects on you.</p>
+
+<h2>4. Marketing communications and your choices</h2>
+<p>We will only send you marketing emails if you have opted in. Each marketing email contains an unsubscribe link, and you can withdraw your consent at any time by:</p>
+<ul>
+  <li>Clicking "unsubscribe" at the bottom of any marketing email, or</li>
+  <li>Emailing us at <a href="mailto:contact@aira-breathing.com">contact@aira-breathing.com</a></li>
+</ul>
+<p>Withdrawing consent does not affect the lawfulness of any processing carried out before you withdrew it. Even if you unsubscribe from marketing, we will still send you transactional messages relating to your orders (order confirmations, shipping notifications, etc.).</p>
+
+<h2>5. Who we share your information with</h2>
+<p>We do not sell your personal information. We share it only with the following categories of recipients, and only to the extent necessary:</p>
+<ul>
+  <li><strong>Shopify Inc.</strong> — our e-commerce platform provider. Shopify hosts our Site and stores order and customer data on secure servers. Shopify's privacy practices are described at <a href="https://www.shopify.com/legal/privacy" target="_blank" rel="noopener noreferrer">shopify.com/legal/privacy</a>.</li>
+  <li><strong>Payment processors</strong> — to process your payment securely. Card data is encrypted and handled in accordance with PCI-DSS (Payment Card Industry Data Security Standard). We do not store full payment card numbers.</li>
+  <li><strong>Shipping and fulfilment partners</strong> — to deliver your order to the address you provide.</li>
+  <li><strong>Email and communication providers</strong> — to send order confirmations and, where you have opted in, marketing communications.</li>
+  <li><strong>Professional advisors</strong> — accountants, lawyers and auditors, bound by confidentiality.</li>
+  <li><strong>Government authorities and regulators</strong> — where we are required by applicable law, court order, or to protect our legal rights.</li>
+  <li><strong>Successor entity</strong> — if Aira is sold, merged or undergoes a corporate reorganisation, your information may be transferred to the new owner under the same protections set out in this Policy.</li>
+</ul>
+<p>Each third-party service provider is contractually required to handle your data securely and only for the purposes we instruct.</p>
+
+<h2>6. International transfers of your data</h2>
+<p>Some of our service providers (including Shopify) are based outside the GCC, including in jurisdictions such as the United States, Canada, the European Union and Ireland. When we transfer your data internationally, we ensure adequate protection by relying on one or more of the following:</p>
+<ul>
+  <li>The country has been recognised as providing adequate protection by the relevant authority</li>
+  <li>Standard contractual clauses or equivalent contractual safeguards</li>
+  <li>Your explicit consent, where appropriate</li>
+</ul>
+<p>You can request more information about the specific safeguards in place by emailing <a href="mailto:contact@aira-breathing.com">contact@aira-breathing.com</a>.</p>
+
+<h2>7. Cookies and tracking technologies</h2>
+<p>A cookie is a small text file placed on your device when you visit a website. We use cookies and similar technologies to make the Site work, to understand how it is used, and (where you consent) for marketing.</p>
+<p>The cookies we use fall into four categories:</p>
+
+<h3>Strictly necessary cookies</h3>
+<p>Required for the Site to function. These cannot be disabled.</p>
+<div class="policy-table-wrap">
+  <table>
+    <thead><tr><th>Cookie</th><th>Purpose</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td><code>_session_id</code></td><td>Allows Shopify to manage your session</td><td>Session</td></tr>
+      <tr><td><code>_secure_session_id</code></td><td>Secure session management</td><td>Session</td></tr>
+      <tr><td><code>cart</code></td><td>Stores the contents of your cart</td><td>2 weeks</td></tr>
+      <tr><td><code>storefront_digest</code></td><td>Authentication for password-protected stores</td><td>Indefinite</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Performance and analytics cookies</h3>
+<p>Help us understand how visitors use the Site.</p>
+<div class="policy-table-wrap">
+  <table>
+    <thead><tr><th>Cookie</th><th>Purpose</th><th>Duration</th></tr></thead>
+    <tbody>
+      <tr><td><code>_shopify_visit</code></td><td>Tracks number of visits</td><td>30 minutes from last visit</td></tr>
+      <tr><td><code>_shopify_uniq</code></td><td>Counts unique visitors</td><td>Until midnight of the following day</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Functional cookies</h3>
+<p>Remember preferences such as your selected currency (used for currency conversion based on your IP-derived location).</p>
+
+<p>You can manage cookies through your browser settings or, where applicable, via the cookie consent banner on the Site. Disabling strictly necessary cookies may break parts of the Site.</p>
+
+<h2>8. How long we keep your data</h2>
+<p>We keep your personal information only as long as we need it for the purposes set out in this Policy, or to meet legal, accounting or reporting obligations.</p>
+<p>Indicative retention periods:</p>
+<ul>
+  <li><strong>Account and order data:</strong> for the duration of your customer relationship with us, plus the period required by applicable tax and commercial law.</li>
+  <li><strong>Payment transaction data:</strong> stored only as long as needed to complete the transaction, then deleted by the payment processor (subject to their own legal retention obligations).</li>
+  <li><strong>Marketing consent records:</strong> until you withdraw consent, plus a short period to evidence the withdrawal.</li>
+  <li><strong>Website analytics:</strong> typically up to 26 months.</li>
+  <li><strong>Customer support correspondence:</strong> typically 3 years after the matter is resolved.</li>
+</ul>
+<p>When the retention period ends, we securely delete or anonymise your data.</p>
+
+<h2>9. Your rights</h2>
+<p>Subject to the data protection law applicable to you, you have the following rights regarding your personal information:</p>
+<ul>
+  <li><strong>Right of access</strong> — request a copy of the personal data we hold about you</li>
+  <li><strong>Right of rectification</strong> — ask us to correct inaccurate or incomplete data</li>
+  <li><strong>Right of erasure ("right to be forgotten")</strong> — ask us to delete your data where there is no compelling reason for us to keep it</li>
+  <li><strong>Right to restrict processing</strong> — ask us to limit how we use your data</li>
+  <li><strong>Right to data portability</strong> — receive your data in a structured, machine-readable format</li>
+  <li><strong>Right to object</strong> — object to processing based on legitimate interests, including direct marketing</li>
+  <li><strong>Right to withdraw consent</strong> — at any time, where processing is based on consent</li>
+  <li><strong>Right to lodge a complaint</strong> — with the relevant data protection authority in your jurisdiction (for example, the UAE Data Office, the Saudi Data and Artificial Intelligence Authority (SDAIA), or your local equivalent)</li>
+</ul>
+<p>To exercise any of these rights, email <a href="mailto:contact@aira-breathing.com">contact@aira-breathing.com</a>. We will respond within the timeframe required by applicable law (typically 30 days). We may need to verify your identity before fulfilling your request.</p>
+<p>There is no fee for exercising your rights, unless your request is manifestly unfounded or excessive.</p>
+
+<h2>10. Security</h2>
+<p>We take the security of your data seriously. Measures we have in place include:</p>
+<ul>
+  <li>Encryption of data in transit using TLS (SSL) and at rest using industry-standard encryption (AES-256 where applied by our providers)</li>
+  <li>PCI-DSS compliant payment processing handled by certified payment gateways</li>
+  <li>Access controls limiting who can view personal data internally</li>
+  <li>Use of reputable third-party providers (Shopify, payment processors) that maintain their own security certifications</li>
+</ul>
+<p>No method of transmission over the internet or electronic storage is 100% secure, but we follow industry best practice. In the event of a personal data breach that is likely to affect your rights, we will notify you and the relevant authority in accordance with applicable law.</p>
+
+<h2>11. Children's privacy</h2>
+<p>The Site is not directed to children. We do not knowingly collect personal information from anyone under the age of 18. If you are under 18, please do not use the Site or provide any personal information. If we become aware that we have collected personal information from a child without verified parental consent, we will delete that information.</p>
+<p>By using the Site you confirm that you are at least 18 years old, or that you have the consent of a parent or legal guardian.</p>
+
+<h2>12. Links to other websites</h2>
+<p>The Site may contain links to third-party websites. This Privacy Policy does not apply to those websites. We are not responsible for the content or privacy practices of third parties. We encourage you to read the privacy policy of any third-party site you visit.</p>
+
+<h2>13. Changes to this Privacy Policy</h2>
+<p>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements or for other operational reasons. The "Last updated" date at the top of this Policy indicates when it was most recently revised.</p>
+<p>If we make material changes, we will notify you by email (where we have your address) or by posting a prominent notice on the Site before the changes take effect.</p>
+
+<h2>14. Contact us</h2>
+<p>If you have any questions about this Privacy Policy, would like to exercise your rights, or wish to make a complaint, please contact us at:</p>
+<p><strong>Email:</strong> <a href="mailto:contact@aira-breathing.com">contact@aira-breathing.com</a><br><strong>Postal address:</strong> Building A1, Dubai Digital Park, Dubai Silicon Oasis, Dubai, United Arab Emirates</p>
+<p>We will respond as quickly as possible and within the timeframe required by applicable law.</p>
+
+────────────────────────────────────────────────  END PASTE  ────────────────────────────────────────────────
 
 
 ================================================================================
-9. ORDER OF WORK (RECOMMENDED SEQUENCE)
+6. ACCEPTANCE CRITERIA
 ================================================================================
+Done when ALL of the following are true:
 
-PHASE 1 — Setup, settings, and Shopify config (Day 1)
-  1.1 Add the "Support & contact" theme settings (section 5).
-  1.2 Update / create the four footer Shopify navigation menus
-      (section 6.2). Initially the new page links will 404 — that's
-      fine, they'll resolve as pages are created.
-  1.3 Add WhatsApp icon to footer social row (section 6.3).
-  1.4 Add legal entity block to footer (section 6.4).
-  1.5 Confirm or override the policy template (section 1.2).
+  [ ] /policies/privacy-policy returns 200 and uses the new page.policy template
+  [ ] Hero renders with eyebrow + page title + last-updated, on navy bg
+      with halo, matching the our-story visual family but scaled down
+  [ ] All 14 H2 sections render with proper heading typography
+  [ ] Both 3-column and 2-column tables render correctly desktop + mobile
+      (horizontal scroll on mobile)
+  [ ] TOC is auto-generated client-side, sticky on desktop ≥ md
+  [ ] Mobile TOC is collapsed by default inside a <details> element
+  [ ] Anchor links smooth-scroll, current section is highlighted via
+      aria-current as the user scrolls
+  [ ] Contact section renders with mailto: link and matches navy footer
+      callout style
+  [ ] Print preview: TOC hidden, tables full-width, no clipped content
+  [ ] Page is indexable (no noindex meta on policy pages)
+  [ ] Shopify cookie banner appears on first visit from ALL regions (not
+      just EU); preference centre link visible inside the banner
+  [ ] Banner's "View privacy policy" link navigates to /policies/privacy-policy
+  [ ] After accepting/rejecting, banner does not reappear within the same
+      browser session
+  [ ] Lighthouse accessibility score ≥ 95 on /policies/privacy-policy
+  [ ] Verified on Chrome, Safari, iOS Safari, Firefox
 
-PHASE 2 — Page + template + section scaffolding (Day 1-2)
-  2.1 Create /pages/contact in Shopify Admin → scaffold template +
-      section files (section 2.3).
-  2.2 Create /pages/returns + scaffolds (section 2.1).
-  2.3 Create /pages/affiliate + scaffolds (section 2.2).
-  2.4 Create or refresh /pages/faq + scaffolds (section 2.4).
-      Implement FAQPage JSON-LD (section 2.4 schema snippet).
-  2.5 Create /pages/science + scaffolds (section 2.5).
-
-PHASE 3 — Form handlers (Day 2)
-  3.1 Wire up returns form → support email (section 4).
-  3.2 Wire up affiliate form → partnerships email.
-  3.3 Wire up contact fallback form → support email.
-  3.4 Configure auto-acknowledgment emails (section 4.4).
-
-PHASE 4 — Policy content paste + verify (15 min)
-  4.1 Tom pastes TOS, Privacy, Refund, Shipping content (section 1.1).
-  4.2 VSC verifies all four policy URLs render correctly.
-
-PHASE 5 — QA & validation (Day 2-3)
-  5.1 Visit each new page — confirm scaffolds render without errors.
-  5.2 Submit test entries through each form — confirm email routing.
-  5.3 Run /pages/faq through Google Rich Results Test (will only work
-      after FAQ content is filled by design phase, but scaffold should
-      still validate as empty FAQPage).
-  5.4 Test WhatsApp link from footer + contact page on mobile.
-
-WHEN PHASE 5 IS COMPLETE → hand off to design phase. VSC waits for
-per-page design briefs to be approved before filling in markup, copy,
-and styling.
+NICE-TO-HAVE (not blocking):
+  [ ] When sibling policies (TOS, Refund, Shipping) get rewritten later,
+      they automatically inherit this template — no extra dev work.
 
 
 ================================================================================
-10. OPEN QUESTIONS / BLOCKERS
+7. ORDER OF WORK
 ================================================================================
-Items that block specific phases:
 
-  BLOCKING PHASE 1:
-  [ ] Confirm legal entity name + trade license / CR number
-      (Tom — needed for footer + contact page)
+PHASE 1 — Shopify admin setup (15-30 min)
+  1.1  Paste policy HTML into Settings → Policies → Privacy policy
+       (section 5, via the source/HTML view)
+  1.2  Enable + configure Shopify cookie banner (section 1.2)
+  1.3  Confirm footer Legal link points to /policies/privacy-policy
 
-  BLOCKING PHASE 4:
-  [ ] Confirm policy content is drafted for all four:
-      Refund / Privacy / Terms / Shipping
-      (Tom — Tom said three are ready; shipping policy status
-      unconfirmed)
+PHASE 2 — Custom policy template (Day 1)
+  2.1  Create templates/page.policy.json
+  2.2  Build sections/policy-hero.liquid
+  2.3  Build sections/policy-content.liquid (with TOC + prose wrapper)
+  2.4  Build sections/policy-contact.liquid
+  2.5  Write assets/policy-page.js (TOC generator + sticky/observer logic)
+  2.6  Write assets/policy-page.css (table + print styles)
+  2.7  Conditionally load JS/CSS on /policies/* pages in theme.liquid
 
-  BLOCKING PHASE 5 (and launch):
-  [ ] WhatsApp Business API verification complete OR interim
-      number available
-  [ ] support@ and partnerships@ email addresses created and tested
+PHASE 3 — QA (½ day)
+  3.1  Walk the acceptance criteria checklist (section 6)
+  3.2  Mobile QA: real iOS + Android
+  3.3  Print preview
+  3.4  Lighthouse + axe accessibility scan
+  3.5  Cross-browser smoke test
 
-NOT BLOCKING but good to confirm before launch:
-  [ ] Confirm IG / TikTok / YouTube social URLs in theme settings
-  [ ] Decide auto-acknowledgment copy (defaults in section 4.4 are fine)
 
+================================================================================
+8. OPEN QUESTIONS / DECISIONS NEEDED FROM TOM
+================================================================================
+
+  [ ] Set up privacy@aira-breathing.com as a dedicated alias (recommended,
+      easier to audit privacy requests over time). If yes, swap the email
+      in the policy-contact section settings AND consider updating the
+      policy text (sections 1, 4, 6, 9, 14) in a follow-up. For now the
+      brief uses contact@aira-breathing.com per the source doc.
+
+  [ ] Confirm Shopify cookie banner is set to "show in all regions" not
+      just EU/UK/CH/CA. If left at default, section 4 of this brief
+      explains the one-line policy text edit that becomes required.
+
+
+================================================================================
+9. WHEN THE POLICY CHANGES (OPERATIONAL NOTE FOR TOM)
+================================================================================
+Not a code task, but: when the policy text materially changes:
+
+  1.  Update the canonical Notion doc.
+  2.  Update the HTML in Shopify Settings → Policies → Privacy policy.
+  3.  Update the "Last updated date" in theme settings (Policy — Hero section).
+  4.  If material (new processors, new data categories, change in legal
+      basis), email the customer list per section 13's commitment.
 
 ================================================================================
 END OF BRIEF
