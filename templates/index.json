@@ -389,7 +389,7 @@
         "heading": "See it in action.",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing",
-        "theme": "dark",
+        "theme": "light",
         "shop_cta_label": "",
         "shop_cta_url": ""
       }
@@ -400,7 +400,8 @@
         "eyebrow": "What our customers say",
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
-        "product": "aira-starter-kit"
+        "product": "aira-starter-kit",
+        "theme": "dark"
       }
     },
     "faq": {

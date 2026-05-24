@@ -370,6 +370,84 @@
     }
   }
 
+  /* ── Mobile video-only: collapse details, give video more vertical space ── */
+  .review-lightbox__expand-tab {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .review-lightbox.is-video .review-lightbox__dialog {
+      position: relative;
+      max-height: 92vh;
+    }
+
+    .review-lightbox.is-video .review-lightbox__media {
+      max-height: none;
+      height: auto;
+      flex: 1 1 auto;
+    }
+
+    .review-lightbox.is-video .review-lightbox__media iframe {
+      height: 100%;
+      min-height: 70vh;
+    }
+
+    .review-lightbox.is-video .review-lightbox__details {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-height: 80%;
+      background: rgba(255, 255, 255, 0.95);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      padding: 4px 20px 24px;
+      transform: translateY(calc(100% - 76px));
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .review-lightbox.is-video .review-lightbox__details.is-expanded {
+      transform: translateY(0);
+    }
+
+    .review-lightbox.is-video .review-lightbox__helpful {
+      display: none;
+    }
+
+    .review-lightbox.is-video .review-lightbox__reviewer-product {
+      display: none;
+    }
+    .review-lightbox.is-video .review-lightbox__details.is-expanded .review-lightbox__reviewer-product {
+      display: block;
+    }
+
+    .review-lightbox.is-video .review-lightbox__expand-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 6px 0 2px;
+      cursor: pointer;
+      color: var(--color-main, #0A1A34);
+    }
+    .review-lightbox.is-video .review-lightbox__expand-tab svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s ease;
+    }
+    .review-lightbox.is-video .review-lightbox__details.is-expanded .review-lightbox__expand-tab svg {
+      transform: rotate(180deg);
+    }
+  }
+
   body.lightbox-open {
     overflow: hidden;
   }
@@ -688,8 +766,28 @@
   }
 </style>
 
-<section class="bg-secondary" data-custom-reviews data-product-id="{{ review_product.id }}">
-  <div class="container-contained py-12 md:py-20">
+{%- liquid
+  assign cr_theme = section.settings.theme | default: 'light'
+  if cr_theme == 'dark'
+    assign cr_bg_class = 'bg-main'
+    assign cr_heading_class = 'text-secondary'
+    assign cr_cta_class = 'bg-secondary text-main hover:bg-secondary/90'
+  else
+    assign cr_bg_class = 'bg-secondary'
+    assign cr_heading_class = 'text-title'
+    assign cr_cta_class = 'bg-main text-secondary hover:bg-main/90'
+  endif
+-%}
+<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}">
+  {%- if cr_theme == 'dark' -%}
+    <div
+      class="absolute inset-0 pointer-events-none"
+      style="background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.22), transparent 65%),
+        radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.22), transparent 70%);"
+    ></div>
+  {%- endif -%}
+  <div class="container-contained py-12 md:py-20 relative z-10">
 
     <!-- ── Section header ── -->
     <div class="text-center mb-10 md:mb-14">
@@ -699,7 +797,7 @@
         </p>
       {%- endif -%}
       {%- if section.settings.heading != blank -%}
-        <h2 class="text-3xl md:text-4xl font-heading font-bold text-title">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold {{ cr_heading_class }}">
           {{ section.settings.heading }}
         </h2>
       {%- endif -%}
@@ -746,7 +844,7 @@
 
     <!-- ── Write a review CTA ── -->
     <div class="text-center mt-8">
-      <button class="reviews-write-cta inline-block bg-main text-secondary border-none rounded-xl px-10 py-4 text-sm font-medium tracking-wide cursor-pointer transition-colors duration-200 hover:bg-main/90"
+      <button class="reviews-write-cta inline-block {{ cr_cta_class }} border-none rounded-xl px-10 py-4 text-sm font-medium tracking-wide cursor-pointer transition-colors duration-200"
         onclick="document.querySelector('.jdgm-widget-hidden .jm-button--primary').click()">
         {{ section.settings.cta_text | default: 'Write a review' }}
       </button>
@@ -1129,9 +1227,10 @@
 
     // Update summary
     if (summaryEl) {
+      var summaryTextClass = section.getAttribute('data-theme') === 'dark' ? 'text-secondary' : 'text-copy';
       summaryEl.innerHTML =
         '<span class="flex gap-0.5">' + starsHTML(Math.round(avgRating)) + '</span>' +
-        '<span class="text-[15px] text-copy">' + avgRating.toFixed(1) + ' from ' + totalCount + ' reviews</span>';
+        '<span class="text-[15px] ' + summaryTextClass + '">' + avgRating.toFixed(1) + ' from ' + totalCount + ' reviews</span>';
     }
 
     // Setup carousel navigation
@@ -1306,11 +1405,32 @@
     if (!lightbox) return;
 
     var mediaEl = lightbox.querySelector('.review-lightbox__media');
+    var detailsEl = lightbox.querySelector('.review-lightbox__details');
     var detailsReviewer = lightbox.querySelector('.review-lightbox__reviewer');
     var detailsStars = lightbox.querySelector('.review-lightbox__stars');
     var detailsTitle = lightbox.querySelector('.review-lightbox__title');
     var detailsBody = lightbox.querySelector('.review-lightbox__body');
     var detailsHelpful = lightbox.querySelector('.review-lightbox__helpful');
+
+    // ── Video vs photo mode + expand tab (mobile) ──
+    lightbox.classList.toggle('is-video', !!review.isVideo);
+    if (detailsEl) detailsEl.classList.remove('is-expanded');
+
+    if (detailsEl && !detailsEl.querySelector('.review-lightbox__expand-tab')) {
+      var expandTab = document.createElement('button');
+      expandTab.type = 'button';
+      expandTab.className = 'review-lightbox__expand-tab';
+      expandTab.setAttribute('aria-label', 'Show review details');
+      expandTab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+      expandTab.addEventListener('click', function () {
+        detailsEl.classList.toggle('is-expanded');
+        expandTab.setAttribute(
+          'aria-label',
+          detailsEl.classList.contains('is-expanded') ? 'Hide review details' : 'Show review details'
+        );
+      });
+      detailsEl.insertBefore(expandTab, detailsEl.firstChild);
+    }
 
     // ── Populate media ──
     if (review.isVideo) {
@@ -1447,6 +1567,16 @@
       "id": "cta_text",
       "label": "CTA button text",
       "default": "Write a review"
+    },
+    {
+      "type": "select",
+      "id": "theme",
+      "label": "Theme",
+      "options": [
+        { "value": "light", "label": "Light (cream)" },
+        { "value": "dark",  "label": "Dark (navy)" }
+      ],
+      "default": "light"
     },
     {
       "type": "header",
