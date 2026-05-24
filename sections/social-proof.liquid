@@ -267,7 +267,7 @@
 					</div>
 
 					{%- comment -%} Benefit cell {%- endcomment -%}
-					<div class="pr-10 xl:pr-16 pl-12 py-6 {% unless forloop.last %}border-b border-white/10{% endunless %} border-l">
+					<div class="pr-10 xl:pr-16 pl-12 py-6 {% unless forloop.last %}border-b{% endunless %} border-l border-white/10">
 						{%- assign dt_b_counter = 0 -%}
 						{%- for block in section.blocks -%}
 							{%- if block.type == 'benefit' -%}

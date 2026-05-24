@@ -497,10 +497,10 @@
   "order": [
     "hero",
     "before_after_slider",
-    "how_to_use",
     "health_effects",
     "social_proof",
     "benefits_slider",
+    "how_to_use",
     "ugc_gallery",
     "custom_reviews",
     "faq",
