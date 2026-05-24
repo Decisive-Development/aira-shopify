@@ -16,14 +16,10 @@
 
 	<div class="relative z-10 container-contained max-w-[880px] text-center">
 
-		{%- comment -%} Eyebrow with hairlines {%- endcomment -%}
-		<div class="flex items-center justify-center gap-3 md:gap-3.5 mb-6 md:mb-8">
-			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
-			<p class="font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0">
-				{{ section.settings.eyebrow | default: 'Where we go from here' }}
-			</p>
-			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
-		</div>
+		{%- comment -%} Eyebrow {%- endcomment -%}
+		<p class="text-center font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0 mb-6 md:mb-8">
+			{{ section.settings.eyebrow | default: 'Where we go from here' }}
+		</p>
 
 		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
 		{%- liquid

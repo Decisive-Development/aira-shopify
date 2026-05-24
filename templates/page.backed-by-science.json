@@ -71,22 +71,6 @@
 			}
 		},
 
-		"clinical_claims": {
-			"type": "science-clinical-claims",
-			"blocks": {
-				"claim-1": { "type": "claim", "settings": { "figure": "+[XX]%",  "body": "[Specific numerical result — e.g., increase in measured nasal airflow over baseline in n=[X] adult subjects]", "citation_ref": "7" } },
-				"claim-2": { "type": "claim", "settings": { "figure": "[XX] hrs", "body": "[Specific numerical result — e.g., average sustained adhesion through a full night of side-sleeping]",        "citation_ref": "8" } }
-			},
-			"block_order": ["claim-1", "claim-2"],
-			"settings": {
-				"is_published": false,
-				"eyebrow": "Verified results",
-				"heading": "Independently tested.",
-				"lede": "When we make a numerical claim about Aira, it comes from third-party testing. Every figure below is cited.",
-				"disclaimer": "Aira does not make claims about treating sleep apnea or any other medical condition. Every claim above refers to mechanical performance only."
-			}
-		},
-
 		"citations": {
 			"type": "science-citations",
 			"blocks": {
@@ -110,5 +94,5 @@
 			}
 		}
 	},
-	"order": ["hero", "nasal_breathing", "mechanism", "medical_advisor", "clinical_claims", "citations"]
+	"order": ["hero", "nasal_breathing", "mechanism", "medical_advisor", "citations"]
 }

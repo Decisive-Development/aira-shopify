@@ -16,15 +16,6 @@
 
 	<div class="relative z-10 container-contained">
 
-		{%- comment -%} Eyebrow {%- endcomment -%}
-		<div class="flex items-center justify-center gap-3 md:gap-3.5 mb-6 md:mb-8">
-			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
-			<p class="font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0">
-				{{ section.settings.eyebrow | default: 'Our story' }}
-			</p>
-			<span class="block w-6 md:w-8 h-px bg-tertiary-light/70"></span>
-		</div>
-
 		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
 		{%- liquid
 			assign hl_text = section.settings.headline
@@ -37,22 +28,11 @@
 			endif
 		-%}
 		<h1
-			class="font-heading font-normal text-[38px] md:text-[clamp(40px,5.4vw,76px)] leading-[1.08] md:leading-[1.05] tracking-[-0.025em] text-secondary text-center text-balance mx-auto mb-8 md:mb-10"
+			class="font-heading font-normal text-[38px] md:text-[clamp(40px,5.4vw,76px)] leading-[1.08] md:leading-[1.05] tracking-[-0.025em] text-secondary text-center text-balance mx-auto mb-12 md:mb-16"
 			style="max-width: 18ch;"
 		>
 			{{ hl_html }}
 		</h1>
-
-		{%- comment -%} Soft scroll cue — gives the hero question direction without breaking calm tone {%- endcomment -%}
-		<div class="mb-10 md:mb-16 flex justify-center">
-			<a
-				href="#story-tiles"
-				class="font-body text-sm font-medium tracking-widest uppercase text-secondary/70 hover:text-secondary transition-colors inline-flex items-center gap-2 group"
-			>
-				See how it works
-				<span class="transition-transform group-hover:translate-y-0.5">↓</span>
-			</a>
-		</div>
 
 		{%- comment -%} Landscape photograph (21:9 desktop / 4:5 mobile) {%- endcomment -%}
 		<div
@@ -85,9 +65,11 @@
 			{%- endif -%}
 
 			{%- comment -%} Caption (bottom-right) {%- endcomment -%}
-			<div class="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-body text-[9.5px] md:text-[10.5px] uppercase tracking-[0.14em] text-tertiary-light/85">
-				{{ section.settings.photo_caption | default: 'Aira · 2025' }}
-			</div>
+			{%- if section.settings.photo_caption != blank -%}
+				<div class="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-body text-[9.5px] md:text-[10.5px] uppercase tracking-[0.14em] text-tertiary-light/85">
+					{{ section.settings.photo_caption }}
+				</div>
+			{%- endif -%}
 		</div>
 
 		{%- comment -%} Supporting copy + meta row {%- endcomment -%}
@@ -181,8 +163,7 @@
 		{
 			"type": "text",
 			"id": "photo_caption",
-			"label": "Photo caption",
-			"default": "Aira · 2025"
+			"label": "Photo caption"
 		},
 		{
 			"type": "text",

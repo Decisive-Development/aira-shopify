@@ -38,7 +38,7 @@
         "heading_size": "md",
         "before_label": "Without Aira",
         "after_label": "With Aira",
-        "background_color": "#f1ebe1",
+        "background_color": "#ffffff",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
         "container_width": "contained",
@@ -51,21 +51,18 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "icon": "",
             "text": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "icon": "",
             "text": "Cleaner air in — your nose filters, warms and humidifies every breath. Your mouth doesn't."
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
-            "icon": "",
             "text": "Calmer recovery — nasal breathing helps bring heart rate and breathing back down between efforts."
           }
         }
@@ -86,7 +83,7 @@
         "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max.",
         "stat_footnote": "Dallam et al., 2018",
         "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
-        "container_width": "contained"
+        "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp"
       }
     },
     "social_proof": {
@@ -457,9 +454,9 @@
   "order": [
     "hero",
     "before_after_slider",
-    "performance",
     "social_proof",
     "benefits_slider",
+    "performance",
     "how_to_use",
     "ugc_gallery",
     "custom_reviews",

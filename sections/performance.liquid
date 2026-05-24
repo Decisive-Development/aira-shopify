@@ -1,13 +1,4 @@
 {%- liquid
-	case section.settings.container_width
-		when 'contained'
-			assign container_class = 'container-contained'
-		when 'wide'
-			assign container_class = 'container-wide'
-		when 'full'
-			assign container_class = 'container-full'
-	endcase
-
 	assign has_image_desktop = false
 	if section.settings.image_desktop != blank
 		assign has_image_desktop = true
@@ -18,360 +9,413 @@
 		assign has_image_mobile = true
 	endif
 
-	assign has_any_image = false
-	if has_image_desktop or has_image_mobile
-		assign has_any_image = true
-	endif
+	assign image_alt = section.settings.image_desktop.alt | default: section.settings.heading | escape
 
-	assign alt_text = section.settings.heading | default: 'AIRA — Performance' | escape
-	if has_image_desktop and section.settings.image_desktop.alt != blank
-		assign alt_text = section.settings.image_desktop.alt | escape
-	elsif has_image_mobile and section.settings.image_mobile.alt != blank
-		assign alt_text = section.settings.image_mobile.alt | escape
-	endif
+	# Split stat_value into numeric + unit (e.g. "22%" → "22" + "%")
+	assign stat_chars  = section.settings.stat_value | split: ''
+	assign stat_number = ''
+	assign stat_unit   = ''
+	assign in_unit     = false
+	for c in stat_chars
+		assign is_digit = false
+		case c
+			when '0','1','2','3','4','5','6','7','8','9','.',','
+				assign is_digit = true
+		endcase
+		if in_unit
+			assign stat_unit = stat_unit | append: c
+		elsif is_digit
+			assign stat_number = stat_number | append: c
+		else
+			assign in_unit = true
+			assign stat_unit = stat_unit | append: c
+		endif
+	endfor
+
+	# Break heading across two lines on the first ". "
+	assign heading_parts = section.settings.heading | split: '. '
+	assign heading_html  = heading_parts | join: '.<br>'
 -%}
+
+{%- comment -%}
+	────────────────────────────────────────────────────────────
+	Stat card — captured once, rendered twice (mobile + desktop)
+	────────────────────────────────────────────────────────────
+{%- endcomment -%}
+{%- capture stat_card -%}
+	<div
+		class="bg-main text-secondary w-full max-w-[340px] mx-auto p-7 lg:p-[36px_38px_32px]"
+		style="border-radius: 6px; border: 1px solid rgba(241,235,225,0.08); box-shadow: 0 32px 80px rgba(7,18,38,0.5), 0 8px 24px rgba(7,18,38,0.3);"
+	>
+		{%- comment -%} Big number + unit {%- endcomment -%}
+		{%- if section.settings.stat_value != blank -%}
+			<div class="flex items-baseline">
+				<span
+					class="font-heading heading-weight text-secondary text-[64px] lg:text-[84px]"
+					style="line-height: 0.95; letter-spacing: -0.03em;"
+				>
+					{{- stat_number -}}
+				</span>
+				{%- if stat_unit != blank -%}
+					<span
+						class="font-heading heading-weight ml-0.5 text-[28px] lg:text-[36px]"
+						style="line-height: 0.95; letter-spacing: -0.02em; color: #9BB7D4;"
+					>
+						{{- stat_unit -}}
+					</span>
+				{%- endif -%}
+			</div>
+		{%- endif -%}
+
+		{%- if section.settings.stat_label != blank -%}
+			<p
+				class="font-heading font-semibold uppercase text-secondary"
+				style="font-size: 11px; letter-spacing: 0.18em; margin: 12px 0 14px;"
+			>
+				{{- section.settings.stat_label -}}
+			</p>
+		{%- endif -%}
+
+		{%- if section.settings.stat_supporting != blank -%}
+			<p
+				class="font-body"
+				style="font-size: 13px; line-height: 1.6; color: rgba(241,235,225,0.75);"
+			>
+				{{- section.settings.stat_supporting -}}
+			</p>
+		{%- endif -%}
+
+		{%- if section.settings.stat_footnote != blank -%}
+			<div class="mt-4">
+				{%- if section.settings.stat_footnote_url != blank -%}
+					<a
+						href="{{ section.settings.stat_footnote_url }}"
+						target="_blank"
+						rel="noopener"
+						class="font-mono uppercase inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+						style="font-size: 10.5px; letter-spacing: 0.06em; color: #9BB7D4;"
+					>
+						{{ section.settings.stat_footnote }}
+						<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+					</a>
+				{%- else -%}
+					<span
+						class="font-mono uppercase"
+						style="font-size: 10.5px; letter-spacing: 0.06em; color: #9BB7D4;"
+					>
+						{{ section.settings.stat_footnote }}
+					</span>
+				{%- endif -%}
+			</div>
+		{%- endif -%}
+	</div>
+{%- endcapture -%}
 
 <section
 	id="performance-{{ section.id }}"
-	class="relative overflow-hidden w-full bg-main text-secondary md:min-h-[85vh] md:max-h-[900px]"
+	class="relative w-full overflow-hidden bg-cream-light"
 	data-performance="{{ section.id }}"
 >
+	<div class="md:grid md:grid-cols-[1fr_1fr] lg:grid-cols-[1.05fr_1fr] md:min-h-[680px] lg:min-h-[min(760px,90vh)]">
 
-	{%- comment -%} ── Image layer ── {%- endcomment -%}
-	<div class="relative w-full aspect-[4/5] md:aspect-auto md:absolute md:inset-0">
+		{%- comment -%} ── Photo column ── {%- endcomment -%}
+		<div class="relative aspect-4/5 md:aspect-auto md:h-full">
+			{%- if has_image_desktop or has_image_mobile -%}
+				<picture>
+					{%- if has_image_desktop -%}
+						<source
+							media="(min-width: 768px)"
+							srcset="{{ section.settings.image_desktop | image_url: width: 768 }} 768w,
+							        {{ section.settings.image_desktop | image_url: width: 1280 }} 1280w,
+							        {{ section.settings.image_desktop | image_url: width: 1920 }} 1920w,
+							        {{ section.settings.image_desktop | image_url: width: 2400 }} 2400w"
+							sizes="(min-width: 1024px) 52vw, 50vw"
+						>
+					{%- endif -%}
+					{%- if has_image_mobile -%}
+						<img
+							src="{{ section.settings.image_mobile | image_url: width: 1125 }}"
+							srcset="{{ section.settings.image_mobile | image_url: width: 750 }} 750w,
+							        {{ section.settings.image_mobile | image_url: width: 1125 }} 1125w,
+							        {{ section.settings.image_mobile | image_url: width: 1500 }} 1500w"
+							sizes="100vw"
+							alt="{{ image_alt }}"
+							class="absolute inset-0 w-full h-full object-cover"
+							loading="lazy"
+							decoding="async"
+							width="{{ section.settings.image_mobile.width }}"
+							height="{{ section.settings.image_mobile.height }}"
+						>
+					{%- elsif has_image_desktop -%}
+						<img
+							src="{{ section.settings.image_desktop | image_url: width: 1280 }}"
+							srcset="{{ section.settings.image_desktop | image_url: width: 768 }} 768w,
+							        {{ section.settings.image_desktop | image_url: width: 1280 }} 1280w,
+							        {{ section.settings.image_desktop | image_url: width: 1920 }} 1920w"
+							sizes="100vw"
+							alt="{{ image_alt }}"
+							class="absolute inset-0 w-full h-full object-cover"
+							loading="lazy"
+							decoding="async"
+							width="{{ section.settings.image_desktop.width }}"
+							height="{{ section.settings.image_desktop.height }}"
+						>
+					{%- endif -%}
+				</picture>
+			{%- else -%}
+				<div class="absolute inset-0 bg-main/10"></div>
+			{%- endif -%}
 
-		{%- if has_any_image -%}
-			<picture>
-				{%- if has_image_desktop -%}
-					<source
-						media="(min-width: 768px)"
-						srcset="{{ section.settings.image_desktop | image_url: width: 1280 }} 1280w,
-						        {{ section.settings.image_desktop | image_url: width: 1920 }} 1920w,
-						        {{ section.settings.image_desktop | image_url: width: 2400 }} 2400w"
-						sizes="100vw"
+			{%- comment -%} Corner labels {%- endcomment -%}
+			{%- if section.settings.image_marker != blank -%}
+				<div
+					class="absolute top-4 left-4 md:top-7 md:left-7 flex items-center gap-2 pointer-events-none"
+				>
+					<span
+						class="inline-block h-px"
+						style="width: 18px; background-color: rgba(241,235,225,0.7);"
+					></span>
+					<span
+						class="font-mono uppercase"
+						style="font-size: 9.5px; letter-spacing: 0.16em; color: rgba(241,235,225,0.7);"
 					>
-				{%- endif -%}
+						{{ section.settings.image_marker }}
+					</span>
+				</div>
+			{%- endif -%}
 
-				{%- if has_image_mobile -%}
-					<img
-						src="{{ section.settings.image_mobile | image_url: width: 1125 }}"
-						srcset="{{ section.settings.image_mobile | image_url: width: 750 }} 750w,
-						        {{ section.settings.image_mobile | image_url: width: 1125 }} 1125w,
-						        {{ section.settings.image_mobile | image_url: width: 1500 }} 1500w"
-						sizes="100vw"
-						alt="{{ alt_text }}"
-						class="absolute inset-0 w-full h-full object-cover"
-						loading="lazy"
-						decoding="async"
-						width="{{ section.settings.image_mobile.width }}"
-						height="{{ section.settings.image_mobile.height }}"
-					>
-				{%- elsif has_image_desktop -%}
-					<img
-						src="{{ section.settings.image_desktop | image_url: width: 1920 }}"
-						alt="{{ alt_text }}"
-						class="absolute inset-0 w-full h-full object-cover"
-						loading="lazy"
-						decoding="async"
-						width="{{ section.settings.image_desktop.width }}"
-						height="{{ section.settings.image_desktop.height }}"
-					>
-				{%- endif -%}
-			</picture>
-		{%- endif -%}
+			{%- if section.settings.image_caption != blank -%}
+				<span
+					class="absolute bottom-4 left-4 md:bottom-7 md:left-7 font-mono uppercase pointer-events-none"
+					style="font-size: 9.5px; letter-spacing: 0.14em; color: rgba(241,235,225,0.55);"
+				>
+					{{ section.settings.image_caption }}
+				</span>
+			{%- endif -%}
+		</div>
 
-		{%- comment -%} Desktop legibility gradient — dark on left, fades right {%- endcomment -%}
-		<div
-			class="hidden md:block absolute inset-0 pointer-events-none"
-			style="background: linear-gradient(90deg, rgba(10,26,52,0.92) 0%, rgba(10,26,52,0.78) 22%, rgba(10,26,52,0.45) 42%, rgba(10,26,52,0.12) 62%, transparent 80%);"
-		></div>
+		{%- comment -%} ── Mobile stat card (between photo and copy) ── {%- endcomment -%}
+		<div class="md:hidden relative z-10 -mt-14 px-6">
+			{{ stat_card }}
+		</div>
 
-		{%- comment -%} Mobile fade — image bleeds into the content block below {%- endcomment -%}
-		<div
-			class="md:hidden absolute inset-x-0 bottom-0 h-24 pointer-events-none"
-			style="background: linear-gradient(180deg, transparent, var(--color-main));"
-		></div>
-	</div>
+		{%- comment -%} ── Copy column ── {%- endcomment -%}
+		<div class="relative bg-secondary px-6 pt-10 pb-14 md:px-12 md:py-16 md:pl-[200px] md:pr-12 lg:pt-24 lg:pr-[88px] lg:pb-20 lg:pl-[210px] flex flex-col md:justify-center">
 
-	{%- comment -%} ── Content layer ── {%- endcomment -%}
-	<div class="relative md:absolute md:inset-0 md:flex md:items-end md:pb-16 lg:pb-20">
-		<div class="{{ container_class }} w-full py-10 md:py-0">
-			<div
-				class="max-w-md md:max-w-lg lg:max-w-xl flex flex-col gap-5 md:gap-6 transition-all duration-700 ease-out opacity-0 translate-y-6"
-				data-animate
-			>
+			{%- comment -%} Eyebrow {%- endcomment -%}
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-6 lg:mb-7">
+					{{ section.settings.eyebrow }}
+				</p>
+			{%- endif -%}
 
-				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-xs font-bold uppercase tracking-widest text-highlight">
-						{{ section.settings.eyebrow }}
-					</p>
-				{%- endif -%}
+			{%- comment -%} Heading {%- endcomment -%}
+			{%- if section.settings.heading != blank -%}
+				<h2
+					class="font-heading heading-weight text-main"
+					style="font-size: 40px; line-height: 1.0; letter-spacing: -0.03em;"
+				>
+					{{ heading_html }}
+				</h2>
+				<style>
+					@media (min-width: 768px) {
+						#performance-{{ section.id }} h2 { font-size: 52px; }
+					}
+					@media (min-width: 1024px) {
+						#performance-{{ section.id }} h2 { font-size: 64px; }
+					}
+				</style>
+			{%- endif -%}
 
-				{%- if section.settings.heading != blank -%}
-					<h2 class="font-heading heading-weight text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-secondary">
-						{{ section.settings.heading }}
-					</h2>
-				{%- endif -%}
+			{%- comment -%} Subhead {%- endcomment -%}
+			{%- if section.settings.subheading != blank -%}
+				<p
+					class="font-body text-copy mt-6 md:mt-7"
+					style="font-size: 15.5px; line-height: 1.65; max-width: 38ch;"
+				>
+					{{ section.settings.subheading }}
+				</p>
+				<style>
+					@media (min-width: 1024px) {
+						#performance-{{ section.id }} .perf-subhead { font-size: 17.5px; }
+					}
+				</style>
+			{%- endif -%}
 
-				{%- if section.settings.subheading != blank -%}
-					<p class="text-base md:text-lg leading-relaxed text-secondary/80 max-w-md">
-						{{ section.settings.subheading }}
-					</p>
-				{%- endif -%}
+			{%- comment -%} Benefits {%- endcomment -%}
+			{%- if section.blocks.size > 0 -%}
+				<div
+					class="mt-7 md:mt-8 pt-6 md:pt-7 flex flex-col gap-3.5"
+					style="border-top: 1px solid #E6DFD2;"
+				>
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'benefit' -%}
+							{%- liquid
+								assign idx = forloop.index | prepend: '0' | slice: -2, 2
 
-				{%- if section.settings.cta_label != blank -%}
-					<div class="pt-1">
+								assign benefit_lead = block.settings.lead
+								assign benefit_text = block.settings.text
+
+								if benefit_lead == blank and benefit_text contains ' — '
+									assign benefit_lead = benefit_text | split: ' — ' | first
+									assign benefit_text = benefit_text | remove_first: benefit_lead | remove_first: ' — '
+								endif
+							-%}
+							<div
+								class="grid items-baseline gap-3 grid-cols-[24px_1fr] lg:grid-cols-[32px_1fr]"
+								{{ block.shopify_attributes }}
+							>
+								<span
+									class="font-mono uppercase text-highlight"
+									style="font-size: 11px; letter-spacing: 0.12em;"
+								>
+									{{ idx }}
+								</span>
+								<p class="font-body text-copy" style="font-size: 15px; line-height: 1.55;">
+									{%- if benefit_lead != blank -%}
+										<span class="font-semibold text-main">{{ benefit_lead }}</span>
+										{%- if benefit_text != blank %} &mdash; {{ benefit_text }}{%- endif -%}
+									{%- else -%}
+										{{ benefit_text }}
+									{%- endif -%}
+								</p>
+							</div>
+						{%- endif -%}
+					{%- endfor -%}
+				</div>
+			{%- endif -%}
+
+			{%- comment -%} CTAs {%- endcomment -%}
+			{%- if section.settings.cta_label != blank or section.settings.cta_secondary_label != blank -%}
+				<div class="mt-8 md:mt-10 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+					{%- if section.settings.cta_label != blank -%}
 						{%- render 'cta-button',
 							label:   section.settings.cta_label,
 							url:     section.settings.cta_url,
-							variant: 'accent'
+							variant: 'accent',
+							size:    'lg',
+							extra_classes: 'w-full md:w-auto text-center'
 						-%}
-					</div>
-				{%- endif -%}
+					{%- endif -%}
+					{%- if section.settings.cta_secondary_label != blank -%}
+						<a
+							href="{{ section.settings.cta_secondary_url | default: '#' }}"
+							class="font-body text-main self-start md:self-auto hover:opacity-70 transition-opacity"
+							style="font-size: 14.5px; font-weight: 500; border-bottom: 1px solid currentColor; padding-bottom: 1px;"
+						>
+							{{ section.settings.cta_secondary_label }}
+						</a>
+					{%- endif -%}
+				</div>
+			{%- endif -%}
 
-				{%- comment -%} ── Stat (qualifier stays attached — see brief §5) ── {%- endcomment -%}
-				{%- if section.settings.stat_value != blank or section.settings.stat_label != blank or section.settings.stat_supporting != blank -%}
-					<div class="pt-4 md:pt-5 mt-1 md:mt-2 border-t border-secondary/20">
+		</div>
+	</div>
 
-						<div class="flex items-baseline gap-3 flex-wrap">
-							{%- if section.settings.stat_value != blank -%}
-								<span class="font-heading font-bold text-secondary leading-none tracking-tight" style="font-size: clamp(2.75rem, 5.5vw, 4rem);">
-									{{ section.settings.stat_value }}
-								</span>
-							{%- endif -%}
-							{%- if section.settings.stat_label != blank -%}
-								<span class="font-heading font-semibold uppercase tracking-wide text-secondary leading-tight text-sm md:text-base">
-									{{ section.settings.stat_label }}
-								</span>
-							{%- endif -%}
-						</div>
-
-						{%- if section.settings.stat_supporting != blank -%}
-							<p class="mt-3 text-sm md:text-[0.95rem] text-secondary/75 leading-relaxed max-w-md">
-								{{ section.settings.stat_supporting }}
-							</p>
-						{%- endif -%}
-
-						{%- if section.settings.stat_footnote != blank -%}
-							{%- if section.settings.stat_footnote_url != blank -%}
-								<a
-									href="{{ section.settings.stat_footnote_url }}"
-									target="_blank"
-									rel="noopener"
-									class="inline-block mt-2 text-xs italic hover:underline"
-									style="color: var(--color-tertiary-light);"
-								>
-									{{ section.settings.stat_footnote }}
-								</a>
-							{%- else -%}
-								<p class="mt-2 text-xs italic" style="color: var(--color-tertiary-light);">
-									{{ section.settings.stat_footnote }}
-								</p>
-							{%- endif -%}
-						{%- endif -%}
-					</div>
-				{%- endif -%}
-
-				{%- comment -%} ── Benefits ── {%- endcomment -%}
-				{%- if section.blocks.size > 0 -%}
-					<ul class="flex flex-col gap-3 pt-1">
-						{%- for block in section.blocks -%}
-							{%- if block.type == 'benefit' -%}
-								<li
-									class="flex items-start gap-3 text-sm md:text-[0.95rem] text-secondary/85 leading-relaxed"
-									{{ block.shopify_attributes }}
-								>
-									<span class="shrink-0 mt-0.5 text-highlight" aria-hidden="true">
-										{%- if block.settings.icon != blank -%}
-											<span class="text-base leading-none">{{ block.settings.icon }}</span>
-										{%- else -%}
-											<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-										{%- endif -%}
-									</span>
-									<span>{{ block.settings.text }}</span>
-								</li>
-							{%- endif -%}
-						{%- endfor -%}
-					</ul>
-				{%- endif -%}
-
-			</div>
+	{%- comment -%} ── Desktop stat card (absolute, straddling the seam) ── {%- endcomment -%}
+	<div
+		class="hidden md:block absolute z-10 pointer-events-none"
+		style="left: 50%; top: 50%; transform: translate(-50%, -50%); width: 340px; will-change: transform;"
+	>
+		<div class="pointer-events-auto" data-perf-parallax style="will-change: transform;">
+			{{ stat_card }}
 		</div>
 	</div>
 </section>
 
 <script>
 (function () {
-	var els = document.querySelectorAll('#performance-{{ section.id }} [data-animate]');
-	if (!('IntersectionObserver' in window)) {
-		els.forEach(function (el) { el.classList.remove('opacity-0', 'translate-y-6'); });
-		return;
+	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+	var section = document.getElementById('performance-{{ section.id }}');
+	if (!section) return;
+
+	var el = section.querySelector('[data-perf-parallax]');
+	if (!el) return;
+
+	var mq = window.matchMedia('(min-width: 768px)');
+	var ticking = false;
+
+	function update() {
+		ticking = false;
+		if (!mq.matches) {
+			if (el.style.transform) el.style.transform = '';
+			return;
+		}
+		var rect = section.getBoundingClientRect();
+		var visible = rect.bottom > 0 && rect.top < window.innerHeight;
+		if (!visible) return;
+
+		{%- comment -%} progress: 0 when section enters viewport bottom, 1 when it leaves the top {%- endcomment -%}
+		var progress = -rect.top / (rect.height + window.innerHeight);
+		var offset = (0.5 - progress) * 80; {%- comment -%} ±40px drift, "rises" as you scroll {%- endcomment -%}
+		el.style.transform = 'translate3d(0,' + offset.toFixed(2) + 'px,0)';
 	}
-	var observer = new IntersectionObserver(function (entries) {
-		entries.forEach(function (entry) {
-			if (!entry.isIntersecting) return;
-			entry.target.classList.remove('opacity-0', 'translate-y-6');
-			observer.unobserve(entry.target);
-		});
-	}, { threshold: 0.2 });
-	els.forEach(function (el) { observer.observe(el); });
+
+	function onScroll() {
+		if (ticking) return;
+		ticking = true;
+		requestAnimationFrame(update);
+	}
+
+	window.addEventListener('scroll', onScroll, { passive: true });
+	window.addEventListener('resize', onScroll, { passive: true });
+	update();
 })();
 </script>
+
+<style>
+	#performance-{{ section.id }} .perf-subhead { /* spacing hook only */ }
+</style>
 
 {% schema %}
 {
 	"name": "Performance",
+	"tag": "section",
+	"class": "shopify-section",
 	"settings": [
-		{
-			"type": "header",
-			"content": "Content"
-		},
-		{
-			"type": "text",
-			"id": "eyebrow",
-			"label": "Eyebrow",
-			"default": "TRAIN"
-		},
-		{
-			"type": "text",
-			"id": "heading",
-			"label": "Headline",
-			"default": "More air. Less effort."
-		},
-		{
-			"type": "textarea",
-			"id": "subheading",
-			"label": "Subhead",
-			"default": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session."
-		},
-		{
-			"type": "header",
-			"content": "CTA (optional)",
-			"info": "Leave blank to rely on the page-level CTA."
-		},
-		{
-			"type": "text",
-			"id": "cta_label",
-			"label": "CTA label"
-		},
-		{
-			"type": "url",
-			"id": "cta_url",
-			"label": "CTA URL"
-		},
-		{
-			"type": "header",
-			"content": "Proof stat",
-			"info": "Keep the qualifier attached — do not crop the number out of context."
-		},
-		{
-			"type": "text",
-			"id": "stat_value",
-			"label": "Stat value",
-			"default": "22%"
-		},
-		{
-			"type": "text",
-			"id": "stat_label",
-			"label": "Stat label",
-			"default": "More efficient breathing"
-		},
-		{
-			"type": "textarea",
-			"id": "stat_supporting",
-			"label": "Supporting line",
-			"default": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max."
-		},
-		{
-			"type": "text",
-			"id": "stat_footnote",
-			"label": "Footnote",
-			"default": "Dallam et al., 2018"
-		},
-		{
-			"type": "url",
-			"id": "stat_footnote_url",
-			"label": "Footnote URL"
-		},
-		{
-			"type": "header",
-			"content": "Images",
-			"info": "Hero photography is gated — see brief §4 & §8. Do not ship a placeholder."
-		},
-		{
-			"type": "image_picker",
-			"id": "image_desktop",
-			"label": "Image (desktop)",
-			"info": "Shown on tablet & desktop (≥768px). Subject offset camera-right; dark third camera-left for copy."
-		},
-		{
-			"type": "image_picker",
-			"id": "image_mobile",
-			"label": "Image (mobile)",
-			"info": "Required separate crop for mobile (<768px). Keep face and AIRA strip visible."
-		},
-		{
-			"type": "header",
-			"content": "Layout"
-		},
-		{
-			"type": "select",
-			"id": "container_width",
-			"label": "Container width",
-			"options": [
-				{ "value": "contained", "label": "Contained (1280px)" },
-				{ "value": "wide",      "label": "Wide (1536px)" },
-				{ "value": "full",      "label": "Full width" }
-			],
-			"default": "contained"
-		}
+		{ "type": "header", "content": "Header" },
+		{ "type": "text",     "id": "eyebrow",    "label": "Eyebrow",    "default": "TRAIN" },
+		{ "type": "text",     "id": "heading",    "label": "Heading",    "default": "More air. Less effort." },
+		{ "type": "textarea", "id": "subheading", "label": "Subheading", "default": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session." },
+
+		{ "type": "header", "content": "CTA" },
+		{ "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop AIRA" },
+		{ "type": "url",  "id": "cta_url",   "label": "CTA URL" },
+		{ "type": "text", "id": "cta_secondary_label", "label": "Secondary link label", "default": "The science →" },
+		{ "type": "url",  "id": "cta_secondary_url",   "label": "Secondary link URL" },
+
+		{ "type": "header", "content": "Proof stat" },
+		{ "type": "text",     "id": "stat_value",        "label": "Stat value",         "default": "22%" },
+		{ "type": "text",     "id": "stat_label",        "label": "Stat label",         "default": "More efficient breathing" },
+		{ "type": "textarea", "id": "stat_supporting",   "label": "Stat supporting line", "default": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max." },
+		{ "type": "text",     "id": "stat_footnote",     "label": "Footnote (source)",  "default": "Dallam et al., 2018" },
+		{ "type": "url",      "id": "stat_footnote_url", "label": "Footnote URL" },
+
+		{ "type": "header", "content": "Image" },
+		{ "type": "image_picker", "id": "image_desktop", "label": "Desktop image" },
+		{ "type": "image_picker", "id": "image_mobile",  "label": "Mobile image (optional, defaults to desktop)" },
+		{ "type": "text",         "id": "image_caption", "label": "Image caption (bottom-left slate)", "default": "Hatta · 04:42" },
+		{ "type": "text",         "id": "image_marker",  "label": "Image top-left marker" }
 	],
 	"blocks": [
 		{
 			"type": "benefit",
 			"name": "Benefit",
+			"limit": 3,
 			"settings": [
-				{
-					"type": "text",
-					"id": "icon",
-					"label": "Icon",
-					"info": "Emoji or symbol. Leave blank for a checkmark."
-				},
-				{
-					"type": "text",
-					"id": "text",
-					"label": "Benefit line",
-					"default": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
-				}
+				{ "type": "text", "id": "lead", "label": "Lead-in word" },
+				{ "type": "text", "id": "text", "label": "Benefit text" }
 			]
 		}
 	],
-	"max_blocks": 5,
 	"presets": [
 		{
 			"name": "Performance",
 			"blocks": [
-				{
-					"type": "benefit",
-					"settings": {
-						"icon": "",
-						"text": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
-					}
-				},
-				{
-					"type": "benefit",
-					"settings": {
-						"icon": "",
-						"text": "Cleaner air in — your nose filters, warms and humidifies every breath. Your mouth doesn't."
-					}
-				},
-				{
-					"type": "benefit",
-					"settings": {
-						"icon": "",
-						"text": "Calmer recovery — nasal breathing helps bring heart rate and breathing back down between efforts."
-					}
-				}
+				{ "type": "benefit", "settings": { "lead": "Easier endurance", "text": "an open airway means less breathing effort on long, steady efforts." } },
+				{ "type": "benefit", "settings": { "lead": "Cleaner air in",   "text": "your nose filters, warms and humidifies every breath. Your mouth doesn't." } },
+				{ "type": "benefit", "settings": { "lead": "Calmer recovery",  "text": "nasal breathing helps bring heart rate and breathing back down between efforts." } }
 			]
 		}
 	]
