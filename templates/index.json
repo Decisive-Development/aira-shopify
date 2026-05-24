@@ -45,132 +45,48 @@
         "padding_vertical": "lg"
       }
     },
-    "how_to_use": {
-      "type": "how-to-use",
+    "performance": {
+      "type": "performance",
       "blocks": {
-        "step_1": {
-          "type": "step",
+        "benefit_1": {
+          "type": "benefit",
           "settings": {
-            "step_number": "01",
-            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
-            "step_heading": "Peel",
-            "step_description": "Peel the adhesive tab from its backing."
+            "icon": "",
+            "text": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
           }
         },
-        "step_2": {
-          "type": "step",
+        "benefit_2": {
+          "type": "benefit",
           "settings": {
-            "step_number": "02",
-            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
-            "step_heading": "Place",
-            "step_description": "Place a tab on either side of your nose bridge."
+            "icon": "",
+            "text": "Cleaner air in — your nose filters, warms and humidifies every breath. Your mouth doesn't."
           }
         },
-        "step_3": {
-          "type": "step",
+        "benefit_3": {
+          "type": "benefit",
           "settings": {
-            "step_number": "03",
-            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
-            "step_heading": "Breathe",
-            "step_description": "Attach the magnetic band and breathe freely all night."
+            "icon": "",
+            "text": "Calmer recovery — nasal breathing helps bring heart rate and breathing back down between efforts."
           }
         }
       },
       "block_order": [
-        "step_1",
-        "step_2",
-        "step_3"
+        "benefit_1",
+        "benefit_2",
+        "benefit_3"
       ],
       "settings": {
-        "eyebrow": "How it works",
-        "heading": "3 simple steps.",
-        "tutorial_label": "See the full tutorial →",
-        "tutorial_url": "/pages/how-it-works"
-      }
-    },
-    "health_effects": {
-      "type": "health-effects",
-      "blocks": {
-        "effect_1": {
-          "type": "effect",
-          "settings": {
-            "icon": "🫀",
-            "title": "High blood pressure",
-            "subtitle": "",
-            "image": "shopify://shop_images/blood-pressure.png",
-            "description": "<p>Mouth breathing activates the body's stress response, raising cortisol and constricting blood vessels. Over time this can contribute to chronically elevated blood pressure — a major risk factor for heart disease.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "effect_2": {
-          "type": "effect",
-          "settings": {
-            "icon": "😴",
-            "title": "Snoring",
-            "subtitle": "",
-            "image": "shopify://shop_images/DSCF3212-3.jpg",
-            "description": "<p>When the nose is bypassed, the soft tissue at the back of the throat is more likely to vibrate during sleep — producing the sound of snoring. Nasal breathing stabilises this tissue and reduces vibration significantly.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "effect_3": {
-          "type": "effect",
-          "settings": {
-            "icon": "💧",
-            "title": "Dry mouth",
-            "subtitle": "",
-            "image": "shopify://shop_images/5_Mouth_Exercises_to_Stop_Teeth_Grinding_and_Jaw_Clenching___Sentinel_Mouthguards.jpg",
-            "description": "<p>Breathing through the mouth dries out saliva, which is your body's first line of defence against bacteria. Chronic dry mouth leads to bad breath, tooth decay, and gum disease.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "effect_4": {
-          "type": "effect",
-          "settings": {
-            "icon": "🌙",
-            "title": "Poor sleep quality",
-            "subtitle": "",
-            "image": "shopify://shop_images/AI.jpg",
-            "description": "<p>Mouth breathing reduces oxygen uptake and disrupts sleep architecture — resulting in more time in lighter sleep stages. Switching to nasal breathing has been shown to improve deep sleep and morning energy levels.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        },
-        "effect_5": {
-          "type": "effect",
-          "settings": {
-            "icon": "🧒",
-            "title": "Facial development",
-            "subtitle": "",
-            "image": "shopify://shop_images/face-development.png",
-            "description": "<p>In children, long-term mouth breathing can alter the development of facial bones — leading to a narrower palate, elongated face, and crowded teeth. Early nasal breathing habits help guide healthy craniofacial growth.</p>",
-            "link_label": "",
-            "link_url": ""
-          }
-        }
-      },
-      "block_order": [
-        "effect_1",
-        "effect_2",
-        "effect_3",
-        "effect_4",
-        "effect_5"
-      ],
-      "settings": {
-        "eyebrow": "Why it matters",
-        "heading": "Health effects of poor airflow",
-        "subheading": "Mouth breathing and restricted nasal airflow have been linked to a surprising range of health issues — many of which are reversible.",
-        "heading_size": "md",
-        "background_color": "#f8f5f0",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "cta_label": "Shop Aira Kit",
+        "eyebrow": "TRAIN",
+        "heading": "More air. Less effort.",
+        "subheading": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
+        "cta_label": "Shop AIRA",
         "cta_url": "/products/aira-starter-kit",
-        "container_width": "contained",
-        "padding_vertical": "lg"
+        "stat_value": "22%",
+        "stat_label": "More efficient breathing",
+        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max.",
+        "stat_footnote": "Dallam et al., 2018",
+        "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
+        "container_width": "contained"
       }
     },
     "social_proof": {
@@ -342,6 +258,49 @@
         "padding_vertical": "lg"
       }
     },
+    "how_to_use": {
+      "type": "how-to-use",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
+            "step_heading": "Peel",
+            "step_description": "Peel the adhesive tab from its backing."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
+            "step_heading": "Place",
+            "step_description": "Place a tab on either side of your nose bridge."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
+            "step_heading": "Breathe",
+            "step_description": "Attach the magnetic band and breathe freely all night."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "eyebrow": "How it works",
+        "heading": "3 simple steps.",
+        "tutorial_label": "See the full tutorial →",
+        "tutorial_url": "/pages/how-it-works"
+      }
+    },
     "ugc_gallery": {
       "type": "ugc-gallery",
       "blocks": {
@@ -400,8 +359,8 @@
         "eyebrow": "What our customers say",
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
-        "product": "aira-starter-kit",
-        "theme": "dark"
+        "theme": "dark",
+        "product": "aira-starter-kit"
       }
     },
     "faq": {
@@ -498,7 +457,7 @@
   "order": [
     "hero",
     "before_after_slider",
-    "health_effects",
+    "performance",
     "social_proof",
     "benefits_slider",
     "how_to_use",
