@@ -56,18 +56,16 @@
 			}
 		},
 
-		"medical_advisor": {
-			"type": "science-medical-advisor",
+		"why_nose_matters": {
+			"type": "nasal-breathing-science",
 			"settings": {
-				"is_published": false,
-				"eyebrow": "Reviewed by",
-				"heading_lead": "Our medical",
-				"heading_accent": "advisor.",
-				"plaque_label": "Specialty",
-				"plaque_value": "ENT / Sleep Medicine",
-				"advisor_name": "Dr. [Advisor Name]",
-				"advisor_role": "[Specialty], [Hospital / Practice]",
-				"advisor_location": "[City, Country]"
+				"heading": "Why the nose matters",
+				"quote": "<p>\"Breathing is not just a biochemical or physical act; it's a force that has a profound effect on the way our bodies and minds function.\"</p>",
+				"attribution_name": "James Nestor",
+				"attribution_source": "Breath: The New Science of a Lost Art (2020)",
+				"body": "<p>Nasal breathing increases nitric oxide production, filters and humidifies incoming air, and is consistently linked to deeper sleep, better recovery, and improved focus. AIRA is engineered to keep that pathway open — mechanically, magnetically, all night.</p>",
+				"background_style": "navy",
+				"show_top_divider": false
 			}
 		},
 
@@ -94,5 +92,5 @@
 			}
 		}
 	},
-	"order": ["hero", "nasal_breathing", "mechanism", "medical_advisor", "citations"]
+	"order": ["hero", "nasal_breathing", "mechanism", "why_nose_matters", "citations"]
 }

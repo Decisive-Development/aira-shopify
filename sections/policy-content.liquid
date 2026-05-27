@@ -7,9 +7,10 @@
 	Content source:
 	  - If the page body (page.content) has text, render that — lets an
 	    editor override from the Shopify page editor.
-	  - Otherwise render the verbatim legally-reviewed HTML in
-	    snippets/policy-privacy-default.liquid (the default — no admin
-	    work needed). Update that snippet when the policy text changes.
+	  - Otherwise render the verbatim legally-reviewed HTML in the
+	    snippet selected by the "Default content snippet" section setting
+	    (privacy or terms). Update those snippets when the policy text
+	    changes.
 {%- endcomment -%}
 
 {{ 'policy-page.css' | asset_url | stylesheet_tag }}
@@ -43,7 +44,14 @@
 				{%- if page.content != blank -%}
 					{{ page.content }}
 				{%- else -%}
-					{%- render 'policy-privacy-default' -%}
+					{%- case section.settings.default_content -%}
+						{%- when 'terms' -%}
+							{%- render 'policy-terms-default' -%}
+						{%- when 'returns' -%}
+							{%- render 'policy-returns-default' -%}
+						{%- else -%}
+							{%- render 'policy-privacy-default' -%}
+					{%- endcase -%}
 				{%- endif -%}
 			</article>
 
@@ -60,7 +68,20 @@
 	"name": "Policy — Content",
 	"tag": "section",
 	"class": "shopify-section",
-	"settings": [],
+	"settings": [
+		{
+			"type": "select",
+			"id": "default_content",
+			"label": "Default content snippet",
+			"info": "Used when the page body is empty.",
+			"options": [
+				{ "value": "privacy", "label": "Privacy policy" },
+				{ "value": "terms",   "label": "Terms of service" },
+				{ "value": "returns", "label": "Return & refund policy" }
+			],
+			"default": "privacy"
+		}
+	],
 	"presets": [
 		{ "name": "Policy — Content" }
 	]

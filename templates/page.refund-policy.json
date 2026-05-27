@@ -4,19 +4,21 @@
       "type": "policy-hero",
       "settings": {
         "eyebrow": "Legal",
-        "heading": "Privacy Policy",
-        "last_updated": "19 May 2026"
+        "heading": "Return & Refund Policy",
+        "last_updated": "April 2026"
       }
     },
     "content": {
       "type": "policy-content",
-      "settings": {}
+      "settings": {
+        "default_content": "returns"
+      }
     },
     "contact": {
       "type": "policy-contact",
       "settings": {
-        "heading": "Questions about how we handle your data?",
-        "body": "Email us and we'll respond within the timeframe required by applicable law (typically 30 days).",
+        "heading": "Need help with a return?",
+        "body": "Reach out before you start a return — we'd love the chance to help first.",
         "cta_label": "Email us",
         "cta_email": "contact@shop-aira.com"
       }

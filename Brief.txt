@@ -1,192 +1,47 @@
-AIRA — PERFORMANCE SECTION
-Design & Build Brief
-==================================================
-Prepared for : claude design (visual) + VSC (dev)
-Date         : 2026-05-24
-Location     : Homepage — replaces the "Health Effects of poor airflow" section
-Status       : Ready for design + build (gated on hero photography — see §8)
+## Return & Refund Policy
 
+**Our Promise**
 
-1. PURPOSE
---------------------------------------------------
-Replace the "Health Effects of poor airflow" section with a new
-aspiration-led "Performance" section.
+We stand behind every product we make. If you're not satisfied with your AIRA experience, we're here to make it right.
 
-The old section was fear/education-led. The new one is aspiration-led
-and targets the athletic / exercise audience (endurance — runners and
-cyclists). The problem-agitation job that Health Effects used to do is
-now carried by the comparison / stats table elsewhere on the page, so
-THIS section does not need to educate or scare. It sells the upside.
+**30-Day Satisfaction Guarantee**
 
-Primary persona: Khalid — performance-minded, 20–45, GCC urban
-professional / athlete.
+Try AIRA for 30 days. If you're not happy with your purchase for any reason, contact us at contact@aira-breathing.com within 30 days of delivery and we'll guide you through the return process.
 
+---
 
-2. DEV INSTRUCTIONS (VSC)
---------------------------------------------------
-- DO NOT delete the existing "Health Effects of poor airflow" section
-  code. Keep it.
-    > Leave the existing section .liquid file and its block code intact
-      in the repo.
-    > Only remove / comment out its reference in the page template JSON
-      so it no longer renders.
-    > Reason: rollback safety and possible reuse. Until the new hero
-      photography lands, the old section may need to stay live (see §8).
+**Magnetic Strip Returns**
 
-- Add the new Performance section as a new Online Store 2.0 section
-  (e.g. sections/performance.liquid) and register it in the page
-  template JSON in the slot where Health Effects sat.
+The reusable magnetic strip is eligible for return within 30 days of delivery, provided it is in good physical condition, not broken or damaged and returned in its original packaging.
 
-- Schema should expose, as theme-editor-editable settings/blocks:
-    > desktop image, mobile image (separate crops — see §6)
-    > eyebrow, headline, subhead
-    > optional CTA (label + link)
-    > one stat: value, label, supporting line, footnote, footnote_url
-    > a repeatable benefit block: icon + text
+To initiate a return, simply contact our support team with your order number. Return shipping costs are the responsibility of the customer.
 
-- Stack: existing theme Tailwind utilities only — do not introduce new
-  utility classes. Vanilla JS / Alpine for any light interaction; no
-  React. GSAP is available if a subtle entrance animation is wanted.
+---
 
+**Adhesive Tabs Returns**
 
-3. LAYOUT — FULLSCREEN IMAGE HERO (not a box grid)
---------------------------------------------------
-Decision: full-bleed photographic hero, single image.
+Adhesive tab packs are eligible for return only if they are completely unopened and untouched. Once a pack has been opened or a tab has been removed, it cannot be returned or refunded. This applies to both individual purchases and subscription refill orders.
 
-Rationale: performance sells on emotion and aspiration. A fullscreen
-image of an athlete under effort outperforms a modular feature grid,
-and it deliberately breaks the page's box-grid rhythm to signal a
-distinct pillar.
+We encourage you to try the tabs, they're designed to be used.
 
-- Full-width, large vertical presence (~80–90vh on desktop, capped).
-- Single hero image bleeds the full section.
-- Text content sits on a dark negative-space third — camera-left,
-  with the image subject offset camera-right.
-- Content order, lower-left: eyebrow > headline > subhead >
-  CTA (optional) > stat + benefit lines.
+---
 
-NOTE ON VISUAL FAMILY: this section intentionally diverges from the
-navy bg-main + light-blue radial halo standard used on other custom
-pages. The divergence is deliberate and approved — the performance
-pillar is photographic, dark and energetic by design. Flag whether the
-sections directly above/below need a transition treatment so the page
-doesn't feel like it jumps.
+**Subscription Refill Plan**
 
+You may pause, skip, or cancel your refill subscription at any time through your account portal. Changes must be made at least 72 hours before your next billing date to avoid being charged for that cycle.
 
-4. IMAGE ART DIRECTION
---------------------------------------------------
-Single hero image. Brief for the shoot / sourcing:
+Orders that have already been processed and shipped cannot be cancelled but may be returned unopened within 30 days, with return shipping at the customer's expense.
 
-- Subject: ONE endurance athlete — runner or road cyclist. NOT a gym /
-  lifting setting. Endurance reads "aerobic efficiency"; lifting reads
-  "max strain" and fights the headline.
+---
 
-- Expression: calm, composed, focused. Effortless under effort.
-  NOT grimacing or straining.
+**Important Notes**
 
-- MOUTH CLOSED. Non-negotiable. This is a nasal-breathing product; an
-  open-mouthed, gasping athlete contradicts the entire message. The
-  closed mouth is the proof of concept.
+Refunds are only available for purchases made directly through our official website. If you purchased through a third-party platform, please initiate your return through that platform directly.
 
-- The AIRA strip must be clearly visible on the bridge of the nose.
-  Use a three-quarter or profile crop — the strip reads best from the
-  side. Do not use a wide front-on body shot that loses the product.
+Refunds will be processed within 5 to 10 business days of receiving your return.
 
-- Light: dawn / early morning, directional. Premium and cinematic.
-  Dawn also subtly links back to the sleep story (sleep well > train
-  well).
+---
 
-- Tone: cool-to-neutral with deep shadow. This contrasts the warm
-  amber of the sleep sections and provides a dark area for text.
+**A note from us**
 
-- Composition: subject offset camera-right; clean dark third
-  camera-left for copy. Slight motion blur in the background to imply
-  movement; subject tack-sharp.
-
-- Casting: cast for the GCC market — the model should reflect the
-  target customer.
-
-- Optional: a small product detail inset if the strip does not read
-  clearly at hero scale.
-
-CONSTRAINT: this cannot be stock — no stock athlete is wearing an AIRA
-strip. It requires a custom shoot OR a careful retouch of the product
-onto a licensed image. This is a cost + timeline dependency (see §8).
-
-
-5. COPY (final — design may tweak length, not claims)
---------------------------------------------------
-Eyebrow      : TRAIN
-
-Headline     : More air. Less effort.
-
-Subhead      : AIRA holds your nasal passages open so you breathe
-               deeper through your nose — the way your body is built to
-               work under load. More efficient airflow, less wasted
-               energy, every session.
-
-CTA (optional): "Shop AIRA" — confirm whether this section needs its
-               own CTA or relies on the page-level CTA.
-
-PROOF STAT (the visual anchor of the section):
-  Value         : 22%
-  Label         : More efficient breathing
-  Supporting line: Recreational runners moved the same air with up to
-                   22% less effort after switching to nasal breathing —
-                   with no drop in VO2max.
-  Footnote      : Dallam et al., 2018
-  Footnote URL  : https://journals.aiac.org.au/index.php/IJKSS/article/view/4400
-
-  CRITICAL: the 22% must stay tethered to "recreational runners" + the
-  endurance context. Do NOT crop it to a standalone "22% MORE EFFICIENT"
-  hero number — out of context that is an over-claim. Keep the
-  qualifying line attached to the number.
-
-THREE BENEFIT LINES (icon-led, short):
-  - Easier endurance — an open airway means less breathing effort on
-    long, steady efforts.
-  - Cleaner air in — your nose filters, warms and humidifies every
-    breath. Your mouth doesn't.
-  - Calmer recovery — nasal breathing helps bring heart rate and
-    breathing back down between efforts.
-
-  Note: "Calmer recovery" is a qualitative benefit, not a stat — keep
-  it as words, no number behind it.
-
-ONLY ONE STATISTIC in this section, by design. We have one strong
-peer-reviewed study; a stat wall stretched from a single paper reads
-thin and invites scrutiny. One real number beats three asterisked
-ones (cf. competitor HiStrips' 96% / 91% / 94% self-reported survey
-stats — we are deliberately not copying that approach).
-
-
-6. RESPONSIVE / MOBILE
---------------------------------------------------
-Fullscreen text-over-image breaks on mobile. Mobile layout:
-
-- Stack vertically: hero image on top, then a solid dark block below
-  containing eyebrow > headline > subhead > stat > benefits > CTA.
-- Provide a SEPARATE art-directed mobile image crop (do not just
-  rescale the desktop image) so the subject, face and strip stay
-  visible. Schema should hold both a desktop and a mobile image.
-
-
-7. VOICE CHECK
---------------------------------------------------
-AIRA voice = warm, human, calm, science-simplified — never salesy,
-clinical or guru-like. The copy above is intentionally punchy but
-should not be pushed harder into hype. If any element reads as boastful
-or bro-y in design, pull it back toward calm confidence.
-
-
-8. OPEN ITEMS / DEPENDENCIES
---------------------------------------------------
-- Hero photography: owner + deadline TBD. The section is gated on this
-  asset. Do not ship a placeholder fullscreen image — until the hero
-  photo lands, keep the existing Health Effects section live (this is
-  why its code is being retained, not deleted — see §2).
-- Confirm the exact page template and section handle to disable.
-- Confirm CTA: section-level CTA or rely on the page-level CTA.
-- The comparison / stats table restructure (strip the long copy down
-  to value + title + research link, absorb the lost Health Effects
-  topics) is a SEPARATE brief — not in scope here.
+We're a small brand that genuinely cares about your experience. If something isn't working for you, reach out before you request a return we'd love the chance to help first.

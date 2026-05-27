@@ -53,10 +53,10 @@
 	<div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 40%, rgba(0,0,0,0.75) 100%);"></div>
 
 	{%- comment -%} Content {%- endcomment -%}
-	<div class="relative z-10 w-full pt-12 md:pt-16 pb-16 md:pb-36">
+	<div class="relative z-10 w-full pt-12 md:pt-16 pb-10 md:pb-20">
 
 		{%- comment -%} Centered heading {%- endcomment -%}
-		<div class="container-contained text-center mb-10 md:mb-24">
+		<div class="container-contained text-center mb-4 md:mb-8">
 			{%- if section.settings.eyebrow != blank -%}
 				<p
 					class="text-xs font-body font-semibold uppercase tracking-widest text-highlight mb-3 md:mb-4 transition-all duration-700 ease-out opacity-0 translate-y-6"
@@ -92,11 +92,11 @@
 
 			{%- comment -%} Column headings row {%- endcomment -%}
 			<div class="grid grid-cols-2 gap-4 mb-4">
-				<p class="font-heading font-bold text-xs uppercase tracking-widest" style="color: #EF4444;">
+				<p class="font-heading font-bold text-xs uppercase tracking-widest text-right" style="color: #EF4444;">
 					{{- section.settings.left_heading | default: 'The problem' -}}
 				</p>
-				<p class="font-heading font-bold text-xs uppercase tracking-widest text-right" style="color: #4ADE80;">
-					{{- section.settings.right_heading | default: 'With better breathing' -}}
+				<p class="font-heading font-bold text-xs uppercase tracking-widest" style="color: #4ADE80;">
+					{{- section.settings.right_heading | default: 'With Aira' -}}
 				</p>
 			</div>
 
@@ -126,25 +126,22 @@
 				{%- assign p_counter = 0 -%}
 				{%- assign b_counter = 0 -%}
 
-				<div class="grid grid-cols-2 gap-4 py-3 {% unless forloop.last %}border-b border-white/10{% endunless %}">
+				<div class="grid grid-cols-2 gap-4 py-3">
 
-					{%- comment -%} Problem cell {%- endcomment -%}
+					{%- comment -%} Problem cell (left, right-aligned toward middle) {%- endcomment -%}
 					{%- for block in section.blocks -%}
 						{%- if block.type == 'problem' -%}
 							{%- if p_counter == p_i and p_found == false -%}
 								{%- assign p_found = true -%}
-								<div class="flex flex-col gap-0.5">
-									<span class="font-heading font-bold leading-none" style="color: #EF4444; font-size: clamp(1.5rem, 6vw, 2rem);">
+								<div class="flex flex-col gap-1 text-right">
+									<span class="font-heading font-bold leading-none" style="color: #EF4444; font-size: clamp(1.25rem, 5vw, 1.75rem);">
 										{{- block.settings.value -}}
 									</span>
 									{%- if block.settings.keyword != blank -%}
-										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight mt-1">
+										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight">
 											{{- block.settings.keyword -}}
 										</p>
 									{%- endif -%}
-									<p class="font-body text-white/60 text-xs leading-snug mt-0.5">
-										{{- block.settings.label -}}
-									</p>
 								</div>
 							{%- endif -%}
 							{%- assign p_counter = p_counter | plus: 1 -%}
@@ -152,23 +149,20 @@
 					{%- endfor -%}
 					{%- unless p_found -%}<div></div>{%- endunless -%}
 
-					{%- comment -%} Benefit cell {%- endcomment -%}
+					{%- comment -%} Benefit cell (right, left-aligned toward middle) {%- endcomment -%}
 					{%- for block in section.blocks -%}
 						{%- if block.type == 'benefit' -%}
 							{%- if b_counter == b_i and b_found == false -%}
 								{%- assign b_found = true -%}
-								<div class="flex flex-col gap-0.5 text-right">
-									<span class="font-heading font-bold leading-none" style="color: #4ADE80; font-size: clamp(1.5rem, 6vw, 2rem);">
+								<div class="flex flex-col gap-1">
+									<span class="font-heading font-bold leading-none" style="color: #4ADE80; font-size: clamp(1.25rem, 5vw, 1.75rem);">
 										{{- block.settings.value -}}
 									</span>
 									{%- if block.settings.keyword != blank -%}
-										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight mt-1">
+										<p class="font-heading font-bold text-white text-sm uppercase tracking-wide leading-tight">
 											{{- block.settings.keyword -}}
 										</p>
 									{%- endif -%}
-									<p class="font-body text-white/60 text-xs leading-snug mt-0.5">
-										{{- block.settings.label -}}
-									</p>
 								</div>
 							{%- endif -%}
 							{%- assign b_counter = b_counter | plus: 1 -%}
@@ -177,6 +171,10 @@
 					{%- unless b_found -%}<div></div>{%- endunless -%}
 
 				</div>
+
+				{%- unless forloop.last -%}
+					<div class="w-1/4 mx-auto h-px bg-white/10"></div>
+				{%- endunless -%}
 
 				{%- assign p_i = p_i | plus: 1 -%}
 				{%- assign b_i = b_i | plus: 1 -%}
@@ -192,7 +190,7 @@
 				<div class="pl-10 xl:pl-16 pr-12">
 					{%- if section.settings.left_heading != blank -%}
 						<h3
-							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 transition-all duration-700 ease-out opacity-0 translate-y-6"
+							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 text-right transition-all duration-700 ease-out opacity-0 translate-y-6"
 							style="color: #EF4444; transition-delay: 200ms"
 							data-sp-animate
 						>
@@ -203,7 +201,7 @@
 				<div class="pr-10 xl:pr-16 pl-12 border-l border-white/10">
 					{%- if section.settings.right_heading != blank -%}
 						<h3
-							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 text-right transition-all duration-700 ease-out opacity-0 translate-y-6"
+							class="font-heading font-bold text-sm uppercase tracking-widest mb-0 transition-all duration-700 ease-out opacity-0 translate-y-6"
 							style="color: #4ADE80; transition-delay: 200ms"
 							data-sp-animate
 						>
@@ -232,33 +230,21 @@
 					style="transition-delay: {{ delay }}ms"
 					data-sp-animate
 				>
-					{%- comment -%} Problem cell {%- endcomment -%}
-					<div class="pl-10 xl:pl-16 pr-12 py-6 {% unless forloop.last %}border-b border-white/10{% endunless %}">
+					{%- comment -%} Problem cell (left, content pushed toward middle) {%- endcomment -%}
+					<div class="pl-10 xl:pl-16 pr-12 py-6">
 						{%- assign dt_p_counter = 0 -%}
 						{%- for block in section.blocks -%}
 							{%- if block.type == 'problem' -%}
 								{%- if dt_p_counter == dt_p_i -%}
-									<div class="flex items-start gap-5" {{ block.shopify_attributes }}>
-										<span class="font-heading font-bold leading-none shrink-0 w-24 text-right" style="color: #EF4444; font-size: clamp(2rem, 4vw, 3rem);">
+									<div class="flex flex-col gap-2 text-right" {{ block.shopify_attributes }}>
+										<span class="font-heading font-bold leading-none" style="color: #EF4444; font-size: clamp(1.75rem, 3.5vw, 2.5rem);">
 											{{- block.settings.value -}}
 										</span>
-										<div class="flex flex-col gap-1 pt-1">
-											{%- if block.settings.keyword != blank -%}
-												<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
-													{{- block.settings.keyword -}}
-												</p>
-											{%- endif -%}
-											<p class="font-body text-white/75 text-sm leading-snug">
-												{{- block.settings.label -}}
+										{%- if block.settings.keyword != blank -%}
+											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none">
+												{{- block.settings.keyword -}}
 											</p>
-											{%- if block.settings.footnote != blank -%}
-												{%- if block.settings.footnote_url != blank -%}
-													<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
-												{%- else -%}
-													<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
-												{%- endif -%}
-											{%- endif -%}
-										</div>
+										{%- endif -%}
 									</div>
 								{%- endif -%}
 								{%- assign dt_p_counter = dt_p_counter | plus: 1 -%}
@@ -266,33 +252,21 @@
 						{%- endfor -%}
 					</div>
 
-					{%- comment -%} Benefit cell {%- endcomment -%}
-					<div class="pr-10 xl:pr-16 pl-12 py-6 {% unless forloop.last %}border-b{% endunless %} border-l border-white/10">
+					{%- comment -%} Benefit cell (right, content pushed toward middle) {%- endcomment -%}
+					<div class="pr-10 xl:pr-16 pl-12 py-6 border-l border-white/10">
 						{%- assign dt_b_counter = 0 -%}
 						{%- for block in section.blocks -%}
 							{%- if block.type == 'benefit' -%}
 								{%- if dt_b_counter == dt_b_i -%}
-									<div class="flex items-start gap-5 flex-row-reverse text-right" {{ block.shopify_attributes }}>
-										<span class="font-heading font-bold leading-none shrink-0 w-24 text-left" style="color: #4ADE80; font-size: clamp(2rem, 4vw, 3rem);">
+									<div class="flex flex-col gap-2" {{ block.shopify_attributes }}>
+										<span class="font-heading font-bold leading-none" style="color: #4ADE80; font-size: clamp(1.75rem, 3.5vw, 2.5rem);">
 											{{- block.settings.value -}}
 										</span>
-										<div class="flex flex-col gap-1 pt-1">
-											{%- if block.settings.keyword != blank -%}
-												<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none mb-1">
-													{{- block.settings.keyword -}}
-												</p>
-											{%- endif -%}
-											<p class="font-body text-white/75 text-sm leading-snug">
-												{{- block.settings.label -}}
+										{%- if block.settings.keyword != blank -%}
+											<p class="font-heading font-bold text-white text-xl uppercase tracking-wide leading-none">
+												{{- block.settings.keyword -}}
 											</p>
-											{%- if block.settings.footnote != blank -%}
-												{%- if block.settings.footnote_url != blank -%}
-													<a href="{{ block.settings.footnote_url }}" target="_blank" rel="noopener" class="font-body text-xs mt-0.5 hover:underline" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</a>
-												{%- else -%}
-													<p class="font-body text-xs mt-0.5" style="color: var(--color-tertiary-light);">{{ block.settings.footnote }}</p>
-												{%- endif -%}
-											{%- endif -%}
-										</div>
+										{%- endif -%}
 									</div>
 								{%- endif -%}
 								{%- assign dt_b_counter = dt_b_counter | plus: 1 -%}
@@ -301,6 +275,10 @@
 					</div>
 				</div>
 
+				{%- unless forloop.last -%}
+					<div class="w-1/4 mx-auto h-px bg-white/10"></div>
+				{%- endunless -%}
+
 				{%- assign dt_p_i = dt_p_i | plus: 1 -%}
 				{%- assign dt_b_i = dt_b_i | plus: 1 -%}
 			{%- endfor -%}
@@ -308,7 +286,7 @@
 		</div>
 
 		{%- if section.settings.cta_label != blank -%}
-			<div class="mt-12 md:mt-16 text-center">
+			<div class="mt-8 md:mt-10 text-center">
 				{%- render 'cta-button',
 					label: section.settings.cta_label,
 					url: section.settings.cta_url,
@@ -390,7 +368,7 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely."
+			"default": "What the research says — and what changes when you breathe freely."
 		},
 		{
 			"type": "header",
@@ -421,7 +399,7 @@
 			"type": "text",
 			"id": "right_heading",
 			"label": "Right column heading",
-			"default": "With better breathing"
+			"default": "With Aira"
 		}
 	],
 	"blocks": [
