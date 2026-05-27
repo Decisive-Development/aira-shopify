@@ -314,7 +314,7 @@
         "feature_1": {
           "type": "feature",
           "settings": {
-            "image": "shopify://shop_images/IMG_3426.jpg",
+            "image": "shopify://shop_images/design.jpg",
             "title": "Instantly Expands",
             "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
           }
@@ -322,6 +322,7 @@
         "feature_2": {
           "type": "feature",
           "settings": {
+            "image": "shopify://shop_images/photoshoot.jpg",
             "title": "Won't Collapse",
             "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
           }
@@ -329,6 +330,7 @@
         "feature_3": {
           "type": "feature",
           "settings": {
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
             "title": "Sweat-Proof. Stays On.",
             "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
           }
@@ -336,6 +338,7 @@
         "feature_4": {
           "type": "feature",
           "settings": {
+            "image": "shopify://shop_images/Skin_safe_final_ed245389-afb4-43f0-87f9-1d082e7cc3e5.png",
             "title": "Skin Safe. Medical Grade.",
             "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
           }
@@ -428,6 +431,7 @@
         "eyebrow": "What our customers say",
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
+        "theme": "light",
         "product": "aira-starter-kit"
       }
     },

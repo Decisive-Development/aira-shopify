@@ -45,47 +45,6 @@
         "padding_vertical": "lg"
       }
     },
-    "performance": {
-      "type": "performance",
-      "blocks": {
-        "benefit_1": {
-          "type": "benefit",
-          "settings": {
-            "text": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
-          }
-        },
-        "benefit_2": {
-          "type": "benefit",
-          "settings": {
-            "text": "Cleaner air in — your nose filters, warms and humidifies every breath. Your mouth doesn't."
-          }
-        },
-        "benefit_3": {
-          "type": "benefit",
-          "settings": {
-            "text": "Calmer recovery — nasal breathing helps bring heart rate and breathing back down between efforts."
-          }
-        }
-      },
-      "block_order": [
-        "benefit_1",
-        "benefit_2",
-        "benefit_3"
-      ],
-      "settings": {
-        "eyebrow": "TRAIN",
-        "heading": "More air. Less effort.",
-        "subheading": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
-        "cta_label": "Shop AIRA",
-        "cta_url": "/products/aira-starter-kit",
-        "stat_value": "22%",
-        "stat_label": "More efficient breathing",
-        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max.",
-        "stat_footnote": "Dallam et al., 2018",
-        "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
-        "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp"
-      }
-    },
     "social_proof": {
       "type": "social-proof",
       "blocks": {
@@ -206,7 +165,7 @@
         "slide_2": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/photoshoot.jpg",
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
             "heading": "Sweat Resistant. Stays On.",
             "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
           }
@@ -222,7 +181,7 @@
         "slide_4": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/design.jpg",
+            "image": "shopify://shop_images/Skin_safe_final_ed245389-afb4-43f0-87f9-1d082e7cc3e5.png",
             "heading": "Skin Safe. Medical Grade.",
             "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
           }
@@ -253,6 +212,54 @@
         "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
+      }
+    },
+    "performance": {
+      "type": "performance",
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "lead": "",
+            "text": "Easier endurance — an open airway means less breathing effort on long, steady efforts."
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "lead": "",
+            "text": "Cleaner air in — your nose filters, warms and humidifies every breath. Your mouth doesn't."
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "lead": "",
+            "text": "Calmer recovery — nasal breathing helps bring heart rate and breathing back down between efforts."
+          }
+        }
+      },
+      "block_order": [
+        "benefit_1",
+        "benefit_2",
+        "benefit_3"
+      ],
+      "settings": {
+        "eyebrow": "TRAIN",
+        "heading": "More air. Less effort.",
+        "subheading": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
+        "cta_label": "Shop AIRA",
+        "cta_url": "/products/aira-starter-kit",
+        "cta_secondary_label": "The science →",
+        "cta_secondary_url": "",
+        "stat_value": "22%",
+        "stat_label": "More efficient breathing",
+        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max.",
+        "stat_footnote": "Dallam et al., 2018",
+        "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
+        "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp",
+        "image_caption": "Hatta · 04:42",
+        "image_marker": ""
       }
     },
     "how_to_use": {

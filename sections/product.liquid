@@ -76,25 +76,67 @@
 		{%- comment -%} ══════ Buy box ══════ {%- endcomment -%}
 		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
 
-			{%- comment -%} ── Left: Image gallery (sticky on desktop) ── {%- endcomment -%}
+			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
+			{%- liquid
+				assign media_items = product.media | slice: 0, 6
+				assign media_count = media_items.size
+			-%}
 			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
 
-				{%- comment -%} Main image {%- endcomment -%}
-				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted">
-					{%- if product.featured_image -%}
-						{{
-							product.featured_image
-							| image_url: width: 1200
-							| image_tag:
-								loading: 'eager',
-								class: 'w-full h-full object-cover',
-								widths: '400, 600, 800, 1200',
-								id: 'product-main-image'
-						}}
+				{%- comment -%} Main display — all items rendered, only one visible {%- endcomment -%}
+				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted" data-gallery>
+					{%- if media_count > 0 -%}
+						{%- for media in media_items -%}
+							<div
+								class="absolute inset-0 {% unless forloop.first %}hidden{% endunless %}"
+								data-gallery-item="{{ forloop.index0 }}"
+							>
+								{%- case media.media_type -%}
+									{%- when 'video' -%}
+										<video
+											class="w-full h-full object-cover"
+											playsinline
+											muted
+											loop
+											preload="metadata"
+											{% if forloop.first %}autoplay{% endif %}
+											{% if media.preview_image %}poster="{{ media.preview_image | image_url: width: 1200 }}"{% endif %}
+										>
+											{%- for source in media.sources -%}
+												<source src="{{ source.url }}" type="{{ source.mime_type }}">
+											{%- endfor -%}
+										</video>
+									{%- else -%}
+										{{
+											media
+											| image_url: width: 1200
+											| image_tag:
+												loading: forloop.first | default: false,
+												class: 'w-full h-full object-cover',
+												widths: '400, 600, 800, 1200',
+												sizes: '(min-width: 1024px) 50vw, 100vw',
+												alt: media.alt
+										}}
+								{%- endcase -%}
+							</div>
+						{%- endfor -%}
+					{%- elsif product.featured_image -%}
+						{%- comment -%} Fallback for products with no media but a featured image {%- endcomment -%}
+						<div class="absolute inset-0" data-gallery-item="0">
+							{{
+								product.featured_image
+								| image_url: width: 1200
+								| image_tag:
+									loading: 'eager',
+									class: 'w-full h-full object-cover',
+									widths: '400, 600, 800, 1200',
+									sizes: '(min-width: 1024px) 50vw, 100vw'
+							}}
+						</div>
 					{%- endif -%}
 
 					{%- if section.settings.image_badge != blank -%}
-						<div class="absolute top-4 left-4 right-4 flex justify-center">
+						<div class="absolute top-4 left-4 right-4 flex justify-center z-10">
 							<span class="px-5 py-2 rounded-full bg-highlight text-white text-xs font-bold tracking-wide uppercase">
 								{{ section.settings.image_badge }}
 							</span>
@@ -104,25 +146,36 @@
 
 				{%- comment -%} Thumbnail row {%- endcomment -%}
 				<div class="grid grid-cols-6 gap-2">
-					{%- for image in product.images limit: 6 -%}
+					{%- for media in media_items -%}
 						<button
 							type="button"
-							class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if forloop.first %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
+							class="relative aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if forloop.first %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
 							data-thumb-btn
-							data-thumb-src="{{ image | image_url: width: 1200 }}"
+							data-thumb-index="{{ forloop.index0 }}"
+							aria-label="Show {{ media.media_type }} {{ forloop.index }}"
 						>
-							{{
-								image
-								| image_url: width: 200
-								| image_tag:
-									loading: 'lazy',
-									class: 'w-full h-full object-cover',
-									widths: '100, 200'
-							}}
+							{%- if media.preview_image -%}
+								{{
+									media.preview_image
+									| image_url: width: 200
+									| image_tag:
+										loading: 'lazy',
+										class: 'w-full h-full object-cover',
+										widths: '100, 200',
+										alt: ''
+								}}
+							{%- endif -%}
+							{%- if media.media_type == 'video' -%}
+								<span class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/15">
+									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white drop-shadow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+										<path d="M8 5v14l11-7z"/>
+									</svg>
+								</span>
+							{%- endif -%}
 						</button>
 					{%- endfor -%}
-					{%- if product.images.size < 6 -%}
-						{%- assign placeholders_needed = 6 | minus: product.images.size -%}
+					{%- if media_count < 6 -%}
+						{%- assign placeholders_needed = 6 | minus: media_count -%}
 						{%- for i in (1..placeholders_needed) -%}
 							<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
 						{%- endfor -%}
@@ -425,7 +478,7 @@
 
 	var sellingPlanInput = section.querySelector('[data-selling-plan-input]');
 	var addBtn = section.querySelector('[data-add-to-cart]');
-	var mainImage = document.getElementById('product-main-image');
+	var galleryItems = section.querySelectorAll('[data-gallery-item]');
 	var thumbBtns = section.querySelectorAll('[data-thumb-btn]');
 	var stickyBar = document.querySelector('[data-sticky-bar]');
 	var stickyAtc = stickyBar ? stickyBar.querySelector('[data-sticky-atc]') : null;
@@ -468,10 +521,23 @@
 	/* ── Thumbnail gallery ── */
 	thumbBtns.forEach(function (btn) {
 		btn.addEventListener('click', function () {
-			if (!mainImage) return;
-			mainImage.removeAttribute('srcset');
-			mainImage.removeAttribute('sizes');
-			mainImage.src = btn.getAttribute('data-thumb-src');
+			var idx = btn.getAttribute('data-thumb-index');
+			if (idx === null) return;
+
+			galleryItems.forEach(function (item) {
+				var match = item.getAttribute('data-gallery-item') === idx;
+				item.classList.toggle('hidden', !match);
+
+				var video = item.querySelector('video');
+				if (!video) return;
+				if (match) {
+					try { video.currentTime = 0; } catch (e) {}
+					var p = video.play();
+					if (p && typeof p.catch === 'function') p.catch(function () {});
+				} else {
+					video.pause();
+				}
+			});
 
 			thumbBtns.forEach(function (b) {
 				b.classList.remove('border-main');
