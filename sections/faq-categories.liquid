@@ -61,24 +61,30 @@
 							{%- if block.type == 'faq_item' -%}
 								{%- assign block_cat_handle = block.settings.category | downcase | handleize -%}
 								{%- if block_cat_handle == cat_handle -%}
-									<details
-										class="group py-4"
+									<div
+										class="faq-item"
 										data-faq-search-target
 										data-faq-search-text="{{ block.settings.question | append: ' ' | append: block.settings.answer | strip_html | escape }}"
 										{{ block.shopify_attributes }}
 									>
-										<summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+										<button
+											class="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer group"
+											aria-expanded="false"
+											data-faq-toggle
+										>
 											<span class="font-heading text-base md:text-lg font-medium text-title">{{ block.settings.question }}</span>
-											<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform group-open:rotate-45" aria-hidden="true">
+											<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform duration-300 group-aria-expanded:rotate-45" aria-hidden="true">
 												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 													<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
 												</svg>
 											</span>
-										</summary>
-										<div class="pt-3 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
-											{{ block.settings.answer }}
+										</button>
+										<div class="overflow-hidden transition-all duration-300 ease-out" style="max-height: 0;" data-faq-answer>
+											<div class="pb-4 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
+												{{ block.settings.answer }}
+											</div>
 										</div>
-									</details>
+									</div>
 								{%- endif -%}
 							{%- endif -%}
 						{%- endfor -%}
@@ -101,24 +107,30 @@
 				<div class="flex flex-col divide-y divide-main/10 border-t border-main/10">
 					{%- for block in section.blocks -%}
 						{%- if block.type == 'faq_item' and block.settings.category == blank -%}
-							<details
-								class="group py-4"
+							<div
+								class="faq-item"
 								data-faq-search-target
 								data-faq-search-text="{{ block.settings.question | append: ' ' | append: block.settings.answer | strip_html | escape }}"
 								{{ block.shopify_attributes }}
 							>
-								<summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+								<button
+									class="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer group"
+									aria-expanded="false"
+									data-faq-toggle
+								>
 									<span class="font-heading text-base md:text-lg font-medium text-title">{{ block.settings.question }}</span>
-									<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform group-open:rotate-45" aria-hidden="true">
+									<span class="shrink-0 w-5 h-5 text-copy/50 transition-transform duration-300 group-aria-expanded:rotate-45" aria-hidden="true">
 										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 											<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
 										</svg>
 									</span>
-								</summary>
-								<div class="pt-3 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
-									{{ block.settings.answer }}
+								</button>
+								<div class="overflow-hidden transition-all duration-300 ease-out" style="max-height: 0;" data-faq-answer>
+									<div class="pb-4 pr-6 text-sm md:text-base leading-relaxed text-copy/80">
+										{{ block.settings.answer }}
+									</div>
 								</div>
-							</details>
+							</div>
 						{%- endif -%}
 					{%- endfor -%}
 				</div>
@@ -153,6 +165,42 @@
 	}
 	</script>
 {%- endif -%}
+
+{%- comment -%}
+	Open/close animation — mirrors /sections/faq.liquid (homepage & product).
+	The button toggles aria-expanded; the answer animates via max-height.
+{%- endcomment -%}
+<script>
+(function () {
+	var root = document.getElementById('faq-categories-{{ section.id }}');
+	if (!root) return;
+
+	root.querySelectorAll('[data-faq-toggle]').forEach(function (btn) {
+		btn.addEventListener('click', function () {
+			var expanded = btn.getAttribute('aria-expanded') === 'true';
+			var answer = btn.parentElement.querySelector('[data-faq-answer]');
+			if (!answer) return;
+
+			if (expanded) {
+				answer.style.maxHeight = answer.scrollHeight + 'px';
+				requestAnimationFrame(function () {
+					answer.style.maxHeight = '0';
+				});
+				btn.setAttribute('aria-expanded', 'false');
+			} else {
+				answer.style.maxHeight = answer.scrollHeight + 'px';
+				btn.setAttribute('aria-expanded', 'true');
+				answer.addEventListener('transitionend', function handler() {
+					if (btn.getAttribute('aria-expanded') === 'true') {
+						answer.style.maxHeight = 'none';
+					}
+					answer.removeEventListener('transitionend', handler);
+				});
+			}
+		});
+	});
+})();
+</script>
 
 {% schema %}
 {

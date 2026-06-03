@@ -1,47 +1,273 @@
-## Return & Refund Policy
+Please, but i also think i like the white outline
+Love it — that's the ghost-light variant (light/white outline), and it's the missing piece for dark sections where a navy solid would vanish. Let me grab your fonts and brand assets so the mockup is pixel-accurate.
 
-**Our Promise**
+Let me confirm the font roles and copy the font files I'll need.
 
-We stand behind every product we make. If you're not satisfied with your AIRA experience, we're here to make it right.
+Satoshi (headings) + Nunito Sans (body). I have everything I need. Let me set up and build the comparison.
 
-**30-Day Satisfaction Guarantee**
+Now I'll build a clean comparison page in your actual brand language.
 
-Try AIRA for 30 days. If you're not happy with your purchase for any reason, contact us at contact@aira-breathing.com within 30 days of delivery and we'll guide you through the return process.
+Let me fix a stray invalid CSS value I left in the navy hover.
 
----
+✓
+✓ #1
+✓
+✓ #2
+✓
+✓ #3
+✓
+✓ #4
+Done — it's open in your tab. Built in your real brand (Satoshi/Nunito Sans, navy/cream/orange), with live hover states.
 
-**Magnetic Strip Returns**
+My recommended hierarchy, with the white outline folded in:
 
-The reusable magnetic strip is eligible for return within 30 days of delivery, provided it is in good physical condition, not broken or damaged and returned in its original packaging.
+Orange solid → the fixed Shop CTA. Reserve the color exclusively for it.
+Navy solid → primary secondary on light backgrounds (Add to Cart, Subscribe).
+Outline → your pick. Navy outline on light, white outline on dark — fills in on hover. This is the clean answer for dark sections where a navy fill would disappear.
+Ghost + arrow → low-emphasis "learn more" links.
+The page shows each tier with when-to-use notes, then the full set on light + dark, plus two in-context examples (product card, dark CTA band).
 
-To initiate a return, simply contact our support team with your order number. Return shipping costs are the responsibility of the customer.
+One call to make: do you want the outline to be the main secondary across the site, or stay paired with navy-solid (navy on light, outline on dark)? Tell me and I can collapse it to a 3-tier system either way.
 
----
+Please give me a breif now for VSC AI to create these 4 tiers on the component and then go through and amend all in the codebase
+Good move. Let me audit how buttons are actually used across the codebase so the brief is precise — not guesswork.
 
-**Adhesive Tabs Returns**
+Now I see the real picture: buttons exist in two forms — the cta-button snippet, and hand-coded Tailwind class strings. I need a full inventory of both. Let me gather every render call and every raw button class string.
 
-Adhesive tab packs are eligible for return only if they are completely unopened and untouched. Once a pack has been opened or a tab has been removed, it cannot be returned or refunded. This applies to both individual purchases and subscription refill orders.
+The directory grep is being flaky with filter. Let me query explicit files for the snippet usages and raw button strings.
 
-We encourage you to try the tabs, they're designed to be used.
+Let me catch the remaining hotspots — header, cart, sticky bar, forms — so the inventory is complete.
 
----
+I have a complete inventory now. Let me confirm two surfaces (light vs dark background) so my migration table is correct.
 
-**Subscription Refill Plan**
+Complete inventory in hand. Here's the picture: the codebase uses 7 legacy variants (accent, primary, ghost, ghost-light, inverse, blue, blue-light) across ~18 cta-button calls, plus ~9 hand-coded buttons with raw Tailwind that bypass the snippet entirely. I'll write a precise, copy-pasteable brief that collapses everything to your 4 tiers.
 
-You may pause, skip, or cancel your refill subscription at any time through your account portal. Changes must be made at least 72 hours before your next billing date to avoid being charged for that cycle.
+Brief's ready — download above, or it's in your project as Button System — VS Code AI Brief.md. Paste it straight into your in-editor AI.
 
-Orders that have already been processed and shipped cannot be cancelled but may be returned unopened within 30 days, with return shipping at the customer's expense.
+What it tells the AI to do:
 
----
+Rewrite cta-button.liquid — new 4-tier API (shop / solid / outline / link) + a surface: light|dark param, plus a legacy alias map so nothing breaks mid-migration.
+Migrate all ~18 snippet calls — exact file + line + old→new variant table.
+Refactor ~9 hand-coded buttons (product, cart drawer, sticky bars) onto the snippet, preserving their JS hooks via a new attributes passthrough.
+Do-not-touch list — badges, cart bubbles, nav, pagination, inputs, plan selectors all share these Tailwind classes but aren't CTAs.
+Cleanup + QA — delete the alias block last, grep for stragglers, run theme-check, visual pass.
+Two things baked in from your real code: the migration tables use actual confirmed line numbers, and the surface flags are set from each section's real background (e.g. how-to-use and how-it-works-cta → surface: 'dark').
 
-**Important Notes**
+One judgment call to flag: I mapped the retired blue/blue-light straight into outline/solid. If those blue buttons were doing something intentional (e.g. a distinct "watch/media" action), tell me and I'll add a 5th accent tier instead of folding them in.
 
-Refunds are only available for purchases made directly through our official website. If you purchased through a third-party platform, please initiate your return through that platform directly.
+I cant download it can you just give me the breif here
+aira-shopify
+Here's the full brief — copy from here straight into your in-editor AI.
 
-Refunds will be processed within 5 to 10 business days of receiving your return.
+Brief: Migrate Aira to a 4‑Tier Button System
+For: the in‑editor AI coding assistant working in the aira-shopify Shopify theme. Goal: Replace the current 7‑variant button mess with one semantic 4‑tier system. Update the cta-button snippet, then migrate every call site and hand‑coded button.
 
----
+Buttons live in two places: (A) the cta-button snippet, and (B) raw Tailwind class strings hand‑written into sections. Both must be migrated. Do not touch non‑button elements sharing these classes (badges, pills, cart‑count bubbles, nav links, pagination, inputs) — see the Do‑Not‑Touch list.
 
-**A note from us**
+1. The system (descending emphasis)
+Tier	Variant	Looks like	When to use
+1	shop	Orange solid (bg-highlight text-white)	The one Shop/Buy CTA. Reserve orange for buying only.
+2	solid	Navy solid on light (bg-main text-secondary) / cream solid on dark (bg-secondary text-main)	Primary secondary action: Add to Cart, Subscribe, Checkout, form submits.
+3	outline	Navy outline on light / white outline on dark; fills on hover	Secondary action, esp. on dark sections.
+4	link	Ghost text + arrow (→, nudges on hover)	Low‑emphasis text links: "The science", "Learn more".
+A surface param (light | dark) controls how solid/outline/link adapt. shop ignores it.
 
-We're a small brand that genuinely cares about your experience. If something isn't working for you, reach out before you request a return we'd love the chance to help first.
+Retired: accent, primary, ghost, ghost-light, inverse, blue, blue-light. The new snippet keeps a back‑compat alias map so nothing breaks mid‑migration; delete it at the end.
+
+2. Step 1 — Replace snippets/cta-button.liquid entirely
+{%- comment -%}
+	CTA Button — Aira 4-tier system
+
+	Tiers (descending emphasis):
+	  shop     Orange solid    — the ONE Shop CTA. Reserve orange for buying only.
+	  solid    Navy/cream solid — primary secondary action (Add to Cart, Subscribe, submit).
+	  outline  Outlined        — secondary action; navy on light, white on dark.
+	  link     Ghost + arrow   — low-emphasis text link ("learn more", "the science").
+
+	Parameters:
+	  label         {String}  Button text (required)
+	  url           {String}  href when element is 'a'                (default: '#')
+	  variant       {String}  'shop' | 'solid' | 'outline' | 'link'   (default: 'solid')
+	  surface       {String}  'light' | 'dark' — background it sits on (default: 'light')
+	  size          {String}  'sm' | 'md' | 'lg'                      (default: 'md')
+	  element       {String}  'a' | 'button'                          (default: 'a')
+	  button_type   {String}  'button' | 'submit' | 'reset'           (default: 'button')
+	  arrow         {Boolean} trailing arrow on 'link' variant        (default: true)
+	  full_width    {Boolean} stretch to container width              (default: false)
+	  disabled      {Boolean} disabled state (button element only)    (default: false)
+	  attributes    {String}  raw extra attributes (id, data-*, aria-*) appended to the tag
+	  extra_classes {String}  additional classes
+
+	Legacy aliases (auto-mapped — remove from call sites during migration):
+	  accent → shop · primary → solid · inverse → solid+dark
+	  ghost → outline · ghost-light → outline+dark · blue → solid · blue-light → outline+dark
+{%- endcomment -%}
+
+{%- liquid
+	assign btn_variant = variant | default: 'solid'
+	assign btn_surface = surface | default: 'light'
+	assign btn_size    = size    | default: 'md'
+	assign btn_element = element | default: 'a'
+	assign btn_type    = button_type | default: 'button'
+
+	# Legacy alias mapping (back-compat during migration)
+	case btn_variant
+		when 'accent'
+			assign btn_variant = 'shop'
+		when 'primary'
+			assign btn_variant = 'solid'
+		when 'inverse'
+			assign btn_variant = 'solid'
+			assign btn_surface = 'dark'
+		when 'ghost'
+			assign btn_variant = 'outline'
+		when 'ghost-light'
+			assign btn_variant = 'outline'
+			assign btn_surface = 'dark'
+		when 'blue'
+			assign btn_variant = 'solid'
+		when 'blue-light'
+			assign btn_variant = 'outline'
+			assign btn_surface = 'dark'
+	endcase
+
+	# Colour tokens per tier × surface
+	case btn_variant
+		when 'shop'
+			assign btn_colors = 'bg-highlight text-white hover:opacity-90'
+		when 'solid'
+			if btn_surface == 'dark'
+				assign btn_colors = 'bg-secondary text-main hover:opacity-90'
+			else
+				assign btn_colors = 'bg-main text-secondary hover:opacity-90'
+			endif
+		when 'outline'
+			if btn_surface == 'dark'
+				assign btn_colors = 'border-2 border-secondary/60 text-secondary hover:bg-secondary hover:text-main'
+			else
+				assign btn_colors = 'border-2 border-main text-main hover:bg-main hover:text-secondary'
+			endif
+		when 'link'
+			if btn_surface == 'dark'
+				assign btn_colors = 'text-secondary hover:opacity-70'
+			else
+				assign btn_colors = 'text-main hover:opacity-70'
+			endif
+	endcase
+
+	# Sizing
+	case btn_size
+		when 'sm'
+			assign btn_padding = 'px-6 py-2.5 text-sm'
+		when 'md'
+			assign btn_padding = 'px-8 py-3 text-sm'
+		when 'lg'
+			assign btn_padding = 'px-10 py-4 text-base'
+	endcase
+
+	# 'link' has no fill and minimal padding
+	if btn_variant == 'link'
+		assign btn_padding = 'px-1 py-1 text-sm'
+	endif
+
+	# Assemble classes
+	assign btn_base = 'group inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-wide transition-all duration-200 cursor-pointer'
+	assign btn_classes = btn_base | append: ' ' | append: btn_colors | append: ' ' | append: btn_padding
+
+	if full_width
+		assign btn_classes = btn_classes | append: ' w-full text-center'
+	endif
+	if disabled
+		assign btn_classes = btn_classes | append: ' disabled:opacity-40 disabled:cursor-not-allowed'
+	endif
+	if extra_classes != blank
+		assign btn_classes = btn_classes | append: ' ' | append: extra_classes
+	endif
+
+	assign show_arrow = arrow
+	if show_arrow == nil
+		assign show_arrow = true
+	endif
+-%}
+
+{%- capture btn_inner -%}
+	{{ label }}
+	{%- if btn_variant == 'link' and show_arrow -%}
+		<span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- if btn_element == 'button' -%}
+	<button type="{{ btn_type }}" class="{{ btn_classes }}"{% if disabled %} disabled{% endif %} {{ attributes }}>{{ btn_inner }}</button>
+{%- else -%}
+	<a href="{{ url | default: '#' }}" class="{{ btn_classes }}" {{ attributes }}>{{ btn_inner }}</a>
+{%- endif -%}
+attributes is a raw passthrough so hand‑coded buttons keep their id / data-* / aria-* JS hooks when they move onto the snippet.
+The alias case block keeps existing calls working before you touch them — migrate them anyway, then delete it last.
+3. Step 2 — Migrate every render 'cta-button' call
+Update variant: and add surface: where the button sits on a dark background. Confirmed call sites:
+
+File	Line(s)	Old	New
+sections/hero.liquid	137	accent	shop
+sections/final-cta.liquid	32	accent	shop
+sections/how-it-works-cta.liquid	33	accent	shop
+sections/how-it-works-cta.liquid	41	ghost-light	outline, surface: 'dark'
+sections/faq-final-cta.liquid	31	primary	solid (on bg-secondary → light)
+sections/faq-final-cta.liquid	37	ghost	outline (light)
+sections/affiliate-final-cta.liquid	30	accent	shop
+sections/affiliate-hero.liquid	29	accent	shop
+sections/our-story-closing.liquid	55	accent	shop
+sections/social-proof.liquid	293	accent	shop
+sections/cross-sell.liquid	51	primary	solid (on bg-bg-soft → light)
+sections/health-effects.liquid	204	accent	shop
+sections/how-to-use.liquid	100	blue-light	outline, surface: 'dark' (section is bg-main)
+sections/header.liquid	131, 252	accent	shop
+sections/mobile-sticky-bar.liquid	19	accent	shop
+sections/contact-form.liquid	72	primary	solid
+sections/returns-form.liquid	105	primary	solid
+sections/affiliate-form.liquid	123	primary	solid
+Surface rule: if the section/container is dark (bg-main, dark hero, footer) → surface: 'dark'. Otherwise omit (defaults light). shop never needs it.
+
+Also in sections/hero.liquid (~line 143) there's a hand‑coded secondary text link (<a … text-secondary … hover:underline>) next to the hero CTA — replace with:
+
+{%- render 'cta-button', label: section.settings.secondary_button_label, url: section.settings.secondary_button_url, variant: 'link', surface: 'dark' -%}
+4. Step 3 — Refactor hand‑coded buttons onto the snippet
+Convert each to a cta-button render, preserving JS hooks via element: 'button', full_width, disabled, and attributes: (move any id / data-* / name there). Keep submit behaviour.
+
+File	Line	Current	Target
+sections/product.liquid	354	bg-main text-secondary … w-full submit (Add to Cart)	variant: 'solid', element: 'button', button_type: 'submit', full_width: true, data hooks → attributes
+sections/product.liquid	455	bg-highlight text-white sticky add	variant: 'shop', element: 'button', hooks as needed
+sections/product-refill.liquid	227	bg-main text-secondary … w-full submit	variant: 'solid', submit, full_width
+sections/product-refill.liquid	328	bg-highlight text-white sticky add	variant: 'shop', submit
+snippets/cart-drawer.liquid	48	bg-main text-secondary (empty‑cart Shop)	variant: 'solid'
+snippets/cart-drawer.liquid	74	border-2 border-main … hover:bg-main (Add refill)	variant: 'outline' (light)
+snippets/cart-drawer.liquid	103	bg-main text-secondary … w-full (Checkout)	variant: 'solid', full_width, data-cart-checkout → attributes
+snippets/product-card.liquid	207	bg-main text-secondary (Add)	variant: 'solid', hooks → attributes
+cart-drawer.liquid builds line‑items as JS template strings (~lines 258‑270). Those are quantity steppers / remove icons, not CTAs — leave them (or align colours only). Don't render Liquid inside the JS string.
+
+5. Do NOT touch (share classes, not buttons)
+Badges / pills: product.liquid:140, product-refill.liquid:170, product-card.liquid:35, before-after-slider.liquid:110/142.
+Cart‑count bubbles: header.liquid:155/276.
+Header nav links: header.liquid:105/226 (hover:bg-main hover:text-secondary).
+Pagination: collection.liquid:50/63/69/83.
+Form inputs / selects / textareas: the rounded-xl border border-main/20 fields.
+Plan selector cards & size swatches: product.liquid / product-card.liquid .plan-card — selection controls with their own active states.
+Scope edits to interactive <a>/<button> action elements with button‑shaped classes (rounded-xl + fill/border + font-semibold + px-/py-). Ignore <span>, <div>, inputs, nav.
+
+6. Step 4 — Cleanup & verify
+Once all calls use shop/solid/outline/link, delete the legacy alias case block from the snippet.
+Grep for stragglers: legacy variant names, and raw bg-highlight text-white / bg-main text-secondary / border-2 border-main text-main on <a>/<button>.
+Run shopify theme check — expect zero new offenses.
+Visual QA: Home (hero), Product, Cart drawer, How‑it‑works, FAQ, Contact/Returns/Affiliate forms, mobile sticky bar. Confirm: exactly one orange button per view; surface: 'dark' adapts correctly; outlines fill on hover; link arrow nudges; disabled Add‑to‑Cart still greys + submits.
+Reference: tier tokens (source of truth)
+shop            → bg-highlight text-white  (orange, both surfaces)
+solid  · light  → bg-main text-secondary   (navy)
+solid  · dark   → bg-secondary text-main   (cream)
+outline· light  → border-2 border-main text-main             · hover:bg-main hover:text-secondary
+outline· dark   → border-2 border-secondary/60 text-secondary · hover:bg-secondary hover:text-main
+link   · light  → text-main     + → arrow
+link   · dark   → text-secondary + → arrow
+shared          → rounded-xl, font-semibold, tracking-wide, transition-all
+brand colours   → highlight #FF4000 · main #0A1A34 · secondary #F1EBE1
+One judgment call to flag: I folded the retired blue/blue-light into outline/solid. If those blue buttons were intentionally distinct (e.g. a "watch/media" action), say so and I'll add a 5th accent tier instead.
+

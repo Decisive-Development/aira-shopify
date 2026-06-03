@@ -8,15 +8,15 @@
 	<div
 		class="absolute inset-0 pointer-events-none"
 		style="background:
-			radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.22), transparent 65%),
-			radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.22), transparent 70%);"
+			radial-gradient(ellipse 60% 110% at 80% 12%, rgba(155,183,212,0.22), transparent 70%),
+			radial-gradient(ellipse 60% 125% at 15% 96%, rgba(80,162,167,0.22), transparent 72%);"
 	></div>
 
 	<div class="relative z-10 container mx-auto px-4 max-w-[720px] text-center">
 		{%- if section.settings.eyebrow != blank -%}
 			<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light mb-4">{{ section.settings.eyebrow }}</p>
 		{%- endif -%}
-		<h1 class="text-4xl md:text-5xl font-medium mb-4 text-balance">
+		<h1 class="text-4xl md:text-5xl font-medium mb-4 text-balance text-white">
 			{{ section.settings.heading | default: 'Frequently asked questions' }}
 		</h1>
 		{%- if section.settings.subheading != blank -%}

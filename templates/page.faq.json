@@ -5,7 +5,7 @@
 			"settings": {
 				"eyebrow": "Help",
 				"heading": "Frequently asked questions",
-				"subheading": "Everything you'd want to know about AIRA — sizing, materials, sleep, sport, and more."
+				"subheading": "Everything you'd want to know about AIRA — how it works, the kit, sizing, sleep, sport, and shipping."
 			}
 		},
 		"search": {
@@ -15,33 +15,45 @@
 		"categories": {
 			"type": "faq-categories",
 			"blocks": {
-				"cat-sizing":   { "type": "category", "settings": { "title": "Sizing" } },
-				"q-sizing-1":   { "type": "faq_item", "settings": { "category": "Sizing",    "question": "How do I find my size?",          "answer": "<p>Every Aira Kit ships with all four band sizes. Try them on night one and keep the one that fits.</p>" } },
-				"q-sizing-2":   { "type": "faq_item", "settings": { "category": "Sizing",    "question": "Which size for sleep vs sport?",   "answer": "<p>Start a size up for sleep (wider airflow) and a size down for sport (so the tabs hold under sweat).</p>" } },
+				"cat-how": { "type": "category", "settings": { "title": "How it works" } },
+				"q-how-1": { "type": "faq_item", "settings": { "category": "How it works", "question": "How does the Aira nasal strip work?", "answer": "<p>Aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them — creating a soft, outward pull that widens your airway instantly.</p><p>No drugs, no intrusion, no discomfort. Just cleaner, more comfortable breathing from the moment you put it on.</p>" } },
+				"q-how-2": { "type": "faq_item", "settings": { "category": "How it works", "question": "How is Aira different from regular nasal strips?", "answer": "<p>Standard nasal strips use adhesive alone to pull your nose open. That works early in the night, but the adhesive weakens over time — which is why they often peel by morning.</p><p>Aira separates those two jobs: the magnetic band handles the structural opening, and the tabs just hold it in place. Stronger hold, gentler on your skin, and breathing that stays consistent through the night rather than fading.</p>" } },
+				"q-how-3": { "type": "faq_item", "settings": { "category": "How it works", "question": "Will it help with my snoring?", "answer": "<p>For most people, yes. When your nose is properly open, your body defaults to nasal breathing instead of mouth breathing — and it's the mouth breathing that causes the soft-tissue vibration behind most snoring.</p><p>We hear from a lot of customers that their partner noticed the improvement before they did.</p>" } },
 
-				"cat-materials":{ "type": "category", "settings": { "title": "Materials" } },
-				"q-mat-1":      { "type": "faq_item", "settings": { "category": "Materials", "question": "Is the adhesive hypoallergenic?", "answer": "<p>Yes — medical-grade adhesive, latex-free. Run a 24-hour patch test if you have very sensitive skin.</p>" } },
-				"q-mat-2":      { "type": "faq_item", "settings": { "category": "Materials", "question": "How long does the band last?",    "answer": "<p>Months of nightly use. The band is reusable; the adhesive tabs are single-use.</p>" } },
+				"cat-kit": { "type": "category", "settings": { "title": "The kit & materials" } },
+				"q-kit-1": { "type": "faq_item", "settings": { "category": "The kit & materials", "question": "What's in the Aira Kit?", "answer": "<p>Four magnetic band sizes (S2, M1, M2, and L1), a pack of 30 adhesive tabs, and an application guide. The bands are reusable — you only replace the tabs as you go. Everything you need to find your fit and get started is in the kit.</p>" } },
+				"q-kit-2": { "type": "faq_item", "settings": { "category": "The kit & materials", "question": "How long does the band last?", "answer": "<p>The magnetic band itself lasts months — it's reusable. What you need to replace are the adhesive tabs, one pair per night. They come in packs of 30, 60, or 90, so your ongoing cost is just the tabs, not the whole kit every time.</p>" } },
+				"q-kit-3": { "type": "faq_item", "settings": { "category": "The kit & materials", "question": "Is it safe for sensitive skin?", "answer": "<p>The adhesive tabs are medical-grade and specifically designed to minimize irritation. They come off cleanly in the morning without pulling your skin. If your skin is particularly sensitive, you can do a small patch test on your first night — but most people with sensitive skin have no issues.</p>" } },
 
-				"cat-using":    { "type": "category", "settings": { "title": "Using AIRA" } },
-				"q-use-1":      { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Will it stay on through the night?", "answer": "<p>Yes — get the prep right (clean, dry, no moisturiser) and most wearers get a full 8 hours, even on side-sleepers.</p>" } },
-				"q-use-2":      { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Can I wear it during sport?",        "answer": "<p>It was originally engineered for high-impact sport. Size down so the tabs hold tight under sweat and movement.</p>" } },
+				"cat-size": { "type": "category", "settings": { "title": "Sizing & fit" } },
+				"q-size-1": { "type": "faq_item", "settings": { "category": "Sizing & fit", "question": "How do I find the right size?", "answer": "<p>The kit includes four band sizes: S2, M1, M2, and L1. A good fit means the band's ends rest just on the outer edges of your nostrils without pressing them inward. If you're in between sizes, some people size up for workouts and use a smaller size for sleep.</p>" } },
 
-				"cat-orders":   { "type": "category", "settings": { "title": "Orders & shipping" } },
-				"q-ord-1":      { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "How long does shipping take?", "answer": "<p>Within the GCC: 2–4 business days. International: 7–14 business days.</p>" } },
-				"q-ord-2":      { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Can I return it?",             "answer": "<p>Unused, sealed kits within 14 days. <a href=\"/pages/returns\">Start a return</a>.</p>" } }
+				"cat-use": { "type": "category", "settings": { "title": "Using AIRA" } },
+				"q-use-1": { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "How do I apply it?", "answer": "<p>Clean, dry skin is the one thing that actually matters — it's the step most people rush, and it's why tabs sometimes don't hold. Stick one tab on either side of your nose, on the flat area just outside your nostrils, then connect the magnetic bridge between them.</p><p>The guide in the kit has visuals, and most people get the hang of it within the first two or three nights.</p>" } },
+				"q-use-2": { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Is it comfortable to sleep with? What if it falls off?", "answer": "<p>Most people stop noticing it within a few minutes of putting it on. The strip is under 2 grams and sits flat against your skin. The adhesive is medical-grade, designed to hold through a full night — including if you move around a lot.</p><p>If it shifts, it's almost always a skin-prep issue: the tabs need clean, dry skin to grip properly. The kit comes with an application guide that covers this.</p>" } },
+				"q-use-3": { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "How quickly will I notice a difference?", "answer": "<p>The opening in your airway is immediate — you'll feel it the moment you put it on. For snoring, give it a few nights. If you've been a mouth-breather for years, your body takes a little time to settle into nasal breathing as its default. A week is a fair window to judge it properly.</p>" } },
+				"q-use-4": { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "What if the strip doesn't stick properly?", "answer": "<p>It's almost always a skin-prep issue. Make sure your nose is completely clean and dry before applying — no moisturizer, no sweat, no residue from a previous strip. If your skin is naturally oily, a quick wipe with a dry tissue right before application will help. The tabs are medical-grade adhesive, so when the prep is right, they hold reliably.</p>" } },
+				"q-use-5": { "type": "faq_item", "settings": { "category": "Using AIRA", "question": "Can I use it during exercise?", "answer": "<p>Yes — and it actually works particularly well for this. The tabs are sweat-resistant and stay put through running, cycling, or anything high-intensity. Nasal breathing during exercise is worth getting right: it improves oxygen uptake and helps regulate your heart rate.</p>" } },
+
+				"cat-orders": { "type": "category", "settings": { "title": "Orders & shipping" } },
+				"q-ord-1": { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Do you ship to the GCC?", "answer": "<p>Yes, we do! We ship to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive in 3–5 business days.</p>" } },
+				"q-ord-2": { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Do you have a return policy?", "answer": "<p>We stand behind every product we make. Try AIRA for 30 days — if you're not happy with your purchase for any reason, contact us at <a href=\"mailto:contact@aira-breathing.com\">contact@aira-breathing.com</a> within 30 days of delivery and we'll guide you through the return process.</p>" } }
 			},
 			"block_order": [
-				"cat-sizing", "q-sizing-1", "q-sizing-2",
-				"cat-materials", "q-mat-1", "q-mat-2",
-				"cat-using", "q-use-1", "q-use-2",
+				"cat-how", "q-how-1", "q-how-2", "q-how-3",
+				"cat-kit", "q-kit-1", "q-kit-2", "q-kit-3",
+				"cat-size", "q-size-1",
+				"cat-use", "q-use-1", "q-use-2", "q-use-3", "q-use-4", "q-use-5",
 				"cat-orders", "q-ord-1", "q-ord-2"
 			],
 			"settings": {}
 		},
 		"final_cta": {
 			"type": "faq-final-cta",
-			"settings": {}
+			"settings": {
+				"heading": "Still have a question?",
+				"body": "Reach out — we usually reply within an hour during business hours."
+			}
 		}
 	},
 	"order": ["hero", "search", "categories", "final_cta"]
