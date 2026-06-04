@@ -110,23 +110,20 @@
 											<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ section.settings.cta_body }}</p>
 										{%- endif -%}
 									</div>
-									{%- if section.settings.cta_style == 'button' -%}
-										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight text-white px-8 py-3 whitespace-nowrap">
-											{{ section.settings.cta_label }}
-										</a>
-									{%- elsif section.settings.cta_style == 'button-blue' -%}
-										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight-blue text-white px-8 py-3 whitespace-nowrap">
-											{{ section.settings.cta_label }}
-										</a>
-									{%- else -%}
-										<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-cta-link">
-											{{ section.settings.cta_label }}
-											<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-												<line x1="5" y1="12" x2="19" y2="12"/>
-												<polyline points="12 5 19 12 12 19"/>
-											</svg>
-										</a>
-									{%- endif -%}
+									{%- liquid
+										assign cta_variant = 'link'
+										if section.settings.cta_style == 'button'
+											assign cta_variant = 'shop'
+										elsif section.settings.cta_style == 'button-blue'
+											assign cta_variant = 'solid'
+										endif
+									-%}
+									{%- render 'cta-button',
+										label: section.settings.cta_label,
+										url: section.settings.cta_url,
+										variant: cta_variant,
+										extra_classes: 'whitespace-nowrap'
+									-%}
 								</div>
 							{%- endif -%}
 						</div>
@@ -185,23 +182,20 @@
 									<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ section.settings.cta_body }}</p>
 								{%- endif -%}
 							</div>
-							{%- if section.settings.cta_style == 'button' -%}
-								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight text-white px-8 py-3 whitespace-nowrap">
-									{{ section.settings.cta_label }}
-								</a>
-							{%- elsif section.settings.cta_style == 'button-blue' -%}
-								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-highlight-blue text-white px-8 py-3 whitespace-nowrap">
-									{{ section.settings.cta_label }}
-								</a>
-							{%- else -%}
-								<a href="{{ section.settings.cta_url | default: '#' }}" class="inline-cta-link">
-									{{ section.settings.cta_label }}
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-										<line x1="5" y1="12" x2="19" y2="12"/>
-										<polyline points="12 5 19 12 12 19"/>
-									</svg>
-								</a>
-							{%- endif -%}
+							{%- liquid
+								assign cta_variant = 'link'
+								if section.settings.cta_style == 'button'
+									assign cta_variant = 'shop'
+								elsif section.settings.cta_style == 'button-blue'
+									assign cta_variant = 'solid'
+								endif
+							-%}
+							{%- render 'cta-button',
+								label: section.settings.cta_label,
+								url: section.settings.cta_url,
+								variant: cta_variant,
+								extra_classes: 'whitespace-nowrap'
+							-%}
 						</div>
 					{%- endif -%}
 

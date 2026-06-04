@@ -1,64 +1,103 @@
 {%- comment -%}
-	CTA Button component
+	CTA Button — Aira 4-tier system
+
+	Tiers (descending emphasis):
+	  shop     Orange solid    — the ONE Shop CTA. Reserve orange for buying only.
+	  solid    Navy/cream solid — primary secondary action (Add to Cart, Subscribe, submit).
+	  outline  Outlined        — secondary action; navy on light, white on dark.
+	  link     Ghost + arrow   — low-emphasis text link ("learn more", "the science").
 
 	Parameters:
 	  label         {String}  Button text (required)
-	  url           {String}  href — used when element is 'a' (default: '#')
-	  variant       {String}  'primary' | 'accent' | 'ghost' | 'ghost-light' | 'inverse' | 'blue' | 'blue-light'  (default: 'primary')
-	  size          {String}  'sm' | 'md' | 'lg'              (default: 'md')
-	  element       {String}  'a' | 'button'                  (default: 'a')
-	  button_type   {String}  'button' | 'submit' | 'reset'   (default: 'button')
-	  extra_classes {String}  Any additional Tailwind classes
-
-	Usage:
-	  {% render 'cta-button', label: 'Shop now', url: '/collections/all', variant: 'accent' %}
-	  {% render 'cta-button', label: 'Subscribe', element: 'button', button_type: 'submit', variant: 'primary', size: 'sm', extra_classes: 'shrink-0' %}
+	  url           {String}  href when element is 'a'                (default: '#')
+	  variant       {String}  'shop' | 'solid' | 'outline' | 'link'   (default: 'solid')
+	  surface       {String}  'light' | 'dark' — background it sits on (default: 'light')
+	  size          {String}  'sm' | 'md' | 'lg'                      (default: 'md')
+	  element       {String}  'a' | 'button'                          (default: 'a')
+	  button_type   {String}  'button' | 'submit' | 'reset'           (default: 'button')
+	  arrow         {Boolean} trailing arrow on 'link' variant        (default: true)
+	  full_width    {Boolean} stretch to container width              (default: false)
+	  disabled      {Boolean} disabled state (button element only)    (default: false)
+	  attributes    {String}  raw extra attributes (id, data-*, aria-*) appended to the tag
+	  extra_classes {String}  additional classes
 {%- endcomment -%}
 
 {%- liquid
-	assign btn_variant = variant | default: 'primary'
+	assign btn_variant = variant | default: 'solid'
+	assign btn_surface = surface | default: 'light'
 	assign btn_size    = size    | default: 'md'
 	assign btn_element = element | default: 'a'
 	assign btn_type    = button_type | default: 'button'
 
+	# Colour tokens per tier × surface
 	case btn_variant
-		when 'primary'
-			assign btn_colors = 'bg-main text-secondary'
-		when 'accent'
-			assign btn_colors = 'bg-highlight text-white'
-		when 'ghost'
-			assign btn_colors = 'border-2 border-main text-main'
-		when 'ghost-light'
-			assign btn_colors = 'border border-secondary/50 text-secondary hover:bg-secondary/10'
-		when 'inverse'
-			assign btn_colors = 'bg-secondary text-main'
-		when 'blue'
-			assign btn_colors = 'bg-highlight-blue text-white'
-		when 'blue-light'
-			assign btn_colors = 'bg-tertiary-light text-main'
+		when 'shop'
+			assign btn_colors = 'bg-highlight text-white hover:opacity-90'
+		when 'solid'
+			if btn_surface == 'dark'
+				assign btn_colors = 'bg-secondary text-main hover:opacity-90'
+			else
+				assign btn_colors = 'bg-main text-secondary hover:opacity-90'
+			endif
+		when 'outline'
+			if btn_surface == 'dark'
+				assign btn_colors = 'border-2 border-secondary/60 text-secondary hover:bg-secondary hover:text-main'
+			else
+				assign btn_colors = 'border-2 border-main text-main hover:bg-main hover:text-secondary'
+			endif
+		when 'link'
+			if btn_surface == 'dark'
+				assign btn_colors = 'text-secondary hover:opacity-70'
+			else
+				assign btn_colors = 'text-main hover:opacity-70'
+			endif
 	endcase
 
+	# Sizing — uniform text-sm + height (py-2.5) across all tiers;
+	# only horizontal padding steps up for width hierarchy.
 	case btn_size
 		when 'sm'
-			assign btn_padding = 'px-6 py-2.5'
+			assign btn_padding = 'px-6 py-2.5 text-sm'
 		when 'md'
-			assign btn_padding = 'px-8 py-3'
+			assign btn_padding = 'px-8 py-2.5 text-sm'
 		when 'lg'
-			assign btn_padding = 'px-10 py-4'
+			assign btn_padding = 'px-10 py-2.5 text-sm'
 	endcase
 
-	assign btn_classes = 'inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 ' | append: btn_colors | append: ' ' | append: btn_padding
+	# 'link' has no fill and minimal padding
+	if btn_variant == 'link'
+		assign btn_padding = 'px-1 py-1 text-sm'
+	endif
+
+	# Assemble classes
+	assign btn_base = 'group inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-wide transition-all duration-200 cursor-pointer'
+	assign btn_classes = btn_base | append: ' ' | append: btn_colors | append: ' ' | append: btn_padding
+
+	if full_width
+		assign btn_classes = btn_classes | append: ' w-full text-center'
+	endif
+	if disabled
+		assign btn_classes = btn_classes | append: ' disabled:opacity-40 disabled:cursor-not-allowed'
+	endif
 	if extra_classes != blank
 		assign btn_classes = btn_classes | append: ' ' | append: extra_classes
 	endif
+
+	assign show_arrow = arrow
+	if show_arrow == nil
+		assign show_arrow = true
+	endif
 -%}
 
+{%- capture btn_inner -%}
+	{{ label }}
+	{%- if btn_variant == 'link' and show_arrow -%}
+		<span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+	{%- endif -%}
+{%- endcapture -%}
+
 {%- if btn_element == 'button' -%}
-	<button type="{{ btn_type }}" class="{{ btn_classes }}">
-		{{ label }}
-	</button>
+	<button type="{{ btn_type }}" class="{{ btn_classes }}"{% if disabled %} disabled{% endif %} {{ attributes }}>{{ btn_inner }}</button>
 {%- else -%}
-	<a href="{{ url | default: '#' }}" class="{{ btn_classes }}">
-		{{ label }}
-	</a>
+	<a href="{{ url | default: '#' }}" class="{{ btn_classes }}" {{ attributes }}>{{ btn_inner }}</a>
 {%- endif -%}

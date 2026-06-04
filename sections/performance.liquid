@@ -292,19 +292,18 @@
 						{%- render 'cta-button',
 							label:   section.settings.cta_label,
 							url:     section.settings.cta_url,
-							variant: 'accent',
+							variant: 'shop',
 							size:    'lg',
 							extra_classes: 'w-full md:w-auto text-center'
 						-%}
 					{%- endif -%}
 					{%- if section.settings.cta_secondary_label != blank -%}
-						<a
-							href="{{ section.settings.cta_secondary_url | default: '#' }}"
-							class="font-body text-main self-start md:self-auto hover:opacity-70 transition-opacity"
-							style="font-size: 14.5px; font-weight: 500; border-bottom: 1px solid currentColor; padding-bottom: 1px;"
-						>
-							{{ section.settings.cta_secondary_label }}
-						</a>
+						{%- render 'cta-button',
+							label: section.settings.cta_secondary_label,
+							url: section.settings.cta_secondary_url,
+							variant: 'link',
+							extra_classes: 'self-start md:self-auto'
+						-%}
 					{%- endif -%}
 				</div>
 			{%- endif -%}

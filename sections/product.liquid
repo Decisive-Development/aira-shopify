@@ -348,15 +348,26 @@
 
 					</div>
 
-					{%- comment -%} ── Add to cart (matches cta-button primary/lg) ── {%- endcomment -%}
-					<button
-						type="submit"
-						class="inline-block rounded-xl text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 bg-main text-secondary px-10 py-4 w-full text-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-						data-add-to-cart
-						{% unless current_variant.available %}disabled{% endunless %}
-					>
-						{%- if current_variant.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
-					</button>
+					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
+					{%- liquid
+						assign atc_label = 'Sold Out'
+						assign atc_disabled = true
+						if current_variant.available
+							assign atc_label = 'Add to Cart'
+							assign atc_disabled = false
+						endif
+					-%}
+					{%- render 'cta-button',
+						label: atc_label,
+						variant: 'solid',
+						size: 'lg',
+						element: 'button',
+						button_type: 'submit',
+						full_width: true,
+						disabled: atc_disabled,
+						attributes: 'data-add-to-cart',
+						extra_classes: 'disabled:opacity-40 disabled:cursor-not-allowed'
+					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
 					<p class="text-xs text-title text-center">✓ Free shipping on all GCC orders</p>
@@ -450,14 +461,20 @@
 		<p class="font-heading font-semibold text-main text-sm truncate">{{ product.title }}</p>
 		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ current_variant.price | money }}</span>
 	</div>
-	<button
-		type="button"
-		class="shrink-0 px-8 py-3 rounded-xl bg-highlight text-white text-sm font-semibold tracking-wide transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-		data-sticky-atc
-		{% unless current_variant.available %}disabled{% endunless %}
-	>
-		Add to Cart
-	</button>
+	{%- liquid
+		assign sticky_disabled = true
+		if current_variant.available
+			assign sticky_disabled = false
+		endif
+	-%}
+	{%- render 'cta-button',
+		label: 'Add to Cart',
+		variant: 'shop',
+		element: 'button',
+		disabled: sticky_disabled,
+		attributes: 'data-sticky-atc',
+		extra_classes: 'shrink-0 disabled:opacity-40 disabled:cursor-not-allowed'
+	-%}
 </div>
 
 <script>

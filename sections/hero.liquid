@@ -134,17 +134,17 @@
 						{%- render 'cta-button',
 							label: section.settings.button_label,
 							url: section.settings.button_url,
-							variant: 'accent',
+							variant: 'shop',
 							size: 'lg'
 						-%}
 
 						{%- if section.settings.secondary_button_label != blank -%}
-							<a
-								href="{{ section.settings.secondary_button_url }}"
-								class="inline-block text-sm font-semibold tracking-wide text-secondary opacity-80 underline-offset-4 hover:underline transition-opacity hover:opacity-70"
-							>
-								{{ section.settings.secondary_button_label }}
-							</a>
+							{%- render 'cta-button',
+								label: section.settings.secondary_button_label,
+								url: section.settings.secondary_button_url,
+								variant: 'link',
+								surface: 'dark'
+							-%}
 						{%- endif -%}
 					</div>
 				{%- endif -%}

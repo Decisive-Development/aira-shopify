@@ -52,20 +52,19 @@
 					render 'cta-button',
 					label: section.settings.primary_cta_label,
 					url: section.settings.primary_cta_url,
-					variant: 'accent',
+					variant: 'shop',
 					size: 'lg',
 					extra_classes: 'w-full md:w-auto'
 				-%}
 			{%- endif -%}
 
 			{%- if section.settings.secondary_cta_label != blank -%}
-				<a
-					href="{{ section.settings.secondary_cta_url | default: '/' }}"
-					class="font-body text-[15px] font-medium text-secondary py-1 px-2 border-b border-secondary/40 hover:border-secondary transition-colors inline-flex items-center gap-2 group"
-				>
-					{{ section.settings.secondary_cta_label }}
-					<span class="transition-transform group-hover:translate-x-1">→</span>
-				</a>
+				{%- render 'cta-button',
+					label: section.settings.secondary_cta_label,
+					url: section.settings.secondary_cta_url,
+					variant: 'link',
+					surface: 'dark'
+				-%}
 			{%- endif -%}
 
 		</div>

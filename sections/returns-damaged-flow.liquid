@@ -31,14 +31,14 @@
 					{%- render 'cta-button',
 						label: 'Message support on WhatsApp',
 						url:   wa_link,
-						variant: 'primary',
+						variant: 'solid',
 						size: 'sm'
 					-%}
 				{%- elsif settings.support_email != blank -%}
 					{%- render 'cta-button',
 						label: 'Email support',
 						url:   'mailto:' | append: settings.support_email,
-						variant: 'primary',
+						variant: 'solid',
 						size: 'sm'
 					-%}
 				{%- endif -%}

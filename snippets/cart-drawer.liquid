@@ -45,9 +45,11 @@
 				<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
 			</svg>
 			<p class="text-copy text-base">Your cart is empty</p>
-			<a href="/products/aira-starter-kit" class="inline-block px-6 py-3 rounded-xl bg-main text-secondary text-base font-semibold transition-opacity hover:opacity-90 cursor-pointer">
-				Shop Aira Kit
-			</a>
+			{%- render 'cta-button',
+				label: 'Shop Aira Kit',
+				url: '/products/aira-starter-kit',
+				variant: 'solid'
+			-%}
 		</div>
 
 		{%- comment -%} Line items (rendered by JS) {%- endcomment -%}
@@ -67,14 +69,15 @@
 						<p class="font-heading font-semibold text-title text-base leading-snug truncate">{{ refill_product.title }}</p>
 						<p class="text-copy text-base mt-0.5">{{ refill_variant.price | money }}</p>
 					</div>
-					<button
-						type="button"
-						data-upsell-add
-						data-upsell-variant-id="{{ refill_variant.id }}"
-						class="shrink-0 px-5 py-2.5 rounded-xl border-2 border-main text-main text-sm font-bold transition-all hover:bg-main hover:text-secondary cursor-pointer"
-					>
-						Add
-					</button>
+					{%- capture upsell_attrs -%}data-upsell-add data-upsell-variant-id="{{ refill_variant.id }}"{%- endcapture -%}
+					{%- render 'cta-button',
+						label: 'Add',
+						variant: 'outline',
+						size: 'sm',
+						element: 'button',
+						attributes: upsell_attrs,
+						extra_classes: 'shrink-0'
+					-%}
 				</div>
 			</div>
 		{%- endif -%}
@@ -100,9 +103,15 @@
 		</div>
 		<p class="text-copy text-sm">Shipping & taxes calculated at checkout</p>
 		<p class="text-center text-highlight text-sm font-semibold">Free shipping on all orders</p>
-		<a href="/checkout" data-cart-checkout class="block w-full text-center px-6 py-4 rounded-xl bg-main text-secondary text-base font-bold transition-opacity hover:opacity-90 cursor-pointer">
-			Checkout
-		</a>
+		{%- render 'cta-button',
+			label: 'Checkout',
+			url: '/checkout',
+			variant: 'solid',
+			size: 'lg',
+			full_width: true,
+			attributes: 'data-cart-checkout',
+			extra_classes: '!px-6 !font-bold'
+		-%}
 		<button type="button" data-cart-close class="w-full text-center text-copy text-sm font-semibold hover:text-title transition-colors cursor-pointer">
 			Continue shopping
 		</button>

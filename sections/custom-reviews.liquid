@@ -771,11 +771,9 @@
   if cr_theme == 'dark'
     assign cr_bg_class = 'bg-main'
     assign cr_heading_class = 'text-secondary'
-    assign cr_cta_class = 'bg-secondary text-main hover:bg-secondary/90'
   else
     assign cr_bg_class = 'bg-secondary'
     assign cr_heading_class = 'text-title'
-    assign cr_cta_class = 'bg-main text-secondary hover:bg-main/90'
   endif
 -%}
 <section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}">
@@ -844,10 +842,23 @@
 
     <!-- ── Write a review CTA ── -->
     <div class="text-center mt-8">
-      <button class="reviews-write-cta inline-block {{ cr_cta_class }} border-none rounded-xl px-10 py-4 text-sm font-medium tracking-wide cursor-pointer transition-colors duration-200"
-        onclick="document.querySelector('.jdgm-widget-hidden .jm-button--primary').click()">
-        {{ section.settings.cta_text | default: 'Write a review' }}
-      </button>
+      {%- liquid
+        assign cr_surface = 'light'
+        if cr_theme == 'dark'
+          assign cr_surface = 'dark'
+        endif
+        assign cr_cta_label = section.settings.cta_text | default: 'Write a review'
+      -%}
+      {%- capture review_cta_attrs -%}onclick="document.querySelector('.jdgm-widget-hidden .jm-button--primary').click()"{%- endcapture -%}
+      {%- render 'cta-button',
+        label: cr_cta_label,
+        variant: 'solid',
+        surface: cr_surface,
+        size: 'lg',
+        element: 'button',
+        attributes: review_cta_attrs,
+        extra_classes: 'reviews-write-cta'
+      -%}
     </div>
 
     <!-- ── Hidden Judge.me widget (data source) ── -->
