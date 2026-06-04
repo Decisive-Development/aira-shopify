@@ -29,21 +29,25 @@
 	assign btn_element = element | default: 'a'
 	assign btn_type    = button_type | default: 'button'
 
-	# Colour tokens per tier × surface
+	# Colour + box per tier × surface.
+	# Filled buttons use py-3 (no border); the outline uses py-2.5 + a 2px
+	# border — both resolve to the same height so they line up side by side.
+	# Hover = "press": the button sinks 1px, dims slightly and casts a soft
+	# shadow tinted in its own brand colour. The outline fills on hover.
 	case btn_variant
 		when 'shop'
-			assign btn_colors = 'bg-highlight text-white hover:opacity-90'
+			assign btn_colors = 'bg-highlight text-white py-3 hover:brightness-95 hover:translate-y-px hover:shadow-md hover:shadow-highlight/20'
 		when 'solid'
 			if btn_surface == 'dark'
-				assign btn_colors = 'bg-secondary text-main hover:opacity-90'
+				assign btn_colors = 'bg-secondary text-main py-3 hover:brightness-95 hover:translate-y-px hover:shadow-md hover:shadow-secondary/30'
 			else
-				assign btn_colors = 'bg-main text-secondary hover:opacity-90'
+				assign btn_colors = 'bg-main text-secondary py-3 hover:brightness-95 hover:translate-y-px hover:shadow-md hover:shadow-main/20'
 			endif
 		when 'outline'
 			if btn_surface == 'dark'
-				assign btn_colors = 'border-2 border-secondary/60 text-secondary hover:bg-secondary hover:text-main'
+				assign btn_colors = 'border-2 border-secondary/60 text-secondary py-2.5 hover:bg-secondary hover:text-main hover:translate-y-px hover:shadow-md hover:shadow-secondary/30'
 			else
-				assign btn_colors = 'border-2 border-main text-main hover:bg-main hover:text-secondary'
+				assign btn_colors = 'border-2 border-main text-main py-2.5 hover:bg-main hover:text-secondary hover:translate-y-px hover:shadow-md hover:shadow-main/20'
 			endif
 		when 'link'
 			if btn_surface == 'dark'
@@ -53,15 +57,15 @@
 			endif
 	endcase
 
-	# Sizing — uniform text-sm + height (py-2.5) across all tiers;
-	# only horizontal padding steps up for width hierarchy.
+	# Sizing — horizontal padding + text size only. Vertical padding is set
+	# per variant above so bordered/unbordered buttons match in height.
 	case btn_size
 		when 'sm'
-			assign btn_padding = 'px-6 py-2.5 text-sm'
+			assign btn_padding = 'px-6 text-sm'
 		when 'md'
-			assign btn_padding = 'px-8 py-2.5 text-sm'
+			assign btn_padding = 'px-8 text-sm'
 		when 'lg'
-			assign btn_padding = 'px-10 py-2.5 text-sm'
+			assign btn_padding = 'px-10 text-sm'
 	endcase
 
 	# 'link' has no fill and minimal padding
@@ -70,7 +74,7 @@
 	endif
 
 	# Assemble classes
-	assign btn_base = 'group inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-wide transition-all duration-200 cursor-pointer'
+	assign btn_base = 'group inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-wide transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:duration-75 cursor-pointer'
 	assign btn_classes = btn_base | append: ' ' | append: btn_colors | append: ' ' | append: btn_padding
 
 	if full_width

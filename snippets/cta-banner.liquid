@@ -1,0 +1,79 @@
+{%- comment -%}
+	CTA Banner — end-of-page closing band
+
+	Shared closing CTA used at the bottom of pages so every banner stays
+	visually consistent. Owns the background, layout and button surface —
+	edit the look here once and all pages update. Each page section keeps
+	its own schema/copy and just feeds content into this snippet.
+
+	Parameters:
+	  heading           {String}  Headline (required; may contain HTML)
+	  body              {String}  Supporting paragraph                       (optional)
+	  eyebrow           {String}  Small uppercase kicker above the heading    (optional)
+	  theme             {String}  'light' (cream) | 'dark' (navy)            (default: 'light')
+	  primary_label     {String}  Primary button text                        (optional)
+	  primary_url       {String}  Primary button href
+	  primary_variant   {String}  cta-button variant for primary             (default: 'shop')
+	  secondary_label   {String}  Secondary button text                      (optional)
+	  secondary_url     {String}  Secondary button href
+	  secondary_variant {String}  cta-button variant for secondary           (default: 'outline')
+{%- endcomment -%}
+
+{%- liquid
+	assign banner_theme     = theme | default: 'light'
+	assign banner_primary   = primary_variant | default: 'shop'
+	assign banner_secondary = secondary_variant | default: 'outline'
+
+	if banner_theme == 'dark'
+		assign banner_bg      = 'bg-main'
+		assign banner_head    = 'text-secondary'
+		assign banner_body    = 'text-secondary/80'
+		assign banner_eyebrow = 'text-tertiary-light'
+		assign banner_surface = 'dark'
+	else
+		assign banner_bg      = 'bg-secondary'
+		assign banner_head    = 'text-title'
+		assign banner_body    = 'text-copy/80'
+		assign banner_eyebrow = 'text-highlight'
+		assign banner_surface = 'light'
+	endif
+-%}
+
+<section class="{{ banner_bg }} py-16 md:py-20">
+	<div class="container mx-auto px-4 max-w-3xl text-center">
+
+		{%- if eyebrow != blank -%}
+			<p class="text-xs font-bold uppercase tracking-widest {{ banner_eyebrow }} mb-3">{{ eyebrow }}</p>
+		{%- endif -%}
+
+		{%- if heading != blank -%}
+			<h2 class="font-heading heading-weight text-2xl md:text-3xl {{ banner_head }} m-0 mb-3">{{ heading }}</h2>
+		{%- endif -%}
+
+		{%- if body != blank -%}
+			<p class="text-base {{ banner_body }} max-w-xl mx-auto mb-6">{{ body }}</p>
+		{%- endif -%}
+
+		{%- if primary_label != blank or secondary_label != blank -%}
+			<div class="flex flex-wrap items-center justify-center gap-3">
+				{%- if primary_label != blank -%}
+					{%- render 'cta-button',
+						label: primary_label,
+						url: primary_url,
+						variant: banner_primary,
+						surface: banner_surface
+					-%}
+				{%- endif -%}
+				{%- if secondary_label != blank -%}
+					{%- render 'cta-button',
+						label: secondary_label,
+						url: secondary_url,
+						variant: banner_secondary,
+						surface: banner_surface
+					-%}
+				{%- endif -%}
+			</div>
+		{%- endif -%}
+
+	</div>
+</section>

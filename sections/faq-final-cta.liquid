@@ -1,6 +1,7 @@
 {%- comment -%}
 	FAQ — Final CTA (scaffold).
 	When the FAQ doesn't answer it, route customers to support.
+	Styling lives in the shared 'cta-banner' snippet.
 {%- endcomment -%}
 
 {%- liquid
@@ -11,35 +12,23 @@
 		assign wa_encoded = wa_prefill | url_encode
 		assign wa_link    = 'https://wa.me/' | append: wa_number | append: '?text=' | append: wa_encoded
 	endif
+
+	assign faq_primary_label = ''
+	if wa_link != blank
+		assign faq_primary_label = 'Message on WhatsApp'
+	endif
 -%}
 
-<section class="bg-secondary py-16 md:py-20">
-	<div class="container mx-auto px-4 max-w-3xl text-center">
-
-		{%- if section.settings.heading != blank -%}
-			<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0 mb-3">{{ section.settings.heading }}</h2>
-		{%- endif -%}
-		{%- if section.settings.body != blank -%}
-			<p class="text-base text-copy/80 max-w-xl mx-auto mb-6">{{ section.settings.body }}</p>
-		{%- endif -%}
-
-		<div class="flex flex-wrap items-center justify-center gap-3">
-			{%- if wa_link != blank -%}
-				{%- render 'cta-button',
-					label: 'Message on WhatsApp',
-					url:   wa_link,
-					variant: 'solid'
-				-%}
-			{%- endif -%}
-			{%- render 'cta-button',
-				label: 'Contact support',
-				url:   '/pages/contact',
-				variant: 'outline'
-			-%}
-		</div>
-
-	</div>
-</section>
+{%- render 'cta-banner',
+	heading: section.settings.heading,
+	body: section.settings.body,
+	primary_label: faq_primary_label,
+	primary_url: wa_link,
+	primary_variant: 'solid',
+	secondary_label: 'Contact support',
+	secondary_url: '/pages/contact',
+	secondary_variant: 'outline'
+-%}
 
 {% schema %}
 {

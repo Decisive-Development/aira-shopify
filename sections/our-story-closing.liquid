@@ -1,77 +1,31 @@
 {%- comment -%}
 	Our Story — Closing
-	Full-bleed navy statement with eyebrow, headline, paragraph and two CTAs.
-	Text-only by design — no photograph.
+	Text-only closing statement with eyebrow, headline, paragraph and two CTAs.
+	Styling lives in the shared 'cta-banner' snippet.
 {%- endcomment -%}
 
-<section class="relative overflow-hidden bg-main text-secondary py-22 md:py-40">
+{%- liquid
+	assign hl_text   = section.settings.headline
+	assign hl_accent = section.settings.headline_accent
+	if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
+		assign hl_accent_wrapped = '<span class="text-highlight">' | append: hl_accent | append: '</span>'
+		assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
+	else
+		assign hl_html = hl_text
+	endif
+-%}
 
-	{%- comment -%} Atmospheric radial washes (top-center blue, bottom-center teal) {%- endcomment -%}
-	<div
-		class="absolute inset-0 pointer-events-none"
-		style="background:
-			radial-gradient(ellipse 80% 40% at 50% 0%, rgba(155,183,212,0.22), transparent 70%),
-			radial-gradient(ellipse 90% 50% at 50% 100%, rgba(80,162,167,0.22), transparent 70%);"
-	></div>
-
-	<div class="relative z-10 container-contained max-w-[880px] text-center">
-
-		{%- comment -%} Eyebrow {%- endcomment -%}
-		<p class="text-center font-body text-[10.5px] md:text-[11.5px] uppercase tracking-[0.22em] font-medium text-tertiary-light m-0 mb-6 md:mb-8">
-			{{ section.settings.eyebrow | default: 'Where we go from here' }}
-		</p>
-
-		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
-		{%- liquid
-			assign hl_text = section.settings.headline
-			assign hl_accent = section.settings.headline_accent
-			if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
-				assign hl_accent_wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>'
-				assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
-			else
-				assign hl_html = hl_text
-			endif
-		-%}
-		<h2 class="font-heading font-normal text-[34px] md:text-[clamp(36px,5vw,64px)] leading-[1.1] md:leading-[1.08] tracking-[-0.02em] text-secondary text-balance mb-6 md:mb-8">
-			{{ hl_html }}
-		</h2>
-
-		{%- comment -%} Body paragraph {%- endcomment -%}
-		<p
-			class="font-body text-[16px] md:text-[18.5px] leading-[1.65] text-secondary/78 mx-auto mb-10 md:mb-14"
-			style="max-width: 52ch;"
-		>
-			{{ section.settings.body | default: "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for." }}
-		</p>
-
-		{%- comment -%} CTAs — stacked on mobile, inline on desktop {%- endcomment -%}
-		<div class="flex flex-col md:flex-row gap-5 md:gap-4 items-center justify-center flex-wrap">
-
-			{%- if section.settings.primary_cta_label != blank -%}
-				{%-
-					render 'cta-button',
-					label: section.settings.primary_cta_label,
-					url: section.settings.primary_cta_url,
-					variant: 'shop',
-					size: 'lg',
-					extra_classes: 'w-full md:w-auto'
-				-%}
-			{%- endif -%}
-
-			{%- if section.settings.secondary_cta_label != blank -%}
-				{%- render 'cta-button',
-					label: section.settings.secondary_cta_label,
-					url: section.settings.secondary_cta_url,
-					variant: 'link',
-					surface: 'dark'
-				-%}
-			{%- endif -%}
-
-		</div>
-
-	</div>
-
-</section>
+{%- render 'cta-banner',
+	eyebrow: section.settings.eyebrow,
+	heading: hl_html,
+	body: section.settings.body,
+	primary_label: section.settings.primary_cta_label,
+	primary_url: section.settings.primary_cta_url,
+	primary_variant: 'shop',
+	secondary_label: section.settings.secondary_cta_label,
+	secondary_url: section.settings.secondary_cta_url,
+	secondary_variant: 'link'
+-%}
 
 {% schema %}
 {
@@ -95,7 +49,7 @@
 			"type": "text",
 			"id": "headline_accent",
 			"label": "Headline accent phrase",
-			"info": "Phrase from the headline to highlight in editorial blue (must match exactly).",
+			"info": "Phrase from the headline to highlight in the brand accent colour (must match exactly).",
 			"default": "Then the next."
 		},
 		{

@@ -2,37 +2,21 @@
 	Affiliate — Final CTA (scaffold).
 	Slim variant of the shared final-cta — keeps affiliate page copy
 	overrides isolated from the homepage's final CTA.
+	Styling lives in the shared 'cta-banner' snippet.
 {%- endcomment -%}
 
-<section class="bg-main text-secondary py-16 md:py-24 relative overflow-hidden">
+{%- liquid
+	assign aff_cta_url = section.settings.cta_url | default: '#affiliate-form'
+-%}
 
-	<div
-		class="absolute inset-0 pointer-events-none"
-		style="background:
-			radial-gradient(ellipse 60% 50% at 30% 30%, rgba(155,183,212,0.22), transparent 65%),
-			radial-gradient(ellipse 60% 50% at 70% 70%, rgba(80,162,167,0.22), transparent 70%);"
-	></div>
-
-	<div class="relative z-10 container mx-auto px-4 max-w-3xl text-center">
-		{%- if section.settings.eyebrow != blank -%}
-			<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light mb-4">{{ section.settings.eyebrow }}</p>
-		{%- endif -%}
-		{%- if section.settings.heading != blank -%}
-			<h2 class="font-heading heading-weight text-3xl md:text-4xl text-secondary m-0 mb-4 text-balance">{{ section.settings.heading }}</h2>
-		{%- endif -%}
-		{%- if section.settings.body != blank -%}
-			<p class="text-base md:text-lg text-secondary/80 max-w-xl mx-auto mb-8">{{ section.settings.body }}</p>
-		{%- endif -%}
-		{%- if section.settings.cta_label != blank -%}
-			{%- render 'cta-button',
-				label: section.settings.cta_label,
-				url:   section.settings.cta_url | default: '#affiliate-form',
-				variant: 'shop',
-				size: 'lg'
-			-%}
-		{%- endif -%}
-	</div>
-</section>
+{%- render 'cta-banner',
+	eyebrow: section.settings.eyebrow,
+	heading: section.settings.heading,
+	body: section.settings.body,
+	primary_label: section.settings.cta_label,
+	primary_url: aff_cta_url,
+	primary_variant: 'shop'
+-%}
 
 {% schema %}
 {

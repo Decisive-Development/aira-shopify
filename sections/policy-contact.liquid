@@ -1,43 +1,24 @@
 {%- comment -%}
 	Policy — Contact
-	Closing navy callout: short prompt + mailto button. Used on every
-	/policies/* URL.
+	Closing callout: short prompt + mailto button. Used on every
+	/policies/* URL. Styling lives in the shared 'cta-banner' snippet.
 {%- endcomment -%}
 
-<section class="relative overflow-hidden bg-main text-secondary py-16 md:py-20">
+{%- liquid
+	assign cta_email  = section.settings.cta_email | default: 'contact@shop-aira.com'
+	assign cta_label  = section.settings.cta_label | default: 'Email our privacy team'
+	assign mailto_url = 'mailto:' | append: cta_email
+	assign pc_heading = section.settings.heading | default: 'Questions about how we handle your data?'
+	assign pc_body    = section.settings.body | default: "Email us and we'll respond within the timeframe required by applicable law (typically 30 days)."
+-%}
 
-	{%- comment -%} Soft halo, identical family to the policy hero {%- endcomment -%}
-	<div
-		class="absolute inset-0 pointer-events-none"
-		style="background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(155,183,212,0.22), transparent 70%);"
-	></div>
-
-	<div class="relative z-10 container-contained max-w-[640px] text-center">
-
-		<h2 class="font-heading font-normal text-[26px] md:text-[32px] leading-[1.2] tracking-[-0.015em] text-secondary text-balance mb-4 md:mb-5">
-			{{ section.settings.heading | default: 'Questions about how we handle your data?' }}
-		</h2>
-
-		<p class="font-body text-[15px] md:text-[16.5px] leading-[1.65] text-secondary/75 mx-auto mb-8 md:mb-10">
-			{{ section.settings.body | default: "Email us and we'll respond within the timeframe required by applicable law (typically 30 days)." }}
-		</p>
-
-		{%- liquid
-			assign cta_email = section.settings.cta_email | default: 'contact@shop-aira.com'
-			assign cta_label = section.settings.cta_label | default: 'Email our privacy team'
-			assign mailto_url = 'mailto:' | append: cta_email
-		-%}
-		{%- render 'cta-button',
-			label: cta_label,
-			url: mailto_url,
-			variant: 'solid',
-			surface: 'dark',
-			size: 'md'
-		-%}
-
-	</div>
-
-</section>
+{%- render 'cta-banner',
+	heading: pc_heading,
+	body: pc_body,
+	primary_label: cta_label,
+	primary_url: mailto_url,
+	primary_variant: 'solid'
+-%}
 
 {% schema %}
 {

@@ -3,50 +3,17 @@
 	Dark navy band with eyebrow / h2 / lead and two CTAs (orange filled + cream outline).
 {%- endcomment -%}
 
-<section class="w-full py-12 md:py-20 relative overflow-hidden" style="background: #0A1A34;">
-
-	{%- comment -%} Atmospheric radial washes (matching navy section family) {%- endcomment -%}
-	<div
-		class="absolute inset-0 pointer-events-none"
-		style="background: radial-gradient(ellipse 50% 110% at 80% 20%, rgba(155,183,212,0.22), transparent 65%);"
-	></div>
-
-	<div class="container-contained text-center relative z-10">
-
-		{%- if section.settings.eyebrow != blank -%}
-			<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
-		{%- endif -%}
-
-		{%- if section.settings.heading != blank -%}
-			<h2 class="font-heading heading-weight text-3xl md:text-5xl tracking-tight text-secondary mb-3">{{ section.settings.heading }}</h2>
-		{%- endif -%}
-
-		{%- if section.settings.lead != blank -%}
-			<p class="text-secondary/60 text-base md:text-lg max-w-xl mx-auto mb-8">{{ section.settings.lead }}</p>
-		{%- endif -%}
-
-		<div class="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-			{%- if section.settings.primary_label != blank -%}
-				{%- render 'cta-button',
-					label: section.settings.primary_label,
-					url: section.settings.primary_url,
-					variant: 'shop',
-					size: 'lg'
-				-%}
-			{%- endif -%}
-			{%- if section.settings.secondary_label != blank -%}
-				{%- render 'cta-button',
-					label: section.settings.secondary_label,
-					url: section.settings.secondary_url,
-					variant: 'outline',
-					surface: 'dark',
-					size: 'lg'
-				-%}
-			{%- endif -%}
-		</div>
-
-	</div>
-</section>
+{%- render 'cta-banner',
+	eyebrow: section.settings.eyebrow,
+	heading: section.settings.heading,
+	body: section.settings.lead,
+	primary_label: section.settings.primary_label,
+	primary_url: section.settings.primary_url,
+	primary_variant: 'shop',
+	secondary_label: section.settings.secondary_label,
+	secondary_url: section.settings.secondary_url,
+	secondary_variant: 'outline'
+-%}
 
 {%- comment -%}
 	Page-level JS: reveal-on-scroll + sticky step-rail active state.
