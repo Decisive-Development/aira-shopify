@@ -1,0 +1,28 @@
+{
+  "sections": {
+    "hero": {
+      "type": "policy-hero",
+      "settings": {
+        "eyebrow": "Support",
+        "heading": "Shipping & Delivery",
+        "last_updated": ""
+      }
+    },
+    "content": {
+      "type": "policy-content",
+      "settings": {
+        "default_content": "shipping"
+      }
+    },
+    "contact": {
+      "type": "policy-contact",
+      "settings": {
+        "heading": "Questions?",
+        "body": "Any questions? Just reach out — we're here Monday to Saturday, 9:00 AM – 6:00 PM (UAE time).",
+        "cta_label": "Email us",
+        "cta_email": "contact@shop-aira.com"
+      }
+    }
+  },
+  "order": ["hero", "content", "contact"]
+}

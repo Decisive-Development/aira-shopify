@@ -11,7 +11,20 @@
 				{%- for block in feature_blocks -%}
 					<div {{ block.shopify_attributes }}>
 						<div class="aspect-square rounded-2xl overflow-hidden bg-main">
-							{%- if block.settings.image != blank -%}
+							{%- if block.settings.video != blank -%}
+								{%- assign feature_poster = block.settings.video.preview_image | image_url: width: 600 -%}
+								{{
+									block.settings.video
+									| video_tag:
+										autoplay: true,
+										loop: true,
+										muted: true,
+										playsinline: true,
+										preload: 'none',
+										poster: feature_poster,
+										class: 'w-full h-full object-cover'
+								}}
+							{%- elsif block.settings.image != blank -%}
 								{{
 									block.settings.image
 									| image_url: width: 600
@@ -33,6 +46,41 @@
 
 	</div>
 </section>
+
+{%- assign features_has_video = false -%}
+{%- for block in feature_blocks -%}
+	{%- if block.settings.video != blank -%}{%- assign features_has_video = true -%}{%- break -%}{%- endif -%}
+{%- endfor -%}
+{%- if features_has_video -%}
+	<script>
+		(function () {
+			var root = document.getElementById('shopify-section-{{ section.id }}');
+			if (!root) return;
+			var vids = root.querySelectorAll('video');
+			if (!vids.length) return;
+
+			{%- comment -%} Lazy autoplay: only play while in view (preload: 'none' defers the fetch). {%- endcomment -%}
+			if ('IntersectionObserver' in window) {
+				var io = new IntersectionObserver(function (entries) {
+					entries.forEach(function (entry) {
+						if (!(entry.target instanceof HTMLVideoElement)) return;
+						if (entry.isIntersecting) { entry.target.play().catch(function () {}); }
+						else { entry.target.pause(); }
+					});
+				}, { threshold: 0.4 });
+				vids.forEach(function (v) { io.observe(v); });
+			} else {
+				vids.forEach(function (v) { v.play().catch(function () {}); });
+			}
+
+			document.addEventListener('visibilitychange', function () {
+				if (document.hidden) {
+					vids.forEach(function (v) { v.pause(); });
+				}
+			});
+		})();
+	</script>
+{%- endif -%}
 
 {% schema %}
 {
@@ -57,6 +105,11 @@
 			"name": "Feature",
 			"limit": 4,
 			"settings": [
+				{
+					"type": "video",
+					"id": "video",
+					"label": "Video (takes priority over image)"
+				},
 				{
 					"type": "image_picker",
 					"id": "image",

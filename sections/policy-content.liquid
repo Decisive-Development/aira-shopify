@@ -49,6 +49,8 @@
 							{%- render 'policy-terms-default' -%}
 						{%- when 'returns' -%}
 							{%- render 'policy-returns-default' -%}
+						{%- when 'shipping' -%}
+							{%- render 'policy-shipping-default' -%}
 						{%- else -%}
 							{%- render 'policy-privacy-default' -%}
 					{%- endcase -%}
@@ -75,9 +77,10 @@
 			"label": "Default content snippet",
 			"info": "Used when the page body is empty.",
 			"options": [
-				{ "value": "privacy", "label": "Privacy policy" },
-				{ "value": "terms",   "label": "Terms of service" },
-				{ "value": "returns", "label": "Return & refund policy" }
+				{ "value": "privacy",  "label": "Privacy policy" },
+				{ "value": "terms",    "label": "Terms of service" },
+				{ "value": "returns",  "label": "Return & refund policy" },
+				{ "value": "shipping", "label": "Shipping & delivery" }
 			],
 			"default": "privacy"
 		}

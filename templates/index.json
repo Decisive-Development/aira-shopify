@@ -45,110 +45,53 @@
         "padding_vertical": "lg"
       }
     },
-    "social_proof": {
-      "type": "social-proof",
+    "sleep": {
+      "type": "trust-bar",
       "blocks": {
-        "problem_1": {
-          "type": "problem",
-          "settings": {
-            "value": "57%",
-            "keyword": "Snoring",
-            "label": "More than half of all adults snore regularly — disrupting their sleep and their partner's",
-            "footnote": "PMC, 2022",
-            "footnote_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9670768/"
-          }
-        },
-        "problem_2": {
-          "type": "problem",
-          "settings": {
-            "value": "1 in 3",
-            "keyword": "Sleep deprived",
-            "label": "Adults consistently sleep fewer than 7 hours, leading to fatigue, poor focus and weakened immunity",
-            "footnote": "CDC MMWR, 2016",
-            "footnote_url": "https://www.cdc.gov/mmwr/volumes/65/wr/mm6506a1.htm"
-          }
-        },
-        "problem_3": {
-          "type": "problem",
-          "settings": {
-            "value": "48%",
-            "keyword": "Heart disease",
-            "label": "Higher risk of coronary heart disease when sleep is chronically cut short",
-            "footnote": "Eur Heart J, 2011",
-            "footnote_url": "https://academic.oup.com/eurheartj/article-abstract/32/12/1484/502022"
-          }
-        },
-        "problem_4": {
-          "type": "problem",
-          "settings": {
-            "value": "3.5x",
-            "keyword": "Dry mouth",
-            "label": "More likely to wake with dry mouth when breathing through the mouth overnight — with oral pH dropping low enough to damage tooth enamel",
-            "footnote": "J Oral Rehabil, 2016",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/26666708/"
-          }
-        },
-        "benefit_1": {
+        "claim_1": {
           "type": "benefit",
           "settings": {
-            "value": "75%",
-            "keyword": "Quiet nights",
-            "label": "Reduction in snoring frequency when using an external nasal dilator during sleep, measured by overnight polysomnography",
-            "footnote": "Eur Respir J, 2000",
-            "footnote_url": "https://publications.ersnet.org/content/erj/15/6/996"
+            "lead": "Snoring",
+            "text": "open nasal airways shift you from mouth to nose breathing: the change behind most snoring."
           }
         },
-        "benefit_2": {
+        "claim_2": {
           "type": "benefit",
           "settings": {
-            "value": "58%",
-            "keyword": "Deep sleep",
-            "label": "Lower airway resistance when breathing nasally, promoting deeper and more restorative rest",
-            "footnote": "Eur Respir J, 2003",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/14621092/"
+            "lead": "Restless nights",
+            "text": "nasal breathing supports deeper, less fragmented sleep through the night."
           }
         },
-        "benefit_3": {
+        "claim_3": {
           "type": "benefit",
           "settings": {
-            "value": "65%",
-            "keyword": "Healthier heart",
-            "label": "Lower cardiovascular risk associated with consistent quality sleep duration and habits",
-            "footnote": "Eur Heart J, 2023",
-            "footnote_url": "https://academic.oup.com/eurheartj/article/44/47/4968/7320440"
-          }
-        },
-        "benefit_4": {
-          "type": "benefit",
-          "settings": {
-            "value": "64%",
-            "keyword": "Breathe free",
-            "label": "Reduction in obstructive breathing events when using a nasal dilator — keeping airways open and your mouth closed all night",
-            "footnote": "Schönhofer et al., 1992",
-            "footnote_url": "https://pubmed.ncbi.nlm.nih.gov/1554449/"
+            "lead": "Dry mouth",
+            "text": "wake without the dry mouth and morning grog that mouth breathing leaves behind."
           }
         }
       },
       "block_order": [
-        "problem_1",
-        "problem_2",
-        "problem_3",
-        "problem_4",
-        "benefit_1",
-        "benefit_2",
-        "benefit_3",
-        "benefit_4"
+        "claim_1",
+        "claim_2",
+        "claim_3"
       ],
       "settings": {
-        "background_color": "#0a1a34",
-        "background_image": "shopify://shop_images/IMG_4337.jpg",
-        "eyebrow": "The science of sleep",
-        "heading": "Better breathing, deeper sleep, better life.",
-        "subheading": "What the research says — and what changes when you breathe freely.",
+        "eyebrow": "SLEEP",
+        "heading": "Better rest. Fuller days.",
+        "subheading": "AIRA supports your body's ability to restore itself — opening your airways so you breathe more comfortably, and rest and recover the way you should. Quieter nights. Real rest.",
         "cta_label": "Shop Aira Kit",
         "cta_url": "/products/aira-starter-kit",
-        "left_heading": "The problem",
-        "right_heading": "With Aira"
+        "cta_secondary_label": "How it works",
+        "cta_secondary_url": "/pages/how-it-works",
+        "stat_value": "XX%",
+        "stat_label": "[pending]",
+        "stat_supporting": "[pending — one sourced sleep / nasal-breathing statistic, same structure as TRAIN's Dallam card]",
+        "stat_footnote": "[Author et al., year]",
+        "stat_footnote_url": "",
+        "image_desktop": "shopify://shop_images/IMG_4337.jpg",
+        "image_caption": "",
+        "image_marker": "",
+        "layout_direction": "left"
       }
     },
     "benefits_slider": {
@@ -214,8 +157,8 @@
         "padding_vertical": "lg"
       }
     },
-    "performance": {
-      "type": "performance",
+    "train": {
+      "type": "trust-bar",
       "blocks": {
         "benefit_1": {
           "type": "benefit",
@@ -254,12 +197,13 @@
         "cta_secondary_url": "",
         "stat_value": "22%",
         "stat_label": "More efficient breathing",
-        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max.",
+        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in performance.",
         "stat_footnote": "Dallam et al., 2018",
         "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
         "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp",
         "image_caption": "Hatta · 04:42",
-        "image_marker": ""
+        "image_marker": "",
+        "layout_direction": "right"
       }
     },
     "how_to_use": {
@@ -461,9 +405,9 @@
   "order": [
     "hero",
     "before_after_slider",
-    "social_proof",
+    "sleep",
+    "train",
     "benefits_slider",
-    "performance",
     "how_to_use",
     "ugc_gallery",
     "custom_reviews",

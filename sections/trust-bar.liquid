@@ -11,6 +11,22 @@
 
 	assign image_alt = section.settings.image_desktop.alt | default: section.settings.heading | escape
 
+	# Overlay stat card renders ONLY when a stat value is present.
+	# Blank stat value ⇒ no card at all (no empty card), per brief.
+	assign has_overlay = false
+	if section.settings.stat_value != blank
+		assign has_overlay = true
+	endif
+
+	# Mirroring. layout_direction is the side the TEXT column sits on:
+	#   'right' = text right / image left  (TRAIN — default, current live layout)
+	#   'left'  = text left  / image right (SLEEP — the flipped sibling)
+	# One layout, flipped — not two designs.
+	assign text_left = false
+	if section.settings.layout_direction == 'left'
+		assign text_left = true
+	endif
+
 	# Split stat_value into numeric + unit (e.g. "22%" → "22" + "%")
 	assign stat_chars  = section.settings.stat_value | split: ''
 	assign stat_number = ''
@@ -35,11 +51,44 @@
 	# Break heading across two lines on the first ". "
 	assign heading_parts = section.settings.heading | split: '. '
 	assign heading_html  = heading_parts | join: '.<br>'
+
+	# ── Grid: equal 1fr / 1fr columns at md AND lg, so the image/text seam sits
+	#    at exactly 50% in both mirrored instances. The centre-pinned stat card
+	#    then straddles its seam evenly (≈170px per side). No 1.05fr anywhere. ──
+
+	# ── Copy-column horizontal padding ──
+	# With an overlay, the seam-side padding clears the centred stat card so the
+	# text sits tight against it. Without one, the column is balanced.
+	if has_overlay
+		if text_left
+			assign copy_px = 'md:px-12 md:pl-12 md:pr-[200px] lg:pl-[88px] lg:pr-[210px]'
+		else
+			assign copy_px = 'md:px-12 md:pl-[200px] md:pr-12 lg:pr-[88px] lg:pl-[210px]'
+		endif
+	else
+		assign copy_px = 'md:px-12 lg:px-[88px]'
+	endif
+
+	# ── DOM-order flip (desktop only). Mobile always stacks photo → card → copy,
+	#    so both instances stack identically regardless of layout_direction. ──
+	assign photo_order = ''
+	assign copy_order  = ''
+	if text_left
+		assign photo_order = 'md:order-2'
+		assign copy_order  = 'md:order-1'
+	endif
+
+	# ── Photo corner labels sit on the photo's outer edge (mirrors with it) ──
+	assign label_pos = 'left-4 md:left-7'
+	if text_left
+		assign label_pos = 'right-4 md:right-7'
+	endif
 -%}
 
 {%- comment -%}
 	────────────────────────────────────────────────────────────
-	Stat card — captured once, rendered twice (mobile + desktop)
+	Stat card — captured once, rendered twice (mobile + desktop).
+	Only emitted when has_overlay is true.
 	────────────────────────────────────────────────────────────
 {%- endcomment -%}
 {%- capture stat_card -%}
@@ -112,14 +161,14 @@
 {%- endcapture -%}
 
 <section
-	id="performance-{{ section.id }}"
+	id="trust-bar-{{ section.id }}"
 	class="relative w-full overflow-hidden bg-cream-light"
-	data-performance="{{ section.id }}"
+	data-trust-bar="{{ section.id }}"
 >
-	<div class="md:grid md:grid-cols-[1fr_1fr] lg:grid-cols-[1.05fr_1fr] md:min-h-[680px] lg:min-h-[min(760px,90vh)]">
+	<div class="md:grid md:grid-cols-[1fr_1fr] lg:grid-cols-[1fr_1fr] md:min-h-[680px] lg:min-h-[min(760px,90vh)]">
 
 		{%- comment -%} ── Photo column ── {%- endcomment -%}
-		<div class="relative aspect-4/5 md:aspect-auto md:h-full">
+		<div class="relative aspect-4/3 md:aspect-auto md:h-full {{ photo_order }}">
 			{%- if has_image_desktop or has_image_mobile -%}
 				<picture>
 					{%- if has_image_desktop -%}
@@ -169,7 +218,7 @@
 			{%- comment -%} Corner labels {%- endcomment -%}
 			{%- if section.settings.image_marker != blank -%}
 				<div
-					class="absolute top-4 left-4 md:top-7 md:left-7 flex items-center gap-2 pointer-events-none"
+					class="absolute top-4 md:top-7 {{ label_pos }} flex items-center gap-2 pointer-events-none"
 				>
 					<span
 						class="inline-block h-px"
@@ -186,7 +235,7 @@
 
 			{%- if section.settings.image_caption != blank -%}
 				<span
-					class="absolute bottom-4 left-4 md:bottom-7 md:left-7 font-mono uppercase pointer-events-none"
+					class="absolute bottom-4 md:bottom-7 {{ label_pos }} font-mono uppercase pointer-events-none"
 					style="font-size: 9.5px; letter-spacing: 0.14em; color: rgba(241,235,225,0.55);"
 				>
 					{{ section.settings.image_caption }}
@@ -195,12 +244,19 @@
 		</div>
 
 		{%- comment -%} ── Mobile stat card (between photo and copy) ── {%- endcomment -%}
-		<div class="md:hidden relative z-10 -mt-14 px-6">
-			{{ stat_card }}
-		</div>
+		{%- if has_overlay -%}
+			<div class="md:hidden relative z-10 -mt-14 px-6">
+				{{ stat_card }}
+			</div>
+		{%- endif -%}
 
 		{%- comment -%} ── Copy column ── {%- endcomment -%}
-		<div class="relative bg-secondary px-6 pt-10 pb-14 md:px-12 md:py-16 md:pl-[200px] md:pr-12 lg:pt-24 lg:pr-[88px] lg:pb-20 lg:pl-[210px] flex flex-col md:justify-center">
+		<div class="relative bg-secondary px-6 pt-10 pb-14 md:py-16 lg:pt-24 lg:pb-20 flex flex-col md:justify-center {{ copy_px }} {{ copy_order }}">
+
+			{%- comment -%} Anchor copy to the seam (centre) side so it sits tight against
+				the stat card; any spare column width falls to the outer edge. Mirrors
+				TRAIN's text-to-box measure. Body text stays left-aligned. {%- endcomment -%}
+			{%- if text_left -%}<div class="md:ml-auto md:max-w-[540px]">{%- endif -%}
 
 			{%- comment -%} Eyebrow {%- endcomment -%}
 			{%- if section.settings.eyebrow != blank -%}
@@ -219,10 +275,10 @@
 				</h2>
 				<style>
 					@media (min-width: 768px) {
-						#performance-{{ section.id }} h2 { font-size: 52px; }
+						#trust-bar-{{ section.id }} h2 { font-size: 52px; }
 					}
 					@media (min-width: 1024px) {
-						#performance-{{ section.id }} h2 { font-size: 64px; }
+						#trust-bar-{{ section.id }} h2 { font-size: 64px; }
 					}
 				</style>
 			{%- endif -%}
@@ -235,14 +291,9 @@
 				>
 					{{ section.settings.subheading }}
 				</p>
-				<style>
-					@media (min-width: 1024px) {
-						#performance-{{ section.id }} .perf-subhead { font-size: 17.5px; }
-					}
-				</style>
 			{%- endif -%}
 
-			{%- comment -%} Benefits {%- endcomment -%}
+			{%- comment -%} Claims {%- endcomment -%}
 			{%- if section.blocks.size > 0 -%}
 				<div
 					class="mt-7 md:mt-8 pt-6 md:pt-7 flex flex-col gap-3.5"
@@ -308,28 +359,33 @@
 				</div>
 			{%- endif -%}
 
+			{%- if text_left -%}</div>{%- endif -%}
+
 		</div>
 	</div>
 
 	{%- comment -%} ── Desktop stat card (absolute, straddling the seam) ── {%- endcomment -%}
-	<div
-		class="hidden md:block absolute z-10 pointer-events-none"
-		style="left: 50%; top: 50%; transform: translate(-50%, -50%); width: 340px; will-change: transform;"
-	>
-		<div class="pointer-events-auto" data-perf-parallax style="will-change: transform;">
-			{{ stat_card }}
+	{%- if has_overlay -%}
+		<div
+			class="hidden md:block absolute z-10 pointer-events-none"
+			style="left: 50%; top: 50%; transform: translate(-50%, -50%); width: 340px; will-change: transform;"
+		>
+			<div class="pointer-events-auto" data-tb-parallax style="will-change: transform;">
+				{{ stat_card }}
+			</div>
 		</div>
-	</div>
+	{%- endif -%}
 </section>
 
+{%- if has_overlay -%}
 <script>
 (function () {
 	if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-	var section = document.getElementById('performance-{{ section.id }}');
+	var section = document.getElementById('trust-bar-{{ section.id }}');
 	if (!section) return;
 
-	var el = section.querySelector('[data-perf-parallax]');
+	var el = section.querySelector('[data-tb-parallax]');
 	if (!el) return;
 
 	var mq = window.matchMedia('(min-width: 768px)');
@@ -362,14 +418,11 @@
 	update();
 })();
 </script>
-
-<style>
-	#performance-{{ section.id }} .perf-subhead { /* spacing hook only */ }
-</style>
+{%- endif -%}
 
 {% schema %}
 {
-	"name": "Performance",
+	"name": "Trust Bar",
 	"tag": "section",
 	"class": "shopify-section",
 	"settings": [
@@ -378,39 +431,53 @@
 		{ "type": "text",     "id": "heading",    "label": "Heading",    "default": "More air. Less effort." },
 		{ "type": "textarea", "id": "subheading", "label": "Subheading", "default": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session." },
 
-		{ "type": "header", "content": "CTA" },
-		{ "type": "text", "id": "cta_label", "label": "CTA label", "default": "Shop AIRA" },
-		{ "type": "url",  "id": "cta_url",   "label": "CTA URL" },
-		{ "type": "text", "id": "cta_secondary_label", "label": "Secondary link label", "default": "The science →" },
-		{ "type": "url",  "id": "cta_secondary_url",   "label": "Secondary link URL" },
+		{ "type": "header", "content": "Layout" },
+		{
+			"type": "select",
+			"id": "layout_direction",
+			"label": "Text column side",
+			"options": [
+				{ "value": "left",  "label": "Left (image on right)" },
+				{ "value": "right", "label": "Right (image on left)" }
+			],
+			"default": "right",
+			"info": "Set the two homepage instances to opposite sides so they read as mirrored siblings."
+		},
 
-		{ "type": "header", "content": "Proof stat" },
-		{ "type": "text",     "id": "stat_value",        "label": "Stat value",         "default": "22%" },
-		{ "type": "text",     "id": "stat_label",        "label": "Stat label",         "default": "More efficient breathing" },
-		{ "type": "textarea", "id": "stat_supporting",   "label": "Stat supporting line", "default": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in VO2max." },
-		{ "type": "text",     "id": "stat_footnote",     "label": "Footnote (source)",  "default": "Dallam et al., 2018" },
-		{ "type": "url",      "id": "stat_footnote_url", "label": "Footnote URL" },
+		{ "type": "header", "content": "CTA" },
+		{ "type": "text", "id": "cta_label", "label": "Conversion CTA label", "default": "Shop AIRA" },
+		{ "type": "url",  "id": "cta_url",   "label": "Conversion CTA URL" },
+		{ "type": "text", "id": "cta_secondary_label", "label": "Conviction link label", "default": "The science →" },
+		{ "type": "url",  "id": "cta_secondary_url",   "label": "Conviction link URL" },
+
+		{ "type": "header", "content": "Overlay stat" },
+		{ "type": "paragraph", "content": "Leave the stat value blank to hide the overlay card entirely (no empty card)." },
+		{ "type": "text",     "id": "stat_value",        "label": "Headline (e.g. 22%)",  "default": "22%" },
+		{ "type": "text",     "id": "stat_label",        "label": "Subhead",              "default": "More efficient breathing" },
+		{ "type": "textarea", "id": "stat_supporting",   "label": "Body",                 "default": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in performance." },
+		{ "type": "text",     "id": "stat_footnote",     "label": "Source label",         "default": "Dallam et al., 2018" },
+		{ "type": "url",      "id": "stat_footnote_url", "label": "Source URL" },
 
 		{ "type": "header", "content": "Image" },
 		{ "type": "image_picker", "id": "image_desktop", "label": "Desktop image" },
 		{ "type": "image_picker", "id": "image_mobile",  "label": "Mobile image (optional, defaults to desktop)" },
-		{ "type": "text",         "id": "image_caption", "label": "Image caption (bottom-left slate)", "default": "Hatta · 04:42" },
-		{ "type": "text",         "id": "image_marker",  "label": "Image top-left marker" }
+		{ "type": "text",         "id": "image_caption", "label": "Image caption (bottom corner)", "default": "Hatta · 04:42" },
+		{ "type": "text",         "id": "image_marker",  "label": "Image top corner marker" }
 	],
 	"blocks": [
 		{
 			"type": "benefit",
-			"name": "Benefit",
+			"name": "Claim",
 			"limit": 3,
 			"settings": [
-				{ "type": "text", "id": "lead", "label": "Lead-in word" },
-				{ "type": "text", "id": "text", "label": "Benefit text" }
+				{ "type": "text", "id": "lead", "label": "Title (lead-in word)" },
+				{ "type": "text", "id": "text", "label": "Body" }
 			]
 		}
 	],
 	"presets": [
 		{
-			"name": "Performance",
+			"name": "Trust Bar",
 			"blocks": [
 				{ "type": "benefit", "settings": { "lead": "Easier endurance", "text": "an open airway means less breathing effort on long, steady efforts." } },
 				{ "type": "benefit", "settings": { "lead": "Cleaner air in",   "text": "your nose filters, warms and humidifies every breath. Your mouth doesn't." } },
