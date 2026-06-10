@@ -11,6 +11,7 @@
 		assign border_color = 'border-bg-muted'
 		assign handle_color = 'text-main'
 		assign cta_color = 'text-copy'
+		assign eyebrow_color = 'text-highlight'
 	else
 		assign bg_class = 'bg-main'
 		assign bg_style = 'background-image: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%), radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);'
@@ -20,6 +21,7 @@
 		assign border_color = 'border-white/10'
 		assign handle_color = 'text-secondary'
 		assign cta_color = 'text-secondary opacity-75'
+		assign eyebrow_color = 'text-tertiary-light'
 	endif
 -%}
 
@@ -49,7 +51,7 @@
 		{%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
 			<div class="flex flex-col gap-2 md:gap-3 text-center">
 				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ section.settings.eyebrow }}</p>
+					<p class="text-xs font-bold uppercase tracking-widest {{ eyebrow_color }}">{{ section.settings.eyebrow }}</p>
 				{%- endif -%}
 				{%- if section.settings.heading != blank -%}
 					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight {{ heading_color }}">{{ section.settings.heading }}</h2>
@@ -222,7 +224,7 @@
 			"type": "text",
 			"id": "heading",
 			"label": "Heading",
-			"default": "The Aira community"
+			"default": "The aira community"
 		},
 		{
 			"type": "text",

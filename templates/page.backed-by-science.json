@@ -12,7 +12,7 @@
 				"eyebrow": "Our Approach",
 				"heading_line_1": "Backed by science.",
 				"heading_line_2": "Built around your body.",
-				"lede": "Aira isn't a clinical device pretending to be wellness, or a wellness product pretending to be science. It's a precise, research-grounded tool designed to support what your body already knows how to do: breathe better.",
+				"lede": "aira isn't a clinical device pretending to be wellness, or a wellness product pretending to be science. It's a precise, research-grounded tool designed to support what your body already knows how to do: breathe better.",
 				"scroll_label": "Scroll to read"
 			}
 		},
@@ -46,10 +46,10 @@
 			"block_order": ["step-1", "step-2", "step-3"],
 			"settings": {
 				"eyebrow": "The mechanism",
-				"heading": "How Aira works.",
-				"lede": "Aira gently expands the external nasal valve — the narrowest point of your nasal airway — and holds it open so air can flow freely. The mechanism is mechanical, not pharmacological.",
+				"heading": "How aira works.",
+				"lede": "aira gently expands the external nasal valve — the narrowest point of your nasal airway — and holds it open so air can flow freely. The mechanism is mechanical, not pharmacological.",
 				"honest_eyebrow": "Honestly",
-				"honest_does_label": "What Aira does:",
+				"honest_does_label": "What aira does:",
 				"honest_does": "it improves nasal patency mechanically.",
 				"honest_doesnt_label": "What it doesn't do:",
 				"honest_doesnt": "replace medical treatment for sleep apnea, chronic congestion, or structural issues. If you suspect any of these, see your doctor."
@@ -78,7 +78,7 @@
 				"cite-4": { "type": "citation", "settings": { "ref_id": "4", "body": "<p>[Author], et al. ([Year]). [Study title — REM cycles and nasal breathing]. <em>[Journal name]</em>.</p>" } },
 				"cite-5": { "type": "citation", "settings": { "ref_id": "5", "body": "<p>[Author], et al. ([Year]). [Study title — HRV recovery and nasal breathing in athletes]. <em>[Journal name]</em>.</p>" } },
 				"cite-6": { "type": "citation", "settings": { "ref_id": "6", "body": "<p>[Author], et al. ([Year]). [Study title — external nasal dilators and snoring reduction]. <em>[Journal name]</em>.</p>" } },
-				"cite-7": { "type": "citation", "settings": { "ref_id": "7", "body": "<p>[Independent testing report — Aira mechanical performance]. ([Year]). [Lab / institution].</p>" } },
+				"cite-7": { "type": "citation", "settings": { "ref_id": "7", "body": "<p>[Independent testing report — aira mechanical performance]. ([Year]). [Lab / institution].</p>" } },
 				"cite-8": { "type": "citation", "settings": { "ref_id": "8", "body": "<p>[Independent testing report — adhesion and durability]. ([Year]). [Lab / institution].</p>" } }
 			},
 			"block_order": ["cite-1", "cite-2", "cite-3", "cite-4", "cite-5", "cite-6", "cite-7", "cite-8"],

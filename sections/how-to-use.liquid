@@ -76,10 +76,10 @@
 							{%- endif -%}
 						</div>
 
-						{%- comment -%} Step number + title inline — number matches section heading size {%- endcomment -%}
+						{%- comment -%} Step number + title inline — same size, title semibold {%- endcomment -%}
 						<div class="flex items-baseline gap-3 mb-1">
-							<span class="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-tertiary-light leading-none tracking-wider">{{ block.settings.step_number | default: forloop.index | prepend: '00' | slice: -2, 2 }}</span>
-							<h3 class="font-heading heading-weight text-2xl md:text-3xl text-secondary leading-tight">{{ block.settings.step_heading }}</h3>
+							<span class="font-heading font-bold text-2xl md:text-3xl text-tertiary-light leading-none tracking-wider">{{ block.settings.step_number | default: forloop.index | prepend: '00' | slice: -2, 2 }}</span>
+							<h3 class="font-heading font-semibold text-2xl md:text-3xl text-secondary leading-tight">{{ block.settings.step_heading }}</h3>
 						</div>
 						{%- if block.settings.step_description != blank -%}
 							<p class="text-secondary/70 text-sm leading-relaxed mt-2">{{ block.settings.step_description }}</p>
@@ -90,12 +90,11 @@
 		</div>
 	{%- endif -%}
 
-	{%- if section.settings.tutorial_label != blank -%}
+	{%- if section.settings.tutorial_url != blank -%}
 		<div class="container-contained relative z-10">
 			<div class="text-center mt-10">
-				<p class="text-secondary/70 text-sm mb-4">{{ section.settings.tutorial_label }}</p>
 				{%- render 'cta-button',
-					label: 'Watch how it works',
+					label: 'Watch tutorial',
 					url: section.settings.tutorial_url,
 					variant: 'outline',
 					surface: 'dark',

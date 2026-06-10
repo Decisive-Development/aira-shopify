@@ -101,9 +101,9 @@
 			>
 			{% # theme-check-enable RemoteAsset %}
 		{%- endif -%}
-		<div class="absolute inset-0 bg-black/35"></div>
-		<div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent"></div>
-		<div class="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-black/50 to-transparent"></div>
+		<div class="absolute inset-0 bg-black/45"></div>
+		<div class="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"></div>
+		<div class="absolute inset-x-0 top-0 h-48 bg-linear-to-b from-black/65 to-transparent"></div>
 	</div>
 
 	<div class="{{ container_class }} {{ py }} w-full relative z-10">
@@ -112,7 +112,7 @@
 			<div class="flex flex-col items-start text-left gap-6 max-w-2xl">
 
 				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-sm font-semibold uppercase tracking-widest text-secondary opacity-60">
+					<p class="text-sm font-semibold uppercase tracking-widest text-tertiary-light">
 						{{ section.settings.eyebrow }}
 					</p>
 				{%- endif -%}
@@ -210,7 +210,7 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Aira's magnetic nasal strip gently opens your airway for deeper, quieter sleep, no discomfort."
+			"default": "aira's magnetic nasal strip gently opens your airway for deeper, quieter sleep, no discomfort."
 		},
 		{
 			"type": "header",

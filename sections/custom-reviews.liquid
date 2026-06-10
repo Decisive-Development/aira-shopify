@@ -771,9 +771,11 @@
   if cr_theme == 'dark'
     assign cr_bg_class = 'bg-main'
     assign cr_heading_class = 'text-secondary'
+    assign cr_eyebrow_class = 'text-tertiary-light'
   else
     assign cr_bg_class = 'bg-secondary'
     assign cr_heading_class = 'text-title'
+    assign cr_eyebrow_class = 'text-highlight'
   endif
 -%}
 <section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}">
@@ -790,7 +792,7 @@
     <!-- ── Section header ── -->
     <div class="text-center mb-10 md:mb-14">
       {%- if section.settings.eyebrow != blank -%}
-        <p class="text-xs uppercase tracking-widest text-highlight mb-3 font-semibold">
+        <p class="text-xs uppercase tracking-widest {{ cr_eyebrow_class }} mb-3 font-semibold">
           {{ section.settings.eyebrow }}
         </p>
       {%- endif -%}

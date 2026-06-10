@@ -24,7 +24,7 @@
 			"type": "affiliate-benefits",
 			"blocks": {
 				"b-1": { "type": "benefit", "settings": { "value": "15%",    "title": "Commission",     "body": "On every sale through your link." } },
-				"b-2": { "type": "benefit", "settings": { "value": "Free",   "title": "Starter Kit",    "body": "Sent to every approved partner." } },
+				"b-2": { "type": "benefit", "settings": { "value": "Free",   "title": "aira Kit",    "body": "Sent to every approved partner." } },
 				"b-3": { "type": "benefit", "settings": { "value": "20%",    "title": "Audience code",  "body": "A discount code your audience can use." } },
 				"b-4": { "type": "benefit", "settings": { "value": "Net 30", "title": "Payouts",        "body": "Cleared monthly via bank transfer or PayPal." } }
 			},

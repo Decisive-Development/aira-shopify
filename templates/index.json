@@ -15,7 +15,7 @@
         "eyebrow": "SLEEP. BREATHE. RECOVER.",
         "heading": "Breathe, the way you were meant to.",
         "subheading": "One magnetic strip. Quieter nights, deeper sleep, and mornings that actually feel like mornings.",
-        "button_label": "Shop Aira Kit",
+        "button_label": "Shop aira kit",
         "button_url": "/products/aira-starter-kit",
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
@@ -33,11 +33,11 @@
       "settings": {
         "eyebrow": "BEFORE & AFTER",
         "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways - without and with the Aira nasal strip.",
+        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
-        "before_label": "Without Aira",
-        "after_label": "With Aira",
+        "before_label": "Without aira",
+        "after_label": "With aira",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
         "overlay_opacity": 0,
@@ -79,7 +79,8 @@
         "eyebrow": "SLEEP",
         "heading": "Better rest. Fuller days.",
         "subheading": "AIRA supports your body's ability to restore itself — opening your airways so you breathe more comfortably, and rest and recover the way you should. Quieter nights. Real rest.",
-        "cta_label": "Shop Aira Kit",
+        "layout_direction": "left",
+        "cta_label": "Shop aira kit",
         "cta_url": "/products/aira-starter-kit",
         "cta_secondary_label": "How it works",
         "cta_secondary_url": "/pages/how-it-works",
@@ -90,71 +91,7 @@
         "stat_footnote_url": "",
         "image_desktop": "shopify://shop_images/IMG_4337.jpg",
         "image_caption": "",
-        "image_marker": "",
-        "layout_direction": "left"
-      }
-    },
-    "benefits_slider": {
-      "type": "benefits-slider",
-      "blocks": {
-        "slide_1": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/design.jpg",
-            "heading": "Instantly Expands",
-            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
-          }
-        },
-        "slide_2": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
-            "heading": "Sweat Resistant. Stays On.",
-            "description": "Aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
-          }
-        },
-        "slide_3": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/photoshoot.jpg",
-            "heading": "Won't Collapse",
-            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
-          }
-        },
-        "slide_4": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Skin_safe_final_ed245389-afb4-43f0-87f9-1d082e7cc3e5.png",
-            "heading": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
-          }
-        },
-        "slide_5": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/photoshoot.jpg",
-            "heading": "Reusable Band",
-            "description": "Aira bands are built to last — you only replace the adhesive tabs, not the band itself."
-          }
-        }
-      },
-      "block_order": [
-        "slide_1",
-        "slide_2",
-        "slide_3",
-        "slide_4",
-        "slide_5"
-      ],
-      "settings": {
-        "eyebrow": "Why Aira",
-        "heading": "Built for better breathing.",
-        "subheading": "Every feature of the Aira strip was designed with one goal — to keep your airway open, all night long.",
-        "heading_size": "md",
-        "background_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "container_width": "contained",
-        "padding_vertical": "lg"
+        "image_marker": ""
       }
     },
     "train": {
@@ -191,9 +128,10 @@
         "eyebrow": "TRAIN",
         "heading": "More air. Less effort.",
         "subheading": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
+        "layout_direction": "right",
         "cta_label": "Shop AIRA",
         "cta_url": "/products/aira-starter-kit",
-        "cta_secondary_label": "The science →",
+        "cta_secondary_label": "The science",
         "cta_secondary_url": "",
         "stat_value": "22%",
         "stat_label": "More efficient breathing",
@@ -202,8 +140,71 @@
         "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
         "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp",
         "image_caption": "Hatta · 04:42",
-        "image_marker": "",
-        "layout_direction": "right"
+        "image_marker": ""
+      }
+    },
+    "benefits_slider": {
+      "type": "benefits-slider",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/design.jpg",
+            "heading": "Instantly Expands",
+            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
+            "heading": "Sweat Resistant. Stays On.",
+            "description": "aira was originally designed for athletes, so the Tabs are made to withstand even your sweatiest workouts."
+          }
+        },
+        "slide_3": {
+          "type": "slide",
+          "settings": {
+            "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
+            "image": "shopify://shop_images/photoshoot.jpg",
+            "heading": "Won't Collapse",
+            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+          }
+        },
+        "slide_4": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Adhesive_tab.png",
+            "heading": "Skin Safe. Medical Grade.",
+            "description": "Hypoallergenic, medical-grade materials. FDA registered and made in the USA."
+          }
+        },
+        "slide_5": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/photoshoot.jpg",
+            "heading": "Reusable Band",
+            "description": "aira bands are built to last — you only replace the adhesive tabs, not the band itself."
+          }
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3",
+        "slide_4",
+        "slide_5"
+      ],
+      "settings": {
+        "eyebrow": "Why aira",
+        "heading": "Built for better breathing.",
+        "subheading": "Every feature of the aira strip was designed with one goal — to keep your airway open, all night long.",
+        "heading_size": "md",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "how_to_use": {
@@ -292,7 +293,7 @@
         "ugc_4"
       ],
       "settings": {
-        "eyebrow": "The Aira community",
+        "eyebrow": "The aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing",
@@ -317,22 +318,22 @@
         "faq_1": {
           "type": "question",
           "settings": {
-            "question": "How does the Aira nasal strip work?",
-            "answer": "<p>Aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
+            "question": "How does the aira nasal strip work?",
+            "answer": "<p>aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
           }
         },
         "faq_2": {
           "type": "question",
           "settings": {
             "question": "Is it comfortable to sleep with and what if it falls off during the night?",
-            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>Aira Kit </em>includes a simple application guide to help you get it right from night one.</p>"
+            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>aira kit </em>includes a simple application guide to help you get it right from night one.</p>"
           }
         },
         "faq_3": {
           "type": "question",
           "settings": {
             "question": "How long does the band last?",
-            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, Aira was built to last.</p>"
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, aira was built to last.</p>"
           }
         },
         "faq_4": {
@@ -345,22 +346,22 @@
         "question_EeFcrc": {
           "type": "question",
           "settings": {
-            "question": "How is Aira different from regular adhesive nasal strips?",
-            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> Aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
+            "question": "How is aira different from regular adhesive nasal strips?",
+            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
           }
         },
         "question_LR3ReA": {
           "type": "question",
           "settings": {
             "question": "How do I know which size is right for me?",
-            "answer": "<p>We've made finding your size easy. The Aira Kit includes four bands sizes: <strong>S2, M1, M2, and L1,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
+            "answer": "<p>We've made finding your size easy. The aira kit includes four bands sizes: <strong>Level 1 · Level 2 · Level 3 · Level 4,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
           }
         },
         "faq_5": {
           "type": "question",
           "settings": {
             "question": "Can I use it during exercise?",
-            "answer": "<p>Absolutely, and honestly, this is where Aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, Aira works with your body, not against it.</p>"
+            "answer": "<p>Absolutely, and honestly, this is where aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, aira works with your body, not against it.</p>"
           }
         },
         "faq_6": {
@@ -395,7 +396,7 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop Aira Kit",
+        "button_label": "Shop aira kit",
         "button_url": "/products/aira-starter-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"

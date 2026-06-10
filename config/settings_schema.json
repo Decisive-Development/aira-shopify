@@ -68,7 +68,7 @@
         "type": "color",
         "id": "color_accent",
         "label": "CTA / Accent colour",
-        "info": "Orange by default. Controls all call-to-action buttons (\"Shop Aira Kit\", \"Buy now\", etc.) and highlighted text.",
+        "info": "Orange by default. Controls all call-to-action buttons (\"Shop aira Kit\", \"Buy now\", etc.) and highlighted text.",
         "default": "#FF4000"
       },
       {

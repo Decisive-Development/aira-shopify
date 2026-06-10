@@ -63,7 +63,7 @@
 
 		{%- comment -%} Section heading {%- endcomment -%}
 		{%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
-			<div class="mb-12 md:mb-16">
+			<div class="mb-6 md:mb-8">
 				{%- render 'section-heading',
 					eyebrow:    section.settings.eyebrow,
 					heading:    section.settings.heading,
@@ -95,7 +95,7 @@
 				{%- else -%}
 					<img
 						src="{{ 'images/With_Compressed.webp' | asset_url }}"
-						alt="{{ section.settings.after_label | default: 'With Aira' }}"
+						alt="{{ section.settings.after_label | default: 'With aira' }}"
 						class="w-full h-auto block"
 						width="600"
 						height="654"
@@ -128,7 +128,7 @@
 				{%- else -%}
 					<img
 						src="{{ 'images/Without_Compressed.webp' | asset_url }}"
-						alt="{{ section.settings.before_label | default: 'Without Aira' }}"
+						alt="{{ section.settings.before_label | default: 'Without aira' }}"
 						class="w-full h-auto block"
 						width="600"
 						height="654"
@@ -251,7 +251,7 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Drag to compare your airways — without and with the Aira nasal strip."
+			"default": "Drag to compare your airways — without and with the aira nasal strip."
 		},
 		{
 			"type": "select",
@@ -288,7 +288,7 @@
 			"type": "text",
 			"id": "before_label",
 			"label": "Before label",
-			"default": "Without Aira"
+			"default": "Without aira"
 		},
 		{
 			"type": "header",
@@ -303,7 +303,7 @@
 			"type": "text",
 			"id": "after_label",
 			"label": "After label",
-			"default": "With Aira"
+			"default": "With aira"
 		},
 		{
 			"type": "header",

@@ -599,11 +599,17 @@
   .h-40 {
     height: calc(var(--spacing) * 40);
   }
+  .h-48 {
+    height: calc(var(--spacing) * 48);
+  }
   .h-64 {
     height: calc(var(--spacing) * 64);
   }
   .h-72 {
     height: calc(var(--spacing) * 72);
+  }
+  .h-\[1em\] {
+    height: 1em;
   }
   .h-auto {
     height: auto;
@@ -686,6 +692,9 @@
   .w-72 {
     width: calc(var(--spacing) * 72);
   }
+  .w-\[1em\] {
+    width: 1em;
+  }
   .w-\[40\%\] {
     width: 40%;
   }
@@ -727,9 +736,6 @@
   }
   .max-w-\[340px\] {
     max-width: 340px;
-  }
-  .max-w-\[540px\] {
-    max-width: 540px;
   }
   .max-w-\[640px\] {
     max-width: 640px;
@@ -872,8 +878,8 @@
   .grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
-  .grid-cols-\[24px_1fr\] {
-    grid-template-columns: 24px 1fr;
+  .grid-cols-\[32px_1fr\] {
+    grid-template-columns: 32px 1fr;
   }
   .grid-cols-\[repeat\(3\,auto\)\] {
     grid-template-columns: repeat(3,auto);
@@ -1186,6 +1192,12 @@
       background-color: color-mix(in oklab, var(--color-black) 40%, transparent);
     }
   }
+  .bg-black\/45 {
+    background-color: color-mix(in srgb, #000 45%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 45%, transparent);
+    }
+  }
   .bg-border {
     background-color: var(--color-border);
   }
@@ -1304,10 +1316,24 @@
     }
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
+  .from-black\/65 {
+    --tw-gradient-from: color-mix(in srgb, #000 65%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-gradient-from: color-mix(in oklab, var(--color-black) 65%, transparent);
+    }
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
   .from-black\/70 {
     --tw-gradient-from: color-mix(in srgb, #000 70%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-gradient-from: color-mix(in oklab, var(--color-black) 70%, transparent);
+    }
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+  .from-black\/80 {
+    --tw-gradient-from: color-mix(in srgb, #000 80%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-gradient-from: color-mix(in oklab, var(--color-black) 80%, transparent);
     }
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
@@ -2149,10 +2175,26 @@
       }
     }
   }
+  .group-hover\:translate-x-0\.5 {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        --tw-translate-x: calc(var(--spacing) * 0.5);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+    }
+  }
   .group-hover\:translate-x-1 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         --tw-translate-x: calc(var(--spacing) * 1);
+        translate: var(--tw-translate-x) var(--tw-translate-y);
+      }
+    }
+  }
+  .group-hover\:-translate-y-0\.5 {
+    &:is(:where(.group):hover *) {
+      @media (hover: hover) {
+        --tw-translate-y: calc(var(--spacing) * -0.5);
         translate: var(--tw-translate-x) var(--tw-translate-y);
       }
     }
@@ -3302,16 +3344,6 @@
       grid-template-columns: 1.4fr 1fr;
     }
   }
-  .lg\:grid-cols-\[1\.05fr_1fr\] {
-    @media (width >= 64rem) {
-      grid-template-columns: 1.05fr 1fr;
-    }
-  }
-  .lg\:grid-cols-\[1fr_1\.05fr\] {
-    @media (width >= 64rem) {
-      grid-template-columns: 1fr 1.05fr;
-    }
-  }
   .lg\:grid-cols-\[1fr_1fr\] {
     @media (width >= 64rem) {
       grid-template-columns: 1fr 1fr;
@@ -3322,9 +3354,9 @@
       grid-template-columns: 5fr 6fr;
     }
   }
-  .lg\:grid-cols-\[32px_1fr\] {
+  .lg\:grid-cols-\[40px_1fr\] {
     @media (width >= 64rem) {
-      grid-template-columns: 32px 1fr;
+      grid-template-columns: 40px 1fr;
     }
   }
   .lg\:gap-3 {

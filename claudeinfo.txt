@@ -1,4 +1,4 @@
-# Aira — Site Reference
+# aira — Site Reference
 
 ## Brand
 A wellness / sleep-focused ecommerce brand selling in the GCC. First product: a magnetic nasal strip.
@@ -144,7 +144,7 @@ Default size is `md`. Only specify `size` when intentionally deviating.
 - **Mobile**: first two columns side-by-side (`grid-cols-2`), brand col `col-span-2`, company col `col-span-2`. Email form full-width (`flex flex-col sm:flex-row`, input `w-full sm:w-70`, button `w-full sm:w-auto`).
 - Newsletter form: Shopify `form 'customer'` with `contact[tags]: newsletter`. Input `rounded-xl`, fixed width. Subscribe uses `cta-button` snippet (`element: button`, `button_type: submit`, `variant: primary`)
 - Social icons: Instagram, YouTube, TikTok — CMS-controlled URLs via schema (hidden if blank)
-- Copyright bar: below the pill, `text-white`, `© 2026 Aira Wellness. · Privacy Policy · Terms of Service`
+- Copyright bar: below the pill, `text-white`, `© 2026 aira Wellness. · Privacy Policy · Terms of Service`
 - Links: hardcoded paths. Social URLs: CMS via schema.
 
 ### snippets/section-heading.liquid
@@ -175,7 +175,7 @@ Reusable product card for collection/shop pages. Used by `sections/collection.li
 Removed during cleanup. Was unused.
 
 ### sections/featured-products.liquid — DELETED (Session 19)
-Removed during cleanup. Homepage no longer shows dual product cards (per UX brief — homepage sells Aira Kit only).
+Removed during cleanup. Homepage no longer shows dual product cards (per UX brief — homepage sells aira kit only).
 
 ### sections/collection.liquid
 - Dark navy header banner (`bg-main pt-32 pb-16`) for transparent nav compatibility.
@@ -231,7 +231,7 @@ Full-width problem-vs-solution stats section over a background image.
 - **Block fields**: `value` (stat number), `keyword` (bold emphasis word e.g. "Snoring"), `label` (description), `footnote` (source), `footnote_url` (links to study). Footnotes colored `--color-tertiary-light` (#9BB7D4), clickable when URL provided.
 - **Desktop layout** (`lg+`): two-column grid, full-width (not container-constrained), `max-w-[50vw]` per column. Left = problems left-aligned, right = benefits right-aligned. Vertical divider `border-l border-white/10`. Each stat row: large value → keyword → label → source link. Scroll-in animations via IntersectionObserver.
 - **Mobile layout** (`< lg`): separate code block (`lg:hidden`). Paired rows — each row is `grid-cols-2` with problem on left, matching benefit on right. Compact: no footnotes, smaller text, tighter spacing. Uses counter-based iteration to find nth problem/benefit per row (Liquid can't index arrays with string keys from `split`).
-- **Stats are research-backed**: all cite peer-reviewed studies (PubMed, CDC, journal publications). No "Aira survey" claims. Problems: snoring prevalence, sleep deprivation, heart disease risk, dry mouth. Benefits: snoring reduction, airway resistance, cardiovascular health, nasal obstruction — paired to mirror the problems.
+- **Stats are research-backed**: all cite peer-reviewed studies (PubMed, CDC, journal publications). No "aira survey" claims. Problems: snoring prevalence, sleep deprivation, heart disease risk, dry mouth. Benefits: snoring reduction, airway resistance, cardiovascular health, nasal obstruction — paired to mirror the problems.
 - CMS: eyebrow, heading, subheading, left_heading, right_heading, background_color, background_image.
 
 ### sections/judgeme-reviews.liquid
@@ -276,7 +276,7 @@ Full-width problem-vs-solution stats section over a background image.
 - `formatMoney()` uses `toLocaleString` with shop currency from Liquid.
 
 ### sections/final-cta.liquid
-- Simple last-chance CTA section before footer: heading + "Shop Aira Kit" button, dark background.
+- Simple last-chance CTA section before footer: heading + "Shop aira kit" button, dark background.
 - Negative margins to close gap with footer.
 
 ### sections/faq.liquid
@@ -332,7 +332,7 @@ Full-width problem-vs-solution stats section over a background image.
 - Cream `bg-secondary` band. Centered eyebrow + h2 + lead, then 2x2 grid of "checktile" compare cards.
 - Each card block: 16:9 photo placeholder up top, body underneath with a Do/Don't pill tag (green or orange via `tag-do` / `tag-dont` CSS classes) + title + description.
 - Tag selection driven by block setting `tag` (`do` / `dont`), inlines a check or X SVG accordingly.
-- Closing inline CTA below the grid (`max-w-3xl`, the same `.inline-cta` component). Per Tom's brief, this stays as a text link — only Refills and Aira Kit warrant the orange-button treatment.
+- Closing inline CTA below the grid (`max-w-3xl`, the same `.inline-cta` component). Per Tom's brief, this stays as a text link — only Refills and aira kit warrant the orange-button treatment.
 
 ### sections/how-it-works-pro-tips.liquid (S27)
 - Dark navy `bg-main` band with two large viewport-relative radial gradients (light blue only — orange originally appeared here, removed in S27 refinements).
@@ -353,8 +353,8 @@ Full-width problem-vs-solution stats section over a background image.
 ## Products
 
 Two products currently:
-- **Aira Aira Kit** — includes 4 sized nasal strips (XS/S/M/L) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
-- **Aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
+- **aira aira kit** — includes 4 sized nasal strips (L1/L2/L3/L4) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
+- **aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
 
 Navigation: "Shop" links to /products/aira-starter-kit, "Refills" links to /products/aira-refill-tabs (direct product pages, not collections).
 
@@ -413,7 +413,7 @@ Shopify collection notes:
 - Variant JS: embedded JSON, swatch/pill active state toggling, price/availability/image updates on selection
 - Fixed variant image swap: clear srcset + sizes before setting src (browsers prioritise srcset over src attribute)
 - Variant images must be assigned to individual variants in Shopify admin (not just added to product media gallery) for variant.featured_image to return a value
-- Products: Aira Aira Kit (Colour: Black/Beige), Aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
+- Products: aira aira kit (Colour: Black/Beige), aira Refill Tabs (Pack: 30 pairs / 60 pairs / 90 pairs)
 - templates/index.json wired with featured_products section after before_after_slider
 
 [Session 11] Health effects section
@@ -496,9 +496,9 @@ Shopify collection notes:
 
 [Session 19] UX brief implementation — cart drawer, product page rework, footer, cleanup
 - Full UX brief (UXbreif.txt) implementation completing all code tasks.
-- **Hero text**: Updated super-heading ("SLEEP. BREATHE. RECOVER."), headline, body copy, CTAs ("Shop Aira Kit" + "How it works").
+- **Hero text**: Updated super-heading ("SLEEP. BREATHE. RECOVER."), headline, body copy, CTAs ("Shop aira kit" + "How it works").
 - **Cart drawer** (snippets/cart-drawer.liquid): Built complete AJAX slide-out cart from scratch. Floating design (12px margin, rounded-2xl), responsive via CSS min(). Intercepts all add-to-cart forms site-wide. Refill upsell auto-hidden when refills in cart. Instant open with parallel fetch. All interactives cursor-pointer. "Continue shopping" close button.
-- **Product page nav/hero rework**: Removed hero from product pages (Aira Kit + refill). Transparent nav gets `bg-main` (blue) on product pages via `request.page_type == 'product'` check. Sticky mobile ATC bar restyled: bg-secondary (beige), accent CTA.
+- **Product page nav/hero rework**: Removed hero from product pages (aira kit + refill). Transparent nav gets `bg-main` (blue) on product pages via `request.page_type == 'product'` check. Sticky mobile ATC bar restyled: bg-secondary (beige), accent CTA.
 - **Footer**: Shop links updated to direct product pages. Social icons (Instagram + TikTok) set in footer-group.json. Copyright bar z-index fix.
 - **Cleanup**: Deleted 10 unused files (sections: collections, custom-section, featured-products, imageHero, section-wrapper; templates: list-collections.json; snippets: card, product-card-subscription; assets: icon-cart.svg, icon-account.svg). All references audited before deletion.
 - **Page hero**: Mobile height reduced to min-h-[20vh], heading padding-top reduced to pt-24.
@@ -507,7 +507,7 @@ Shopify collection notes:
 
 [Session 20] Product page V2 — buy box, refill page rework, cart drawer
 
-**Aira Kit buy box (sections/product.liquid):**
+**aira kit buy box (sections/product.liquid):**
 - Accordion "Benefits" section now auto-opens on all devices (removed desktop-only `window.innerWidth >= 1024` check).
 - Accordion bullet icons refactored from CSS `::before` pseudo-elements to JS-injected `<img>` tags using `aira-logo-only-dark.svg`. Skips `<li>` items containing `<strong>` (numbered steps). Ensures visual consistency with product tile bullet icons.
 - One-time Purchase card bullets updated: reordered, added "Magnetic placement tool" and "Instruction manual".
@@ -524,10 +524,10 @@ Shopify collection notes:
 - `selectCard()` JS handles mutual exclusion across all 5 cards, sets/clears selling plan input.
 - Gallery column made sticky: `lg:sticky lg:top-24 lg:self-start`.
 - Trust badges added (Research Backed, High Success Rate, Doctor Recommended) with SVG icons.
-- Accordions: Benefits (tab-specific content), How to use (numbered steps), Shipping & Returns. Benefits auto-opens. Bullet icon injection matches Aira Kit.
+- Accordions: Benefits (tab-specific content), How to use (numbered steps), Shipping & Returns. Benefits auto-opens. Bullet icon injection matches aira kit.
 - Free shipping micro-copy below Add to Cart.
-- Starter link: "Need a Aira Kit? Start here →".
-- Added sticky mobile add-to-cart bar (matching Aira Kit): slides up when main ATC scrolls out of view, price updates on variant/plan selection via `selectCard()`.
+- Starter link: "Need a aira kit? Start here →".
+- Added sticky mobile add-to-cart bar (matching aira kit): slides up when main ATC scrolls out of view, price updates on variant/plan selection via `selectCard()`.
 
 **Refill template (templates/product.refill.json):**
 - Badge: "Best value", Title: "Monthly Refill Plan | 30 tabs", Save text: "Save 20% on refills".
@@ -555,7 +555,7 @@ Shopify collection notes:
 **Benefits grid rebuild (sections/benefits-grid.liquid):**
 - Replaced 6-card icon grid with 2-column layout: product image left (aspect-[3/4] desktop, aspect-[4/3] mobile), 3 text benefit blocks right.
 - Benefits: "Opens your airway instantly", "Stays put all night", "Reusable for months" — each with headline + supporting sentence.
-- Eyebrow "WHY AIRA", heading "Why Aira works." — inline (not section-heading snippet).
+- Eyebrow "WHY AIRA", heading "Why aira works." — inline (not section-heading snippet).
 - CMS: image_picker for left column, falls back to product.featured_image.
 - Mobile: stacks image on top, text blocks below with gap-6.
 - Removed old schema fields (subheading, heading_size, icon image_picker per block).
@@ -569,14 +569,14 @@ Shopify collection notes:
 - Reviews section: heading changed to "Trusted by better breathers." — removed "hundreds of" (both templates).
 
 **Refill page section parity (templates/product.refill.json):**
-- Added benefits_slider (same 5 slides as Aira Kit).
-- Added social_proof (same 8 research stat blocks as Aira Kit).
+- Added benefits_slider (same 5 slides as aira kit).
+- Added social_proof (same 8 research stat blocks as aira kit).
 - Added ugc_gallery (4 testimonial blocks).
-- Added faq (same 6 questions as Aira Kit).
+- Added faq (same 6 questions as aira kit).
 - Added final_cta ("Ready to breathe better?").
 - Section order: main → benefits_slider → social_proof → ugc_gallery → judgeme_reviews → faq → final_cta.
 
-**Aira Kit template order (templates/product.json):**
+**aira kit template order (templates/product.json):**
 - Updated to: main → how_to_use → benefits_grid → ugc_gallery → benefits_slider → social_proof → judgeme_reviews → faq → final_cta.
 - cross_sell removed from order.
 
@@ -587,7 +587,7 @@ Shopify collection notes:
 
 **Refill page star rating link (sections/product-refill.liquid):**
 - Rating wrapped in `<a href="#reviews-section" class="scroll-link">` — was previously a plain div with no link.
-- Added smooth scroll JS (`scrollIntoView({ behavior: 'smooth' })`) matching the Aira Kit implementation.
+- Added smooth scroll JS (`scrollIntoView({ behavior: 'smooth' })`) matching the aira kit implementation.
 
 **Global smooth scrolling (assets/critical.source.css):**
 - Added `html { scroll-behavior: smooth; }` so all anchor links scroll smoothly.
@@ -813,9 +813,9 @@ Goal: alternating cream/paper/cream-soft/navy rhythm so the page reads as paced 
 - For atmospheric radial gradient overlays on existing sections, use `background-image: radial-gradient(...)` rather than `background:` shorthand. `background-image` is independent of `background-color`, so the gradient layers on top of an existing class-based or CMS-controlled base color without overriding it.
 - JS that resolves its own section via `document.currentScript` should always have a `[data-...]` attribute fallback, not a styling class — class names are visual concerns and will get refactored.
 
-### Session 26 — Why Aira animated rebuild + Health Effects manual-only (3 May 2026)
+### Session 26 — Why aira animated rebuild + Health Effects manual-only (3 May 2026)
 
-**Why Aira section rebuild (sections/benefits-grid.liquid) — full replacement:**
+**Why aira section rebuild (sections/benefits-grid.liquid) — full replacement:**
 
 Iterated through four design briefs to land on the final approach. Replaced the static 2-col image+text grid with a pinned full-viewport scroll experience.
 
@@ -874,14 +874,14 @@ Three connected briefs back-to-back: (1) place CTAs across the Our Story page, (
 **/pages/tutorials → /pages/how-it-works cleanup (theme code only — admin work flagged separately):**
 - `sections/how-to-use.liquid` line 89: hardcoded `'Watch tutorial'` button label → `'Watch how it works'`.
 - `templates/index.json`: `tutorial_url` `/pages/tutorials` → `/pages/how-it-works`.
-- `templates/product.json`: `tutorial_url` was empty `""` (the broken-link bug Tom flagged on the Aira Kit product page — same `how-to-use` section as homepage, just with no URL set). Wired to `/pages/how-it-works`.
+- `templates/product.json`: `tutorial_url` was empty `""` (the broken-link bug Tom flagged on the aira kit product page — same `how-to-use` section as homepage, just with no URL set). Wired to `/pages/how-it-works`.
 - `sections/footer.liquid` line 99: was hardcoded `<a href="/pages/how-to-use">How to use</a>` (a live 404). Brief framed it as admin nav work but the footer is hardcoded, so fixed in code → `<a href="/pages/how-it-works">How it works</a>`.
 - `sections/footer.liquid` line 110: "Affiliate Program" Title Case → "Affiliate program" sentence case (matches other footer items per Tom's recommendation). URL untouched — the `/pages/affiliate` vs `/pages/affilliate-program` (header typo) reconciliation needs admin verification of which page actually exists.
 - `templates/page.our-story.json`: both Our Story CTAs (tile-2 + closing secondary) retargeted from `/pages/tutorials` → `/pages/how-it-works`.
 - Body copy left untouched per brief's judgment-call rule: `tutorial_label` prose ("See the full tutorial →" homepage, "watch our short tutorial video" product page), accordion headings "How to use" on starter-kit + refill product templates (instructional UX copy at the right moment).
 - Verified zero `/pages/tutorials`, `/pages/how-to-use`, or `Watch tutorial` matches outside `Brief.txt` and `claudeinfo.txt`.
 
-**How it works page — full build from design handoff (`C:\Users\tompe\Downloads\Aira Two\design_handoff_how_it_works`):**
+**How it works page — full build from design handoff (`C:\Users\tompe\Downloads\aira Two\design_handoff_how_it_works`):**
 
 Created 6 new sections + 1 new snippet + 1 new page template + extended 1 existing snippet + softened 2 site-wide tokens. Reused existing `header.liquid`, `footer.liquid` (via header/footer-group.json — no duplication), and `faq.liquid`.
 
@@ -912,7 +912,7 @@ Page-level JS (reveal observer + sticky-rail active-state observer) lives in `se
 - Steps 01-03: all body copy moved from `text-copy` to `text-main/85` (lead, size-card descriptions + tier labels, prep card body, apply card body, callout body, tip body, CTA sub-copy). The site-wide `text-copy` softening still applies everywhere outside the steps.
 - Step 01 tip body: schema setting changed `textarea` → `richtext`, render wrapper `<p>` → `<div class="... [&_p+p]:mt-1.5">`. JSON now ships `<p>Sleep — start a size up...</p><p>Sport — size down...</p>` so the two rules are visually separated.
 - Step 01 CTA: added `inline-cta-stack` modifier (CSS `flex-direction: column; align-items: flex-start`) so the headline + sub stack full-width and the CTA sits below.
-- Step 02 CTA: introduced `cta_style` schema setting (`link` / `button` / `button-blue`) supported by both size and prep variants. Step 01 now uses `button` (orange, matches nav). Step 02 uses `button-blue` (`bg-highlight-blue` = `#087CA7`). Pitfalls "Read reviews →" stays a text link per the brief's consistency note (only Refills + Aira Kit warrant the button treatment).
+- Step 02 CTA: introduced `cta_style` schema setting (`link` / `button` / `button-blue`) supported by both size and prep variants. Step 01 now uses `button` (orange, matches nav). Step 02 uses `button-blue` (`bg-highlight-blue` = `#087CA7`). Pitfalls "Read reviews →" stays a text link per the brief's consistency note (only Refills + aira kit warrant the button treatment).
 - Pro Tips: replaced two small fixed-px gradients (one orange, one blue) with two large viewport-relative ellipses, both light blue. Long soft falloff so the glows feel ambient on any viewport. Removed orange entirely.
 - Removed orphaned `.hiw-hero-bg` + `.hiw-hero-halo` from `critical.source.css` after Option A swap.
 

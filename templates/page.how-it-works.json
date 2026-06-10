@@ -18,7 +18,7 @@
             "timestamp": "00:00",
             "time_seconds": 0,
             "title": "Find your size",
-            "subtitle": "S2 · M1 · M2 · L1"
+            "subtitle": "Level 1 · Level 2 · Level 3 · Level 4"
           }
         },
         "ch-2": {
@@ -90,7 +90,7 @@
       "settings": {
         "eyebrow": "The basics",
         "heading": "A two-part system. No drugs, nothing inside your nose.",
-        "body": "<p>Aira sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>",
+        "body": "<p>aira sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>",
         "card1_label": "The band",
         "card1_title": "Reusable. Magnetic.",
         "card1_body": "Lasts months. Holds the structural pull.",
@@ -105,7 +105,7 @@
         "size-1": {
           "type": "size",
           "settings": {
-            "code": "S2",
+            "code": "Level 1",
             "tier": "Small",
             "description": "For narrower nose bridges. Lower-impact wear and sleep."
           }
@@ -113,7 +113,7 @@
         "size-2": {
           "type": "size",
           "settings": {
-            "code": "M1",
+            "code": "Level 2",
             "tier": "Medium",
             "description": "Most popular for sport & high-impact use. Slightly tighter pull."
           }
@@ -121,7 +121,7 @@
         "size-3": {
           "type": "size",
           "settings": {
-            "code": "M2",
+            "code": "Level 3",
             "tier": "Medium",
             "description": "Most popular for sleep. Wider opening, longer wear."
           }
@@ -129,7 +129,7 @@
         "size-4": {
           "type": "size",
           "settings": {
-            "code": "L1",
+            "code": "Level 4",
             "tier": "Large",
             "description": "For wider noses. Maximum airflow at rest."
           }
@@ -148,15 +148,15 @@
         "eyebrow": "Step 01",
         "eyebrow_color": "orange",
         "heading": "Find your size.",
-        "lead": "The right band rests with its tips on the outer edges of your nostrils — without pinching them or pressing them shut. Every Aira Kit ships with four sizes so you can find your fit on night one.",
+        "lead": "The right band rests with its tips on the outer edges of your nostrils — without pinching them or pressing them shut. Every aira kit ships with four sizes so you can find your fit on night one.",
         "visual_image": "shopify://shop_images/WhatsApp_Image_2026-05-17_at_16.06.15.jpg",
         "visual_alt": "",
         "visual_label": "Sizing photo — band on nose, callouts pointing to nostril edges",
         "tip_title": "Quick rule of thumb",
         "tip_body": "<p>Sleep — start a size up for wider airflow.</p><p>Sport — size down so the tabs hold under sweat & movement.</p>",
-        "cta_title": "Get all four sizes in the Aira Kit.",
+        "cta_title": "Get all four sizes in the aira kit.",
         "cta_body": "Try every band on night one — keep the one that fits.",
-        "cta_label": "Shop Aira Kit",
+        "cta_label": "Shop aira kit",
         "cta_url": "/products/aira-starter-kit",
         "cta_style": "button",
         "callout_eyebrow": "Don't skip",
@@ -195,7 +195,7 @@
             "image": "shopify://shop_images/skincare.jpg",
             "image_label": "Skip moisturiser & oils on the bridge",
             "title": "Skip the lotion",
-            "body": "Moisturisers, serums, and oils are the #1 reason tabs lift early. Apply Aira first, skincare around it."
+            "body": "Moisturisers, serums, and oils are the #1 reason tabs lift early. Apply aira first, skincare around it."
           }
         }
       },
@@ -209,7 +209,7 @@
         "step_number": 2,
         "bg": "bg-cream-light",
         "eyebrow": "Step 02",
-        "eyebrow_color": "blue",
+        "eyebrow_color": "orange",
         "heading": "Prep your skin.",
         "lead": "Adhesive sticks to clean, dry skin. Twenty seconds of prep is the difference between tabs that hold for a full night and ones that wander off at 4am.",
         "visual_alt": "",
@@ -279,7 +279,7 @@
         "tip_body": "",
         "cta_title": "",
         "cta_body": "",
-        "cta_label": "Shop Aira Kit",
+        "cta_label": "Shop aira kit",
         "cta_url": "",
         "cta_style": "link",
         "callout_eyebrow": "Don't skip",
@@ -315,7 +315,7 @@
           "settings": {
             "icon": "home",
             "title": "Goggles & glasses",
-            "body": "Aira fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch."
+            "body": "aira fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch."
           }
         }
       },
@@ -337,14 +337,14 @@
           "type": "question",
           "settings": {
             "question": "Will it stay on if I move around in my sleep?",
-            "answer": "<p>Yes — Aira was originally engineered for high-impact sport, so a side-sleeper is a low bar. The most common cause of slippage is missed prep: oily skin or skipping the 10-second press. Get those right and most wearers get a full 8 hours.</p>"
+            "answer": "<p>Yes — aira was originally engineered for high-impact sport, so a side-sleeper is a low bar. The most common cause of slippage is missed prep: oily skin or skipping the 10-second press. Get those right and most wearers get a full 8 hours.</p>"
           }
         },
         "q2": {
           "type": "question",
           "settings": {
             "question": "How many tabs do I get per kit?",
-            "answer": "<p>Your Aira Kit ships with the four bands plus 30 pairs of tabs — a full month of nightly wear. Refill packs come in 30, 60, or 90 pairs.</p>"
+            "answer": "<p>Your aira kit ships with the four bands plus 30 pairs of tabs — a full month of nightly wear. Refill packs come in 30, 60, or 90 pairs.</p>"
           }
         },
         "q3": {
@@ -358,7 +358,7 @@
           "type": "question",
           "settings": {
             "question": "Is there anything I shouldn't do before applying?",
-            "answer": "<p>Skip moisturisers, oils, and serums on the bridge of the nose for at least 5 minutes before. Apply Aira first, then your skincare around it.</p>"
+            "answer": "<p>Skip moisturisers, oils, and serums on the bridge of the nose for at least 5 minutes before. Apply aira first, then your skincare around it.</p>"
           }
         }
       },
@@ -383,8 +383,8 @@
       "settings": {
         "eyebrow": "Ready when you are",
         "heading": "Three steps. One better night.",
-        "lead": "Every Aira Kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month.",
-        "primary_label": "Shop Aira Kit",
+        "lead": "Every aira kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month.",
+        "primary_label": "Shop aira kit",
         "primary_url": "/products/aira-starter-kit",
         "secondary_label": "Re-watch tutorial",
         "secondary_url": "#tutorialVideo"

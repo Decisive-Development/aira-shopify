@@ -97,14 +97,113 @@
         "hero_eyebrow": "",
         "show_rating": true,
         "rating_text": "",
-        "product_subtitle": "Replacement adhesive tabs for your Aira magnetic nasal strip. Choose a plan or buy one-time.",
+        "product_subtitle": "Replacement adhesive tabs for your aira magnetic nasal strip. Choose a plan or buy one-time.",
         "plan_badge": "Best value",
         "plan_title": "Monthly Refill Plan | 30 tabs",
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "starter_link_label": "Need a Aira Kit? Start here →",
+        "starter_link_label": "Need a aira kit? Start here →",
         "starter_link_url": "/products/aira-starter-kit"
+      }
+    },
+    "benefits_grid": {
+      "type": "benefits-grid",
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Snore no more",
+            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. aira holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
+            "image": "shopify://shop_images/IMG_4337.jpg"
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Rhythmic breathing",
+            "body": "<p>Built for athletes first. With your airway fully open, you can breathe deep and steady through your nose under load — a smoother rhythm, more efficient oxygen, and less gasping when the effort peaks.</p>",
+            "image": "shopify://shop_images/cycle_edits-33_websize.webp"
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Deepest sleep",
+            "body": "<p>Nose breathing is the foundation of deep, restorative sleep. With your airway held open all night, you drift into deeper stages, wake less often, and rise genuinely rested.</p>",
+            "image": "shopify://shop_images/photoshoot.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "benefit_1",
+        "benefit_2",
+        "benefit_3"
+      ],
+      "settings": {
+        "eyebrow": "Why aira",
+        "heading": "Breathe right, day and night.",
+        "subheading": "aira fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep."
+      }
+    },
+    "how_to_use": {
+      "type": "how-to-use",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "step_number": "01",
+            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
+            "step_heading": "Peel",
+            "step_description": "Peel the adhesive tab from its backing."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "step_number": "02",
+            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
+            "step_heading": "Place",
+            "step_description": "Place a tab on either side of your nose bridge."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "step_number": "03",
+            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
+            "step_heading": "Breathe",
+            "step_description": "Attach the magnetic band and breathe freely all night."
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3"
+      ],
+      "settings": {
+        "eyebrow": "How it works",
+        "heading": "3 steps to better breathing.",
+        "tutorial_label": "For a more detailed guide, watch our short tutorial video.",
+        "tutorial_url": "/pages/how-it-works"
+      }
+    },
+    "before_after_slider": {
+      "type": "before-after-slider",
+      "settings": {
+        "eyebrow": "Before & After",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
+        "heading_align": "center",
+        "heading_size": "md",
+        "before_label": "Without aira",
+        "after_label": "With aira",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "product_features_grid": {
@@ -193,7 +292,7 @@
         "ugc_4"
       ],
       "settings": {
-        "eyebrow": "The Aira community",
+        "eyebrow": "The aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing"
@@ -243,7 +342,7 @@
           "type": "question",
           "settings": {
             "question": "Will any tab size work with my band?",
-            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (XS, S, M, L).</p>"
+            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (L1 / L2 / L3 / L4).</p>"
           }
         },
         "faq_6": {
@@ -276,7 +375,7 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop Aira Kit",
+        "button_label": "Shop aira kit",
         "button_url": "/products/aira-starter-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"
@@ -285,6 +384,9 @@
   },
   "order": [
     "main",
+    "benefits_grid",
+    "how_to_use",
+    "before_after_slider",
     "product_features_grid",
     "ugc_gallery",
     "custom_reviews",

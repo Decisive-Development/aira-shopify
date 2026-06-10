@@ -1,5 +1,5 @@
 {%- comment -%}
-	CTA Button — Aira 4-tier system
+	CTA Button — aira 4-tier system
 
 	Tiers (descending emphasis):
 	  shop     Orange solid    — the ONE Shop CTA. Reserve orange for buying only.
@@ -96,7 +96,8 @@
 {%- capture btn_inner -%}
 	{{ label }}
 	{%- if btn_variant == 'link' and show_arrow -%}
-		<span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+		{%- comment -%} Material Symbols "arrow_outward" — inlined SVG (no icon-font request); inherits currentColor and scales with text. {%- endcomment -%}
+		<svg class="h-[1em] w-[1em] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/></svg>
 	{%- endif -%}
 {%- endcapture -%}
 

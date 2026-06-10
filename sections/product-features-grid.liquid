@@ -3,8 +3,15 @@
 <section class="py-16 md:py-24 bg-bg" data-features-grid>
 	<div class="container-contained">
 
-		<p class="text-xs uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
-		<h2 class="text-3xl md:text-4xl font-heading heading-weight text-title mb-10 md:mb-12">{{ section.settings.heading }}</h2>
+		<div class="mb-10 md:mb-12">
+			{%- render 'section-heading',
+				eyebrow:    section.settings.eyebrow,
+				heading:    section.settings.heading,
+				subheading: section.settings.subheading,
+				align:      'center',
+				size:       'md'
+			-%}
+		</div>
 
 		{%- if feature_blocks.size > 0 -%}
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
@@ -97,6 +104,11 @@
 			"id": "heading",
 			"label": "Heading",
 			"default": "Built for better breathing."
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Subheading"
 		}
 	],
 	"blocks": [
