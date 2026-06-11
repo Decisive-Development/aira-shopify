@@ -108,21 +108,50 @@
         "refill_link_url": "/products/aira-refill-tabs"
       }
     },
-    "before_after_slider": {
-      "type": "before-after-slider",
+    "benefits_grid": {
+      "type": "benefits-grid",
+      "blocks": {
+        "benefit_1": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Snore no more",
+            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. aira holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
+            "image": "shopify://shop_images/IMG_4337.jpg",
+            "button_label": "",
+            "button_url": ""
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Rhythmic breathing",
+            "body": "<p>Built for athletes first. With your airway fully open, you can breathe deep and steady through your nose under load — a smoother rhythm, more efficient oxygen, and less gasping when the effort peaks.</p>",
+            "image": "shopify://shop_images/cycle_edits-33_websize.webp",
+            "button_label": "",
+            "button_url": ""
+          }
+        },
+        "benefit_3": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Deepest sleep",
+            "body": "<p>Nose breathing is the foundation of deep, restorative sleep. With your airway held open all night, you drift into deeper stages, wake less often, and rise genuinely rested.</p>",
+            "image": "shopify://shop_images/IMG_4790-2.jpg",
+            "button_label": "",
+            "button_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "benefit_1",
+        "benefit_2",
+        "benefit_3"
+      ],
       "settings": {
-        "eyebrow": "Before & After",
-        "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
-        "heading_align": "center",
-        "heading_size": "md",
-        "before_label": "Without aira",
-        "after_label": "With aira",
-        "background_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "container_width": "contained",
-        "padding_vertical": "lg"
+        "eyebrow": "Why aira",
+        "heading": "Breathe right, day and night.",
+        "subheading": "aira fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep.",
+        "background_color": "#fafafa"
       }
     },
     "how_to_use": {
@@ -168,48 +197,25 @@
         "tutorial_url": "/pages/how-it-works"
       }
     },
-    "benefits_grid": {
-      "type": "benefits-grid",
-      "blocks": {
-        "benefit_1": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Snore no more",
-            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. aira holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
-            "image": "shopify://shop_images/IMG_4337.jpg"
-          }
-        },
-        "benefit_2": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Rhythmic breathing",
-            "body": "<p>Built for athletes first. With your airway fully open, you can breathe deep and steady through your nose under load — a smoother rhythm, more efficient oxygen, and less gasping when the effort peaks.</p>",
-            "image": "shopify://shop_images/cycle_edits-33_websize.webp"
-          }
-        },
-        "benefit_3": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Deepest sleep",
-            "body": "<p>Nose breathing is the foundation of deep, restorative sleep. With your airway held open all night, you drift into deeper stages, wake less often, and rise genuinely rested.</p>",
-            "image": "shopify://shop_images/photoshoot.jpg"
-          }
-        }
-      },
-      "block_order": [
-        "benefit_1",
-        "benefit_2",
-        "benefit_3"
-      ],
+    "before_after_slider": {
+      "type": "before-after-slider",
       "settings": {
-        "eyebrow": "Why aira",
-        "heading": "Breathe right, day and night.",
-        "subheading": "aira fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep."
+        "eyebrow": "Before & After",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
+        "heading_align": "center",
+        "heading_size": "md",
+        "before_label": "Without aira",
+        "after_label": "With aira",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "social_proof": {
       "type": "social-proof",
-      "disabled": true,
       "blocks": {
         "problem_1": {
           "type": "problem",
@@ -302,6 +308,7 @@
         "benefit_3",
         "benefit_4"
       ],
+      "disabled": true,
       "settings": {
         "background_color": "#0a1a34",
         "background_image": "shopify://shop_images/IMG_4337.jpg",
@@ -322,7 +329,7 @@
           "settings": {
             "image": "shopify://shop_images/design.jpg",
             "title": "Instantly Expands",
-            "description": "Intake instantly expands your nasal passages, helping you breathe freely with less struggle."
+            "description": "The band lifts your nasal passages open the second it clicks into place — no waiting, no adjustment period."
           }
         },
         "feature_2": {
@@ -331,7 +338,7 @@
             "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
             "image": "shopify://shop_images/photoshoot.jpg",
             "title": "Won't Collapse",
-            "description": "Engineered with rigid support that doesn't give in, ensuring your nose stays open all night."
+            "description": "Magnetic force doesn't fatigue. The hold at 6am is the hold at 11pm."
           }
         },
         "feature_3": {
@@ -339,7 +346,7 @@
           "settings": {
             "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
             "title": "Sweat-Proof. Stays On.",
-            "description": "Originally designed for motocross. Tabs grip through workouts, sleep, and everything between."
+            "description": "Originally engineered for motocross. The tabs grip through workouts, humidity, and restless nights."
           }
         },
         "feature_4": {
@@ -347,7 +354,7 @@
           "settings": {
             "image": "shopify://shop_images/Adhesive_tab.png",
             "title": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, latex-free, FDA registered, and made in the USA."
+            "description": "Hypoallergenic, latex-free adhesive that releases without residue."
           }
         }
       },
@@ -359,7 +366,8 @@
       ],
       "settings": {
         "eyebrow": "Product",
-        "heading": "Built for better breathing."
+        "heading": "Built for better breathing.",
+        "subheading": ""
       }
     },
     "ugc_gallery": {

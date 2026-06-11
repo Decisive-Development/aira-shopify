@@ -1,0 +1,238 @@
+{%- comment -%}
+	Kit Offer — the homepage close.
+	Navy treatment with the light-blue radial halo from the /pages/our-story
+	hero family. Content left / product image right; mobile stacks with a
+	full-width CTA. Replaces the two previous closing CTA blocks.
+
+	price_suffix renders after the CTA label (e.g. "— AED 199") and is
+	hidden entirely when blank — pricing is not yet set.
+{%- endcomment -%}
+
+{%- liquid
+	assign kit_cta_label = section.settings.cta_label
+	if section.settings.price_suffix != blank
+		assign kit_cta_label = kit_cta_label | append: ' ' | append: section.settings.price_suffix
+	endif
+-%}
+
+<section
+	id="kit-offer-{{ section.id }}"
+	class="relative overflow-hidden bg-main text-secondary"
+>
+	{%- comment -%} Atmospheric radial wash (top-right light blue — our-story family) {%- endcomment -%}
+	<div
+		class="absolute inset-0 pointer-events-none"
+		style="background: radial-gradient(ellipse 60% 50% at 80% 20%, color-mix(in srgb, var(--color-tertiary-light) 22%, transparent), transparent 65%);"
+	></div>
+
+	<div class="relative z-10 container-contained py-16 md:py-28">
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+			{%- comment -%} ── Content column ── {%- endcomment -%}
+			<div>
+
+				{%- if section.settings.eyebrow != blank -%}
+					<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-5 md:mb-6">
+						{{ section.settings.eyebrow }}
+					</p>
+				{%- endif -%}
+
+				{%- if section.settings.heading != blank -%}
+					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight text-secondary text-balance">
+						{{ section.settings.heading }}
+					</h2>
+				{%- endif -%}
+
+				{%- if section.settings.intro != blank -%}
+					<p class="text-base md:text-lg leading-relaxed text-secondary/80 mt-6 md:mt-7" style="max-width: 48ch;">
+						{{ section.settings.intro }}
+					</p>
+				{%- endif -%}
+
+				{%- comment -%} ✓ checklist {%- endcomment -%}
+				{%- if section.blocks.size > 0 -%}
+					<ul class="mt-7 md:mt-8 flex flex-col gap-4 list-none p-0 m-0">
+						{%- for block in section.blocks -%}
+							{%- if block.type == 'item' -%}
+								{%- liquid
+									assign item_lead = ''
+									assign item_rest = ''
+									if block.settings.text contains ' — '
+										assign item_lead = block.settings.text | split: ' — ' | first
+										assign item_rest = block.settings.text | remove_first: item_lead
+									endif
+								-%}
+								<li class="flex items-start gap-3" {{ block.shopify_attributes }}>
+									<svg
+										class="shrink-0 w-5 h-5 mt-0.5 text-tertiary-light"
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<circle cx="12" cy="12" r="10"/>
+										<path d="m9 12 2 2 4-4"/>
+									</svg>
+									<p class="text-sm md:text-base leading-relaxed m-0">
+										{%- if item_lead != blank -%}
+											<span class="font-semibold text-secondary">{{ item_lead }}</span><span class="text-secondary/75">{{ item_rest }}</span>
+										{%- else -%}
+											<span class="font-semibold text-secondary">{{ block.settings.text }}</span>
+										{%- endif -%}
+									</p>
+								</li>
+							{%- endif -%}
+						{%- endfor -%}
+					</ul>
+				{%- endif -%}
+
+				{%- comment -%} CTA + guarantee line {%- endcomment -%}
+				{%- if kit_cta_label != blank -%}
+					<div class="mt-8 md:mt-10">
+						{%- render 'cta-button',
+							label: kit_cta_label,
+							url: section.settings.cta_url,
+							variant: 'shop',
+							size: 'lg',
+							extra_classes: 'w-full md:w-auto text-center'
+						-%}
+					</div>
+				{%- endif -%}
+
+				{%- if section.settings.guarantee_line != blank -%}
+					<p class="text-sm text-secondary/60 mt-4">
+						{{ section.settings.guarantee_line }}
+					</p>
+				{%- endif -%}
+
+			</div>
+
+			{%- comment -%} ── Product image column (graceful blank state) ── {%- endcomment -%}
+			<div
+				class="relative w-full aspect-square rounded-sm overflow-hidden border border-secondary/8"
+				{% if section.settings.image == blank %}
+					style="background:
+						repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-secondary) 4%, transparent) 0 2px, transparent 2px 18px),
+						linear-gradient(160deg, #071226 0%, #1a2540 60%, #2d3a5a 100%);"
+				{% endif %}
+			>
+				{%- if section.settings.image != blank -%}
+					{{
+						section.settings.image
+						| image_url: width: 1600
+						| image_tag:
+							loading: 'lazy',
+							class: 'absolute inset-0 w-full h-full object-cover',
+							widths: '600, 900, 1280, 1600',
+							alt: section.settings.image_alt
+					}}
+				{%- else -%}
+					<div
+						class="absolute inset-0 pointer-events-none"
+						style="background: radial-gradient(ellipse 60% 80% at 50% 50%, color-mix(in srgb, var(--color-tertiary-light) 10%, transparent), transparent 65%);"
+					></div>
+					<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5 md:gap-2">
+						<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">Product photograph</span>
+						<span class="font-body text-[10px] md:text-[11px] text-secondary/35">kit · contents</span>
+					</div>
+				{%- endif -%}
+			</div>
+
+		</div>
+	</div>
+</section>
+
+{% schema %}
+{
+	"name": "Kit Offer",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{ "type": "header", "content": "Content" },
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"default": "THE AIRA KIT"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Everything you need for night one."
+		},
+		{
+			"type": "textarea",
+			"id": "intro",
+			"label": "Intro",
+			"default": "One reusable magnetic band won't fit every face the same way — so we don't make you guess. Every kit ships with all four band sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes."
+		},
+		{ "type": "header", "content": "CTA" },
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "CTA label",
+			"default": "Get my kit"
+		},
+		{
+			"type": "url",
+			"id": "cta_url",
+			"label": "CTA URL"
+		},
+		{
+			"type": "text",
+			"id": "price_suffix",
+			"label": "Price suffix",
+			"info": "Renders after the CTA label, e.g. \"— AED 199\". Leave blank to hide while pricing is unset."
+		},
+		{
+			"type": "text",
+			"id": "guarantee_line",
+			"label": "Guarantee line",
+			"default": "Free shipping across the GCC."
+		},
+		{ "type": "header", "content": "Image" },
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Product image",
+			"info": "Shows a graceful placeholder until photography lands."
+		},
+		{
+			"type": "text",
+			"id": "image_alt",
+			"label": "Product image alt text"
+		}
+	],
+	"blocks": [
+		{
+			"type": "item",
+			"name": "Checklist item",
+			"limit": 4,
+			"settings": [
+				{
+					"type": "text",
+					"id": "text",
+					"label": "Text",
+					"info": "Bold lead before \" — \", regular weight after."
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Kit Offer",
+			"blocks": [
+				{ "type": "item", "settings": { "text": "4 magnetic bands — L1 to L4, find your exact fit" } },
+				{ "type": "item", "settings": { "text": "30 adhesive tab pairs — a full month, one fresh pair per night" } },
+				{ "type": "item", "settings": { "text": "Quick-start fit guide + video tutorial" } },
+				{ "type": "item", "settings": { "text": "30-day satisfaction guarantee — sleep on it for a month, decide after" } }
+			]
+		}
+	]
+}
+{% endschema %}

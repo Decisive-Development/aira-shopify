@@ -15,13 +15,17 @@
       "type": "mobile-sticky-bar",
       "settings": {
         "text": "Breathe better tonight",
-        "button_label": "Shop Now",
+        "button_label": "Get my kit",
         "button_url": "/products/aira-starter-kit"
       }
     },
     "footer": {
       "type": "footer",
       "settings": {
+        "newsletter_heading": "Better breathing, in your inbox.",
+        "newsletter_body": "Join the aira list for early access to new drops, breathing science worth reading, and 10% off your first kit.",
+        "newsletter_placeholder": "Your email",
+        "newsletter_button": "Get 10% off",
         "social_instagram": "https://www.instagram.com/aira.breathing/",
         "social_youtube": "",
         "social_tiktok": "https://www.tiktok.com/@aira.breathing"

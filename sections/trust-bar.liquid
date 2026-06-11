@@ -107,8 +107,8 @@
 				</span>
 				{%- if stat_unit != blank -%}
 					<span
-						class="font-heading heading-weight ml-0.5 text-[28px] lg:text-[36px]"
-						style="line-height: 0.95; letter-spacing: -0.02em; color: #FF4000;"
+						class="font-heading heading-weight text-highlight ml-0.5 text-[28px] lg:text-[36px]"
+						style="line-height: 0.95; letter-spacing: -0.02em;"
 					>
 						{{- stat_unit -}}
 					</span>
@@ -127,8 +127,8 @@
 
 		{%- if section.settings.stat_supporting != blank -%}
 			<p
-				class="font-body"
-				style="font-size: 13px; line-height: 1.6; color: rgba(241,235,225,0.75);"
+				class="font-body text-secondary"
+				style="font-size: 13px; line-height: 1.6;"
 			>
 				{{- section.settings.stat_supporting -}}
 			</p>
@@ -141,16 +141,16 @@
 						href="{{ section.settings.stat_footnote_url }}"
 						target="_blank"
 						rel="noopener"
-						class="font-mono uppercase inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-						style="font-size: 10.5px; letter-spacing: 0.06em; color: #9BB7D4;"
+						class="font-mono uppercase text-tertiary-light inline-flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+						style="font-size: 10.5px; letter-spacing: 0.06em;"
 					>
 						{{ section.settings.stat_footnote }}
 						<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
 					</a>
 				{%- else -%}
 					<span
-						class="font-mono uppercase"
-						style="font-size: 10.5px; letter-spacing: 0.06em; color: #9BB7D4;"
+						class="font-mono uppercase text-tertiary-light"
+						style="font-size: 10.5px; letter-spacing: 0.06em;"
 					>
 						{{ section.settings.stat_footnote }}
 					</span>
@@ -221,12 +221,12 @@
 					class="absolute top-4 md:top-7 {{ label_pos }} flex items-center gap-2 pointer-events-none"
 				>
 					<span
-						class="inline-block h-px"
-						style="width: 18px; background-color: rgba(241,235,225,0.7);"
+						class="inline-block h-px bg-secondary/70"
+						style="width: 18px;"
 					></span>
 					<span
-						class="font-mono uppercase"
-						style="font-size: 9.5px; letter-spacing: 0.16em; color: rgba(241,235,225,0.7);"
+						class="font-mono uppercase text-secondary/70"
+						style="font-size: 9.5px; letter-spacing: 0.16em;"
 					>
 						{{ section.settings.image_marker }}
 					</span>
@@ -235,8 +235,8 @@
 
 			{%- if section.settings.image_caption != blank -%}
 				<span
-					class="absolute bottom-4 md:bottom-7 {{ label_pos }} font-mono uppercase pointer-events-none"
-					style="font-size: 9.5px; letter-spacing: 0.14em; color: rgba(241,235,225,0.55);"
+					class="absolute bottom-4 md:bottom-7 {{ label_pos }} font-mono uppercase text-secondary/55 pointer-events-none"
+					style="font-size: 9.5px; letter-spacing: 0.14em;"
 				>
 					{{ section.settings.image_caption }}
 				</span>
@@ -317,8 +317,8 @@
 								{{ block.shopify_attributes }}
 							>
 								<span
-									class="font-heading font-semibold"
-									style="font-size: 18px; letter-spacing: 0.01em; color: #087CA7;"
+									class="font-heading font-semibold text-highlight-blue"
+									style="font-size: 18px; letter-spacing: 0.01em;"
 								>
 									{{ idx }}
 								</span>
@@ -431,7 +431,7 @@
 		{ "type": "header", "content": "Header" },
 		{ "type": "text",     "id": "eyebrow",    "label": "Eyebrow",    "default": "TRAIN" },
 		{ "type": "text",     "id": "heading",    "label": "Heading",    "default": "More air. Less effort." },
-		{ "type": "textarea", "id": "subheading", "label": "Subheading", "default": "AIRA holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session." },
+		{ "type": "textarea", "id": "subheading", "label": "Subheading", "default": "aira holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session." },
 
 		{ "type": "header", "content": "Layout" },
 		{
@@ -447,7 +447,7 @@
 		},
 
 		{ "type": "header", "content": "CTA" },
-		{ "type": "text", "id": "cta_label", "label": "Conversion CTA label", "default": "Shop AIRA" },
+		{ "type": "text", "id": "cta_label", "label": "Conversion CTA label", "default": "Get my kit" },
 		{ "type": "url",  "id": "cta_url",   "label": "Conversion CTA URL" },
 		{ "type": "text", "id": "cta_secondary_label", "label": "Conviction link label", "default": "The science" },
 		{ "type": "url",  "id": "cta_secondary_url",   "label": "Conviction link URL" },
@@ -481,9 +481,9 @@
 		{
 			"name": "Trust Bar",
 			"blocks": [
-				{ "type": "benefit", "settings": { "lead": "Easier endurance", "text": "an open airway means less breathing effort on long, steady efforts." } },
-				{ "type": "benefit", "settings": { "lead": "Cleaner air in",   "text": "your nose filters, warms and humidifies every breath. Your mouth doesn't." } },
-				{ "type": "benefit", "settings": { "lead": "Calmer recovery",  "text": "nasal breathing helps bring heart rate and breathing back down between efforts." } }
+				{ "type": "benefit", "settings": { "lead": "Easier endurance", "text": "An open airway means less breathing effort on long, steady efforts." } },
+				{ "type": "benefit", "settings": { "lead": "Cleaner air in",   "text": "Your nose filters, warms and humidifies every breath. Your mouth doesn't." } },
+				{ "type": "benefit", "settings": { "lead": "Calmer recovery",  "text": "Nasal breathing helps bring heart rate and breathing back down between efforts." } }
 			]
 		}
 	]
