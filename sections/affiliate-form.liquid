@@ -27,7 +27,7 @@
 		<div id="affiliate-form-mount">
 			{%- form 'contact', id: 'affiliate-application-form', class: 'flex flex-col gap-5' -%}
 				{%- if form.posted_successfully? -%}
-					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "Thanks for applying to partner with AIRA. We review every application within 5 business days." }}</div>
+					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "Thanks for applying to partner with aira. We review every application within 5 business days." }}</div>
 				{%- endif -%}
 
 				{%- if form.errors -%}
@@ -106,7 +106,7 @@
 				</label>
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Why AIRA?</span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-copy/70">Why aira?</span>
 					<textarea name="contact[why_aira]" rows="5" required maxlength="300" data-char-counter class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main resize-y"></textarea>
 					<span class="text-xs text-copy/50" data-char-count>0 / 300</span>
 				</label>
@@ -153,7 +153,7 @@
 		{ "type": "text",     "id": "eyebrow",         "label": "Eyebrow",        "default": "Apply" },
 		{ "type": "text",     "id": "heading",         "label": "Heading",        "default": "Apply to partner" },
 		{ "type": "textarea", "id": "subheading",      "label": "Subheading",     "default": "Two minutes. We review every application within five business days." },
-		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "Thanks for applying to partner with AIRA. We review every application within 5 business days." }
+		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "Thanks for applying to partner with aira. We review every application within 5 business days." }
 	],
 	"presets": [{ "name": "Affiliate - Form" }]
 }

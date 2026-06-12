@@ -1,174 +1,225 @@
 ================================================================
-AIRA — SITEWIDE COPY STANDARDS ENFORCEMENT
-Implementation Brief for VSC (theme-wide sweep + compliance report)
-Date: 2026-06-10 | Author: Tom | Status: Ready for implementation
+AIRA — KIT PDP FIX (/products/aira-starter-kit)
+Implementation Brief for VSC (structure + copy)
+Date: 2026-06-11 | Author: Tom | Status: Ready for implementation
 ================================================================
 
 CONTEXT
 -------
-Brand & copy standards were locked 2026-06-10 (reference:
-AIRA_Brand_Copy_Standards.md — context only; THIS brief is the
-implementation truth). This job enforces them across the ENTIRE
-theme: every template, section, snippet, and section-settings
-string in templates/*.json.
+This is the page every ad dirham will land on. Audit (2026-06-11)
+found: two contradictory how-to sections, the strongest proof
+asset (Before/After) buried, an unreadable subscription offer,
+claims-register violations, and a live "[LIST OF COUNTRIES]"
+placeholder. Buy-box anatomy is good — keep the skeleton.
 
-EXECUTION ORDER
----------------
-Run AFTER these three land (they rewrite whole blocks; sweeping
-first creates merge noise):
-  1. AIRA_Refills_PDP_Brief_VSC.txt
-  2. AIRA_Shop_Page_Brief_VSC.txt
-  3. AIRA_Homepage_Copy_Flow_Brief_VSC.txt
-Where this brief and a page brief touch the same string, the
-page brief wins.
+QUEUE POSITION: this brief runs BEFORE the homepage brief
+(AIRA_Homepage_Copy_Flow_Brief_VSC.txt). Refills + Shop briefs
+unaffected.
 
-HARD EXCLUSION
---------------
-The homepage FAQ section is FROZEN (deferred by Tom). Zero
-edits there, even for rule violations. Log its violations in
-the compliance report instead (known: "confortable", shipping
-contradiction, exclamation mark, casing).
+APPROVED DECISION — PLAN DEFAULT
+--------------------------------
+One-time Purchase stays the DEFAULT-SELECTED plan (Tom,
+2026-06-11): at launch, an unknown brand converts better
+without commitment friction. Do NOT pre-select the
+subscription. The subscription keeps its "Best value" chip.
+Revisit post-launch with data.
 
 ----------------------------------------------------------------
-SWEEP 1 — BRAND CASING
+1. URL HANDLE + REDIRECT (decision updated 2026-06-11)
 ----------------------------------------------------------------
-"AIRA" / "Aira" → "aira" in ALL customer-facing strings:
-section settings, JSON templates, snippets, email/notification
-templates if themed, meta titles/descriptions, image alt text.
-- Restructure any sentence that STARTS with the brand name so
-  it doesn't ("AIRA holds your..." → "aira holds your..." is
-  NOT enough where it opens a sentence — rewrite the opening:
-  "aira holds..." mid-sentence or "The band holds...").
-  Where restructuring changes meaning, log it for Tom instead
-  of improvising.
-- EXCLUDE: legal entity name in footer copyright ("© 2026 aira
-  Wellness." — already correct), invoice/legal docs, and the
-  Shopify admin product titles (log these for Tom — admin
-  content, his call).
+Canonical product handle: aira-kit.
+- TOM does the rename in admin (Products → Aira Kit → Search
+  engine listing → Edit → URL handle → "aira-kit" → tick
+  "Create a URL redirect" → Save). The redirect from
+  /products/aira-starter-kit is auto-created by that checkbox.
+- VSC: AFTER Tom confirms the rename, sweep the theme for any
+  link still targeting /products/aira-starter-kit → update to
+  /products/aira-kit. (Existing briefs already target
+  /products/aira-kit — no amendments needed there.)
+- VSC: verify the redirect resolves (old URL → 200 at new URL).
 
 ----------------------------------------------------------------
-SWEEP 2 — CTA LABELS (labels must be settings, never hardcoded)
+2. BUY BOX
 ----------------------------------------------------------------
-Canonical set — these are the ONLY CTA labels on the site:
-  Primary (kit):     Get my kit
-  Primary (refills): Get refills
-  PDP buy button:    Add to Cart
-  Secondary:         How it works   |   The science
-  Tutorial:          Watch tutorial
-Replace ALL variants: "Shop aira kit", "Shop AIRA", "Shop Now",
-"Shop the aira kit", "Learn more", "Buy Now".
-If any CTA label is hardcoded in Liquid, convert to a setting
-as part of this sweep.
+a) DESCRIPTION — REPLACE (current leads with "A small…" —
+   leading with small is leading with an apology):
+     A magnetic band and two skin-safe tabs that hold your
+     nose open all night — quieting snoring, stopping mouth
+     breathing, and deepening sleep. All four sizes in the
+     box, fit guaranteed.
+
+b) PLAN SELECTOR — relabel + rewrite bullets.
+   Subscription option (currently "Refill Plan" — confusing
+   label on a KIT page):
+     label:   Kit + Monthly Refills
+     chip:    Best value (keep)
+     price suffix "· Save 20% on refills": keep label-level
+     savings mention ONCE (no duplicate bullet).
+     bullets (REPLACE all four):
+       Everything in the starter kit below
+       30 fresh tab pairs delivered every 30 days
+       20% off every refill delivery
+       Pause, skip, or cancel anytime
+   One-time option:
+     label:   One-time Purchase (unchanged)
+     bullets  (standardize casing only):
+       4 magnetic bands (L1–L4)
+       15 adhesive tab pairs
+       Magnetic placement tool
+       Instruction manual
+   DEFAULT SELECTION: One-time (see decision above).
+
+c) CROSS-LINK: "Already have a strip? Get refills →" →
+   "Already have a band? Get refills →" (terminology: band).
+
+d) Badges row: keep as-is (Research Backed / 30-Day Guarantee /
+   Medical-Grade Adhesive). "Research Backed" must link to
+   /pages/backed-by-science.
 
 ----------------------------------------------------------------
-SWEEP 3 — UNITS (tabs → pairs)
+3. BENEFITS ACCORDION — REPLACE ALL FIVE BULLETS
 ----------------------------------------------------------------
-"X tabs" as a quantity/unit → "X pairs" everywhere (1 pair =
-1 night; 30 pairs = 1 month).
-"Adhesive tabs" as a material noun in prose stays.
-Watch for: subscription app labels, cart drawer line items,
-upsell blocks, meta descriptions. App-side strings you can't
-reach from the theme: list them in the compliance report with
-exact locations.
+Current set has grammar drift ("Support nose breathing") and an
+unsourced superlative ("Significantly reduces snoring" — claims
+register violation). New set (parallel, register-compliant):
+  Opens nasal passages instantly
+  Quiets snoring at its source
+  Keeps you nose-breathing all night
+  Supports deeper, less fragmented sleep
+  Reusable band — months of nights, no single-use waste
 
 ----------------------------------------------------------------
-SWEEP 4 — SIZES
+4. HOW-TO — ONE TRUTH ON THE PAGE
 ----------------------------------------------------------------
-Canonical: "L1–L4" / "all four sizes, L1 to L4".
-Replace: "Level 1 · Level 2 · Level 3 · Level 4", "Level 1-4",
-"four bands sizes" (also a typo → "four band sizes" if the
-sentence survives), any S/M/L/XL references in COPY (the
-packaging artwork is out of scope).
+The page currently has TWO how-to blocks with CONTRADICTORY
+placement copy ("just above the nostril" vs "either side of
+your nose bridge"). Fix:
+PLACEMENT TRUTH (confirmed by Tom, 2026-06-11): tabs sit JUST
+ABOVE THE NOSTRILS — not on the nose bridge. The canonical
+step 2 changes SITEWIDE accordingly.
+
+CANONICAL 3 STEPS (new sitewide version):
+    1. Peel the adhesive tab from its backing.
+    2. Place a tab on each side of your nose, just above
+       the nostril.
+    3. Attach the magnetic band and breathe freely all night.
+
+- The "HOW TO USE" accordion (buy box) adopts these 3 steps.
+  Former step 4 (leaflet) becomes a small note under step 3:
+    "Full instructions in the leaflet inside your kit."
+- The lower "HOW IT WORKS / 3 steps to better breathing"
+  SECTION IS REMOVED from this template (it duplicates the
+  accordion; it lives on the homepage where it belongs).
+- SITEWIDE SWEEP (part of this brief): update step 2 wherever
+  the old "either side of your nose bridge" copy renders —
+  known instances: homepage HOW IT WORKS section, refills PDP
+  how-to accordion ("Place tabs on either side of your nose
+  bridge"), and the homepage FAQ IF unfrozen later (log only
+  for now — FAQ freeze stands). Grep "nose bridge" theme-wide;
+  expected hits after sweep: zero outside the frozen FAQ.
 
 ----------------------------------------------------------------
-SWEEP 5 — SHIPPING LINE
+5. EDUCATION STACK — REORDER + ADD PROOF
 ----------------------------------------------------------------
-Canonical sentence: "Free shipping across the GCC."
-Replace: "Free shipping on all orders", "Free shipping on all
-GCC orders", "Free UAE delivery", "free shipping is available
-above a certain order value" (this last one is in the frozen
-FAQ — log, don't touch).
-Cart drawer: "Secure checkout · Free UAE delivery" →
-"Secure checkout · Free GCC delivery".
+Current order below buy box:
+  WHY AIRA → HOW IT WORKS (dup) → BEFORE/AFTER → PRODUCT
+  features → COMMUNITY → REVIEWS → FAQ → close
+TARGET order:
+  BEFORE/AFTER  (promoted to directly under buy-box fold —
+                 it's the demonstration; demonstration leads)
+  WHY AIRA      (3 use-case blocks)
+  22% STAT CARD (ADD — reuse the homepage TRAIN overlay/stat
+                 component as a standalone proof strip: 22% /
+                 MORE EFFICIENT BREATHING / Dallam et al., 2018
+                 — exact copy from homepage card. If the
+                 component can't render standalone cheaply,
+                 log it; do not rebuild from scratch.)
+  PRODUCT features (canonical 5-card set — already swept)
+  COMMUNITY → REVIEWS → FAQ → close (unchanged order)
 
 ----------------------------------------------------------------
-SWEEP 6 — BANNED STRINGS (grep targets; expected count after
-sweep = ZERO outside the frozen FAQ)
+6. CLAIMS + COPY FIXES (WHY AIRA section, this page)
 ----------------------------------------------------------------
-  "Intake"                 (competitor name — critical)
-  "Shop Now"
-  "Doctor Recommended"
-  "High Success Rate"
-  "FDA registered"         (until documentation exists)
-  "made in the USA"        (same)
-  "Breathe Right" / "Hostage" / "Turbine"  (competitor names)
-  "revolutionary" / "game-changing" / "game changer" /
-  "miracle" / "literally" / "10x"
-  "57%" / "75%" / "48%" / "3.5x"   (dead stats — must never
-                                    resurrect anywhere)
-  "designed for athletes"  → canonical origin: "Originally
-                             engineered for motocross"
-Exclamation marks in customer-facing copy: remove (rewrite the
-sentence flat). Frozen FAQ excluded, log only.
-NOTE on "game changer": it currently appears in a community
-testimonial card ("Game changer for my workouts"). Testimonial
-QUOTES are exempt from voice rules (they're customer speech) —
-but log all placeholder testimonials in the report anyway.
+- "The strip fixes one thing — a blocked, collapsing airway."
+  → "The band does one thing — keep a blocked, collapsing
+     airway open." ("fixes" is banned — medical-claim verb.)
+- "Most partners hear the difference on the very first night."
+  → "Partners usually notice before you do." (claims register:
+     anecdotal framing, no quantifier. This string survived
+     the sweep — also grep the homepage WHY section for it.)
+- "Snore no more" block, "aira holds/The band holds" — keep.
 
 ----------------------------------------------------------------
-SWEEP 7 — SPELLING + MECHANICS
+7. SHIPPING & RETURNS BLOCK
 ----------------------------------------------------------------
-- US English everywhere. Grep for common UK forms: -ise/-isation
-  endings, "colour", "favour", "whilst", "metres". Log genuinely
-  ambiguous cases rather than guessing.
-- Numerals for all quantities in copy (four band sizes → 4 only
-  where it's a quantity claim; "four sizes" in flowing prose is
-  acceptable — when in doubt, log).
-- Eyebrows: ALL CAPS, 1–3 words. Verify every section eyebrow
-  complies; list violations.
-- Stat cards: verify each follows number → label → finding →
-  SOURCE, YEAR. Any stat WITHOUT a source in the rendered
-  output = report as CRITICAL (do not delete unilaterally;
-  placeholder SLEEP card rules from the 06-04 brief stand).
+REPLACE the placeholder sentence:
+  "We deliver to [LIST OF COUNTRIES]."
+WITH:
+  "We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain,
+   Qatar, and Oman."
+Rest of the block is good — keep ("Try aira for 30 days…").
 
 ----------------------------------------------------------------
-DELIVERABLE — COMPLIANCE REPORT
+8. PAGE FAQ — MECHANICAL FIXES ONLY
 ----------------------------------------------------------------
-Single file: AIRA_Copy_Standards_Compliance_Report.txt
-  1. Strings changed (per sweep, with file/section + before →
-     after).
-  2. Strings you could NOT change (app-side, admin-side, frozen
-     FAQ) — exact location + suggested fix, for Tom.
-  3. Judgment calls logged instead of made (per the "log, don't
-     improvise" rules above).
-  4. Final grep proof: every banned string at zero occurrences
-     (or its only occurrences listed with reason).
+The FAQ FREEZE covers the HOMEPAGE instance only. This page's
+FAQ instance gets mechanical fixes (not the full parked
+rewrite):
+- "…this is where aira shines best The adhesive tabs…" →
+  "…this is where aira shines best. The adhesive tabs…"
+- "Absolutely, and honestly, this is where…" →
+  "Yes — this is where…"
+- "which come in packs of 30, 60, or 90 pairs" →
+  "which come in packs from 30 to 360 pairs"
+- Nothing else. Full FAQ rewrite remains deferred.
+
+----------------------------------------------------------------
+9. GALLERY
+----------------------------------------------------------------
+Same rule as refills brief: render populated media only — no
+empty grey thumbnail slots. (3 of 6 currently blank.)
 
 TECH CONSTRAINTS
 ----------------
-- Copy edits only. NO layout, NO design, NO new sections, NO
-  Tailwind/JS changes under this brief.
-- Settings/JSON edits preferred; Liquid edits only where copy
-  is hardcoded (and then: convert to settings where trivial).
-- Commit per sweep (7 commits) so each is reviewable/revertable.
+- OS 2.0; settings/JSON edits preferred; copy never hardcoded.
+- Subscription widget labels may live app-side — any string
+  you can't reach from the theme: log location + exact target
+  string in your handoff note, don't force it.
+- No new Tailwind utilities, no new JS. Reordering = template
+  JSON moves, not rebuilds.
+- Admin product TITLE ("Aira Kit") is Tom's to change — theme
+  H1 may lowercase via existing pattern if one exists; if not,
+  log it.
 
 OUT OF SCOPE
 ------------
-- Homepage FAQ (frozen). Packaging artwork. Admin product
-  titles (log only). Review app content. Meta/SEO rewrites
-  beyond casing (full SEO pass is a separate upcoming brief —
-  don't invent meta copy here).
+- Pricing (still unset — separate admin task).
+- Product photography (AEROFLOW placeholder — asset pipeline).
+- Review app content/seeded reviews.
+- Full FAQ rewrite (deferred — parked in
+  AIRA_Copy_Flow_Audit_June2026.md §3.7).
+- Homepage kit-contents claim ("30 pairs — a full month") —
+  PENDING Tom's SKU decision (kit ships 15 pairs today;
+  homepage Kit Offer copy will be amended once decided).
 
 ACCEPTANCE CHECKLIST
 --------------------
-[ ] All 7 sweeps executed in order, one commit each.
-[ ] Banned-string grep returns zero hits theme-wide (frozen
-    FAQ exceptions listed, nothing else).
-[ ] "Intake" specifically: zero hits, confirmed in report.
-[ ] Every CTA on the site renders one of the 5 canonical labels.
-[ ] Cart drawer shows "Free GCC delivery" + canonical shipping
-    sentence.
-[ ] Compliance report delivered with all 4 sections populated.
-[ ] Homepage FAQ diff = zero.
-[ ] No layout/design/JS diffs anywhere (copy-only job).
+[ ] Handle renamed to aira-kit (Tom) + old starter-kit URL
+    redirects correctly; zero theme links target the old
+    handle.
+[ ] "nose bridge" greps to zero theme-wide (frozen homepage
+    FAQ excepted, logged).
+[ ] One-time Purchase is the default-selected plan.
+[ ] Subscription reads "Kit + Monthly Refills" with the four
+    new bullets; savings claim appears exactly once.
+[ ] Exactly ONE how-to on the page (accordion, 3 canonical
+    steps + leaflet note); lower duplicate section gone.
+[ ] Before/After is the first section under the buy box.
+[ ] 22% Dallam stat card renders on the page (or logged).
+[ ] "fixes", "Significantly reduces", "very first night",
+    "[LIST OF COUNTRIES]": zero hits on this template.
+[ ] Page FAQ: the three mechanical fixes applied, nothing else.
+[ ] No empty gallery slots.
+[ ] Copy entered exactly as written — do not improve it.
+[ ] Mobile pass at 390px: plan selector, reordered stack clean.
 ================================================================

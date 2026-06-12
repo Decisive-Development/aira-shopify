@@ -15,8 +15,8 @@
       "type": "header",
       "settings": {
         "menu": "main-menu",
-        "cta_label": "Shop aira kit",
-        "cta_url": "shopify://products/aira-starter-kit"
+        "cta_label": "Get my kit",
+        "cta_url": "shopify://products/aira-kit"
       }
     }
   },

@@ -46,7 +46,7 @@
         "hero_image": "shopify://shop_images/DSCF3285.jpg",
         "hero_image_alt": "",
         "photo_caption": "aira · 2025",
-        "supporting_copy": "aira makes one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there."
+        "supporting_copy": "We make one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there."
       }
     },
     "tiles": {
@@ -76,7 +76,7 @@
             "image_alt": "",
             "image_label": "Materials · detail",
             "reverse": true,
-            "cta_label": "Watch how it works",
+            "cta_label": "Watch tutorial",
             "cta_url": "/pages/how-it-works"
           }
         },
@@ -89,8 +89,8 @@
             "image_alt": "",
             "image_label": "Product · still life",
             "reverse": false,
-            "cta_label": "Try AIRA",
-            "cta_url": "/products/aira-starter-kit"
+            "cta_label": "Get my kit",
+            "cta_url": "/products/aira-kit"
           }
         }
       },
@@ -108,8 +108,8 @@
         "headline": "One product, done properly. Then the next.",
         "headline_accent": "Then the next.",
         "body": "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover — starting with the strip you came here for.",
-        "primary_cta_label": "Shop the aira kit",
-        "primary_cta_url": "/products/aira-starter-kit",
+        "primary_cta_label": "Get my kit",
+        "primary_cta_url": "/products/aira-kit",
         "secondary_cta_label": "How to use it",
         "secondary_cta_url": "/pages/how-it-works"
       }
@@ -158,8 +158,8 @@
         "handle": "@aira.breathing",
         "cta_text": "Share your experience — tag @aira.breathing",
         "theme": "light",
-        "shop_cta_label": "Start your better breath",
-        "shop_cta_url": "/products/aira-starter-kit"
+        "shop_cta_label": "Get my kit",
+        "shop_cta_url": "/products/aira-kit"
       }
     }
   },

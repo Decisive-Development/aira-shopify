@@ -135,7 +135,7 @@
         "type": "text",
         "id": "support_whatsapp_prefill",
         "label": "Pre-filled WhatsApp message",
-        "default": "Hi AIRA team,"
+        "default": "Hi aira team,"
       },
       {
         "type": "header",

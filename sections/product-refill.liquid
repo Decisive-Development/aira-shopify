@@ -173,7 +173,7 @@
 							{%- endif -%}
 							<div class="flex items-center justify-between gap-4">
 								<div class="flex items-baseline gap-2 flex-wrap">
-									<span class="font-heading font-bold text-title text-base">{{ section.settings.plan_title | default: 'Monthly Refill Plan | 30 tabs' }}</span>
+									<span class="font-heading font-bold text-title text-base">{{ section.settings.plan_title | default: 'Monthly Refill Plan | 30 pairs' }}</span>
 									{%- if section.settings.plan_save_text != blank -%}
 										<span class="text-highlight text-sm font-bold">· {{ section.settings.plan_save_text }}</span>
 									{%- endif -%}
@@ -243,7 +243,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title text-center">✓ Free shipping on all GCC orders</p>
+					<p class="text-xs text-title text-center">✓ Free shipping across the GCC.</p>
 
 				</form>
 
@@ -253,7 +253,7 @@
 						href="{{ section.settings.starter_link_url }}"
 						class="text-sm text-copy hover:text-highlight transition-colors"
 					>
-						{{ section.settings.starter_link_label | default: 'Need a aira kit? Start here →' }}
+						{{ section.settings.starter_link_label | default: 'Need an aira kit? Start here →' }}
 					</a>
 				{%- endif -%}
 
@@ -626,7 +626,7 @@
 			"type": "text",
 			"id": "starter_link_label",
 			"label": "aira kit link text",
-			"default": "Need a aira kit? Start here →"
+			"default": "Need an aira kit? Start here →"
 		},
 		{
 			"type": "url",

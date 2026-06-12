@@ -18,7 +18,7 @@
             "timestamp": "00:00",
             "time_seconds": 0,
             "title": "Find your size",
-            "subtitle": "Level 1 · Level 2 · Level 3 · Level 4"
+            "subtitle": "L1–L4"
           }
         },
         "ch-2": {
@@ -105,7 +105,7 @@
         "size-1": {
           "type": "size",
           "settings": {
-            "code": "Level 1",
+            "code": "L1",
             "tier": "Small",
             "description": "For narrower nose bridges. Lower-impact wear and sleep."
           }
@@ -113,7 +113,7 @@
         "size-2": {
           "type": "size",
           "settings": {
-            "code": "Level 2",
+            "code": "L2",
             "tier": "Medium",
             "description": "Most popular for sport & high-impact use. Slightly tighter pull."
           }
@@ -121,7 +121,7 @@
         "size-3": {
           "type": "size",
           "settings": {
-            "code": "Level 3",
+            "code": "L3",
             "tier": "Medium",
             "description": "Most popular for sleep. Wider opening, longer wear."
           }
@@ -129,7 +129,7 @@
         "size-4": {
           "type": "size",
           "settings": {
-            "code": "Level 4",
+            "code": "L4",
             "tier": "Large",
             "description": "For wider noses. Maximum airflow at rest."
           }
@@ -156,8 +156,8 @@
         "tip_body": "<p>Sleep — start a size up for wider airflow.</p><p>Sport — size down so the tabs hold under sweat & movement.</p>",
         "cta_title": "Get all four sizes in the aira kit.",
         "cta_body": "Try every band on night one — keep the one that fits.",
-        "cta_label": "Shop aira kit",
-        "cta_url": "/products/aira-starter-kit",
+        "cta_label": "Get my kit",
+        "cta_url": "/products/aira-kit",
         "cta_style": "button",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
@@ -217,8 +217,8 @@
         "tip_title": "Sensitive skin?",
         "tip_body": "<p>Run a 24-hour patch test with a single tab before your first full night. Discontinue if you notice irritation.</p>",
         "cta_title": "Running low on tabs?",
-        "cta_body": "30, 60 or 90-pair refills — free shipping over £50.",
-        "cta_label": "Shop Refill Tabs",
+        "cta_body": "30, 60 or 90-pair refills — free shipping across the GCC.",
+        "cta_label": "Get refills",
         "cta_url": "/products/aira-refill-tabs",
         "cta_style": "button-blue",
         "callout_eyebrow": "Don't skip",
@@ -279,7 +279,7 @@
         "tip_body": "",
         "cta_title": "",
         "cta_body": "",
-        "cta_label": "Shop aira kit",
+        "cta_label": "Get my kit",
         "cta_url": "",
         "cta_style": "link",
         "callout_eyebrow": "Don't skip",
@@ -315,7 +315,7 @@
           "settings": {
             "icon": "home",
             "title": "Goggles & glasses",
-            "body": "aira fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch."
+            "body": "The strip fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch."
           }
         }
       },
@@ -384,8 +384,8 @@
         "eyebrow": "Ready when you are",
         "heading": "Three steps. One better night.",
         "lead": "Every aira kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month.",
-        "primary_label": "Shop aira kit",
-        "primary_url": "/products/aira-starter-kit",
+        "primary_label": "Get my kit",
+        "primary_url": "/products/aira-kit",
         "secondary_label": "Re-watch tutorial",
         "secondary_url": "#tutorialVideo"
       }

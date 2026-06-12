@@ -46,15 +46,15 @@
         "trust_2": {
           "type": "trust_badge",
           "settings": {
-            "icon_type": "patented",
-            "text": "High Success Rate"
+            "icon_type": "shield",
+            "text": "30-Day Guarantee"
           }
         },
         "trust_3": {
           "type": "trust_badge",
           "settings": {
             "icon_type": "doctor",
-            "text": "Doctor Recommended"
+            "text": "Medical-Grade Adhesive"
           }
         },
         "faq_1": {
@@ -68,7 +68,7 @@
           "type": "product_faq",
           "settings": {
             "question": "How to use",
-            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place tabs on either side of your nose bridge</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
           }
         },
         "faq_3": {
@@ -99,12 +99,12 @@
         "rating_text": "",
         "product_subtitle": "Replacement adhesive tabs for your aira magnetic nasal strip. Choose a plan or buy one-time.",
         "plan_badge": "Best value",
-        "plan_title": "Monthly Refill Plan | 30 tabs",
+        "plan_title": "Monthly Refill Plan | 30 pairs",
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "starter_link_label": "Need a aira kit? Start here →",
-        "starter_link_url": "/products/aira-starter-kit"
+        "starter_link_label": "Need an aira kit? Start here →",
+        "starter_link_url": "/products/aira-kit"
       }
     },
     "benefits_grid": {
@@ -114,7 +114,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Snore no more",
-            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. aira holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
+            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. The band holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
             "image": "shopify://shop_images/IMG_4337.jpg"
           }
         },
@@ -143,7 +143,7 @@
       "settings": {
         "eyebrow": "Why aira",
         "heading": "Breathe right, day and night.",
-        "subheading": "aira fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep."
+        "subheading": "The strip fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep."
       }
     },
     "how_to_use": {
@@ -164,7 +164,7 @@
             "step_number": "02",
             "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
-            "step_description": "Place a tab on either side of your nose bridge."
+            "step_description": "Place a tab on each side of your nose, just above the nostril."
           }
         },
         "step_3": {
@@ -185,7 +185,7 @@
       "settings": {
         "eyebrow": "How it works",
         "heading": "3 steps to better breathing.",
-        "tutorial_label": "For a more detailed guide, watch our short tutorial video.",
+        "tutorial_label": "Watch tutorial",
         "tutorial_url": "/pages/how-it-works"
       }
     },
@@ -304,7 +304,7 @@
         "eyebrow": "What our customers say",
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
-        "product": "aira-starter-kit"
+        "product": "aira-kit"
       }
     },
     "faq": {
@@ -321,7 +321,7 @@
           "type": "question",
           "settings": {
             "question": "What's the difference between the pack sizes?",
-            "answer": "<p>30 tabs = 1 month supply, 60 tabs = 2 months, 90 tabs = 3 months, 360 tabs = best value bulk pack (12 months). Larger packs come with bigger savings.</p>"
+            "answer": "<p>30 pairs = 1 month supply, 60 pairs = 2 months, 90 pairs = 3 months, 360 pairs = best value bulk pack (12 months). Larger packs come with bigger savings.</p>"
           }
         },
         "faq_3": {
@@ -342,14 +342,14 @@
           "type": "question",
           "settings": {
             "question": "Will any tab size work with my band?",
-            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (L1 / L2 / L3 / L4).</p>"
+            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (L1–L4).</p>"
           }
         },
         "faq_6": {
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping on all GCC orders.</p>"
+            "answer": "<p>Yes. Free shipping across the GCC.</p>"
           }
         }
       },
@@ -375,8 +375,8 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop aira kit",
-        "button_url": "/products/aira-starter-kit",
+        "button_label": "Get my kit",
+        "button_url": "/products/aira-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }

@@ -14,12 +14,13 @@
       "settings": {
         "eyebrow": "BREATHE. SLEEP. RECOVER.",
         "heading": "Breathe, better than you thought possible.",
-        "subheading": "Quiet nights, deep sleep, prime preformance and a body that works ",
+        "subheading": "Quiet nights, deep sleep, prime preformance and a body that works",
         "button_label": "Get my kit",
         "button_url": "/products/aira-kit",
         "secondary_button_label": "How it works",
         "secondary_button_url": "",
         "foreground_image": "shopify://shop_images/IMG_4790.jpg",
+        "foreground_image_mobile": "shopify://shop_images/IMG_4790-5_5b0b9fb5-df2a-4aa8-bde6-5b5e94127da3.jpg",
         "use_gradient": true,
         "overlay_color": "#0a1a34",
         "overlay_opacity": 30,
@@ -92,7 +93,7 @@
         "subheading": "Your airway narrows when you sleep. aira holds it open — so you stay in nose-breathing mode through the night instead of slipping into the mouth breathing that wrecks it. Quieter nights. Real rest.",
         "layout_direction": "left",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-starter-kit",
+        "cta_url": "/products/aira-kit",
         "cta_secondary_label": "How it works",
         "cta_secondary_url": "/pages/how-it-works",
         "stat_value": "XX%",
@@ -141,7 +142,7 @@
         "subheading": "aira holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
         "layout_direction": "right",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-starter-kit",
+        "cta_url": "/products/aira-kit",
         "cta_secondary_label": "The science",
         "cta_secondary_url": "",
         "stat_value": "22%",
@@ -165,14 +166,6 @@
             "description": "The band lifts your nasal passages open the second it clicks into place — no waiting, no adjustment period."
           }
         },
-        "slide_2": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
-            "heading": "Sweat-Proof. Stays On.",
-            "description": "Originally engineered for motocross. The tabs grip through workouts, humidity, and restless nights."
-          }
-        },
         "slide_3": {
           "type": "slide",
           "settings": {
@@ -180,6 +173,14 @@
             "image": "shopify://shop_images/photoshoot.jpg",
             "heading": "Won't Collapse",
             "description": "Magnetic force doesn't fatigue. The hold at 6am is the hold at 11pm."
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
+            "heading": "Sweat-Proof. Stays On.",
+            "description": "Originally engineered for motocross. The tabs grip through workouts, humidity, and restless nights."
           }
         },
         "slide_4": {
@@ -236,7 +237,7 @@
             "step_number": "02",
             "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
-            "step_description": "Place a tab on either side of your nose bridge."
+            "step_description": "Place a tab on each side of your nose, just above the nostril."
           }
         },
         "step_3": {
@@ -257,7 +258,7 @@
       "settings": {
         "eyebrow": "How it works",
         "heading": "3 simple steps.",
-        "tutorial_label": "See the full tutorial →",
+        "tutorial_label": "Watch tutorial",
         "tutorial_url": "/pages/how-it-works"
       }
     },
@@ -320,7 +321,7 @@
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
         "theme": "dark",
-        "product": "aira-starter-kit"
+        "product": "aira-kit"
       }
     },
     "faq": {
@@ -444,7 +445,8 @@
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
-        "guarantee_line": "Free shipping across the GCC."
+        "guarantee_line": "Free shipping across the GCC.",
+        "image_alt": ""
       }
     }
   },

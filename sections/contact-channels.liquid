@@ -6,7 +6,7 @@
 
 {%- liquid
 	assign wa_number  = settings.support_whatsapp_number
-	assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi AIRA team,'
+	assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi aira team,'
 	assign wa_link    = ''
 	if wa_number != blank
 		assign wa_encoded = wa_prefill | url_encode

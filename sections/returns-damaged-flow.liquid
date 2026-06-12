@@ -7,7 +7,7 @@
 
 {%- liquid
 	assign wa_number  = settings.support_whatsapp_number
-	assign wa_prefill = section.settings.whatsapp_prefill | default: 'Hi AIRA team — my order arrived damaged. Order number: '
+	assign wa_prefill = section.settings.whatsapp_prefill | default: 'Hi aira team — my order arrived damaged. Order number: '
 	assign wa_link    = ''
 	if wa_number != blank
 		assign wa_encoded = wa_prefill | url_encode
@@ -54,7 +54,7 @@
 	"settings": [
 		{ "type": "text",     "id": "heading",          "label": "Heading",                     "default": "Did your order arrive damaged?" },
 		{ "type": "textarea", "id": "body",             "label": "Body",                        "default": "Skip the eligibility check above — message us on WhatsApp with a photo of the damage and your order number. We'll replace it without sending anything back." },
-		{ "type": "text",     "id": "whatsapp_prefill", "label": "WhatsApp pre-filled message", "default": "Hi AIRA team — my order arrived damaged. Order number: " }
+		{ "type": "text",     "id": "whatsapp_prefill", "label": "WhatsApp pre-filled message", "default": "Hi aira team — my order arrived damaged. Order number: " }
 	],
 	"presets": [{ "name": "Returns - Damaged flow" }]
 }

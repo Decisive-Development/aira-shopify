@@ -16,66 +16,67 @@
           "type": "trust_badge",
           "settings": {
             "icon_type": "research",
-            "text": "Research Backed"
+            "text": "Research Backed",
+            "link": "/pages/backed-by-science"
           }
         },
         "trust_2": {
           "type": "trust_badge",
           "settings": {
-            "icon_type": "patented",
-            "text": "High Success Rate"
+            "icon_type": "shield",
+            "text": "30-Day Guarantee"
           }
         },
         "trust_3": {
           "type": "trust_badge",
           "settings": {
             "icon_type": "doctor",
-            "text": "Doctor Recommended"
+            "text": "Medical-Grade Adhesive"
           }
         },
         "perk_1": {
           "type": "plan_perk",
           "settings": {
-            "text": "15 Uses of Tabs"
+            "text": "Everything in the starter kit below"
           }
         },
         "perk_2": {
           "type": "plan_perk",
           "settings": {
-            "text": "4 Magnetic Bands"
+            "text": "30 fresh tab pairs delivered every 30 days"
           }
         },
         "perk_3": {
           "type": "plan_perk",
           "settings": {
-            "text": "30 tabs delivered every 30 days"
+            "text": "20% off every refill delivery"
           }
         },
         "perk_4": {
           "type": "plan_perk",
           "settings": {
-            "text": "Discounted refill tabs"
+            "text": "Pause, skip, or cancel anytime"
           }
         },
         "info_2": {
           "type": "product_faq",
           "settings": {
             "question": "BENEFITS",
-            "answer": "<ul><li>Opens nostrils instantly</li><li>Significantly reduces snoring</li><li>Support nose breathing</li><li>Improves sleep quality</li><li>Sustainable solution: the strip is made to be reusable for months</li></ul>"
+            "answer": "<ul><li>Opens nasal passages instantly</li><li>Quiets snoring at its source</li><li>Keeps you nose-breathing all night</li><li>Supports deeper, less fragmented sleep</li><li>Reusable band — months of nights, no single-use waste</li></ul>"
           }
         },
         "info_3": {
           "type": "product_faq",
           "settings": {
             "question": "HOW TO USE",
-            "answer": "<ul><li><strong>1.</strong> Peel an adhesive tab from the paper backing.</li><li><strong>2.</strong> Place one tab on each side of your nose, just above the nostril.</li><li><strong>3.</strong> Set the magnetic band on top. The magnets snap together and gently lift your nose open.</li><li><strong>4.</strong> You can refer to the lellet inside your aira started kit for the detailed instructions.</li></ul>"
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing.</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril.</li><li><strong>3.</strong> Attach the magnetic band and breathe freely all night.</li></ul><p>Full instructions in the leaflet inside your kit.</p>"
           }
         },
         "info_4": {
           "type": "product_faq",
           "settings": {
             "question": "SHIPPING & RETURNS",
-            "answer": "<p>Free shipping across the Middle East. We deliver to [LIST OF COUNTRIES]. Your order arrives in <strong>3 to 5 working days </strong>within the UAE, and <strong>5 to 7 days</strong> everywhere else. Try aira for 30 days. If it's not the right fit, send it back for a full <strong>refund</strong>.</p>"
+            "answer": "<p>Free shipping across the GCC. We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Your order arrives in <strong>3 to 5 working days </strong>within the UAE, and <strong>5 to 7 days</strong> everywhere else. Try aira for 30 days. If it's not the right fit, send it back for a full <strong>refund</strong>.</p>"
           }
         }
       },
@@ -95,16 +96,16 @@
         "hero_image": "shopify://shop_images/IMG_4805.jpg",
         "hero_heading": "",
         "hero_eyebrow": "",
-        "product_subtitle": "aira is a research-backed small magnetic nasal strip that gently opens the nose so air flows freely, reducing snoring, mouth breathing and supporting deeper sleep.",
+        "product_subtitle": "A magnetic band and two skin-safe tabs that hold your nose open all night — quieting snoring, stopping mouth breathing, and deepening sleep. All four sizes in the box, fit guaranteed.",
         "image_badge": "",
         "show_rating": true,
         "review_snippet": "Best sleep purchase I've made",
-        "plan_title": "Refill Plan",
+        "plan_title": "Kit + Monthly Refills",
         "plan_badge": "Best value",
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "refill_link_label": "Already have a strip? Buy refill tabs →",
+        "refill_link_label": "Already have a band? Get refills →",
         "refill_link_url": "/products/aira-refill-tabs"
       }
     },
@@ -115,7 +116,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Snore no more",
-            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. aira holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
+            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. The band holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Partners usually notice before you do.</p>",
             "image": "shopify://shop_images/IMG_4337.jpg",
             "button_label": "",
             "button_url": ""
@@ -150,51 +151,8 @@
       "settings": {
         "eyebrow": "Why aira",
         "heading": "Breathe right, day and night.",
-        "subheading": "aira fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep.",
+        "subheading": "The band does one thing — keep a blocked, collapsing airway open. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep.",
         "background_color": "#fafafa"
-      }
-    },
-    "how_to_use": {
-      "type": "how-to-use",
-      "blocks": {
-        "step_1": {
-          "type": "step",
-          "settings": {
-            "step_number": "01",
-            "step_image": "shopify://shop_images/Application-2-cropped.jpg",
-            "step_heading": "Peel",
-            "step_description": "Peel the adhesive tab from its backing."
-          }
-        },
-        "step_2": {
-          "type": "step",
-          "settings": {
-            "step_number": "02",
-            "step_image": "shopify://shop_images/Application-3-cropped.jpg",
-            "step_heading": "Place",
-            "step_description": "Place a tab on either side of your nose bridge."
-          }
-        },
-        "step_3": {
-          "type": "step",
-          "settings": {
-            "step_number": "03",
-            "step_image": "shopify://shop_images/Application-4-cropped.jpg",
-            "step_heading": "Breathe",
-            "step_description": "Attach the magnetic band and breathe freely all night."
-          }
-        }
-      },
-      "block_order": [
-        "step_1",
-        "step_2",
-        "step_3"
-      ],
-      "settings": {
-        "eyebrow": "How it works",
-        "heading": "3 steps to better breathing.",
-        "tutorial_label": "For a more detailed guide, watch our short tutorial video.",
-        "tutorial_url": "/pages/how-it-works"
       }
     },
     "before_after_slider": {
@@ -220,7 +178,7 @@
         "problem_1": {
           "type": "problem",
           "settings": {
-            "value": "57%",
+            "value": "XX%",
             "keyword": "Snoring",
             "label": "More than half of all adults snore regularly — disrupting their sleep and their partner's",
             "footnote": "PMC, 2022",
@@ -240,7 +198,7 @@
         "problem_3": {
           "type": "problem",
           "settings": {
-            "value": "48%",
+            "value": "XX%",
             "keyword": "Heart disease",
             "label": "Higher risk of coronary heart disease when sleep is chronically cut short",
             "footnote": "Eur Heart J, 2011",
@@ -250,7 +208,7 @@
         "problem_4": {
           "type": "problem",
           "settings": {
-            "value": "3.5x",
+            "value": "X.Xx",
             "keyword": "Dry mouth",
             "label": "More likely to wake with dry mouth when breathing through the mouth overnight — with oral pH dropping low enough to damage tooth enamel",
             "footnote": "J Oral Rehabil, 2016",
@@ -260,7 +218,7 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "value": "75%",
+            "value": "XX%",
             "keyword": "Quiet nights",
             "label": "Reduction in snoring frequency when using an external nasal dilator during sleep, measured by overnight polysomnography",
             "footnote": "Eur Respir J, 2000",
@@ -315,8 +273,8 @@
         "eyebrow": "The science of sleep",
         "heading": "Better breathing, deeper sleep, better life.",
         "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says — and what changes when you breathe freely.",
-        "cta_label": "Shop aira kit",
-        "cta_url": "/products/aira-starter-kit",
+        "cta_label": "Get my kit",
+        "cta_url": "/products/aira-kit",
         "left_heading": "The problem",
         "right_heading": "With aira"
       }
@@ -447,7 +405,7 @@
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
         "theme": "light",
-        "product": "aira-starter-kit"
+        "product": "aira-kit"
       }
     },
     "faq": {
@@ -457,7 +415,7 @@
           "type": "question",
           "settings": {
             "question": "How does the aira nasal strip work?",
-            "answer": "<p>aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
+            "answer": "<p>aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more comfortable breathing from the moment you put it on.</p>"
           }
         },
         "faq_2": {
@@ -471,28 +429,28 @@
           "type": "question",
           "settings": {
             "question": "How long does the band last?",
-            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, aira was built to last.</p>"
+            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs from 30 to 360 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, aira was built to last.</p>"
           }
         },
         "faq_4": {
           "type": "question",
           "settings": {
             "question": "Will it help with my snoring?",
-            "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could!</p>"
+            "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could.</p>"
           }
         },
         "faq_5": {
           "type": "question",
           "settings": {
             "question": "Can I use it during exercise?",
-            "answer": "<p>Absolutely, and honestly, this is where aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, aira works with your body, not against it.</p>"
+            "answer": "<p>Yes — this is where aira shines best. The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, aira works with your body, not against it.</p>"
           }
         },
         "faq_6": {
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and free shipping is available above a certain order value. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
+            "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and shipping is free across the GCC. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
           }
         }
       },
@@ -518,8 +476,8 @@
       "type": "final-cta",
       "settings": {
         "heading": "Ready to breathe better?",
-        "button_label": "Shop aira kit",
-        "button_url": "/products/aira-starter-kit",
+        "button_label": "Get my kit",
+        "button_url": "/products/aira-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }
@@ -527,9 +485,8 @@
   },
   "order": [
     "main",
-    "benefits_grid",
-    "how_to_use",
     "before_after_slider",
+    "benefits_grid",
     "social_proof",
     "product_features_grid",
     "ugc_gallery",

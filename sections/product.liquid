@@ -5,7 +5,13 @@
 		assign has_selling_plans = true
 		assign sp_group = product.selling_plan_groups.first
 		assign sp_first = sp_group.selling_plans.first
-		assign sp_allocation = current_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first
+		assign sp_allocation = nil
+		for alloc in current_variant.selling_plan_allocations
+			if alloc.selling_plan.id == sp_first.id
+				assign sp_allocation = alloc
+				break
+			endif
+		endfor
 	endif
 -%}
 
@@ -174,12 +180,6 @@
 							{%- endif -%}
 						</button>
 					{%- endfor -%}
-					{%- if media_count < 6 -%}
-						{%- assign placeholders_needed = 6 | minus: media_count -%}
-						{%- for i in (1..placeholders_needed) -%}
-							<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
-						{%- endfor -%}
-					{%- endif -%}
 				</div>
 
 
@@ -230,7 +230,7 @@
 
 					<div class="flex flex-col gap-3" data-selling-plan-group>
 
-						{%- comment -%} ── Refill Plan card (default selected) ── {%- endcomment -%}
+						{%- comment -%} ── Subscription card ── {%- endcomment -%}
 						<button
 							type="button"
 							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border-2 border-border bg-bg text-left"
@@ -244,7 +244,7 @@
 
 							<div class="flex items-start justify-between gap-4">
 								<div>
-									<span class="font-heading font-bold text-title text-lg">{{ section.settings.plan_title | default: 'Refill Plan' }}</span>
+									<span class="font-heading font-bold text-title text-lg">{{ section.settings.plan_title | default: 'Kit + Monthly Refills' }}</span>
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
@@ -288,7 +288,7 @@
 							{%- endif -%}
 						</button>
 
-						{%- comment -%} ── One-time purchase card ── {%- endcomment -%}
+						{%- comment -%} ── One-time purchase card (default selected) ── {%- endcomment -%}
 						<button
 							type="button"
 							class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
@@ -308,7 +308,7 @@
 										height="16"
 										loading="lazy"
 									>
-									4 magnetic bands (L1 / L2 / L3 / L4)
+									4 magnetic bands (L1–L4)
 								</li>
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									<img
@@ -370,7 +370,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title text-center">✓ Free shipping on all GCC orders</p>
+					<p class="text-xs text-title text-center">✓ Free shipping across the GCC.</p>
 
 				</form>
 
@@ -380,7 +380,7 @@
 						href="{{ section.settings.refill_link_url }}"
 						class="text-sm text-copy hover:text-highlight transition-colors"
 					>
-						{{ section.settings.refill_link_label | default: 'Already have a strip? Buy refill tabs →' }}
+						{{ section.settings.refill_link_label | default: 'Already have a band? Get refills →' }}
 					</a>
 				{%- endif -%}
 
@@ -389,7 +389,8 @@
 				{%- if trust_blocks.size > 0 -%}
 					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 						{%- for block in trust_blocks -%}
-							<div class="flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}" {{ block.shopify_attributes }}>
+							{%- capture badge_classes -%}flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}{%- endcapture -%}
+							{%- capture badge_inner -%}
 								{%- case block.settings.icon_type -%}
 									{%- when 'research' -%}
 										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 7v10m-3-7h6m-6 4h6"/></svg>
@@ -403,7 +404,12 @@
 										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
 								{%- endcase -%}
 								<span class="font-heading font-semibold text-title text-xs leading-tight">{{ block.settings.text }}</span>
-							</div>
+							{%- endcapture -%}
+							{%- if block.settings.link != blank -%}
+								<a href="{{ block.settings.link }}" class="{{ badge_classes }} hover:opacity-80 transition-opacity" {{ block.shopify_attributes }}>{{ badge_inner }}</a>
+							{%- else -%}
+								<div class="{{ badge_classes }}" {{ block.shopify_attributes }}>{{ badge_inner }}</div>
+							{%- endif -%}
 						{%- endfor -%}
 					</div>
 				{%- endif -%}
@@ -691,7 +697,7 @@
 			"type": "textarea",
 			"id": "product_subtitle",
 			"label": "Product subtitle",
-			"default": "aira is a research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing and breathe your best.",
+			"default": "A research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing — so you breathe your best.",
 			"info": "Shown below the product title. Falls back to product description if blank."
 		},
 		{
@@ -729,7 +735,7 @@
 			"type": "text",
 			"id": "plan_title",
 			"label": "Plan card title",
-			"default": "Refill Plan"
+			"default": "Kit + Monthly Refills"
 		},
 		{
 			"type": "text",
@@ -764,7 +770,7 @@
 			"type": "text",
 			"id": "refill_link_label",
 			"label": "Link text",
-			"default": "Already have a strip? Buy refill tabs →"
+			"default": "Already have a band? Get refills →"
 		},
 		{
 			"type": "url",
@@ -794,6 +800,12 @@
 					"id": "text",
 					"label": "Text",
 					"default": "Research Backed"
+				},
+				{
+					"type": "url",
+					"id": "link",
+					"label": "Link URL",
+					"info": "Optional. Makes the badge clickable."
 				}
 			]
 		},
@@ -805,7 +817,7 @@
 					"type": "text",
 					"id": "text",
 					"label": "Perk text",
-					"default": "15 Uses of Tabs"
+					"default": "15 tab pairs"
 				}
 			]
 		},
