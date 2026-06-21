@@ -1,225 +1,193 @@
-================================================================
-AIRA — KIT PDP FIX (/products/aira-starter-kit)
-Implementation Brief for VSC (structure + copy)
-Date: 2026-06-11 | Author: Tom | Status: Ready for implementation
-================================================================
+AIRA — SHOP PAGE REVISIONS BRIEF
+Source: Senior designer feedback (June 2026) + mentor reconciliation against locked AIRA standards
+Page: /products/aira-kit (canonical handle aira-kit) — the Shop/Kit PDP
+Audience: VSC (dev / Shopify Liquid) + claude design (visual)
+Status: Revision pass on the existing shop page. Implement structural items first, design/copy fill-in second.
 
-CONTEXT
--------
-This is the page every ad dirham will land on. Audit (2026-06-11)
-found: two contradictory how-to sections, the strongest proof
-asset (Before/After) buried, an unreadable subscription offer,
-claims-register violations, and a live "[LIST OF COUNTRIES]"
-placeholder. Buy-box anatomy is good — keep the skeleton.
+=====================================================================
+0. NON-NEGOTIABLES — read before touching anything
+=====================================================================
+These OVERRIDE the designer's wording wherever they conflict. The designer
+doesn't have our locked standards; we do.
 
-QUEUE POSITION: this brief runs BEFORE the homepage brief
-(AIRA_Homepage_Copy_Flow_Brief_VSC.txt). Refills + Shop briefs
-unaffected.
+- CLAIMS: Every claim must be mechanically true, sourced, or user-reported.
+  NOTHING invented. NO fake review counts ("1,200+ breathers"), NO fake
+  testimonial totals ("10,000+ people"), NO "clinically designed".
+  Use: real beta quotes (collect this week) + the sourced UAE snoring stat.
+- PLAN DEFAULT: One-time purchase stays DEFAULT-selected at launch.
+  Do NOT promote Subscribe & Save to priority/default (designer suggested
+  this; we've decided against it for an unknown brand. Revisit with data).
+- UNITS: pairs, never tabs (1 pair = 1 night). Sizes L1 to L4.
+- CTA: "Add to cart" (this is a PDP). Sentence case. ("Get my kit" is the
+  HOMEPAGE CTA only.)
+- BRAND CASING: "aira" lowercase always, even sentence-initial.
+- GUARANTEE: 30-NIGHT guarantee. Say "nights", never "days".
+- SHIPPING: "Free shipping across the GCC." + delivery timeframe.
+  >> TOM TO CONFIRM real working-day range before this ships. <<
+- COPY RULES: UK English. Sentence case everywhere incl. buttons/badges.
+  ALL CAPS only for eyebrows. NO em-dashes, hyphens-as-pivots, or arrows
+  in customer copy (reads as AI). Read-aloud test is law.
+- SKU: Kit ships 15 pairs. "What's in the box" must reflect the real
+  count. >> TOM TO CONFIRM 15 vs 30 before "month" language is used. <<
 
-APPROVED DECISION — PLAN DEFAULT
---------------------------------
-One-time Purchase stays the DEFAULT-SELECTED plan (Tom,
-2026-06-11): at launch, an unknown brand converts better
-without commitment friction. Do NOT pre-select the
-subscription. The subscription keeps its "Best value" chip.
-Revisit post-launch with data.
+=====================================================================
+1. HERO — title clarity + gallery (HIGHEST IMPACT)
+=====================================================================
+Problem (designer, correct): "The aira kit" tells a cold visitor nothing.
+Could be a laundry product. Cold ad/search traffic needs to know what it is
+in two seconds.
 
-----------------------------------------------------------------
-1. URL HANDLE + REDIRECT (decision updated 2026-06-11)
-----------------------------------------------------------------
-Canonical product handle: aira-kit.
-- TOM does the rename in admin (Products → Aira Kit → Search
-  engine listing → Edit → URL handle → "aira-kit" → tick
-  "Create a URL redirect" → Save). The redirect from
-  /products/aira-starter-kit is auto-created by that checkbox.
-- VSC: AFTER Tom confirms the rename, sweep the theme for any
-  link still targeting /products/aira-starter-kit → update to
-  /products/aira-kit. (Existing briefs already target
-  /products/aira-kit — no amendments needed there.)
-- VSC: verify the redirect resolves (old URL → 200 at new URL).
+COPY — new hero stack:
+  Eyebrow (ALL CAPS ok):   MAGNETIC NASAL STRIPS
+  Headline:                Breathe better. Sleep deeper. Train harder.
+  Product descriptor:      aira magnetic nasal strips. Reusable, adjustable
+                           and built to open your airway all night and
+                           through every session.
+  (Descriptor is the "what is it" line the designer asked for. Keep it plain.
+   SEO note: works the locked keyword "magnetic nasal strips" / "nasal
+   strips UAE" naturally.)
 
-----------------------------------------------------------------
-2. BUY BOX
-----------------------------------------------------------------
-a) DESCRIPTION — REPLACE (current leads with "A small…" —
-   leading with small is leading with an apology):
-     A magnetic band and two skin-safe tabs that hold your
-     nose open all night — quieting snoring, stopping mouth
-     breathing, and deepening sleep. All four sizes in the
-     box, fit guaranteed.
+DESIGN (claude design):
+- Shift hero to ~60/40 imagery-to-buy-panel ratio (designer). Gallery is
+  too small right now.
+- Gallery shot list (physical product needs to be pictured owned):
+    1. 3D render close-up of the device (hero or second slot)
+    2. What's in the box / kit laid out
+    3. Person wearing it, multiple angles
+    4. Size comparison (in-hand or on-face scale)
+    5. Night-time / in-bed usage
+    6. Gym / running usage
+- Keep navy bg-main + light-blue radial halo family (matches /pages/our-story).
 
-b) PLAN SELECTOR — relabel + rewrite bullets.
-   Subscription option (currently "Refill Plan" — confusing
-   label on a KIT page):
-     label:   Kit + Monthly Refills
-     chip:    Best value (keep)
-     price suffix "· Save 20% on refills": keep label-level
-     savings mention ONCE (no duplicate bullet).
-     bullets (REPLACE all four):
-       Everything in the starter kit below
-       30 fresh tab pairs delivered every 30 days
-       20% off every refill delivery
-       Pause, skip, or cancel anytime
-   One-time option:
-     label:   One-time Purchase (unchanged)
-     bullets  (standardize casing only):
-       4 magnetic bands (L1–L4)
-       15 adhesive tab pairs
-       Magnetic placement tool
-       Instruction manual
-   DEFAULT SELECTION: One-time (see decision above).
+DEV (VSC):
+- Restructure hero section grid to 60/40. Use existing Tailwind utilities
+  only (no new utility classes). Gallery = existing theme media/gallery
+  pattern; thumbnails or swipe on mobile.
 
-c) CROSS-LINK: "Already have a strip? Get refills →" →
-   "Already have a band? Get refills →" (terminology: band).
+=====================================================================
+2. BUY PANEL — benefit summary, plan cards, FAQ anchor
+=====================================================================
+DESIGN + COPY — benefit summary directly ABOVE the purchase controls:
 
-d) Badges row: keep as-is (Research Backed / 30-Day Guarantee /
-   Medical-Grade Adhesive). "Research Backed" must link to
-   /pages/backed-by-science.
+  aira kit
+  [star row]  >> NO numeric review count until we have real reviews. <<
+              Launch option: drop the rating row entirely, OR show a single
+              sourced trust line instead (see below). Do NOT fabricate.
 
-----------------------------------------------------------------
-3. BENEFITS ACCORDION — REPLACE ALL FIVE BULLETS
-----------------------------------------------------------------
-Current set has grammar drift ("Support nose breathing") and an
-unsourced superlative ("Significantly reduces snoring" — claims
-register violation). New set (parallel, register-compliant):
-  Opens nasal passages instantly
-  Quiets snoring at its source
-  Keeps you nose-breathing all night
-  Supports deeper, less fragmented sleep
-  Reusable band — months of nights, no single-use waste
+  Trust line (sourced, honest):  A UAE study found 1 in 3 adults snore.
+                                 (Al Shaikh 2018 — say "a UAE study", not
+                                 "UAE adults".)
 
-----------------------------------------------------------------
-4. HOW-TO — ONE TRUTH ON THE PAGE
-----------------------------------------------------------------
-The page currently has TWO how-to blocks with CONTRADICTORY
-placement copy ("just above the nostril" vs "either side of
-your nose bridge"). Fix:
-PLACEMENT TRUTH (confirmed by Tom, 2026-06-11): tabs sit JUST
-ABOVE THE NOSTRILS — not on the nose bridge. The canonical
-step 2 changes SITEWIDE accordingly.
+  Benefit ticks:
+    ✓ Opens nasal airflow instantly
+    ✓ Reusable and adjustable
+    ✓ Comfortable enough for all-night wear
+    ✓ Designed for sleep and training
+    ✓ 30-night guarantee
 
-CANONICAL 3 STEPS (new sitewide version):
-    1. Peel the adhesive tab from its backing.
-    2. Place a tab on each side of your nose, just above
-       the nostril.
-    3. Attach the magnetic band and breathe freely all night.
+PLAN SELECTOR — use enhanced radio cards (designer Option 3). NOT tabs
+(our "pairs, not tabs" + cleaner-default reasoning), NOT subscribe-priority.
 
-- The "HOW TO USE" accordion (buy box) adopts these 3 steps.
-  Former step 4 (leaflet) becomes a small note under step 3:
-    "Full instructions in the leaflet inside your kit."
-- The lower "HOW IT WORKS / 3 steps to better breathing"
-  SECTION IS REMOVED from this template (it duplicates the
-  accordion; it lives on the homepage where it belongs).
-- SITEWIDE SWEEP (part of this brief): update step 2 wherever
-  the old "either side of your nose bridge" copy renders —
-  known instances: homepage HOW IT WORKS section, refills PDP
-  how-to accordion ("Place tabs on either side of your nose
-  bridge"), and the homepage FAQ IF unfrozen later (log only
-  for now — FAQ freeze stands). Grep "nose bridge" theme-wide;
-  expected hits after sweep: zero outside the frozen FAQ.
+  ( ◉ )  One-time purchase            <-- DEFAULT SELECTED
+         DHS 0.00 today
+         15 pairs. No commitment.
 
-----------------------------------------------------------------
-5. EDUCATION STACK — REORDER + ADD PROOF
-----------------------------------------------------------------
-Current order below buy box:
-  WHY AIRA → HOW IT WORKS (dup) → BEFORE/AFTER → PRODUCT
-  features → COMMUNITY → REVIEWS → FAQ → close
-TARGET order:
-  BEFORE/AFTER  (promoted to directly under buy-box fold —
-                 it's the demonstration; demonstration leads)
-  WHY AIRA      (3 use-case blocks)
-  22% STAT CARD (ADD — reuse the homepage TRAIN overlay/stat
-                 component as a standalone proof strip: 22% /
-                 MORE EFFICIENT BREATHING / Dallam et al., 2018
-                 — exact copy from homepage card. If the
-                 component can't render standalone cheaply,
-                 log it; do not rebuild from scratch.)
-  PRODUCT features (canonical 5-card set — already swept)
-  COMMUNITY → REVIEWS → FAQ → close (unchanged order)
+  ( ○ )  Kit + monthly refills
+         DHS 0.00 / month
+         Save 20% on refills. Delivered monthly. Cancel anytime.
 
-----------------------------------------------------------------
-6. CLAIMS + COPY FIXES (WHY AIRA section, this page)
-----------------------------------------------------------------
-- "The strip fixes one thing — a blocked, collapsing airway."
-  → "The band does one thing — keep a blocked, collapsing
-     airway open." ("fixes" is banned — medical-claim verb.)
-- "Most partners hear the difference on the very first night."
-  → "Partners usually notice before you do." (claims register:
-     anecdotal framing, no quantifier. This string survived
-     the sweep — also grep the homepage WHY section for it.)
-- "Snore no more" block, "aira holds/The band holds" — keep.
+  CTA:   Add to cart
 
-----------------------------------------------------------------
-7. SHIPPING & RETURNS BLOCK
-----------------------------------------------------------------
-REPLACE the placeholder sentence:
-  "We deliver to [LIST OF COUNTRIES]."
-WITH:
-  "We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain,
-   Qatar, and Oman."
-Rest of the block is good — keep ("Try aira for 30 days…").
+  Note: visual polish is the upgrade here vs the current cards — clearer
+  selected state, more enticing styling. Logic/default unchanged.
 
-----------------------------------------------------------------
-8. PAGE FAQ — MECHANICAL FIXES ONLY
-----------------------------------------------------------------
-The FAQ FREEZE covers the HOMEPAGE instance only. This page's
-FAQ instance gets mechanical fixes (not the full parked
-rewrite):
-- "…this is where aira shines best The adhesive tabs…" →
-  "…this is where aira shines best. The adhesive tabs…"
-- "Absolutely, and honestly, this is where…" →
-  "Yes — this is where…"
-- "which come in packs of 30, 60, or 90 pairs" →
-  "which come in packs from 30 to 360 pairs"
-- Nothing else. Full FAQ rewrite remains deferred.
+GUARANTEE — expand the line beneath the CTA:
+  Try aira risk free.
+  Not the right fit? Return within 30 nights.
 
-----------------------------------------------------------------
-9. GALLERY
-----------------------------------------------------------------
-Same rule as refills brief: render populated media only — no
-empty grey thumbnail slots. (3 of 6 currently blank.)
+DELIVERY — make a bigger deal of free shipping, add timeframe:
+  Free shipping across the GCC.
+  Arrives in [X to Y working days].   >> TOM TO CONFIRM RANGE <<
 
-TECH CONSTRAINTS
-----------------
-- OS 2.0; settings/JSON edits preferred; copy never hardcoded.
-- Subscription widget labels may live app-side — any string
-  you can't reach from the theme: log location + exact target
-  string in your handoff note, don't force it.
-- No new Tailwind utilities, no new JS. Reordering = template
-  JSON moves, not rebuilds.
-- Admin product TITLE ("Aira Kit") is Tom's to change — theme
-  H1 may lowercase via existing pattern if one exists; if not,
-  log it.
+FAQ ANCHOR (designer, correct): add a small "Questions? Read the FAQ" link
+near the buy panel, anchoring to /pages/faq.
 
-OUT OF SCOPE
-------------
-- Pricing (still unset — separate admin task).
-- Product photography (AEROFLOW placeholder — asset pipeline).
-- Review app content/seeded reviews.
-- Full FAQ rewrite (deferred — parked in
-  AIRA_Copy_Flow_Audit_June2026.md §3.7).
-- Homepage kit-contents claim ("30 pairs — a full month") —
-  PENDING Tom's SKU decision (kit ships 15 pairs today;
-  homepage Kit Offer copy will be amended once decided).
+DEV (VSC):
+- Radio cards bind to existing variant/selling-plan logic. One-time = default
+  variant. Subscribe = Shopify subscription selling plan (Klaviyo/refill flow).
+- Star/trust row is a conditional block — easy to swap once real reviews exist.
 
-ACCEPTANCE CHECKLIST
---------------------
-[ ] Handle renamed to aira-kit (Tom) + old starter-kit URL
-    redirects correctly; zero theme links target the old
-    handle.
-[ ] "nose bridge" greps to zero theme-wide (frozen homepage
-    FAQ excepted, logged).
-[ ] One-time Purchase is the default-selected plan.
-[ ] Subscription reads "Kit + Monthly Refills" with the four
-    new bullets; savings claim appears exactly once.
-[ ] Exactly ONE how-to on the page (accordion, 3 canonical
-    steps + leaflet note); lower duplicate section gone.
-[ ] Before/After is the first section under the buy box.
-[ ] 22% Dallam stat card renders on the page (or logged).
-[ ] "fixes", "Significantly reduces", "very first night",
-    "[LIST OF COUNTRIES]": zero hits on this template.
-[ ] Page FAQ: the three mechanical fixes applied, nothing else.
-[ ] No empty gallery slots.
-[ ] Copy entered exactly as written — do not improve it.
-[ ] Mobile pass at 390px: plan selector, reordered stack clean.
-================================================================
+=====================================================================
+3. "See the difference for yourself" section — add CTA
+=====================================================================
+Designer: section is strong but has no CTA.
+ADD a secondary CTA at the section end. Copy: "See the difference" linking to
+the buy panel (anchor scroll) or add-to-cart. Keep it secondary in styling so
+the primary buy panel stays the focus.
+
+=====================================================================
+4. "Why aira" (benefits) — stat hierarchy
+=====================================================================
+Designer: move the stats ABOVE the paragraph + title, make them bold, bump
+size slightly for impact.
+DESIGN: stat-first layout. Big bold figure, supporting line beneath.
+COPY: only sourced/true stats. UK study snoring stat is fair game. Do NOT use
+the Dallam "22%" figure (downgraded — not supported by the paper).
+
+=====================================================================
+5. "See it in action" (testimonials heading) — honest reframe
+=====================================================================
+Designer suggested: "Join 10,000+ people breathing better every day."
+>> REJECTED — fabricated count. <<
+Use instead (honest, until we have real numbers):
+  "From our first wave of breathers"  OR  "What early aira users are saying"
+Swap to a real number only once we can substantiate it.
+
+=====================================================================
+6. "Reviews" section — visual hierarchy
+=====================================================================
+Designer (correct, cheap win):
+- Bigger stars under the main title.
+- Increase review card title size; establish hierarchy (title > body).
+- Right now everything is the same size and reads flat.
+DESIGN only. Populate with REAL beta quotes — collect this week. No
+placeholders shipped as if real.
+
+=====================================================================
+7. NEW — comparison section (designer addition, adopt)
+=====================================================================
+Adds the category wedge: why buy aira over an ordinary nasal strip.
+Frame as aira (magnetic) vs ordinary adhesive nasal strips.
+
+  Feature                         aira      Ordinary nasal strip
+  Reusable                         ✓               ✕
+  Adjustable airflow               ✓               ✕
+  No adhesive residue (magnetic)   ✓               ✕
+  Sleep + training                 ✓             Limited
+  Premium comfort                  ✓               ✕
+
+Placement note: this is a NEW section. Per the sales-page philosophy
+(resist bloat), site it where it earns its place — ideally just before or
+after the buy/benefits block where the buying decision happens. On a PDP a
+comparison block is justified; keep it tight, table only, no padding bloat.
+
+DEV (VSC): build as a simple responsive table/grid, existing Tailwind
+classes, stacks cleanly on mobile.
+
+=====================================================================
+BUILD ORDER
+=====================================================================
+1. Hero title/descriptor copy + 60/40 restructure (free, biggest lift)
+2. Buy panel: benefit ticks, radio-card polish, guarantee + delivery copy,
+   FAQ anchor (one-time stays default)
+3. Comparison section (free, differentiates us)
+4. Section CTA ("See the difference"), Why-aira stat-first, Reviews hierarchy
+   (cheap polish)
+5. Imagery overhaul: 3D render + lifestyle set (the slow/cost item — brief
+   the shoot/render separately)
+
+OPEN ITEMS FOR TOM:
+- [ ] Confirm delivery working-day range for GCC.
+- [ ] Confirm kit pair count (15 vs 30) before any "month" language.
+- [ ] Approve dropping the rating row at launch vs a sourced trust line.
+- [ ] Line up real beta quotes (testimonials + reviews sections need them).

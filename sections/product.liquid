@@ -21,13 +21,13 @@
 		transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
 	}
 	.plan-card:hover:not(.is-selected) {
-		border-color: var(--color-primary);
-		background-color: var(--color-secondary);
+		border-color: var(--color-main);
+		background-color: var(--color-cream-light);
 	}
 	.plan-card.is-selected {
-		border-color: var(--color-primary);
-		background-color: var(--color-secondary);
-		box-shadow: 0 0 0 1px var(--color-primary), 0 4px 20px rgba(10,26,52,0.08);
+		border-color: var(--color-main);
+		background-color: var(--color-cream-light);
+		box-shadow: 0 0 0 1px var(--color-main), 0 4px 20px rgba(10,26,52,0.08);
 	}
 	.plan-card:not(.is-selected) {
 		border-color: var(--color-border);
@@ -44,7 +44,9 @@
 	.plan-card.is-selected .plan-perks {
 		max-height: 300px;
 		opacity: 1;
-		margin-top: 0.25rem;
+		margin-top: 0;
+		border-top: 1px solid var(--color-border);
+		padding-top: 0.75rem;
 	}
 
 	/* Accordion content — bullet lists */
@@ -72,6 +74,21 @@
 	.product-info-content li strong {
 		font-weight: 700;
 		color: var(--color-highlight, #FF4000);
+	}
+
+	/* Tutorial link below the How to use steps */
+	.product-info-content ul + p {
+		margin-top: 0.875rem;
+	}
+	.product-info-content a {
+		font-weight: 600;
+		color: var(--color-main);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		transition: color 0.2s ease;
+	}
+	.product-info-content a:hover {
+		color: var(--color-highlight);
 	}
 </style>
 
@@ -188,28 +205,17 @@
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
 
-				{%- comment -%} Rating — dynamic from Judge.me, clickable to reviews {%- endcomment -%}
-				{%- if section.settings.show_rating -%}
-					{%- assign jm_rating = product.metafields.judgeme.rating.value | default: 0 -%}
-					{%- assign jm_count = product.metafields.judgeme.review_count.value | default: 0 | plus: 0 -%}
-					<a href="#reviews-section" class="flex flex-wrap items-center gap-2 hover:opacity-80 transition-opacity scroll-link">
-						<div class="flex items-center gap-0.5 text-highlight">
-							{%- for i in (1..5) -%}
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-							{%- endfor -%}
-						</div>
-						{%- if jm_count >= 10 -%}
-							<span class="text-copy text-sm">{{ jm_rating }} · {{ jm_count }} reviews</span>
-						{%- endif -%}
-						{%- if jm_count >= 20 and section.settings.review_snippet != blank -%}
-							<span class="text-copy text-sm italic">— "{{ section.settings.review_snippet }}"</span>
-						{%- endif -%}
-					</a>
+				{%- comment -%} Guarantee badge — stars reclaim this slot once a review system goes live {%- endcomment -%}
+				{%- if section.settings.pretitle_badge != blank -%}
+					<span class="self-start inline-flex items-center gap-1.5 bg-main rounded-full px-3 py-1.5">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light shrink-0" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+						<span class="font-heading font-semibold text-secondary text-xs leading-tight">{{ section.settings.pretitle_badge }}</span>
+					</span>
 				{%- endif -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
 				<div>
-					<h1 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ product.title }}</h1>
+					<h1 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ section.settings.hero_heading | default: product.title }}</h1>
 					{%- if section.settings.product_subtitle != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
 					{%- elsif product.description != blank -%}
@@ -226,9 +232,7 @@
 						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
-					<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
-
-					<div class="flex flex-col gap-3" data-selling-plan-group>
+						<div class="flex flex-col gap-3" data-selling-plan-group>
 
 						{%- comment -%} ── Subscription card ── {%- endcomment -%}
 						<button
@@ -242,9 +246,9 @@
 								</span>
 							{%- endif -%}
 
-							<div class="flex items-start justify-between gap-4">
+							<div class="flex items-center justify-between gap-4">
 								<div>
-									<span class="font-heading font-bold text-title text-lg">{{ section.settings.plan_title | default: 'Kit + Monthly Refills' }}</span>
+									<span class="font-heading font-bold text-title text-lg leading-tight block">{{ section.settings.plan_title | default: 'The aira kit + monthly refills' }}</span>
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
@@ -257,12 +261,12 @@
 								<div class="text-right shrink-0">
 									{%- if has_selling_plans and sp_allocation -%}
 										<span class="text-copy text-sm line-through" data-plan-compare>{{ current_variant.price | money }}</span>
-										<span class="font-heading font-bold text-title text-2xl block" data-subscribe-price>{{ sp_allocation.per_delivery_price | money }}</span>
+										<span class="font-heading font-bold text-title text-xl md:text-2xl block" data-subscribe-price>{{ sp_allocation.per_delivery_price | money }}</span>
 									{%- else -%}
 										{%- if section.settings.plan_compare_price != blank -%}
 											<span class="text-copy text-sm line-through">{{ section.settings.plan_compare_price }}</span>
 										{%- endif -%}
-										<span class="font-heading font-bold text-title text-2xl block" data-subscribe-price>{{ section.settings.plan_price | default: current_variant.price | money }}</span>
+										<span class="font-heading font-bold text-title text-xl md:text-2xl block" data-subscribe-price>{{ section.settings.plan_price | default: current_variant.price | money }}</span>
 									{%- endif -%}
 								</div>
 							</div>
@@ -294,10 +298,11 @@
 							class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
 							data-plan-btn="onetime"
 						>
-							<div class="flex items-start justify-between gap-4">
-								<span class="font-heading font-bold text-title text-lg">One-time Purchase</span>
-								<span class="font-heading font-bold text-title text-2xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
+							<div class="flex items-center justify-between gap-4">
+								<span class="font-heading font-bold text-title text-lg leading-tight">One-time purchase</span>
+								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
 							</div>
+							<div class="h-px bg-border"></div>
 							<ul class="flex flex-col gap-2">
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									<img
@@ -308,7 +313,7 @@
 										height="16"
 										loading="lazy"
 									>
-									4 magnetic bands (L1–L4)
+									4 magnetic bands (L1 to L4)
 								</li>
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									<img
@@ -350,16 +355,16 @@
 
 					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
 					{%- liquid
-						assign atc_label = 'Sold Out'
+						assign atc_label = 'Sold out'
 						assign atc_disabled = true
 						if current_variant.available
-							assign atc_label = 'Add to Cart'
+							assign atc_label = 'Add to cart'
 							assign atc_disabled = false
 						endif
 					-%}
 					{%- render 'cta-button',
 						label: atc_label,
-						variant: 'solid',
+						variant: 'shop',
 						size: 'lg',
 						element: 'button',
 						button_type: 'submit',
@@ -380,7 +385,7 @@
 						href="{{ section.settings.refill_link_url }}"
 						class="text-sm text-copy hover:text-highlight transition-colors"
 					>
-						{{ section.settings.refill_link_label | default: 'Already have a band? Get refills →' }}
+						{{ section.settings.refill_link_label | default: 'Already have a band? Get refills' }}
 					</a>
 				{%- endif -%}
 
@@ -389,21 +394,22 @@
 				{%- if trust_blocks.size > 0 -%}
 					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 						{%- for block in trust_blocks -%}
-							{%- capture badge_classes -%}flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}{%- endcapture -%}
+							{%- capture badge_classes -%}flex flex-col items-center justify-center text-center gap-2 bg-main rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}{%- endcapture -%}
 							{%- capture badge_inner -%}
+								{%- comment -%} Material Icons (filled) — inlined SVGs, no icon-font request {%- endcomment -%}
 								{%- case block.settings.icon_type -%}
 									{%- when 'research' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 7v10m-3-7h6m-6 4h6"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M19.8 18.4 14 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81H9.04c-.42 0-.65.48-.39.81L10 6.5v4.17L4.2 18.4c-.49.66-.02 1.6.8 1.6h14c.82 0 1.29-.94.8-1.6z"/></svg>
 									{%- when 'patented' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
 									{%- when 'doctor' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M4.8 2.3A.3.3 0 105 2H4a2 2 0 00-2 2v5a6 6 0 006 6 6 6 0 006-6V4a2 2 0 00-2-2h-1a.2.2 0 10.3.3"/><path d="M8 15v1a6 6 0 006 6 6 6 0 006-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M17.73 12.02l3.98-3.98c.39-.39.39-1.02 0-1.41l-4.34-4.34c-.39-.39-1.02-.39-1.41 0l-3.98 3.98L8 2.29C7.8 2.1 7.55 2 7.29 2c-.25 0-.51.1-.7.29L2.25 6.63c-.39.39-.39 1.02 0 1.41l3.98 3.98-3.98 3.98c-.39.39-.39 1.02 0 1.41l4.34 4.34c.39.39 1.02.39 1.41 0l3.98-3.98 3.98 3.98c.2.2.45.29.71.29.26 0 .51-.1.71-.29l4.34-4.34c.39-.39.39-1.02 0-1.41l-3.99-3.98zM12 9c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-4.71 1.96L3.66 7.34l3.63-3.63 3.62 3.62-3.62 3.63zM10 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2 2c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2-4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2.66 9.34l-3.63-3.62 3.63-3.63 3.62 3.62-3.62 3.63z"/></svg>
 									{%- when 'shield' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
 									{%- else -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
 								{%- endcase -%}
-								<span class="font-heading font-semibold text-title text-xs leading-tight">{{ block.settings.text }}</span>
+								<span class="font-heading font-semibold text-secondary text-xs leading-tight">{{ block.settings.text }}</span>
 							{%- endcapture -%}
 							{%- if block.settings.link != blank -%}
 								<a href="{{ block.settings.link }}" class="{{ badge_classes }} hover:opacity-80 transition-opacity" {{ block.shopify_attributes }}>{{ badge_inner }}</a>
@@ -440,14 +446,14 @@
 				{%- endif -%}
 
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
-				<div class="flex flex-col gap-4 border-t border-border pt-4">
+				<div class="flex flex-col gap-4 pt-2">
 					<div>
 						<p class="font-heading font-semibold text-title text-sm">Will it help with my snoring?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">When your airway is open, your body naturally breathes through the nose instead of the mouth — the primary cause of snoring is reduced.</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">Most snoring starts when your mouth falls open at night. The band keeps your nose open, your body switches back to nose breathing, and there is a lot less to hear.</p>
 					</div>
 					<div>
 						<p class="font-heading font-semibold text-title text-sm">Does it fall off during sleep?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">The medical-grade adhesive holds all night, even for restless sleepers. The magnetic band weighs less than 2 grams — most people forget it's there within minutes.</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">No. The tabs use 3M medical-grade adhesive, made to stay on skin for days, not hours. And the magnetic band clips onto the tabs instead of pulling on your skin, so nothing works it loose while you toss and turn. Fresh tabs each night, full strength every night.</p>
 					</div>
 				</div>
 
@@ -464,7 +470,7 @@
 	style="box-shadow: 0 -4px 24px rgba(10,26,52,0.1);"
 >
 	<div class="flex flex-col min-w-0">
-		<p class="font-heading font-semibold text-main text-sm truncate">{{ product.title }}</p>
+		<p class="font-heading font-semibold text-main text-sm truncate">{{ section.settings.hero_heading | default: product.title }}</p>
 		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ current_variant.price | money }}</span>
 	</div>
 	{%- liquid
@@ -474,7 +480,7 @@
 		endif
 	-%}
 	{%- render 'cta-button',
-		label: 'Add to Cart',
+		label: 'Add to cart',
 		variant: 'shop',
 		element: 'button',
 		disabled: sticky_disabled,
@@ -697,7 +703,7 @@
 			"type": "textarea",
 			"id": "product_subtitle",
 			"label": "Product subtitle",
-			"default": "A research-backed magnetic nasal dilator that opens your airways, helps to reduce mouth breathing — so you breathe your best.",
+			"default": "A proven breathing aid, aira's magnetic nasal strip kit. Four band sizes, fresh skin-safe tabs, and your nose held open all night. Less snoring. Deeper sleep. Train harder. Recover faster. Fit guaranteed.",
 			"info": "Shown below the product title. Falls back to product description if blank."
 		},
 		{
@@ -712,20 +718,14 @@
 		},
 		{
 			"type": "header",
-			"content": "Rating"
-		},
-		{
-			"type": "checkbox",
-			"id": "show_rating",
-			"label": "Show star rating",
-			"default": true
+			"content": "Badge above title"
 		},
 		{
 			"type": "text",
-			"id": "review_snippet",
-			"label": "Review snippet quote",
-			"default": "Best sleep purchase I've made",
-			"info": "Short quote from a top review. Only shown when 20+ reviews exist. Leave blank to hide."
+			"id": "pretitle_badge",
+			"label": "Badge text",
+			"default": "30-night guarantee",
+			"info": "Small pill above the product title. Leave blank to hide."
 		},
 		{
 			"type": "header",
@@ -735,13 +735,13 @@
 			"type": "text",
 			"id": "plan_title",
 			"label": "Plan card title",
-			"default": "Kit + Monthly Refills"
+			"default": "The aira kit + monthly refills"
 		},
 		{
 			"type": "text",
 			"id": "plan_badge",
 			"label": "Plan card badge",
-			"default": "Best Value"
+			"default": "Best value"
 		},
 		{
 			"type": "text",
@@ -770,7 +770,7 @@
 			"type": "text",
 			"id": "refill_link_label",
 			"label": "Link text",
-			"default": "Already have a band? Get refills →"
+			"default": "Already have a band? Get refills"
 		},
 		{
 			"type": "url",
@@ -799,7 +799,7 @@
 					"type": "text",
 					"id": "text",
 					"label": "Text",
-					"default": "Research Backed"
+					"default": "Research backed"
 				},
 				{
 					"type": "url",

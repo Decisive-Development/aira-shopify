@@ -21,7 +21,7 @@
         "perk_2": {
           "type": "refill_perk",
           "settings": {
-            "text": "VIP Customer Service"
+            "text": "VIP customer service"
           }
         },
         "perk_3": {
@@ -40,7 +40,7 @@
           "type": "trust_badge",
           "settings": {
             "icon_type": "research",
-            "text": "Research Backed"
+            "text": "Research backed"
           }
         },
         "trust_2": {
@@ -54,7 +54,7 @@
           "type": "trust_badge",
           "settings": {
             "icon_type": "doctor",
-            "text": "Medical-Grade Adhesive"
+            "text": "Medical-grade adhesive"
           }
         },
         "faq_1": {
@@ -68,14 +68,14 @@
           "type": "product_faq",
           "settings": {
             "question": "How to use",
-            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril</li><li><strong>3.</strong> Attach the magnetic band — breathe freely</li></ul>"
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril</li><li><strong>3.</strong> Attach the magnetic band and breathe freely</li></ul>"
           }
         },
         "faq_3": {
           "type": "product_faq",
           "settings": {
-            "question": "Shipping & Returns",
-            "answer": "<p>Free shipping across the GCC. Delivery in 3–5 business days (UAE) or 5–7 days (rest of GCC). 30-day satisfaction guarantee.</p>"
+            "question": "Shipping & returns",
+            "answer": "<p>Free shipping across the GCC. Delivery in 3 to 5 business days (UAE) or 5 to 7 days (rest of GCC). 30-night guarantee.</p>"
           }
         }
       },
@@ -99,11 +99,11 @@
         "rating_text": "",
         "product_subtitle": "Replacement adhesive tabs for your aira magnetic nasal strip. Choose a plan or buy one-time.",
         "plan_badge": "Best value",
-        "plan_title": "Monthly Refill Plan | 30 pairs",
+        "plan_title": "Monthly refill plan | 30 pairs",
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
-        "starter_link_label": "Need an aira kit? Start here →",
+        "starter_link_label": "Need an aira kit? Start here",
         "starter_link_url": "/products/aira-kit"
       }
     },
@@ -114,36 +114,45 @@
           "type": "benefit",
           "settings": {
             "heading": "Snore no more",
-            "body": "<p>Snoring usually starts the moment you slip into mouth breathing. The band holds your nasal passages open so air flows freely through your nose — quieting the vibration at its source. Most partners hear the difference on the very first night.</p>",
-            "image": "shopify://shop_images/IMG_4337.jpg"
+            "body": "<p>Snoring starts in a blocked nose. Air can't get through, your mouth falls open, and the soft tissue behind it starts to rattle. The band holds your nose open, so your mouth stays shut and the noise never begins. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "image": "shopify://shop_images/IMG_4337.jpg",
+            "stat_number": "1 in 3",
+            "stat_finding": "adults snored in a UAE community study.",
+            "stat_source": "AL SHAIKH ET AL., 2018"
           }
         },
         "benefit_2": {
           "type": "benefit",
           "settings": {
-            "heading": "Rhythmic breathing",
-            "body": "<p>Built for athletes first. With your airway fully open, you can breathe deep and steady through your nose under load — a smoother rhythm, more efficient oxygen, and less gasping when the effort peaks.</p>",
-            "image": "shopify://shop_images/cycle_edits-33_websize.webp"
+            "heading": "Stronger under load",
+            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "image": "shopify://shop_images/cycle_edits-33_websize.webp",
+            "stat_number": "22%",
+            "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
+            "stat_source": "DALLAM ET AL., 2018"
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
             "heading": "Deepest sleep",
-            "body": "<p>Nose breathing is the foundation of deep, restorative sleep. With your airway held open all night, you drift into deeper stages, wake less often, and rise genuinely rested.</p>",
-            "image": "shopify://shop_images/photoshoot.jpg"
+            "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
+            "image": "shopify://shop_images/photoshoot.jpg",
+            "stat_number": "2.4x",
+            "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
+            "stat_source": "YOUNG ET AL., 1997"
           }
         }
       },
       "block_order": [
         "benefit_1",
-        "benefit_2",
-        "benefit_3"
+        "benefit_3",
+        "benefit_2"
       ],
       "settings": {
-        "eyebrow": "Why aira",
-        "heading": "Breathe right, day and night.",
-        "subheading": "The strip fixes one thing — a blocked, collapsing airway. That single change is what quiets snoring, steadies your breathing under load, and deepens your sleep."
+        "eyebrow": "WHY AIRA",
+        "heading": "Better nights. Stronger days.",
+        "subheading": "The band does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep."
       }
     },
     "how_to_use": {
@@ -212,29 +221,29 @@
         "feature_1": {
           "type": "feature",
           "settings": {
-            "title": "Instantly Expands",
-            "description": "The band lifts your nasal passages open the second it clicks into place — no waiting, no adjustment period."
+            "title": "Opens on contact",
+            "description": "Pick your size, click the band on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         },
         "feature_2": {
           "type": "feature",
           "settings": {
-            "title": "Won't Collapse",
-            "description": "Magnetic force doesn't fatigue. The hold at 6am is the hold at 11pm."
+            "title": "Holds all night",
+            "description": "Disposable strips pull on your skin until the adhesive quits. Magnets don't tire. The hold you fall asleep with is the hold you wake up with."
           }
         },
         "feature_3": {
           "type": "feature",
           "settings": {
-            "title": "Sweat-Proof. Stays On.",
-            "description": "Originally engineered for motocross. The tabs grip through workouts, humidity, and restless nights."
+            "title": "Built for the Gulf",
+            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "feature_4": {
           "type": "feature",
           "settings": {
-            "title": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, latex-free adhesive that releases without residue."
+            "title": "Kind to skin",
+            "description": "Medical-grade, hypoallergenic, latex-free adhesive. A fresh pair of tabs every night, off in the morning without leaving a trace."
           }
         }
       },
@@ -295,7 +304,7 @@
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
-        "cta_text": "Share your experience — tag @aira.breathing"
+        "cta_text": "Share your experience. Tag @aira.breathing"
       }
     },
     "custom_reviews": {
@@ -328,7 +337,7 @@
           "type": "question",
           "settings": {
             "question": "Do I need to replace the magnetic band too?",
-            "answer": "<p>No — the magnetic band is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
+            "answer": "<p>No. The magnetic band is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
           }
         },
         "faq_4": {
@@ -342,7 +351,7 @@
           "type": "question",
           "settings": {
             "question": "Will any tab size work with my band?",
-            "answer": "<p>Yes — all adhesive tabs are one universal size and work with every band size (L1–L4).</p>"
+            "answer": "<p>Yes. All adhesive tabs are one universal size and work with every band size (L1 to L4).</p>"
           }
         },
         "faq_6": {

@@ -14,7 +14,7 @@
       "settings": {
         "eyebrow": "BREATHE. SLEEP. RECOVER.",
         "heading": "Breathe, better than you thought possible.",
-        "subheading": "Quiet nights, deep sleep, prime preformance and a body that works",
+        "subheading": "Quiet nights, deep sleep, prime performance and a body that works.",
         "button_label": "Get my kit",
         "button_url": "/products/aira-kit",
         "secondary_button_label": "How it works",
@@ -34,7 +34,7 @@
       "settings": {
         "eyebrow": "BEFORE & AFTER",
         "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
+        "subheading": "Drag to compare your airways: without and with the aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
         "before_label": "Without aira",
@@ -51,108 +51,69 @@
       "settings": {
         "eyebrow": "THE AIRA DIFFERENCE",
         "heading": "Most sleep problems are breathing problems.",
-        "body": "<p>The snoring that sends your partner to the sofa. The dry mouth at 6am. The eight hours that somehow weren't enough. They look like different problems — but they usually share one root: your nose closes, and your mouth takes over.</p><p>Keep your airway open through the night, and the dominoes fall the other way. Quieter rooms. Deeper sleep. Easier mornings, faster recovery. Nothing to learn, nothing to remember — it works while you sleep.</p>",
+        "body": "<p>The snoring that sends your partner to the sofa. The dry mouth at 6am. The eight hours that somehow weren't enough. They look like different problems, but they usually share one root: your nose closes, and your mouth takes over.</p><p>Keep your airway open through the night, and the dominoes fall the other way. Quieter rooms. Deeper sleep. Easier mornings, faster recovery. Nothing to learn, nothing to remember: it works while you sleep.</p>",
         "kicker_line": "Fix the breathing. The rest follows.",
         "cta_label": "How it works",
         "cta_url": "/pages/how-it-works"
       }
     },
-    "sleep": {
-      "type": "trust-bar",
+    "why_aira": {
+      "type": "benefits-grid",
       "blocks": {
-        "claim_1": {
+        "card_snoring": {
           "type": "benefit",
           "settings": {
-            "lead": "Snoring",
-            "text": "Most snoring starts when you slip into mouth breathing. Keep the nose open, and the noise loses its source."
+            "heading": "Snore no more",
+            "body": "<p>Snoring starts in a blocked nose. Air can't get through, your mouth falls open, and the soft tissue behind it starts to rattle. The band holds your nose open, so your mouth stays shut and the noise never begins. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "image": "shopify://shop_images/IMG_4337.jpg",
+            "stat_number": "1 in 3",
+            "stat_finding": "adults snored in a UAE community study.",
+            "stat_source": "AL SHAIKH ET AL., 2018",
+            "button_label": "",
+            "button_url": ""
           }
         },
-        "claim_2": {
+        "card_sleep": {
           "type": "benefit",
           "settings": {
-            "lead": "Restless nights",
-            "text": "Nasal breathing carries you into deeper sleep stages with fewer wake-ups."
+            "heading": "Deepest sleep",
+            "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
+            "image": "shopify://shop_images/IMG_4790-2.jpg",
+            "stat_number": "2.4x",
+            "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
+            "stat_source": "YOUNG ET AL., 1997",
+            "button_label": "",
+            "button_url": ""
           }
         },
-        "claim_3": {
+        "card_train": {
           "type": "benefit",
           "settings": {
-            "lead": "Dry mouth",
-            "text": "Wake without the parched mouth and morning fog that mouth breathing leaves behind."
+            "heading": "Stronger under load",
+            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "image": "shopify://shop_images/cycle_edits-33_websize.webp",
+            "stat_number": "22%",
+            "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
+            "stat_source": "DALLAM ET AL., 2018",
+            "button_label": "",
+            "button_url": ""
           }
         }
       },
       "block_order": [
-        "claim_1",
-        "claim_2",
-        "claim_3"
+        "card_snoring",
+        "card_sleep",
+        "card_train"
       ],
       "settings": {
-        "eyebrow": "SLEEP",
-        "heading": "Better rest. Fuller days.",
-        "subheading": "Your airway narrows when you sleep. aira holds it open — so you stay in nose-breathing mode through the night instead of slipping into the mouth breathing that wrecks it. Quieter nights. Real rest.",
-        "layout_direction": "left",
-        "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
-        "cta_secondary_label": "How it works",
-        "cta_secondary_url": "/pages/how-it-works",
-        "stat_value": "XX%",
-        "stat_label": "[pending]",
-        "stat_supporting": "[pending — one sourced sleep / nasal-breathing statistic, same structure as TRAIN's Dallam card]",
-        "stat_footnote": "[Author et al., year]",
-        "stat_footnote_url": "",
-        "image_desktop": "shopify://shop_images/IMG_4337.jpg",
-        "image_caption": "",
-        "image_marker": ""
-      }
-    },
-    "train": {
-      "type": "trust-bar",
-      "blocks": {
-        "benefit_1": {
-          "type": "benefit",
-          "settings": {
-            "lead": "",
-            "text": "Easier endurance — An open airway means less breathing effort on long, steady efforts."
-          }
-        },
-        "benefit_2": {
-          "type": "benefit",
-          "settings": {
-            "lead": "",
-            "text": "Cleaner air in — Your nose filters, warms and humidifies every breath. Your mouth doesn't."
-          }
-        },
-        "benefit_3": {
-          "type": "benefit",
-          "settings": {
-            "lead": "",
-            "text": "Calmer recovery — Nasal breathing helps bring heart rate and breathing back down between efforts."
-          }
-        }
-      },
-      "block_order": [
-        "benefit_1",
-        "benefit_2",
-        "benefit_3"
-      ],
-      "settings": {
-        "eyebrow": "TRAIN",
-        "heading": "More air. Less effort.",
-        "subheading": "aira holds your nasal passages open so you breathe deeper through your nose — the way your body is built to work under load. More efficient airflow, less wasted energy, every session.",
-        "layout_direction": "right",
-        "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
+        "eyebrow": "WHY AIRA",
+        "heading": "Better nights. Stronger days.",
+        "subheading": "The band does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep.",
+        "background_color": "#FAFAFA",
+        "cta_primary_label": "Get my kit",
+        "cta_primary_url": "/products/aira-kit",
         "cta_secondary_label": "The science",
-        "cta_secondary_url": "",
-        "stat_value": "22%",
-        "stat_label": "More efficient breathing",
-        "stat_supporting": "Recreational runners moved the same air with up to 22% less effort after switching to nasal breathing — with no drop in performance.",
-        "stat_footnote": "Dallam et al., 2018",
-        "stat_footnote_url": "https://journals.aiac.org.au/index.php/IJKSS/article/view/4400",
-        "image_desktop": "shopify://shop_images/cycle_edits-33_websize.webp",
-        "image_caption": "Hatta · 04:42",
-        "image_marker": ""
+        "cta_secondary_url": "/pages/backed-by-science"
       }
     },
     "benefits_slider": {
@@ -161,9 +122,10 @@
         "slide_1": {
           "type": "slide",
           "settings": {
+            "video": "shopify://files/videos/0612(1).mp4",
             "image": "shopify://shop_images/design.jpg",
-            "heading": "Instantly Expands",
-            "description": "The band lifts your nasal passages open the second it clicks into place — no waiting, no adjustment period."
+            "heading": "Opens on contact",
+            "description": "Pick your size, click the band on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         },
         "slide_3": {
@@ -171,32 +133,32 @@
           "settings": {
             "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
             "image": "shopify://shop_images/photoshoot.jpg",
-            "heading": "Won't Collapse",
-            "description": "Magnetic force doesn't fatigue. The hold at 6am is the hold at 11pm."
+            "heading": "Holds all night",
+            "description": "Disposable strips pull on your skin until the adhesive quits. Magnets don't tire. The hold you fall asleep with is the hold you wake up with."
           }
         },
         "slide_2": {
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
-            "heading": "Sweat-Proof. Stays On.",
-            "description": "Originally engineered for motocross. The tabs grip through workouts, humidity, and restless nights."
+            "heading": "Built for the Gulf",
+            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "slide_4": {
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Adhesive_tab.png",
-            "heading": "Skin Safe. Medical Grade.",
-            "description": "Hypoallergenic, latex-free adhesive that releases without residue."
+            "heading": "Kind to skin",
+            "description": "Medical-grade, hypoallergenic, latex-free adhesive. A fresh pair of tabs every night, off in the morning without leaving a trace."
           }
         },
         "slide_5": {
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/photoshoot.jpg",
-            "heading": "Reusable Band",
-            "description": "One band lasts months. You replace only the nightly tabs — less waste, lower cost per night than disposable strips."
+            "heading": "Reusable band",
+            "description": "One band lasts months. You replace only the nightly tabs: less waste, lower cost per night than disposable strips."
           }
         }
       },
@@ -208,9 +170,9 @@
         "slide_5"
       ],
       "settings": {
-        "eyebrow": "Why aira",
+        "eyebrow": "PRODUCT",
         "heading": "Built for better breathing.",
-        "subheading": "Every feature of the aira strip was designed with one goal — to keep your airway open, all night long.",
+        "subheading": "Every feature of the aira strip was designed with one goal: to keep your airway open, all night long.",
         "heading_size": "md",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -308,7 +270,7 @@
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "handle": "@aira.breathing",
-        "cta_text": "Share your experience — tag @aira.breathing",
+        "cta_text": "Share your experience. Tag @aira.breathing",
         "theme": "light",
         "shop_cta_label": "",
         "shop_cta_url": ""
@@ -331,56 +293,42 @@
           "type": "question",
           "settings": {
             "question": "How does the aira nasal strip work?",
-            "answer": "<p>aira uses a lightweight magnetic band that gently opens your nasal passages from the outside. Two small adhesive tabs sit on either side of your nose, and the magnetic bridge connects them - creating a soft, outward pull that widens your airway instantly. <br/>No drugs, no intrusion, no discomfort. Just cleaner, more confortable breathing from the moment you put it on.</p>"
+            "answer": "<p>Two small adhesive tabs sit just above your nostrils. The magnetic band connects them and gently lifts your airway open. Nothing inside your nose, no drugs, and the hold at 6am is the hold at 11pm.</p>"
           }
         },
         "faq_2": {
           "type": "question",
           "settings": {
-            "question": "Is it comfortable to sleep with and what if it falls off during the night?",
-            "answer": "<p>Most people forget they're wearing it within minutes. The strip weighs <strong>less than 2 grams</strong>, sits gently on the outside of your nose, and leaves no residue when you take it off in the morning. </p><p>The adhesive tabs are <strong>medical-grade </strong>and designed to stay put all night - even if you move around in your sleep. On the rare occasion one shifts, it simply means your skin needs to be a little drier or cleaner before application. Your <em>aira kit </em>includes a simple application guide to help you get it right from night one.</p>"
+            "question": "Is it comfortable to sleep with, and what if it falls off?",
+            "answer": "<p>The band weighs less than 2 grams, and most people forget it's on within minutes. The medical-grade tabs hold all night and peel off clean. Either way, the 30-night guarantee covers you.</p>"
           }
         },
         "faq_3": {
           "type": "question",
           "settings": {
             "question": "How long does the band last?",
-            "answer": "<p>The magnetic band is reusable and built to last for months. You only need to replace the adhesive tabs, which come in <strong>packs of 30, 60, or 90 pairs</strong>. One tab lasts for a single use (one night). Unlike single-use strips, aira was built to last.</p>"
+            "answer": "<p>The band is reusable and built to last. You only replace the adhesive tabs: 1 pair per night, in packs from 30 to 360 pairs.</p>"
           }
         },
         "faq_4": {
           "type": "question",
           "settings": {
             "question": "Will it help with my snoring?",
-            "answer": "<p>When your nasal passages are open, your body naturally breathes through your nose rather than your mouth, and it's that shift that reduces the soft-tissue vibration behind most snoring problems. Our customers regularly tell us their partners noticed the difference before they did. That says more than any number could!</p>"
-          }
-        },
-        "question_EeFcrc": {
-          "type": "question",
-          "settings": {
-            "question": "How is aira different from regular adhesive nasal strips?",
-            "answer": "<p>Traditional disposable nasal strips rely entirely on adhesive to pull your nose open, which means they weaken as the night goes on, often peel at the edges, and can<strong> irritate sensitive skin.</strong> aira works differently. The magnetic band does the structural work of keeping your airway open, while the tabs maintain it in place. The result is a stronger, more consistent opening that lasts all night and a gentler experience for your skin. </p>"
-          }
-        },
-        "question_LR3ReA": {
-          "type": "question",
-          "settings": {
-            "question": "How do I know which size is right for me?",
-            "answer": "<p>We've made finding your size easy. The aira kit includes four bands sizes: <strong>Level 1 · Level 2 · Level 3 · Level 4,</strong> so you can find your perfect fit from the start. A simple way to check: the band should sit with its ends resting gently on the outer edges of your nostrils, without pinching or pressing them closed. Some people also use different sizes depending on the moment, a slightly larger band during exercise for maximum airflow, and a more fitted size for sleep. </p>"
+            "answer": "<p>Most snoring is mouth breathing. Open the nose and you switch back to nasal breathing, which quiets the vibration behind the noise. Partners usually notice before you do.</p>"
           }
         },
         "faq_5": {
           "type": "question",
           "settings": {
             "question": "Can I use it during exercise?",
-            "answer": "<p>Absolutely, and honestly, this is where aira shines best The adhesive tabs are sweat-resistant and engineered to stay in place through high-intensity workouts, runs, cycling sessions, or even pilates. Nasal breathing during exercise helps regulate your heart rate, improve oxygen uptake, and reduce breathlessness. Whether you're training or winding down, aira works with your body, not against it.</p>"
+            "answer": "<p>Yes, this is where aira shines. The tabs are sweat-proof and hold through hard sessions and Gulf heat. In one study, runners needed 22% less air for the same pace (Dallam et al., 2018).</p>"
           }
         },
         "faq_6": {
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes, we ship across the GCC, including the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive within 3–5 business days, and free shipping is available above a certain order value. We're extremely proud to be part of the wellness journey of customers across the region.</p>"
+            "answer": "<p>Yes. Free shipping across the GCC, arriving within 3 to 5 business days.</p>"
           }
         }
       },
@@ -389,8 +337,6 @@
         "faq_2",
         "faq_3",
         "faq_4",
-        "question_EeFcrc",
-        "question_LR3ReA",
         "faq_5",
         "faq_6"
       ],
@@ -410,13 +356,13 @@
         "item_1": {
           "type": "item",
           "settings": {
-            "text": "4 magnetic bands — L1 to L4, find your exact fit"
+            "text": "4 magnetic bands (L1 to L4), find your exact fit"
           }
         },
         "item_2": {
           "type": "item",
           "settings": {
-            "text": "30 adhesive tab pairs — a full month, one fresh pair per night"
+            "text": "30 adhesive tab pairs: a full month, one fresh pair per night"
           }
         },
         "item_3": {
@@ -428,7 +374,7 @@
         "item_4": {
           "type": "item",
           "settings": {
-            "text": "30-day satisfaction guarantee — sleep on it for a month, decide after"
+            "text": "30-night guarantee: sleep on it for a month, decide after"
           }
         }
       },
@@ -441,7 +387,7 @@
       "settings": {
         "eyebrow": "THE AIRA KIT",
         "heading": "Everything you need for night one.",
-        "intro": "One reusable magnetic band won't fit every face the same way — so we don't make you guess. Every kit ships with all four band sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes.",
+        "intro": "One reusable magnetic band won't fit every face the same way, so we don't make you guess. Every kit ships with all four band sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes.",
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
@@ -454,8 +400,7 @@
     "hero",
     "before_after_slider",
     "mechanism",
-    "sleep",
-    "train",
+    "why_aira",
     "benefits_slider",
     "how_to_use",
     "ugc_gallery",
