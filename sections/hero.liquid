@@ -37,6 +37,17 @@
 	endif
 %}
 
+{%- liquid
+	assign hl_text = section.settings.heading
+	assign hl_accent = section.settings.heading_accent
+	if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
+		assign hl_accent_wrapped = '<span class="text-tertiary-light">' | append: hl_accent | append: '</span>'
+		assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
+	else
+		assign hl_html = hl_text
+	endif
+-%}
+
 <section
 	data-hero
 	class="relative overflow-hidden w-full {% if section.settings.full_height %}min-h-screen flex items-end md:items-center{% endif %}"
@@ -112,14 +123,14 @@
 			<div class="flex flex-col items-start text-left gap-6 max-w-2xl">
 
 				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-sm font-semibold uppercase tracking-widest text-tertiary-light">
+					<p class="text-sm font-semibold uppercase tracking-widest text-secondary">
 						{{ section.settings.eyebrow }}
 					</p>
 				{%- endif -%}
 
 				{%- if section.settings.heading != blank -%}
-					<h1 class="font-heading heading-weight text-[42px] md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-secondary">
-						{{ section.settings.heading }}
+					<h1 class="font-heading heading-weight text-[36px] md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-secondary">
+						{{ hl_html }}
 					</h1>
 				{%- endif -%}
 
@@ -205,6 +216,13 @@
 			"id": "heading",
 			"label": "Heading",
 			"default": "Rest starts with your breath."
+		},
+		{
+			"type": "text",
+			"id": "heading_accent",
+			"label": "Heading accent phrase",
+			"info": "Phrase from the heading to highlight in light blue (must match exactly).",
+			"default": "Life changing breathing"
 		},
 		{
 			"type": "textarea",

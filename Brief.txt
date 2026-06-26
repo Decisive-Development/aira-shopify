@@ -1,193 +1,50 @@
-AIRA — SHOP PAGE REVISIONS BRIEF
-Source: Senior designer feedback (June 2026) + mentor reconciliation against locked AIRA standards
-Page: /products/aira-kit (canonical handle aira-kit) — the Shop/Kit PDP
-Audience: VSC (dev / Shopify Liquid) + claude design (visual)
-Status: Revision pass on the existing shop page. Implement structural items first, design/copy fill-in second.
+Job list
 
-=====================================================================
-0. NON-NEGOTIABLES — read before touching anything
-=====================================================================
-These OVERRIDE the designer's wording wherever they conflict. The designer
-doesn't have our locked standards; we do.
+without and with the aira nasal strip. > with and without
 
-- CLAIMS: Every claim must be mechanically true, sourced, or user-reported.
-  NOTHING invented. NO fake review counts ("1,200+ breathers"), NO fake
-  testimonial totals ("10,000+ people"), NO "clinically designed".
-  Use: real beta quotes (collect this week) + the sourced UAE snoring stat.
-- PLAN DEFAULT: One-time purchase stays DEFAULT-selected at launch.
-  Do NOT promote Subscribe & Save to priority/default (designer suggested
-  this; we've decided against it for an unknown brand. Revisit with data).
-- UNITS: pairs, never tabs (1 pair = 1 night). Sizes L1 to L4.
-- CTA: "Add to cart" (this is a PDP). Sentence case. ("Get my kit" is the
-  HOMEPAGE CTA only.)
-- BRAND CASING: "aira" lowercase always, even sentence-initial.
-- GUARANTEE: 30-NIGHT guarantee. Say "nights", never "days".
-- SHIPPING: "Free shipping across the GCC." + delivery timeframe.
-  >> TOM TO CONFIRM real working-day range before this ships. <<
-- COPY RULES: UK English. Sentence case everywhere incl. buttons/badges.
-  ALL CAPS only for eyebrows. NO em-dashes, hyphens-as-pivots, or arrows
-  in customer copy (reads as AI). Read-aloud test is law.
-- SKU: Kit ships 15 pairs. "What's in the box" must reflect the real
-  count. >> TOM TO CONFIRM 15 vs 30 before "month" language is used. <<
 
-=====================================================================
-1. HERO — title clarity + gallery (HIGHEST IMPACT)
-=====================================================================
-Problem (designer, correct): "The aira kit" tells a cold visitor nothing.
-Could be a laundry product. Cold ad/search traffic needs to know what it is
-in two seconds.
+The stacking cards - adults snored in a UAE community study.this line of text under the stat should be bigger, semi bold and use our brand dark blue. 
+The link below should be clickable
+Make the copy text below the line 2px smaller
 
-COPY — new hero stack:
-  Eyebrow (ALL CAPS ok):   MAGNETIC NASAL STRIPS
-  Headline:                Breathe better. Sleep deeper. Train harder.
-  Product descriptor:      aira magnetic nasal strips. Reusable, adjustable
-                           and built to open your airway all night and
-                           through every session.
-  (Descriptor is the "what is it" line the designer asked for. Keep it plain.
-   SEO note: works the locked keyword "magnetic nasal strips" / "nasal
-   strips UAE" naturally.)
+Copy changes:
 
-DESIGN (claude design):
-- Shift hero to ~60/40 imagery-to-buy-panel ratio (designer). Gallery is
-  too small right now.
-- Gallery shot list (physical product needs to be pictured owned):
-    1. 3D render close-up of the device (hero or second slot)
-    2. What's in the box / kit laid out
-    3. Person wearing it, multiple angles
-    4. Size comparison (in-hand or on-face scale)
-    5. Night-time / in-bed usage
-    6. Gym / running usage
-- Keep navy bg-main + light-blue radial halo family (matches /pages/our-story).
+adults snored in a UAE community study. > adults in the UAE snore nightly.
 
-DEV (VSC):
-- Restructure hero section grid to 60/40. Use existing Tailwind utilities
-  only (no new utility classes). Gallery = existing theme media/gallery
-  pattern; thumbnails or swipe on mobile.
+Snoring starts in a blocked nose. Air can't get through, your mouth falls open, and the soft tissue behind it starts to rattle. The band holds your nose open, so your mouth stays shut and the noise never begins. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997). >
+Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tounge gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).
 
-=====================================================================
-2. BUY PANEL — benefit summary, plan cards, FAQ anchor
-=====================================================================
-DESIGN + COPY — benefit summary directly ABOVE the purchase controls:
 
-  aira kit
-  [star row]  >> NO numeric review count until we have real reviews. <<
-              Launch option: drop the rating row entirely, OR show a single
-              sourced trust line instead (see below). Do NOT fabricate.
+Deep, restorative sleep runs on nose breathing. Held open all night, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006). >
 
-  Trust line (sourced, honest):  A UAE study found 1 in 3 adults snore.
-                                 (Al Shaikh 2018 — say "a UAE study", not
-                                 "UAE adults".)
+Deep, restorative sleep runs on nose breathing. Held open all night, oxygen intake is high, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).
 
-  Benefit ticks:
-    ✓ Opens nasal airflow instantly
-    ✓ Reusable and adjustable
-    ✓ Comfortable enough for all-night wear
-    ✓ Designed for sleep and training
-    ✓ 30-night guarantee
 
-PLAN SELECTOR — use enhanced radio cards (designer Option 3). NOT tabs
-(our "pairs, not tabs" + cleaner-default reasoning), NOT subscribe-priority.
 
-  ( ◉ )  One-time purchase            <-- DEFAULT SELECTED
-         DHS 0.00 today
-         15 pairs. No commitment.
+Every feature of the aira strip was designed with one goal: to keep your airway open, all night long. >
+The aira strip was designed with one goal: to keep your airway open, all day or all night long.
 
-  ( ○ )  Kit + monthly refills
-         DHS 0.00 / month
-         Save 20% on refills. Delivered monthly. Cancel anytime.
 
-  CTA:   Add to cart
+Holds all night copy > Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing. 
 
-  Note: visual polish is the upgrade here vs the current cards — clearer
-  selected state, more enticing styling. Logic/default unchanged.
+Reusable band copy > One band lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly.
 
-GUARANTEE — expand the line beneath the CTA:
-  Try aira risk free.
-  Not the right fit? Return within 30 nights.
 
-DELIVERY — make a bigger deal of free shipping, add timeframe:
-  Free shipping across the GCC.
-  Arrives in [X to Y working days].   >> TOM TO CONFIRM RANGE <<
+3 simple steps:
 
-FAQ ANCHOR (designer, correct): add a small "Questions? Read the FAQ" link
-near the buy panel, anchoring to /pages/faq.
+Peel the adhesive tab from its backing. > Peel the adhesive tab from its backing. Avoid touching the glue too much. 
+Place a tab on each side of your nose, just above the nostril. > Place a tab on each side of your nose, just above the nostril. (Think, where I would pinch my nose)
 
-DEV (VSC):
-- Radio cards bind to existing variant/selling-plan logic. One-time = default
-  variant. Subscribe = Shopify subscription selling plan (Klaviyo/refill flow).
-- Star/trust row is a conditional block — easy to swap once real reviews exist.
+Attach the magnetic band and breathe freely all night. > Attach the magnetic band and exeperience effortless breathing.
 
-=====================================================================
-3. "See the difference for yourself" section — add CTA
-=====================================================================
-Designer: section is strong but has no CTA.
-ADD a secondary CTA at the section end. Copy: "See the difference" linking to
-the buy panel (anchor scroll) or add-to-cart. Keep it secondary in styling so
-the primary buy panel stays the focus.
 
-=====================================================================
-4. "Why aira" (benefits) — stat hierarchy
-=====================================================================
-Designer: move the stats ABOVE the paragraph + title, make them bold, bump
-size slightly for impact.
-DESIGN: stat-first layout. Big bold figure, supporting line beneath.
-COPY: only sourced/true stats. UK study snoring stat is fair game. Do NOT use
-the Dallam "22%" figure (downgraded — not supported by the paper).
+Got questions? We've got answers. > Common questions, answered.
 
-=====================================================================
-5. "See it in action" (testimonials heading) — honest reframe
-=====================================================================
-Designer suggested: "Join 10,000+ people breathing better every day."
->> REJECTED — fabricated count. <<
-Use instead (honest, until we have real numbers):
-  "From our first wave of breathers"  OR  "What early aira users are saying"
-Swap to a real number only once we can substantiate it.
+Everything you need for night one. > Everything you need to improve your life.
 
-=====================================================================
-6. "Reviews" section — visual hierarchy
-=====================================================================
-Designer (correct, cheap win):
-- Bigger stars under the main title.
-- Increase review card title size; establish hierarchy (title > body).
-- Right now everything is the same size and reads flat.
-DESIGN only. Populate with REAL beta quotes — collect this week. No
-placeholders shipped as if real.
+30 adhesive tab pairs: a full month, one fresh pair per night > per use.
 
-=====================================================================
-7. NEW — comparison section (designer addition, adopt)
-=====================================================================
-Adds the category wedge: why buy aira over an ordinary nasal strip.
-Frame as aira (magnetic) vs ordinary adhesive nasal strips.
+Free shipping across the GCC. > Free shipping in the UAE.
 
-  Feature                         aira      Ordinary nasal strip
-  Reusable                         ✓               ✕
-  Adjustable airflow               ✓               ✕
-  No adhesive residue (magnetic)   ✓               ✕
-  Sleep + training                 ✓             Limited
-  Premium comfort                  ✓               ✕
-
-Placement note: this is a NEW section. Per the sales-page philosophy
-(resist bloat), site it where it earns its place — ideally just before or
-after the buy/benefits block where the buying decision happens. On a PDP a
-comparison block is justified; keep it tight, table only, no padding bloat.
-
-DEV (VSC): build as a simple responsive table/grid, existing Tailwind
-classes, stacks cleanly on mobile.
-
-=====================================================================
-BUILD ORDER
-=====================================================================
-1. Hero title/descriptor copy + 60/40 restructure (free, biggest lift)
-2. Buy panel: benefit ticks, radio-card polish, guarantee + delivery copy,
-   FAQ anchor (one-time stays default)
-3. Comparison section (free, differentiates us)
-4. Section CTA ("See the difference"), Why-aira stat-first, Reviews hierarchy
-   (cheap polish)
-5. Imagery overhaul: 3D render + lifestyle set (the slow/cost item — brief
-   the shoot/render separately)
-
-OPEN ITEMS FOR TOM:
-- [ ] Confirm delivery working-day range for GCC.
-- [ ] Confirm kit pair count (15 vs 30) before any "month" language.
-- [ ] Approve dropping the rating row at launch vs a sourced trust line.
-- [ ] Line up real beta quotes (testimonials + reviews sections need them).
+Join the aira list for early access to new drops, breathing science worth reading, and 10% off your first kit. > 
+Join the aira list for early access to new drops, giveaways, exclusive offers and 10% off your first kit.

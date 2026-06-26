@@ -1,0 +1,267 @@
+{% comment %}
+  ══════════════════════════════════════════════════════════════
+  Section: comparison-table (new 2026-06-21, Kit PDP shop-page brief)
+  COMPARISON — aira (magnetic) vs an ordinary adhesive nasal strip
+  The category wedge: why buy aira over a disposable strip.
+  Tight, table only, no padding bloat. Stacks cleanly on mobile.
+  Rows are hardcoded (brand-stable) so the section survives a
+  theme-editor JSON revert. Labels are editable in the theme editor.
+  ══════════════════════════════════════════════════════════════
+{% endcomment %}
+
+{%- assign cmp_bg = section.settings.background_color | default: '#FAFAFA' -%}
+
+<style>
+  #shopify-section-{{ section.id }} .cmp-section {
+    background: {{ cmp_bg }};
+    padding: clamp(48px, 8vw, 96px) 0;
+  }
+  #shopify-section-{{ section.id }} .cmp-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto clamp(28px, 4vw, 44px);
+  }
+  #shopify-section-{{ section.id }} .cmp-eyebrow {
+    font-family: var(--font-heading, 'Satoshi', sans-serif);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--color-highlight, #FF4000);
+    margin: 0 0 14px;
+  }
+  #shopify-section-{{ section.id }} .cmp-title {
+    font-family: var(--font-heading, 'Satoshi', sans-serif);
+    font-weight: 700;
+    font-size: clamp(26px, 3.6vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: var(--color-main, #0A1A34);
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .cmp-sub {
+    font-family: var(--font-body, sans-serif);
+    font-size: clamp(15px, 1.4vw, 17px);
+    line-height: 1.6;
+    color: var(--color-copy, #5C6470);
+    margin: 14px auto 0;
+    max-width: 520px;
+  }
+
+  /* ── Table ── */
+  #shopify-section-{{ section.id }} .cmp-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  #shopify-section-{{ section.id }} .cmp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--color-bg, #fff);
+    border: 1px solid rgba(10, 26, 52, 0.08);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(7, 18, 38, 0.06);
+  }
+  #shopify-section-{{ section.id }} .cmp-table th,
+  #shopify-section-{{ section.id }} .cmp-table td {
+    padding: 15px 14px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(10, 26, 52, 0.07);
+  }
+  #shopify-section-{{ section.id }} .cmp-table tr:last-child th,
+  #shopify-section-{{ section.id }} .cmp-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  /* Feature column — left aligned */
+  #shopify-section-{{ section.id }} .cmp-table .cmp-feature {
+    text-align: left;
+    font-family: var(--font-body, sans-serif);
+    font-size: clamp(13.5px, 1.4vw, 15px);
+    font-weight: 600;
+    color: var(--color-title, #2A3142);
+    width: 50%;
+  }
+  /* Column headers */
+  #shopify-section-{{ section.id }} .cmp-table thead th {
+    font-family: var(--font-heading, 'Satoshi', sans-serif);
+    font-weight: 700;
+    font-size: clamp(14px, 1.5vw, 17px);
+    color: var(--color-main, #0A1A34);
+    background: rgba(10, 26, 52, 0.03);
+  }
+  #shopify-section-{{ section.id }} .cmp-table thead th.cmp-feature {
+    color: var(--color-copy, #5C6470);
+    font-family: var(--font-body, sans-serif);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  /* aira column — highlighted */
+  #shopify-section-{{ section.id }} .cmp-table .cmp-aira {
+    background: rgba(255, 64, 0, 0.05);
+    width: 25%;
+  }
+  #shopify-section-{{ section.id }} .cmp-table thead th.cmp-aira {
+    background: rgba(255, 64, 0, 0.10);
+    color: var(--color-highlight, #FF4000);
+  }
+  #shopify-section-{{ section.id }} .cmp-table .cmp-other {
+    width: 25%;
+  }
+  /* Icons + text values */
+  #shopify-section-{{ section.id }} .cmp-yes svg { color: var(--color-highlight-green, #28965A); }
+  #shopify-section-{{ section.id }} .cmp-no svg { color: rgba(10, 26, 52, 0.25); }
+  #shopify-section-{{ section.id }} .cmp-table svg {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+  }
+  #shopify-section-{{ section.id }} .cmp-limited {
+    font-family: var(--font-body, sans-serif);
+    font-size: 12.5px;
+    color: var(--color-copy, #5C6470);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 600px) {
+    #shopify-section-{{ section.id }} .cmp-table th,
+    #shopify-section-{{ section.id }} .cmp-table td {
+      padding: 13px 8px;
+    }
+    #shopify-section-{{ section.id }} .cmp-table svg { width: 19px; height: 19px; }
+  }
+</style>
+
+<div class="cmp-section">
+  <div class="container-contained">
+
+    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="cmp-head">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="cmp-eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="cmp-title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p class="cmp-sub">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- liquid
+      assign col_aira = section.settings.col_aira | default: 'aira'
+      assign col_other = section.settings.col_other | default: 'Ordinary nasal strip'
+    -%}
+
+    {%- capture icon_yes -%}<span class="cmp-yes"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></svg><span class="sr-only">Yes</span></span>{%- endcapture -%}
+    {%- capture icon_no -%}<span class="cmp-no"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg><span class="sr-only">No</span></span>{%- endcapture -%}
+
+    <div class="cmp-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th scope="col" class="cmp-feature">{{ section.settings.col_feature }}</th>
+            <th scope="col" class="cmp-aira">{{ col_aira }}</th>
+            <th scope="col" class="cmp-other">{{ col_other }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="cmp-feature">Reusable</th>
+            <td class="cmp-aira">{{ icon_yes }}</td>
+            <td class="cmp-other">{{ icon_no }}</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-feature">Adjustable airflow</th>
+            <td class="cmp-aira">{{ icon_yes }}</td>
+            <td class="cmp-other">{{ icon_no }}</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-feature">No adhesive residue (magnetic)</th>
+            <td class="cmp-aira">{{ icon_yes }}</td>
+            <td class="cmp-other">{{ icon_no }}</td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-feature">Sleep and training</th>
+            <td class="cmp-aira">{{ icon_yes }}</td>
+            <td class="cmp-other"><span class="cmp-limited">Limited</span></td>
+          </tr>
+          <tr>
+            <th scope="row" class="cmp-feature">Premium comfort</th>
+            <td class="cmp-aira">{{ icon_yes }}</td>
+            <td class="cmp-other">{{ icon_no }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Comparison Table",
+  "tag": "section",
+  "class": "shopify-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The aira difference"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Not your average nasal strip."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Magnetic hold, reusable, adjustable. Here's how aira compares to an ordinary adhesive strip."
+    },
+    {
+      "type": "header",
+      "content": "Column labels"
+    },
+    {
+      "type": "text",
+      "id": "col_feature",
+      "label": "Feature column label",
+      "default": "Feature"
+    },
+    {
+      "type": "text",
+      "id": "col_aira",
+      "label": "aira column label",
+      "default": "aira"
+    },
+    {
+      "type": "text",
+      "id": "col_other",
+      "label": "Comparison column label",
+      "default": "Ordinary nasal strip"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#FAFAFA"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison Table"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

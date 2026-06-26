@@ -75,7 +75,7 @@
           "type": "product_faq",
           "settings": {
             "question": "Shipping & returns",
-            "answer": "<p>Free shipping across the GCC. Delivery in 3 to 5 business days (UAE) or 5 to 7 days (rest of GCC). 30-night guarantee.</p>"
+            "answer": "<p>Free shipping in the UAE. Delivery in 3 to 5 business days (UAE) or 5 to 7 days (rest of GCC). 30-night guarantee.</p>"
           }
         }
       },
@@ -114,11 +114,12 @@
           "type": "benefit",
           "settings": {
             "heading": "Snore no more",
-            "body": "<p>Snoring starts in a blocked nose. Air can't get through, your mouth falls open, and the soft tissue behind it starts to rattle. The band holds your nose open, so your mouth stays shut and the noise never begins. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
             "image": "shopify://shop_images/IMG_4337.jpg",
             "stat_number": "1 in 3",
-            "stat_finding": "adults snored in a UAE community study.",
-            "stat_source": "AL SHAIKH ET AL., 2018"
+            "stat_finding": "adults in the UAE snore nightly.",
+            "stat_source": "AL SHAIKH ET AL., 2018",
+            "stat_source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6073781/"
           }
         },
         "benefit_2": {
@@ -129,18 +130,20 @@
             "image": "shopify://shop_images/cycle_edits-33_websize.webp",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
-            "stat_source": "DALLAM ET AL., 2018"
+            "stat_source": "DALLAM ET AL., 2018",
+            "stat_source_url": "https://doi.org/10.7575/aiac.ijkss.v.6n.2p.22"
           }
         },
         "benefit_3": {
           "type": "benefit",
           "settings": {
             "heading": "Deepest sleep",
-            "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
+            "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, oxygen intake is high, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
             "image": "shopify://shop_images/photoshoot.jpg",
             "stat_number": "2.4x",
             "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
-            "stat_source": "YOUNG ET AL., 1997"
+            "stat_source": "YOUNG ET AL., 1997",
+            "stat_source_url": "https://www.jacionline.org/article/S0091-6749(97)70124-6/fulltext"
           }
         }
       },
@@ -164,7 +167,7 @@
             "step_number": "01",
             "step_image": "shopify://shop_images/Application-2-cropped.jpg",
             "step_heading": "Peel",
-            "step_description": "Peel the adhesive tab from its backing."
+            "step_description": "Peel the adhesive tab from its backing. Avoid touching the glue too much."
           }
         },
         "step_2": {
@@ -173,7 +176,7 @@
             "step_number": "02",
             "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
-            "step_description": "Place a tab on each side of your nose, just above the nostril."
+            "step_description": "Place a tab on each side of your nose, just above the nostril. (Think, where I would pinch my nose)"
           }
         },
         "step_3": {
@@ -182,7 +185,7 @@
             "step_number": "03",
             "step_image": "shopify://shop_images/Application-4-cropped.jpg",
             "step_heading": "Breathe",
-            "step_description": "Attach the magnetic band and breathe freely all night."
+            "step_description": "Attach the magnetic band and experience effortless breathing."
           }
         }
       },
@@ -203,7 +206,7 @@
       "settings": {
         "eyebrow": "Before & After",
         "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways - without and with the aira nasal strip.",
+        "subheading": "Drag to compare your airways: with and without the aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
         "before_label": "Without aira",
@@ -215,47 +218,67 @@
         "padding_vertical": "lg"
       }
     },
-    "product_features_grid": {
-      "type": "product-features-grid",
+    "benefits_slider": {
+      "type": "benefits-slider",
       "blocks": {
-        "feature_1": {
-          "type": "feature",
+        "slide_1": {
+          "type": "slide",
           "settings": {
-            "title": "Opens on contact",
+            "video": "shopify://files/videos/0612(1).mp4",
+            "heading": "Opens on contact",
             "description": "Pick your size, click the band on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         },
-        "feature_2": {
-          "type": "feature",
+        "slide_3": {
+          "type": "slide",
           "settings": {
-            "title": "Holds all night",
-            "description": "Disposable strips pull on your skin until the adhesive quits. Magnets don't tire. The hold you fall asleep with is the hold you wake up with."
+            "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
+            "heading": "Holds all night",
+            "description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
           }
         },
-        "feature_3": {
-          "type": "feature",
+        "slide_2": {
+          "type": "slide",
           "settings": {
-            "title": "Built for the Gulf",
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
+            "heading": "Built for the Gulf",
             "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
-        "feature_4": {
-          "type": "feature",
+        "slide_4": {
+          "type": "slide",
           "settings": {
-            "title": "Kind to skin",
+            "image": "shopify://shop_images/Adhesive_tab.png",
+            "heading": "Kind to skin",
             "description": "Medical-grade, hypoallergenic, latex-free adhesive. A fresh pair of tabs every night, off in the morning without leaving a trace."
+          }
+        },
+        "slide_5": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Reusable_band.png",
+            "heading": "Reusable band",
+            "description": "One band lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
           }
         }
       },
       "block_order": [
-        "feature_1",
-        "feature_2",
-        "feature_3",
-        "feature_4"
+        "slide_1",
+        "slide_3",
+        "slide_2",
+        "slide_4",
+        "slide_5"
       ],
       "settings": {
-        "eyebrow": "Product",
-        "heading": "Built for better breathing."
+        "eyebrow": "PRODUCT",
+        "heading": "Built for better breathing.",
+        "subheading": "The aira strip was designed with one goal: to keep your airway open, all day or all night long.",
+        "heading_size": "md",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "ugc_gallery": {
@@ -358,7 +381,7 @@
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping across the GCC.</p>"
+            "answer": "<p>Yes. Free shipping in the UAE.</p>"
           }
         }
       },
@@ -372,7 +395,7 @@
       ],
       "settings": {
         "eyebrow": "FAQ",
-        "heading": "Got questions? We've got answers.",
+        "heading": "Common questions, answered.",
         "subheading": "",
         "heading_size": "md",
         "background_color": "#fafafa",
@@ -396,7 +419,7 @@
     "benefits_grid",
     "how_to_use",
     "before_after_slider",
-    "product_features_grid",
+    "benefits_slider",
     "ugc_gallery",
     "custom_reviews",
     "faq",

@@ -56,6 +56,9 @@
 				{%- if section.settings.heading != blank -%}
 					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight {{ heading_color }}">{{ section.settings.heading }}</h2>
 				{%- endif -%}
+				{%- if section.settings.subheading != blank -%}
+					<p class="text-base md:text-lg {{ cta_color }} max-w-xl mx-auto mt-1">{{ section.settings.subheading }}</p>
+				{%- endif -%}
 			</div>
 		{%- endif -%}
 
@@ -83,7 +86,7 @@
 								<p class="text-white text-sm md:text-base font-medium leading-snug">"{{ block.settings.quote }}"</p>
 							{%- endif -%}
 							{%- if block.settings.name != blank -%}
-								<p class="text-white/70 text-xs mt-1">— {{ block.settings.name }}</p>
+								<p class="text-white/70 text-xs mt-1">{{ block.settings.name }}</p>
 							{%- endif -%}
 						</div>
 					{%- endif -%}
@@ -228,6 +231,12 @@
 		},
 		{
 			"type": "text",
+			"id": "subheading",
+			"label": "Subheading",
+			"info": "Honest framing line. No fabricated counts until real numbers exist. Leave blank to hide."
+		},
+		{
+			"type": "text",
 			"id": "handle",
 			"label": "Handle",
 			"default": "@aira.breathing"
@@ -236,7 +245,7 @@
 			"type": "text",
 			"id": "cta_text",
 			"label": "Bottom text",
-			"default": "Share your experience — tag @aira.breathing"
+			"default": "Share your experience. Tag @aira.breathing"
 		},
 		{
 			"type": "select",

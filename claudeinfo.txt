@@ -353,7 +353,7 @@ Full-width problem-vs-solution stats section over a background image.
 ## Products
 
 Two products currently:
-- **aira aira kit** — includes 4 sized nasal strips (L1/L2/L3/L4) + 15 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
+- **aira aira kit** — includes 4 sized nasal strips (L1/L2/L3/L4) + 30 adhesive tabs + fit guide. Variants: Colour (Black, Beige).
 - **aira Refill Tabs** — replacement adhesive tabs. Variants: Pack size (30, 60, 90). Will have subscription/selling plan for auto-delivery at a discount.
 
 Navigation: "Shop" links to /products/aira-starter-kit, "Refills" links to /products/aira-refill-tabs (direct product pages, not collections).

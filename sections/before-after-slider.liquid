@@ -174,11 +174,37 @@
 
 		</div>
 
+		{%- comment -%} Secondary CTA — drives to the buy panel (kept secondary so the buy panel stays the focus) {%- endcomment -%}
+		{%- if section.settings.cta_label != blank -%}
+			<div class="mt-8 md:mt-10 flex justify-center">
+				{%- render 'cta-button',
+					label: section.settings.cta_label,
+					url: section.settings.cta_url | default: '#buy',
+					variant: 'outline',
+					surface: 'light',
+					size: 'lg',
+					extra_classes: 'before-after-scroll-cta'
+				-%}
+			</div>
+		{%- endif -%}
+
 	</div>
 </section>
 
 <script>
 	(function () {
+		/* Smooth-scroll the secondary CTA to its in-page anchor (e.g. #buy) */
+		document.querySelectorAll('.before-after-scroll-cta').forEach(function (link) {
+			link.addEventListener('click', function (e) {
+				var href = link.getAttribute('href') || '';
+				if (href.charAt(0) !== '#') return;
+				var target = document.querySelector(href);
+				if (!target) return;
+				e.preventDefault();
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			});
+		});
+
 		document.querySelectorAll('[data-comparison-slider]').forEach(function (slider) {
 			var beforePane = slider.querySelector('[data-before-pane]');
 			var divider    = slider.querySelector('[data-divider]');
@@ -251,7 +277,7 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Drag to compare your airways — without and with the aira nasal strip."
+			"default": "Drag to compare your airways: with and without the aira nasal strip."
 		},
 		{
 			"type": "select",
@@ -274,6 +300,22 @@
 				{ "value": "lg", "label": "Large" }
 			],
 			"default": "md"
+		},
+		{
+			"type": "header",
+			"content": "Secondary CTA (optional)"
+		},
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "Button label",
+			"info": "Leave blank to hide. Kept secondary in styling so the buy panel stays the focus."
+		},
+		{
+			"type": "url",
+			"id": "cta_url",
+			"label": "Button link",
+			"info": "Defaults to #buy (the buy panel) when blank."
 		},
 		{
 			"type": "header",

@@ -18,6 +18,15 @@
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
+  /* ── Summary stars under the heading — larger for hierarchy ── */
+  .reviews-summary {
+    gap: 10px;
+  }
+  .reviews-summary svg {
+    width: 22px;
+    height: 22px;
+  }
+
   /* ── Review body text clamp ── */
   .review-card__body {
     display: -webkit-box;
@@ -1193,7 +1202,7 @@
 
       var titleHTML = '';
       if (review.title) {
-        titleHTML = '<h3 class="text-lg font-bold text-title leading-snug mb-2 font-heading">' + review.title + '</h3>';
+        titleHTML = '<h3 class="text-xl md:text-2xl font-bold text-title leading-snug mb-2 font-heading">' + review.title + '</h3>';
       }
 
       var imageHTML = '';

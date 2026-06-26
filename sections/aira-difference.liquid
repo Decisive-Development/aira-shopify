@@ -1,72 +1,75 @@
 {%- comment -%}
-	The aira difference — problems fixed → results, not mechanism.
-	Light/cream editorial interlude between the Before/After slider and the
-	SLEEP trust bar. Single centered text column (~65ch), no JS.
-	Optional image renders only when set (hidden when blank).
+	The aira difference — editorial interlude on cream. Left-aligned: eyebrow,
+	large heading, two-column body, then a short rule with a conviction line and
+	a low-emphasis link. Optional image renders only when set. No JS.
 {%- endcomment -%}
 
 <section
 	id="aira-difference-{{ section.id }}"
 	class="bg-cream-light"
 >
-	<div class="container-contained py-12 md:py-32">
-		<div class="mx-auto text-center" style="max-width: 65ch;">
+	<div class="container-contained py-16 md:py-32">
 
-			{%- comment -%} Eyebrow {%- endcomment -%}
-			{%- if section.settings.eyebrow != blank -%}
-				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-5 md:mb-6">
-					{{ section.settings.eyebrow }}
-				</p>
-			{%- endif -%}
+		{%- comment -%} Eyebrow {%- endcomment -%}
+		{%- if section.settings.eyebrow != blank -%}
+			<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-6 md:mb-8">
+				{{ section.settings.eyebrow }}
+			</p>
+		{%- endif -%}
 
-			{%- comment -%} Heading {%- endcomment -%}
-			{%- if section.settings.heading != blank -%}
-				<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight text-title text-balance">
-					{{ section.settings.heading }}
-				</h2>
-			{%- endif -%}
+		{%- comment -%} Heading {%- endcomment -%}
+		{%- if section.settings.heading != blank -%}
+			<h2 class="font-heading heading-weight text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-title max-w-3xl text-balance">
+				{{ section.settings.heading }}
+			</h2>
+		{%- endif -%}
 
-			{%- comment -%} Body (richtext) {%- endcomment -%}
-			{%- if section.settings.body != blank -%}
-				<div class="text-base md:text-lg leading-relaxed text-copy mt-7 md:mt-8 [&>p]:mb-5 [&>p:last-child]:mb-0">
-					{{ section.settings.body }}
+		{%- comment -%} Body — two columns on desktop, stacked on mobile {%- endcomment -%}
+		{%- if section.settings.body != blank -%}
+			<div class="text-base md:text-lg leading-relaxed text-copy mt-8 md:mt-12 md:columns-2 md:gap-x-16 [&>p]:mb-5 md:[&>p]:mb-0 [&>p]:break-inside-avoid">
+				{{ section.settings.body }}
+			</div>
+		{%- endif -%}
+
+		{%- comment -%} Optional image — hidden entirely when blank {%- endcomment -%}
+		{%- if section.settings.image != blank -%}
+			<div class="mt-12 md:mt-16">
+				{{
+					section.settings.image
+					| image_url: width: 1600
+					| image_tag:
+						loading: 'lazy',
+						class: 'w-full h-auto rounded-2xl',
+						widths: '600, 900, 1280, 1600',
+						alt: section.settings.image.alt
+				}}
+			</div>
+		{%- endif -%}
+
+		{%- comment -%} Conviction line — short rule, then kicker + link {%- endcomment -%}
+		{%- if section.settings.kicker_line != blank or section.settings.cta_label != blank -%}
+			<div class="mt-12 md:mt-16">
+				<div class="h-[3px] w-12 bg-highlight"></div>
+				<div class="mt-6 md:mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+					{%- if section.settings.kicker_line != blank -%}
+						<p class="font-heading font-bold text-title text-xl md:text-2xl tracking-tight">
+							{{ section.settings.kicker_line }}
+						</p>
+					{%- endif -%}
+
+					{%- if section.settings.cta_label != blank -%}
+						<div class="shrink-0">
+							{%- render 'cta-button',
+								label: section.settings.cta_label,
+								url: section.settings.cta_url,
+								variant: 'link'
+							-%}
+						</div>
+					{%- endif -%}
 				</div>
-			{%- endif -%}
+			</div>
+		{%- endif -%}
 
-			{%- comment -%} Kicker line {%- endcomment -%}
-			{%- if section.settings.kicker_line != blank -%}
-				<p class="font-heading font-semibold text-main text-lg md:text-xl tracking-tight mt-8 md:mt-10">
-					{{ section.settings.kicker_line }}
-				</p>
-			{%- endif -%}
-
-			{%- comment -%} Conviction CTA (ghost link + arrow, as on the trust bars) {%- endcomment -%}
-			{%- if section.settings.cta_label != blank -%}
-				<div class="mt-6 md:mt-7">
-					{%- render 'cta-button',
-						label: section.settings.cta_label,
-						url: section.settings.cta_url,
-						variant: 'link'
-					-%}
-				</div>
-			{%- endif -%}
-
-			{%- comment -%} Optional image — hidden entirely when blank {%- endcomment -%}
-			{%- if section.settings.image != blank -%}
-				<div class="mt-12 md:mt-16">
-					{{
-						section.settings.image
-						| image_url: width: 1600
-						| image_tag:
-							loading: 'lazy',
-							class: 'w-full h-auto rounded-2xl',
-							widths: '600, 900, 1280, 1600',
-							alt: section.settings.image.alt
-					}}
-				</div>
-			{%- endif -%}
-
-		</div>
 	</div>
 </section>
 
@@ -92,7 +95,8 @@
 			"type": "richtext",
 			"id": "body",
 			"label": "Body",
-			"default": "<p>The snoring that sends your partner to the sofa. The dry mouth at 6am. The eight hours that somehow weren't enough. They look like different problems — but they usually share one root: your nose closes, and your mouth takes over.</p><p>Keep your airway open through the night, and the dominoes fall the other way. Quieter rooms. Deeper sleep. Easier mornings, faster recovery. Nothing to learn, nothing to remember — it works while you sleep.</p>"
+			"info": "Two paragraphs render side by side as two columns on desktop.",
+			"default": "<p>The snoring that sends your partner to the sofa. The dry mouth at 6am. The eight hours that somehow weren't enough. They look like different problems, but they usually share one root: your nose closes, and your mouth takes over.</p><p>Keep your airway open through the night, and the dominoes fall the other way. Quieter rooms. Deeper sleep. Easier mornings, faster recovery. Nothing to learn, nothing to remember: it works while you sleep.</p>"
 		},
 		{
 			"type": "text",

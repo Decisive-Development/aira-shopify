@@ -1,11 +1,3 @@
-{% comment %}
-  ══════════════════════════════════════════════════════════════
-  WHY AIRA — Stacking cards
-  Pure-CSS sticky stacking (no JS / no GSAP). Each card pins just
-  below the header and the next card scrolls up and stacks on top,
-  leaving a small "peek" of the cards beneath.
-  ══════════════════════════════════════════════════════════════
-{% endcomment %}
 
 {%- assign sc_bg = section.settings.background_color | default: '#FAFAFA' -%}
 
@@ -115,7 +107,7 @@
   #shopify-section-{{ section.id }} .sc-card-body,
   #shopify-section-{{ section.id }} .sc-card-body :where(p) {
     font-family: var(--font-body, sans-serif);
-    font-size: clamp(15px, 1.3vw, 16.5px);
+    font-size: clamp(13px, 1.3vw, 14.5px);
     line-height: 1.7;
     color: var(--color-copy, #555);
     margin: 0;
@@ -124,17 +116,18 @@
     margin-top: 28px;
   }
 
-  /* ── Stat chip (canonical stat-card pattern at card scale) ── */
+  /* ── Stat chip (canonical stat-card pattern at card scale) ──
+     Stat-first: the figure leads, the title and paragraph sit beneath it. */
   #shopify-section-{{ section.id }} .sc-chip {
-    margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(10, 26, 52, 0.10);
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(10, 26, 52, 0.10);
   }
   #shopify-section-{{ section.id }} .sc-chip-number {
     display: block;
     font-family: var(--font-heading, 'Satoshi', sans-serif);
-    font-weight: 400;
-    font-size: clamp(30px, 3vw, 40px);
+    font-weight: 700;
+    font-size: clamp(40px, 4.5vw, 56px);
     line-height: 0.95;
     letter-spacing: -0.02em;
     color: var(--color-highlight, #FF4000);
@@ -142,9 +135,10 @@
   #shopify-section-{{ section.id }} .sc-chip-finding {
     margin: 8px 0 0;
     font-family: var(--font-body, sans-serif);
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: var(--color-copy, #555);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--color-main, #0A1A34);
   }
   #shopify-section-{{ section.id }} .sc-chip-source {
     display: inline-block;
@@ -155,6 +149,15 @@
     text-transform: uppercase;
     color: var(--color-copy, #555);
     opacity: 0.75;
+  }
+  #shopify-section-{{ section.id }} a.sc-chip-source {
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  #shopify-section-{{ section.id }} a.sc-chip-source:hover,
+  #shopify-section-{{ section.id }} a.sc-chip-source:focus-visible {
+    opacity: 1;
+    text-decoration: underline;
   }
 
   /* ── Closing CTA pair ── */
@@ -254,13 +257,6 @@
           <div class="sc-card-inner">
 
             <div class="sc-text">
-              {%- if block.settings.heading != blank -%}
-                <h3 class="sc-card-title">{{ block.settings.heading }}</h3>
-              {%- endif -%}
-              <div class="sc-line"></div>
-              {%- if block.settings.body != blank -%}
-                <div class="sc-card-body">{{ block.settings.body }}</div>
-              {%- endif -%}
               {%- if block.settings.stat_number != blank -%}
                 <div class="sc-chip">
                   <span class="sc-chip-number">{{ block.settings.stat_number }}</span>
@@ -268,9 +264,20 @@
                     <p class="sc-chip-finding">{{ block.settings.stat_finding }}</p>
                   {%- endif -%}
                   {%- if block.settings.stat_source != blank -%}
-                    <span class="sc-chip-source">{{ block.settings.stat_source }}</span>
+                    {%- if block.settings.stat_source_url != blank -%}
+                      <a class="sc-chip-source" href="{{ block.settings.stat_source_url }}" target="_blank" rel="noopener nofollow">{{ block.settings.stat_source }}</a>
+                    {%- else -%}
+                      <span class="sc-chip-source">{{ block.settings.stat_source }}</span>
+                    {%- endif -%}
                   {%- endif -%}
                 </div>
+              {%- endif -%}
+              {%- if block.settings.heading != blank -%}
+                <h3 class="sc-card-title">{{ block.settings.heading }}</h3>
+              {%- endif -%}
+              <div class="sc-line"></div>
+              {%- if block.settings.body != blank -%}
+                <div class="sc-card-body">{{ block.settings.body }}</div>
               {%- endif -%}
               {%- if block.settings.button_label != blank -%}
                 <div class="sc-cta">
@@ -442,6 +449,12 @@
           "label": "Source (AUTHOR ET AL., YEAR)"
         },
         {
+          "type": "url",
+          "id": "stat_source_url",
+          "label": "Source link (optional)",
+          "info": "Links the source line to the study. Leave blank for plain text."
+        },
+        {
           "type": "text",
           "id": "button_label",
           "label": "Button label (optional)"
@@ -462,10 +475,11 @@
           "type": "benefit",
           "settings": {
             "heading": "Snore no more",
-            "body": "<p>Snoring starts in a blocked nose. Air can't get through, your mouth falls open, and the soft tissue behind it starts to rattle. The band holds your nose open, so your mouth stays shut and the noise never begins. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
             "stat_number": "1 in 3",
-            "stat_finding": "adults snored in a UAE community study.",
-            "stat_source": "AL SHAIKH ET AL., 2018"
+            "stat_finding": "adults in the UAE snore nightly.",
+            "stat_source": "AL SHAIKH ET AL., 2018",
+            "stat_source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6073781/"
           }
         },
         {
@@ -475,7 +489,8 @@
             "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
             "stat_number": "2.4x",
             "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
-            "stat_source": "YOUNG ET AL., 1997"
+            "stat_source": "YOUNG ET AL., 1997",
+            "stat_source_url": "https://www.jacionline.org/article/S0091-6749(97)70124-6/fulltext"
           }
         },
         {
@@ -485,7 +500,8 @@
             "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
-            "stat_source": "DALLAM ET AL., 2018"
+            "stat_source": "DALLAM ET AL., 2018",
+            "stat_source_url": "https://doi.org/10.7575/aiac.ijkss.v.6n.2p.22"
           }
         }
       ]

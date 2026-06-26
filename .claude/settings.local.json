@@ -18,7 +18,17 @@
       "PowerShell(git -C C:\\\\code\\\\aira-shopify diff -- assets/critical.css)",
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(node .tmp-tagcheck.js)"
+      "Bash(node .tmp-tagcheck.js)",
+      "Bash(grep -o \"text-copy\\\\\\\\\\\\\\\\/50\\\\|text-copy\\\\/50\" assets/critical.css)",
+      "Bash(grep -o \"lg\\\\\\\\\\\\\\\\:col-span-3\\\\|lg\\\\\\\\\\\\\\\\:col-span-2\\\\|grid-cols-5\" assets/critical.css)",
+      "Bash(grep -o '[a-z:\\\\\\\\/.-]*grid-cols-5' assets/critical.css)",
+      "Bash(grep -o '[a-z:\\\\\\\\/.-]*col-span-[0-9]' assets/critical.css)",
+      "Bash(grep -o '[a-z:\\\\\\\\/.0-9-]*text-copy\\\\\\\\/50' assets/critical.css)",
+      "Bash(grep -o '\\\\.py-3\\\\\\\\\\\\.5' assets/critical.css)",
+      "Bash(grep -o '[a-z:\\\\\\\\/.0-9-]*text-2xl' assets/critical.css)",
+      "Bash(grep -o 'text-copy[\\\\\\\\/0-9]*' assets/critical.css)",
+      "Bash(grep -o '[a-z-]*\\\\\\\\\\\\\\\\/50' assets/critical.css)",
+      "WebSearch"
     ]
   }
 }
