@@ -13,7 +13,7 @@
       "type": "hero",
       "settings": {
         "eyebrow": "BREATHE. SLEEP. RECOVER.",
-        "heading": "Life changing breathing, every single day. ",
+        "heading": "Life changing breathing, every single day.",
         "heading_accent": "Life changing breathing",
         "subheading": "Quiet nights, deep sleep, peak performance and a nose that's got your back.",
         "button_label": "Get my kit",
@@ -38,9 +38,11 @@
         "subheading": "Drag to compare your airways: with and without the aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
-        "cta_label": "",
-        "cta_url": "",
+        "cta_label": "Experience the difference",
+        "cta_url": "/products/aira-kit",
+        "before_image": "shopify://shop_images/without-aira.jpg",
         "before_label": "Without aira",
+        "after_image": "shopify://shop_images/with-aira.jpg",
         "after_label": "With aira",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -130,7 +132,7 @@
           "settings": {
             "video": "shopify://files/videos/0612(1).mp4",
             "heading": "Opens on contact",
-            "description": "Pick your size, click the band on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
+            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         },
         "slide_3": {
@@ -161,8 +163,8 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Reusable_band.png",
-            "heading": "Reusable band",
-            "description": "One band lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
+            "heading": "Reusable strip",
+            "description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
           }
         }
       },
@@ -183,6 +185,18 @@
         "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
+      }
+    },
+    "comparison_table": {
+      "type": "comparison-table",
+      "settings": {
+        "eyebrow": "How we compare",
+        "heading": "Not your average nasal strip.",
+        "subheading": "Magnetic hold, reusable, adjustable. Here's how aira compares to an ordinary nasal strip.",
+        "col_feature": "",
+        "col_aira": "aira",
+        "col_other": "Nasal strips",
+        "background_color": "#fafafa"
       }
     },
     "how_to_use": {
@@ -212,7 +226,7 @@
             "step_number": "03",
             "step_image": "shopify://shop_images/Application-4-cropped.jpg",
             "step_heading": "Breathe",
-            "step_description": "Attach the magnetic band and experience effortless breathing."
+            "step_description": "Attach the magnetic strip and experience effortless breathing."
           }
         }
       },
@@ -294,21 +308,21 @@
           "type": "question",
           "settings": {
             "question": "How does the aira nasal strip work?",
-            "answer": "<p>Two small adhesive tabs sit just above your nostrils. The magnetic band connects them and gently lifts your airway open. Nothing inside your nose, no drugs, and the hold at 6am is the hold at 11pm.</p>"
+            "answer": "<p>Two small adhesive tabs sit just above your nostrils. The magnetic strip connects them and gently lifts your airway open. Nothing inside your nose, no drugs, and the hold at 6am is the hold at 11pm.</p>"
           }
         },
         "faq_2": {
           "type": "question",
           "settings": {
             "question": "Is it comfortable to sleep with, and what if it falls off?",
-            "answer": "<p>The band weighs less than 2 grams, and most people forget it's on within minutes. The medical-grade tabs hold all night and peel off clean. Either way, the 30-night guarantee covers you.</p>"
+            "answer": "<p>The strip weighs less than 2 grams, and most people forget it's on within minutes. The medical-grade tabs hold all night and peel off clean. Either way, the 30-night guarantee covers you.</p>"
           }
         },
         "faq_3": {
           "type": "question",
           "settings": {
-            "question": "How long does the band last?",
-            "answer": "<p>The band is reusable and built to last. You only replace the adhesive tabs: 1 pair per night, in packs from 30 to 360 pairs.</p>"
+            "question": "How long does the strip last?",
+            "answer": "<p>The strip is reusable and built to last. You only replace the adhesive tabs: 1 pair per night, in packs from 30 to 360 pairs.</p>"
           }
         },
         "faq_4": {
@@ -357,7 +371,7 @@
         "item_1": {
           "type": "item",
           "settings": {
-            "text": "4 magnetic bands (L1 to L4), find your exact fit"
+            "text": "4 magnetic strips (L1 to L4), find your exact fit"
           }
         },
         "item_2": {
@@ -388,7 +402,7 @@
       "settings": {
         "eyebrow": "THE AIRA KIT",
         "heading": "Everything you need to improve your life.",
-        "intro": "One reusable magnetic band won't fit every face the same way, so we don't make you guess. Every kit ships with all four band sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes.",
+        "intro": "One reusable magnetic strip won't fit every face the same way, so we don't make you guess. Every kit ships with all four strip sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes.",
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
@@ -403,6 +417,7 @@
     "mechanism",
     "why_aira",
     "benefits_slider",
+    "comparison_table",
     "how_to_use",
     "ugc_gallery",
     "custom_reviews",

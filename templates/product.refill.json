@@ -68,7 +68,7 @@
           "type": "product_faq",
           "settings": {
             "question": "How to use",
-            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril</li><li><strong>3.</strong> Attach the magnetic band and breathe freely</li></ul>"
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril</li><li><strong>3.</strong> Attach the magnetic strip and breathe freely</li></ul>"
           }
         },
         "faq_3": {
@@ -155,7 +155,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The band does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep."
+        "subheading": "The strip does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep."
       }
     },
     "how_to_use": {
@@ -185,7 +185,7 @@
             "step_number": "03",
             "step_image": "shopify://shop_images/Application-4-cropped.jpg",
             "step_heading": "Breathe",
-            "step_description": "Attach the magnetic band and experience effortless breathing."
+            "step_description": "Attach the magnetic strip and experience effortless breathing."
           }
         }
       },
@@ -226,7 +226,7 @@
           "settings": {
             "video": "shopify://files/videos/0612(1).mp4",
             "heading": "Opens on contact",
-            "description": "Pick your size, click the band on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
+            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         },
         "slide_3": {
@@ -257,8 +257,8 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Reusable_band.png",
-            "heading": "Reusable band",
-            "description": "One band lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
+            "heading": "Reusable strip",
+            "description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
           }
         }
       },
@@ -359,8 +359,8 @@
         "faq_3": {
           "type": "question",
           "settings": {
-            "question": "Do I need to replace the magnetic band too?",
-            "answer": "<p>No. The magnetic band is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
+            "question": "Do I need to replace the magnetic strip too?",
+            "answer": "<p>No. The magnetic strip is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
           }
         },
         "faq_4": {
@@ -373,8 +373,8 @@
         "faq_5": {
           "type": "question",
           "settings": {
-            "question": "Will any tab size work with my band?",
-            "answer": "<p>Yes. All adhesive tabs are one universal size and work with every band size (L1 to L4).</p>"
+            "question": "Will any tab size work with my strip?",
+            "answer": "<p>Yes. All adhesive tabs are one universal size and work with every strip size (L1 to L4).</p>"
           }
         },
         "faq_6": {

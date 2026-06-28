@@ -1,6 +1,6 @@
 {%- comment -%}
 	How it works — Pro Tips
-	Dark navy band with two layered radials (orange top-right, light blue bottom-left).
+	Dark navy strip with two layered radials (orange top-right, light blue bottom-left).
 	3-up grid of cards on translucent cream surfaces.
 {%- endcomment -%}
 
@@ -18,13 +18,13 @@
 
 		<div class="max-w-2xl reveal">
 			{%- if section.settings.eyebrow != blank -%}
-				<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light">{{ section.settings.eyebrow }}</p>
+				<p class="text-xs font-bold uppercase tracking-widest text-secondary">{{ section.settings.eyebrow }}</p>
 			{%- endif -%}
 			{%- if section.settings.heading != blank -%}
 				<h2 class="font-heading heading-weight text-secondary text-3xl md:text-5xl mt-3 leading-tight">{{ section.settings.heading }}</h2>
 			{%- endif -%}
 			{%- if section.settings.lead != blank -%}
-				<p class="text-secondary/70 text-base md:text-lg leading-relaxed mt-4">{{ section.settings.lead }}</p>
+				<p class="text-secondary text-base md:text-lg leading-relaxed mt-4">{{ section.settings.lead }}</p>
 			{%- endif -%}
 		</div>
 
@@ -32,23 +32,9 @@
 			<div class="grid md:grid-cols-3 gap-5 md:gap-6 mt-12 reveal">
 				{%- for block in tips -%}
 					<div class="rounded-2xl p-6 md:p-7" style="background: rgba(241, 235, 225, 0.06); border: 1px solid rgba(241, 235, 225, 0.10);" {{ block.shopify_attributes }}>
-						<div class="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center text-main">
-							{%- case block.settings.icon -%}
-								{%- when 'bolt' -%}
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-								{%- when 'clock' -%}
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-								{%- when 'home' -%}
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-								{%- when 'sparkle' -%}
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>
-								{%- else -%}
-									<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
-							{%- endcase -%}
-						</div>
-						<p class="font-heading text-secondary text-lg mt-5" style="font-weight: 600;">{{ block.settings.title }}</p>
+						<p class="font-heading text-secondary text-lg" style="font-weight: 600;">{{ block.settings.title }}</p>
 						{%- if block.settings.body != blank -%}
-							<p class="text-secondary/65 text-sm leading-relaxed mt-2">{{ block.settings.body }}</p>
+							<p class="text-secondary text-lg leading-relaxed mt-2">{{ block.settings.body }}</p>
 						{%- endif -%}
 					</div>
 				{%- endfor -%}
@@ -87,7 +73,7 @@
 					"default": "bolt"
 				},
 				{ "type": "text",     "id": "title", "label": "Title", "default": "Pair sizes for activity" },
-				{ "type": "textarea", "id": "body",  "label": "Body",  "default": "Use a smaller band for sport (less pull on the tabs) and a larger band for sleep (wider airflow). Many wearers keep both bedside." }
+				{ "type": "textarea", "id": "body",  "label": "Body",  "default": "Use a smaller strip for sport (less pull on the tabs) and a larger strip for sleep (wider airflow). Many wearers keep both bedside." }
 			]
 		}
 	],

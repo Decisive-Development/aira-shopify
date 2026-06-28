@@ -1,6 +1,6 @@
 {%- comment -%}
 	How it works — Intro strip
-	Cream band that introduces the two-part system (band + tabs).
+	Cream strip that introduces the two-part system (strip + tabs).
 {%- endcomment -%}
 
 <section class="bg-secondary py-12 md:py-20">
@@ -31,9 +31,9 @@
 
 				<div class="grid grid-cols-2 gap-3 mt-8">
 					<div class="rounded-xl bg-bg p-4 md:p-5">
-						<div class="text-xs font-bold uppercase tracking-widest text-copy/60">{{ section.settings.card1_label | default: 'The band' }}</div>
-						<p class="font-heading font-semibold text-main mt-1.5">{{ section.settings.card1_title | default: 'Reusable. Magnetic.' }}</p>
-						<p class="text-sm text-copy/80 leading-snug mt-1.5">{{ section.settings.card1_body | default: 'Lasts months. Holds the structural pull.' }}</p>
+						<div class="text-xs font-bold uppercase tracking-widest text-copy/60">{{ section.settings.card1_label | default: 'The strip' }}</div>
+						<p class="font-heading font-semibold text-main mt-1.5">{{ section.settings.card1_title | default: 'Reusable. Comfortable.' }}</p>
+						<p class="text-sm text-copy/80 leading-snug mt-1.5">{{ section.settings.card1_body | default: 'Lasts forever. Fits any shape or size.' }}</p>
 					</div>
 					<div class="rounded-xl bg-bg p-4 md:p-5">
 						<div class="text-xs font-bold uppercase tracking-widest text-copy/60">{{ section.settings.card2_label | default: 'The tabs' }}</div>
@@ -69,12 +69,12 @@
 			"type": "richtext",
 			"id": "body",
 			"label": "Body",
-			"default": "<p>The strip sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>"
+			"default": "<p>The reusable magnetic <strong>aira strip</strong> sits over the bridge of your nose. This connects to two small <strong>adhesive tabs</strong> placed either side on your nostrils. Gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>"
 		},
-		{ "type": "header", "content": "Card 1 (band)" },
-		{ "type": "text", "id": "card1_label", "label": "Label",       "default": "The band" },
-		{ "type": "text", "id": "card1_title", "label": "Title",       "default": "Reusable. Magnetic." },
-		{ "type": "text", "id": "card1_body",  "label": "Description", "default": "Lasts months. Holds the structural pull." },
+		{ "type": "header", "content": "Card 1 (strip)" },
+		{ "type": "text", "id": "card1_label", "label": "Label",       "default": "The strip" },
+		{ "type": "text", "id": "card1_title", "label": "Title",       "default": "Reusable. Comfortable." },
+		{ "type": "text", "id": "card1_body",  "label": "Description", "default": "Lasts forever. Fits any shape or size." },
 		{ "type": "header", "content": "Card 2 (tabs)" },
 		{ "type": "text", "id": "card2_label", "label": "Label",       "default": "The tabs" },
 		{ "type": "text", "id": "card2_title", "label": "Title",       "default": "Daily. Adhesive." },

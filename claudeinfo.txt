@@ -300,9 +300,9 @@ Full-width problem-vs-solution stats section over a background image.
 - Schema: headline + headline_accent + lead + video_url + video_poster + duration_label; blocks: chapter (limit 3), trust (limit 6).
 
 ### sections/how-it-works-intro.liquid (S27)
-- Cream `bg-secondary` band, 5/7 column split at md+. Left = eyebrow (`#5B7DA0` light blue, NOT orange) + h2. Right = richtext body + 2 mini-cards labelling "The band" / "The tabs".
+- Cream `bg-secondary` strip, 5/7 column split at md+. Left = eyebrow (`#5B7DA0` light blue, NOT orange) + h2. Right = richtext body + 2 mini-cards labelling "The strip" / "The tabs".
 - Eyebrow color is inline-styled because the slightly-darker blue (#5B7DA0) reads better on cream than `text-tertiary-light` (#9BB7D4) which is the on-dark variant.
-- Mini-cards hardcoded as 2 (band/tabs) — each has label / title / body schema fields.
+- Mini-cards hardcoded as 2 (strip/tabs) — each has label / title / body schema fields.
 
 ### sections/how-it-works-step.liquid (S27)
 - Single section, three rendering variants — `variant` setting drives layout:
@@ -329,13 +329,13 @@ Full-width problem-vs-solution stats section over a background image.
 - Snippet params: `active_step` (required), plus `step1_title/sub`, `step2_title/sub`, `step3_title/sub` (all optional, design defaults baked in).
 
 ### sections/how-it-works-pitfalls.liquid (S27)
-- Cream `bg-secondary` band. Centered eyebrow + h2 + lead, then 2x2 grid of "checktile" compare cards.
+- Cream `bg-secondary` strip. Centered eyebrow + h2 + lead, then 2x2 grid of "checktile" compare cards.
 - Each card block: 16:9 photo placeholder up top, body underneath with a Do/Don't pill tag (green or orange via `tag-do` / `tag-dont` CSS classes) + title + description.
 - Tag selection driven by block setting `tag` (`do` / `dont`), inlines a check or X SVG accordingly.
 - Closing inline CTA below the grid (`max-w-3xl`, the same `.inline-cta` component). Per Tom's brief, this stays as a text link — only Refills and aira kit warrant the orange-button treatment.
 
 ### sections/how-it-works-pro-tips.liquid (S27)
-- Dark navy `bg-main` band with two large viewport-relative radial gradients (light blue only — orange originally appeared here, removed in S27 refinements).
+- Dark navy `bg-main` strip with two large viewport-relative radial gradients (light blue only — orange originally appeared here, removed in S27 refinements).
 - Gradient sizing: `ellipse 80vw 60vh at 15% 30%` (rgba(160,195,230,0.18)) + `ellipse 75vw 55vh at 85% 70%` (rgba(140,180,220,0.15)). Long soft falloff (0%→60-65%) so the glows feel ambient at any viewport width.
 - 3-up grid of cards on translucent cream surfaces (`background: rgba(241,235,225,0.06); border: 1px solid rgba(241,235,225,0.10)`).
 - Each block: cream rounded-square icon container + title (cream, weight 600) + body (cream/65 opacity).
@@ -343,7 +343,7 @@ Full-width problem-vs-solution stats section over a background image.
 - Eyebrow uses `text-tertiary-light` (#9BB7D4 — the on-dark light-blue token).
 
 ### sections/how-it-works-cta.liquid (S27)
-- Final dark navy band (`#0A1A34`), centered. Eyebrow + h2 + lead, then two CTAs: orange filled (`variant: 'accent'`) + cream outline (`variant: 'ghost-light'`).
+- Final dark navy strip (`#0A1A34`), centered. Eyebrow + h2 + lead, then two CTAs: orange filled (`variant: 'accent'`) + cream outline (`variant: 'ghost-light'`).
 - Secondary CTA URL defaults to `#tutorialVideo` so "Re-watch tutorial" smooth-scrolls back to the hero video frame's id.
 - **Hosts the page-level JS** for the entire How it works page: reveal-on-scroll IntersectionObserver (`.reveal` → `.in`, threshold 0.12, unobserves on first entry) and the sticky step-rail active-state observer (`[data-step-section]` IntersectionObserver with `rootMargin: '-30% 0px -50% 0px'`, picks the entry with the highest intersectionRatio and toggles `is-active` on matching `.step-link[data-step]`).
 - Both observers self-scope via element existence checks — safe to ship even though the script renders only on this page.
@@ -427,7 +427,7 @@ Shopify collection notes:
 - Track uses CSS calc() left padding to align first card with container-contained edge
 - Scrollbar hidden via [data-benefits-track] CSS selector in inline <style>
 - Scroll-in animations via IntersectionObserver (data-benefits-animate)
-- 5 default slides: Instantly Expands, Sweat Resistant, Won't Collapse, Skin Safe, Reusable Band
+- 5 default slides: Instantly Expands, Sweat Resistant, Won't Collapse, Skin Safe, Reusable Strip
 - Image placeholder: muted bg with SVG icon
 - templates/index.json updated: benefits_slider added after social_proof
 
@@ -920,7 +920,7 @@ Page-level JS (reveal observer + sticky-rail active-state observer) lives in `se
 - Quick rule of thumb tile (size variant): `flex` → `flex flex-col md:flex-row gap-3 md:gap-4`. Icon now stacks above the text on mobile.
 - Step 02 mobile bug: image grid + caption grid were rendered as two separate grids. On desktop the columns aligned visually; on mobile both collapsed to single columns producing image1/image2/image3 then caption1/caption2/caption3 — disconnecting captions from images. Refactored to a single grid where each block is a `flex flex-col h-full` cell containing title + body + image. Mobile gets clean caption→image pairing.
 - Step 02 desktop image alignment: a 3-line caption ("Skip the lotion") was pushing its image below the others. Added `grow` on the text wrapper + `mt-auto` on the image div, and `items-stretch` on the grid, so images bottom-align regardless of caption line count.
-- Step rail: subtitle text darkened from `text-copy/60` to `text-main/70` (the supporting "Four bands in every kit" / "Clean & dry" / "Shark fins up" copy was reading too pale on cream).
+- Step rail: subtitle text darkened from `text-copy/60` to `text-main/70` (the supporting "Four strips in every kit" / "Clean & dry" / "Shark fins up" copy was reading too pale on cream).
 - Active step state: removed the `.step-link.is-active .step-sub` rule entirely (was setting `text-tertiary-light` light-blue + `font-weight: 600` — now inherits the inactive `text-main/70` styling). Active state still telegraphed via the orange ring + tinted background.
 - Active step-num ring: `box-shadow` color changed from light-blue `rgba(155, 183, 212, 0.35)` to highlight orange `rgba(255, 64, 0, 0.35)`.
 

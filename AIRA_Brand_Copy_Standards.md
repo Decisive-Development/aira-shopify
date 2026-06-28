@@ -10,7 +10,7 @@
 
 **Category position:** the premium breathing ritual — the gap no competitor owns. Intake owns athlete-performance, Hostage owns young-DTC, Breathe Right owns pharmacy. aira is the considered, designed, keep-forever object in a category of disposable plastic.
 
-**Proof layer:** the magnetic mechanism. The band does the structural work; adhesive only holds position. Every claim ladders back to this.
+**Proof layer:** the magnetic mechanism. The strip does the structural work; adhesive only holds position. Every claim ladders back to this.
 
 **One-liner (internal):** A premium magnetic breathing system, engineered for nights and training — built for the Gulf.
 
@@ -54,8 +54,8 @@ Principles:
 | Brand | aira (lowercase, even mid-heading; restructure sentences so it's never first word) | AIRA, Aira |
 | Unit | pairs (1 pair = 1 night; 30 pairs = 1 month) | "30 tabs" as a unit |
 | Material | adhesive tabs (prose only) | patches, stickers |
-| Band sizes | L1–L4 ("all four sizes, L1 to L4") | Level 1, S/M/L/XL |
-| The product | the aira kit; the band; refill pairs | the device, the strip system |
+| Strip sizes | L1–L4 ("all four sizes, L1 to L4") | Level 1, S/M/L/XL |
+| The product | the aira kit; the strip; refill pairs | the device, the strip system |
 | Primary CTA | Get my kit | Shop Now, Shop AIRA, Buy Now |
 | Refills CTA | Get refills | — |
 | PDP button | Add to cart (sentence-cased 2026-06-12) | Add to Cart |
@@ -72,7 +72,7 @@ Principles:
 - **Eyebrows:** ALL CAPS, 1–3 words (SLEEP · TRAIN · THE AIRA DIFFERENCE · FAQ).
 - **Numbered claims pattern:** bold problem label, period, then solution sentence. ("**Dry mouth.** Wake without the parched mouth…")
 - **No em-dashes, no hyphens-as-pivots, no arrows (→)** anywhere in customer-facing copy (Tom, 2026-06-12: reads as AI). Pivot with a period, comma, or colon. Hyphens survive only inside compound words (sweat-proof, latex-free).
-- **Numbers:** numerals always (4 bands, 30 pairs, 22%).
+- **Numbers:** numerals always (4 strips, 30 pairs, 22%).
 - **Exclamation marks:** no.
 - **Stat cards:** H1 number → label → one-sentence finding → SOURCE, YEAR (the Dallam card is the canonical template).
 
@@ -81,7 +81,7 @@ Principles:
 | Claim | Status | Source |
 |---|---|---|
 | 22% less air moved for the same work (runners, nasal switch) | ✅ RE-APPROVED 2026-06-12 after full-text verification: authors state "VE was reduced by 22%" (table maths: 23.2% at VO2max, 17.4% at steady state; n=10 trained nasal breathers). Approved phrasing: "22% less air needed for the same pace" (revised 2026-06-12: "less air moved" read as restriction; "needed" reads as efficiency). Never phrase as "breathe less" | Dallam et al., IJKSS 2018, DOI 10.7575/aiac.ijkss.v.6n.2p.22 |
-| Band weighs <2 grams | ✅ Approved | Product spec (verify final unit) |
+| Strip weighs <2 grams | ✅ Approved | Product spec (verify final unit) |
 | Hypoallergenic, latex-free, medical-grade adhesive | ✅ Approved | Supplier docs |
 | 30-day satisfaction guarantee | ❌ SUPERSEDED 2026-06-12: it's "30-night guarantee" everywhere (see row below). Audit found this stale row still marked approved | Policy |
 | "A proven breathing aid" (kit PDP description) | ✅ Approved 2026-06-12. Defensible via the category RCTs in this register (Krakow 2006, Ulfberg 1997, Roithmann 1998, Dallam 2018), and only while the science page lists them. "Proven" never attaches to a specific outcome ("proven to stop snoring" is banned) | Category research, multiple rows above |

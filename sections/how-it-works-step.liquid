@@ -41,7 +41,7 @@
 						</h2>
 					{%- endif -%}
 					{%- if section.settings.lead != blank -%}
-						<p class="text-base md:text-lg text-main/85 leading-relaxed mt-4 max-w-2xl">
+						<p class="text-base md:text-lg text-main/85 leading-relaxed mt-4 max-w-2xl text-pretty">
 							{{ section.settings.lead }}
 						</p>
 					{%- endif -%}
@@ -51,8 +51,22 @@
 				{%- if variant == 'size' -%}
 					{%- assign size_blocks = section.blocks | where: 'type', 'size' -%}
 
-					<div class="grid lg:grid-cols-5 gap-6 lg:gap-8 mt-10">
-						<div class="lg:col-span-2 reveal">
+					{%- if section.settings.tip_title != blank or section.settings.tip_body != blank or section.settings.size_note != blank -%}
+						<div class="mt-8 rounded-2xl bg-highlight/10 border border-highlight/25 p-5 md:p-6 reveal">
+							{%- if section.settings.tip_title != blank -%}
+								<p class="font-heading font-bold text-base md:text-lg text-highlight">{{ section.settings.tip_title }}</p>
+							{%- endif -%}
+							{%- if section.settings.tip_body != blank -%}
+								<div class="text-sm md:text-base text-main/85 mt-1.5 leading-relaxed [&_p+p]:mt-1.5">{{ section.settings.tip_body }}</div>
+							{%- endif -%}
+							{%- if section.settings.size_note != blank -%}
+								<div class="text-sm md:text-base text-main/85 mt-3 pt-3 border-t border-highlight/20 leading-relaxed [&_strong]:font-semibold [&_strong]:text-main">{{ section.settings.size_note }}</div>
+							{%- endif -%}
+						</div>
+					{%- endif -%}
+
+					<div class="grid lg:grid-cols-2 gap-6 lg:gap-8 mt-10 lg:items-stretch">
+						<div class="reveal">
 							<div class="rounded-2xl overflow-hidden ph ph-light" style="aspect-ratio: 4 / 5;">
 								{%- if section.settings.visual_image != blank -%}
 									{{
@@ -70,7 +84,7 @@
 							</div>
 						</div>
 
-						<div class="lg:col-span-3 reveal">
+						<div class="reveal lg:flex lg:flex-col lg:h-full">
 							{%- if size_blocks.size > 0 -%}
 								<div class="grid grid-cols-2 gap-3 md:gap-4">
 									{%- for block in size_blocks -%}
@@ -85,25 +99,8 @@
 								</div>
 							{%- endif -%}
 
-							{%- if section.settings.tip_title != blank or section.settings.tip_body != blank -%}
-								<div class="mt-6 rounded-xl bg-bg-muted p-5 flex flex-col md:flex-row gap-3 md:gap-4">
-									<svg class="shrink-0 md:mt-0.5" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0A1A34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-										<circle cx="12" cy="12" r="10"/>
-										<path d="M12 16v-4M12 8h.01"/>
-									</svg>
-									<div>
-										{%- if section.settings.tip_title != blank -%}
-											<p class="font-heading font-semibold text-main">{{ section.settings.tip_title }}</p>
-										{%- endif -%}
-										{%- if section.settings.tip_body != blank -%}
-											<div class="text-sm text-main/85 mt-1 leading-relaxed [&_p+p]:mt-1.5">{{ section.settings.tip_body }}</div>
-										{%- endif -%}
-									</div>
-								</div>
-							{%- endif -%}
-
 							{%- if section.settings.cta_title != blank -%}
-								<div class="inline-cta inline-cta-stack mt-6">
+								<div class="inline-cta inline-cta-stack mt-6 lg:mt-auto">
 									<div class="min-w-[200px]">
 										<p class="font-heading font-semibold text-main">{{ section.settings.cta_title }}</p>
 										{%- if section.settings.cta_body != blank -%}
@@ -216,7 +213,7 @@
 									</div>
 									<p class="font-heading font-semibold text-main">{{ block.settings.title }}</p>
 									{%- if block.settings.body != blank -%}
-										<p class="text-sm text-main/85 mt-1.5 leading-relaxed">{{ block.settings.body }}</p>
+										<p class="text-sm text-main mt-1.5 leading-relaxed">{{ block.settings.body }}</p>
 									{%- endif -%}
 								</div>
 							{%- endfor -%}
@@ -225,7 +222,7 @@
 
 					{%- comment -%} "Rub it in" callout {%- endcomment -%}
 					{%- if section.settings.callout_title != blank -%}
-						<div class="mt-10 rounded-2xl bg-secondary p-6 md:p-8 reveal">
+						<div class="mt-10 rounded-2xl bg-highlight/10 border border-highlight/25 p-6 md:p-8 reveal">
 							<div class="flex flex-col md:flex-row gap-6 md:items-center">
 								<div class="md:flex-1">
 									{%- if section.settings.callout_eyebrow != blank -%}
@@ -233,18 +230,18 @@
 									{%- endif -%}
 									<h3 class="font-heading heading-weight text-2xl md:text-3xl text-title mt-2">{{ section.settings.callout_title }}</h3>
 									{%- if section.settings.callout_body != blank -%}
-										<p class="text-sm md:text-base text-main/85 leading-relaxed mt-3 max-w-lg">{{ section.settings.callout_body }}</p>
+										<p class="text-sm md:text-base text-main leading-relaxed mt-3 max-w-lg">{{ section.settings.callout_body }}</p>
 									{%- endif -%}
 								</div>
 								<div class="flex items-center justify-center gap-6 md:gap-10">
 									<div class="text-center">
 										<div class="font-heading font-bold text-main text-4xl md:text-5xl leading-none">{{ section.settings.stat1_value | default: '10s' }}</div>
-										<div class="text-xs uppercase tracking-widest text-copy/60 mt-2">{{ section.settings.stat1_label | default: 'per tab' }}</div>
+										<div class="text-xs uppercase tracking-widest text-main/70 mt-2">{{ section.settings.stat1_label | default: 'per tab' }}</div>
 									</div>
 									<div class="w-px h-10 bg-main/15"></div>
 									<div class="text-center">
 										<div class="font-heading font-bold text-main text-4xl md:text-5xl leading-none">{{ section.settings.stat2_value | default: '2x' }}</div>
-										<div class="text-xs uppercase tracking-widest text-copy/60 mt-2">{{ section.settings.stat2_label | default: 'wear time' }}</div>
+										<div class="text-xs uppercase tracking-widest text-main/70 mt-2">{{ section.settings.stat2_label | default: 'wear time' }}</div>
 									</div>
 								</div>
 							</div>
@@ -271,7 +268,7 @@
 			"options": [
 				{ "value": "size",  "label": "Step 01 — Find your size" },
 				{ "value": "prep",  "label": "Step 02 — Prep your skin" },
-				{ "value": "apply", "label": "Step 03 — Apply tabs & band" }
+				{ "value": "apply", "label": "Step 03 — Apply tabs & strip" }
 			],
 			"default": "size"
 		},
@@ -310,7 +307,8 @@
 		{ "type": "header", "content": "Visual (Size variant only)" },
 		{ "type": "image_picker", "id": "visual_image", "label": "Visual image (4:5)" },
 		{ "type": "text",         "id": "visual_alt",   "label": "Visual alt text" },
-		{ "type": "text",         "id": "visual_label", "label": "Placeholder caption", "default": "Sizing photo — band on nose, callouts pointing to nostril edges" },
+		{ "type": "text",         "id": "visual_label", "label": "Placeholder caption", "default": "Sizing photo — strip on nose, callouts pointing to nostril edges" },
+		{ "type": "richtext",     "id": "size_note",    "label": "Note below sizes (Size variant only)", "info": "Renders full-width beneath the size tiles. Use <strong> for emphasis." },
 
 		{ "type": "header", "content": "Tip / info panel (Size & Prep variants)" },
 		{ "type": "text",     "id": "tip_title", "label": "Title" },
@@ -336,7 +334,7 @@
 		{ "type": "header", "content": "Callout (Apply variant only — \"Rub it in\")" },
 		{ "type": "text",     "id": "callout_eyebrow", "label": "Eyebrow", "default": "Don't skip" },
 		{ "type": "text",     "id": "callout_title",   "label": "Title",   "default": "Rub it in." },
-		{ "type": "textarea", "id": "callout_body",    "label": "Body",    "default": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear." },
+		{ "type": "textarea", "id": "callout_body",    "label": "Body",    "default": "Press and rub in each tab for 10 to 15 seconds with your finger. The adhesive activates with heat and pressure. Make sure there are no peeling edges. Do this and add hours of wear time." },
 		{ "type": "text",     "id": "stat1_value",     "label": "Stat 1 value", "default": "10s" },
 		{ "type": "text",     "id": "stat1_label",     "label": "Stat 1 label", "default": "per tab" },
 		{ "type": "text",     "id": "stat2_value",     "label": "Stat 2 value", "default": "2x" },
@@ -379,7 +377,7 @@
 	"presets": [
 		{ "name": "How it works — Step (size)", "settings": { "variant": "size",  "step_number": 1, "eyebrow": "Step 01", "heading": "Find your size." } },
 		{ "name": "How it works — Step (prep)", "settings": { "variant": "prep",  "step_number": 2, "eyebrow": "Step 02", "heading": "Prep your skin.",   "eyebrow_color": "blue", "bg": "bg-cream-light" } },
-		{ "name": "How it works — Step (apply)","settings": { "variant": "apply", "step_number": 3, "eyebrow": "Step 03", "heading": "Apply tabs & band." } }
+		{ "name": "How it works — Step (apply)","settings": { "variant": "apply", "step_number": 3, "eyebrow": "Step 03", "heading": "Apply tabs & strip." } }
 	]
 }
 {% endschema %}

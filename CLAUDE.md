@@ -7,7 +7,7 @@ Before touching ANY customer-facing copy string in this repo, read `AIRA_Brand_C
 1. **UK English.** colour, optimise, customise. Never Americanise copy strings. (Code, class names, and Liquid keys are untouched.)
 2. **No em-dashes (—), no hyphens-as-pivots, no arrow characters (→)** in any customer-facing string or link text. Pivot with a period, comma, or colon. Hyphens only inside compound words (sweat-proof, latex-free).
 3. **Brand casing:** "aira" lowercase always, even in headings. Restructure sentences so it is never the first word.
-4. **Units and sizes:** pairs (1 pair = 1 night), never "tabs" as a unit. Band sizes are L1–L4.
+4. **Units and sizes:** pairs (1 pair = 1 night), never "tabs" as a unit. Strip sizes are L1–L4.
 5. **CTAs:** primary "Get my kit" · refills "Get refills" · PDP button "Add to Cart". Never "Shop Now", "Buy Now", "Learn more".
 6. **Guarantee:** "30-night guarantee" (nights, not days).
 7. **Shipping line:** "Free shipping across the GCC." exactly.

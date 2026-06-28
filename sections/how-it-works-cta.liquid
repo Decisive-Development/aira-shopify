@@ -1,6 +1,6 @@
 {%- comment -%}
 	How it works — Final CTA
-	Dark navy band with eyebrow / h2 / lead and two CTAs (orange filled + cream outline).
+	Dark navy strip with eyebrow / h2 / lead and two CTAs (orange filled + cream outline).
 {%- endcomment -%}
 
 {%- render 'cta-banner',
@@ -16,8 +16,15 @@
 -%}
 
 {%- comment -%}
-	Page-level JS: reveal-on-scroll + sticky step-rail active state.
-	Scoped to elements that exist on this page; safe to ship as-is.
+	Page-level JS: reveal-on-scroll only.
+
+	The step-rail active state is intentionally NOT driven by JS. Each step section
+	renders its own sticky rail (snippets/step-rail.liquid) with the active step baked
+	in server-side, and `.step-rail` is `position: sticky` within its own section. Only
+	one rail is visible at a time, so the highlight always matches the section in view,
+	switches exactly at the section boundary, and reverts on scroll-up automatically.
+	A previous global IntersectionObserver synced all rails to one scroll-computed step,
+	which flipped early and got stuck on scroll-up — removed in favour of the markup.
 {%- endcomment -%}
 <script>
 (function () {
@@ -38,27 +45,6 @@
 			revealEls.forEach(function (el) { io.observe(el); });
 		}
 	}
-
-	/* ── Sticky step-rail active state ── */
-	var stepSections = document.querySelectorAll('[data-step-section]');
-	if (stepSections.length && 'IntersectionObserver' in window) {
-		function setActive(stepNum) {
-			document.querySelectorAll('.step-link').forEach(function (link) {
-				var s = link.getAttribute('data-step');
-				link.classList.toggle('is-active', s === String(stepNum));
-			});
-		}
-		var stepObserver = new IntersectionObserver(function (entries) {
-			/* Pick the entry closest to the top with the largest intersection ratio */
-			var best = null;
-			entries.forEach(function (e) {
-				if (!e.isIntersecting) return;
-				if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
-			});
-			if (best) setActive(best.target.getAttribute('data-step-section'));
-		}, { rootMargin: '-30% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] });
-		stepSections.forEach(function (s) { stepObserver.observe(s); });
-	}
 })();
 </script>
 
@@ -70,7 +56,7 @@
 	"settings": [
 		{ "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "Ready when you are" },
 		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Three steps. One better night." },
-		{ "type": "textarea", "id": "lead",    "label": "Lead",    "default": "Every aira kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month." },
+		{ "type": "textarea", "id": "lead",    "label": "Lead",    "default": "Every aira kit ships with all four strip sizes and 30 pairs of tabs — everything you need for your first month." },
 		{ "type": "header", "content": "Primary CTA (orange)" },
 		{ "type": "text", "id": "primary_label", "label": "Label", "default": "Get my kit" },
 		{ "type": "url",  "id": "primary_url",   "label": "URL" },

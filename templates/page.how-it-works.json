@@ -35,7 +35,7 @@
           "settings": {
             "timestamp": "00:58",
             "time_seconds": 58,
-            "title": "Apply tabs & band",
+            "title": "Apply tabs & strip",
             "subtitle": "Shark fins up"
           }
         },
@@ -64,7 +64,7 @@
           "type": "trust",
           "settings": {
             "icon": "check",
-            "label": "Reusable band"
+            "label": "Reusable strip"
           }
         }
       },
@@ -90,10 +90,10 @@
       "settings": {
         "eyebrow": "The basics",
         "heading": "A two-part system. No drugs, nothing inside your nose.",
-        "body": "<p>aira sits on the outside of your nose. A reusable <strong>magnetic band</strong> connects to two small <strong>adhesive tabs</strong> placed just above your nostrils — gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>",
-        "card1_label": "The band",
-        "card1_title": "Reusable. Magnetic.",
-        "card1_body": "Lasts months. Holds the structural pull.",
+        "body": "<p>The reusable magnetic <strong>aira strip</strong> sits over the bridge of your nose. This connects to two small <strong>adhesive tabs</strong> placed either side on your nostrils. Gently widening your airway from the outside.</p><p>Your nose returns to normal the moment you take it off.</p>",
+        "card1_label": "The strip",
+        "card1_title": "Reusable. Comfortable.",
+        "card1_body": "Lasts forever. Fits any shape or size.",
         "card2_label": "The tabs",
         "card2_title": "Daily. Adhesive.",
         "card2_body": "One pair per night. Replace as you go."
@@ -148,20 +148,21 @@
         "eyebrow": "Step 01",
         "eyebrow_color": "orange",
         "heading": "Find your size.",
-        "lead": "The right band rests with its tips on the outer edges of your nostrils — without pinching them or pressing them shut. Every aira kit ships with four sizes so you can find your fit on night one.",
+        "lead": "Every aira kit comes with four sizes so you can find your fit whatever the activity. Simply measure the width of the strip against your nostrils.",
         "visual_image": "shopify://shop_images/WhatsApp_Image_2026-05-17_at_16.06.15.jpg",
         "visual_alt": "",
-        "visual_label": "Sizing photo — band on nose, callouts pointing to nostril edges",
+        "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
+        "size_note": "<p><strong>Important:</strong> Using a strip much too big will result in tabs pulling off early.</p>",
         "tip_title": "Quick rule of thumb",
-        "tip_body": "<p>Sleep — start a size up for wider airflow.</p><p>Sport — size down so the tabs hold under sweat & movement.</p>",
+        "tip_body": "<p>Sleep: start a size up for wider airflow.</p><p>Sport: size down so the tabs hold under sweat & movement.</p>",
         "cta_title": "Get all four sizes in the aira kit.",
-        "cta_body": "Try every band on night one — keep the one that fits.",
+        "cta_body": "Improve your sleep, level up your fitness.",
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "cta_style": "button",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
-        "callout_body": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear.",
+        "callout_body": "Press and rub in each tab for 10 to 15 seconds with your finger. The adhesive activates with heat and pressure. Make sure there are no peeling edges. Do this and add hours of wear time.",
         "stat1_value": "10s",
         "stat1_label": "per tab",
         "stat2_value": "2x",
@@ -177,7 +178,7 @@
             "image": "shopify://shop_images/iii.jpg",
             "image_label": "Clean — soap & water on the bridge",
             "title": "Clean",
-            "body": "Use a gentle cleanser to remove makeup, oils, and dirt from the bridge of your nose."
+            "body": "Use a gentle cleanser to remove makeup, oils, and dirt from your nose."
           }
         },
         "prep-2": {
@@ -186,7 +187,7 @@
             "image": "shopify://shop_images/IMG_3254.jpg",
             "image_label": "Dry — pat with a towel",
             "title": "Dry",
-            "body": "Pat — don't rub. Even a little moisture stops adhesive from settling properly."
+            "body": "Make sure the nose is fully dry from moisture and oils. Be sure."
           }
         },
         "prep-3": {
@@ -211,19 +212,19 @@
         "eyebrow": "Step 02",
         "eyebrow_color": "orange",
         "heading": "Prep your skin.",
-        "lead": "Adhesive sticks to clean, dry skin. Twenty seconds of prep is the difference between tabs that hold for a full night and ones that wander off at 4am.",
+        "lead": "Adhesive sticks to clean, dry skin. Twenty seconds of prep is the difference between tabs that hold for the full duration vs tabs that wander off a few hours later.",
         "visual_alt": "",
-        "visual_label": "Sizing photo — band on nose, callouts pointing to nostril edges",
-        "tip_title": "Sensitive skin?",
-        "tip_body": "<p>Run a 24-hour patch test with a single tab before your first full night. Discontinue if you notice irritation.</p>",
+        "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
+        "tip_title": "",
+        "tip_body": "",
         "cta_title": "Running low on tabs?",
-        "cta_body": "30, 60 or 90-pair refills. Free shipping in the UAE.",
+        "cta_body": "Buy as many as you need now, or subscribe and save monthly. Free shipping in the UAE.",
         "cta_label": "Get refills",
         "cta_url": "/products/aira-refill-tabs",
         "cta_style": "button-blue",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
-        "callout_body": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear.",
+        "callout_body": "Press and rub in each tab for 10 to 15 seconds with your finger. The adhesive activates with heat and pressure. Make sure there are no peeling edges. Do this and add hours of wear time.",
         "stat1_value": "10s",
         "stat1_label": "per tab",
         "stat2_value": "2x",
@@ -237,7 +238,7 @@
           "type": "apply",
           "settings": {
             "image_label": "A · Peel a tab daintily by the edge",
-            "title": "A · Peel daintily",
+            "title": "Peel carefully",
             "body": "Pinch the tab by its outer edge. The less you touch the adhesive, the longer it holds."
           }
         },
@@ -246,17 +247,17 @@
           "settings": {
             "image": "shopify://shop_images/IMG_3393.jpg",
             "image_label": "B · Place tab just above each nostril",
-            "title": "B · Place as shown",
-            "body": "One tab on each side of your nose, just above the nostril — steel disc facing outward."
+            "title": "Place as shown",
+            "body": "One tab on each side of your nose, just above the nostril, rub firmly onto skin."
           }
         },
         "apply-3": {
           "type": "apply",
           "settings": {
             "image": "shopify://shop_images/IMG_3504.jpg",
-            "image_label": "C · Apply band, magnetic ends up",
-            "title": "C · Shark fins up",
-            "body": "Bring the band in and let the magnets click. The fin tips face the sky — never down."
+            "image_label": "C · Apply strip, magnetic ends up",
+            "title": "Strip fins face up",
+            "body": "Place the magnetic strip over each tab and breathe."
           }
         }
       },
@@ -271,10 +272,10 @@
         "bg": "bg-bg",
         "eyebrow": "Step 03",
         "eyebrow_color": "orange",
-        "heading": "Apply tabs & band.",
-        "lead": "This is the part everyone gets wrong on the first try. Take it slow — the band needs to sit symmetrically, with the magnetic ends pointing up.",
+        "heading": "Apply tabs & strip.",
+        "lead": "You'll get the hang of this quickly, take your time to get it right, for best results and no wasted attempts.",
         "visual_alt": "",
-        "visual_label": "Sizing photo — band on nose, callouts pointing to nostril edges",
+        "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
         "tip_title": "",
         "tip_body": "",
         "cta_title": "",
@@ -284,50 +285,11 @@
         "cta_style": "link",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
-        "callout_body": "Press each tab for 10–15 seconds with the warmth of your finger. The adhesive activates with heat and pressure — this single move adds hours of wear.",
+        "callout_body": "Press and rub in each tab for 10 to 15 seconds with your finger. The adhesive activates with heat and pressure. Make sure there are no peeling edges. Do this and add hours of wear time.",
         "stat1_value": "10s",
         "stat1_label": "per tab",
         "stat2_value": "2x",
         "stat2_label": "wear time"
-      }
-    },
-    "pro_tips": {
-      "type": "how-it-works-pro-tips",
-      "blocks": {
-        "tip-1": {
-          "type": "tip",
-          "settings": {
-            "icon": "bolt",
-            "title": "Pair sizes for activity",
-            "body": "Use a smaller band for sport (less pull on the tabs) and a larger band for sleep (wider airflow). Many wearers keep both bedside."
-          }
-        },
-        "tip-2": {
-          "type": "tip",
-          "settings": {
-            "icon": "clock",
-            "title": "Give it 3–4 nights",
-            "body": "Your body adapts to nasal breathing over a few nights. The first night feels different — by night four it just feels right."
-          }
-        },
-        "tip-3": {
-          "type": "tip",
-          "settings": {
-            "icon": "home",
-            "title": "Goggles & glasses",
-            "body": "The strip fits comfortably under most sunglasses without changing size. For swim goggles or face-plates, size down a notch."
-          }
-        }
-      },
-      "block_order": [
-        "tip-1",
-        "tip-2",
-        "tip-3"
-      ],
-      "settings": {
-        "eyebrow": "Pro tips",
-        "heading": "Once you've got the basics.",
-        "lead": "A few things experienced wearers do differently. Worth a try once you're comfortable with the routine."
       }
     },
     "faq": {
@@ -337,14 +299,14 @@
           "type": "question",
           "settings": {
             "question": "Will it stay on if I move around in my sleep?",
-            "answer": "<p>Yes — aira was originally engineered for high-impact sport, so a side-sleeper is a low bar. The most common cause of slippage is missed prep: oily skin or skipping the 10-second press. Get those right and most wearers get a full 8 hours.</p>"
+            "answer": "<p>Yes, aira was originally engineered for high-impact sport, so a side-sleeper isn't an issue. The most common cause of strips coming off is improper preparation: oily skin or skipping the 10-second press. Get those right and most wearers get at least a full 8 hours.</p>"
           }
         },
         "q2": {
           "type": "question",
           "settings": {
             "question": "How many tabs do I get per kit?",
-            "answer": "<p>Your aira kit ships with the four bands plus 30 pairs of tabs — a full month of nightly wear. Refill packs come in 30, 60, or 90 pairs.</p>"
+            "answer": "<p>Your aira kit ships with the four strips plus 30 pairs of tabs, a full month of wear. Refill packs come in 30, 60, or 90 pairs, subscribe for a discount.</p>"
           }
         },
         "q3": {
@@ -372,7 +334,7 @@
         "eyebrow": "Quick answers",
         "heading": "Still have questions?",
         "subheading": "",
-        "heading_size": "lg",
+        "heading_size": "md",
         "background_color": "#fafafa",
         "container_width": "contained",
         "padding_vertical": "lg"
@@ -383,7 +345,7 @@
       "settings": {
         "eyebrow": "Ready when you are",
         "heading": "Three steps. One better night.",
-        "lead": "Every aira kit ships with all four band sizes and 30 pairs of tabs — everything you need for your first month.",
+        "lead": "Every aira kit ships with all four strip sizes and 30 pairs of tabs — everything you need for your first month.",
         "primary_label": "Get my kit",
         "primary_url": "/products/aira-kit",
         "secondary_label": "Re-watch tutorial",
@@ -397,7 +359,6 @@
     "step_1",
     "step_2",
     "step_3",
-    "pro_tips",
     "faq",
     "final_cta"
   ]

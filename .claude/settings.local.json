@@ -28,7 +28,8 @@
       "Bash(grep -o '[a-z:\\\\\\\\/.0-9-]*text-2xl' assets/critical.css)",
       "Bash(grep -o 'text-copy[\\\\\\\\/0-9]*' assets/critical.css)",
       "Bash(grep -o '[a-z-]*\\\\\\\\\\\\\\\\/50' assets/critical.css)",
-      "WebSearch"
+      "WebSearch",
+      "PowerShell(npm run build:css)"
     ]
   }
 }

@@ -16,7 +16,7 @@
 
 ### Kit PDP `/products/aira-kit`
 - **Title tag:** Magnetic nasal strip kit, reusable | aira
-- **Meta description:** One magnetic band, skin-safe 3M adhesive tabs, all four sizes in the box. A reusable magnetic nasal strip kit with a 30-night guarantee.
+- **Meta description:** One magnetic strip, skin-safe 3M adhesive tabs, all four sizes in the box. A reusable magnetic nasal strip kit with a 30-night guarantee.
 - **H1:** The aira kit
 - **Primary:** magnetic nasal strip kit · Secondary: reusable nasal strips, nose strips for snoring, nasal dilator
 
@@ -28,7 +28,7 @@
 
 ### Refills PDP `/products/aira-refill-tabs`
 - **Title tag:** Nasal strip refills, adhesive tabs | aira
-- **Meta description:** Refill tabs for your aira band. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the GCC. Save 20% with monthly delivery.
+- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the GCC. Save 20% with monthly delivery.
 - **H1:** Refill tabs
 - **Primary:** nasal strip refills · Secondary: magnetic nasal strip refills, adhesive tabs
 
@@ -44,7 +44,7 @@
 
 1. **Product schema (JSON-LD)** on both PDPs: Product + Offer. Add AggregateRating ONLY once real reviews exist.
 2. **OG / social tags:** og:title mirrors title tag, og:image is the final brand photography (not supplier placeholder).
-3. **Image alt text:** descriptive + keyword where natural ("magnetic nasal strip band, size L2, navy"). Never keyword-stuffed.
+3. **Image alt text:** descriptive + keyword where natural ("magnetic nasal strip strip, size L2, navy"). Never keyword-stuffed.
 4. **llms.txt** at site root describing brand, products, shipping, guarantee (the Hostage Tape play; cheap, do at launch).
 5. **Redirects:** confirm aira-starter-kit → aira-kit auto-redirect live (Tom's rename, 2026-06-11).
 6. **3M adhesive claims:** verify exact 3M product/grade in supplier docs before meta descriptions and FAQ copy referencing 3M go live.
