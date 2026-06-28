@@ -20,9 +20,31 @@
 		assign hl_html = hl_text
 	endif
 
+	comment
+		Resolve a single playable source: prefer an uploaded Shopify video
+		(grab its mp4 source), otherwise fall back to the pasted MP4 URL.
+	endcomment
+	assign video_src = ''
+	if section.settings.video != blank
+		assign mp4_source = section.settings.video.sources | where: 'format', 'mp4' | first
+		if mp4_source != blank
+			assign video_src = mp4_source.url
+		else
+			assign video_src = section.settings.video.sources.first.url
+		endif
+	elsif section.settings.video_url != blank
+		assign video_src = section.settings.video_url
+	endif
+
 	assign has_video = false
-	if section.settings.video_url != blank
+	if video_src != blank
 		assign has_video = true
+	endif
+
+	comment Poster falls back to the uploaded video's preview frame. endcomment
+	assign poster_image = section.settings.video_poster
+	if poster_image == blank and section.settings.video != blank
+		assign poster_image = section.settings.video.preview_image
 	endif
 -%}
 
@@ -81,10 +103,10 @@
 			<div class="reveal">
 				<div class="max-w-[320px] mx-auto">
 					<div class="video-frame video-frame--portrait" id="tutorialVideo" data-tutorial-video>
-						{%- if section.settings.video_poster != blank -%}
+						{%- if poster_image != blank -%}
 							<img
 								class="video-cover"
-								src="{{ section.settings.video_poster | image_url: width: 800 }}"
+								src="{{ poster_image | image_url: width: 800 }}"
 								alt=""
 								width="320"
 								height="569"
@@ -92,7 +114,7 @@
 							>
 						{%- elsif has_video -%}
 							<video class="video-cover" preload="metadata" muted playsinline>
-								<source src="{{ section.settings.video_url }}#t=0.1" type="video/mp4">
+								<source src="{{ video_src }}#t=0.1" type="video/mp4">
 							</video>
 						{%- else -%}
 							<div class="video-placeholder">Tutorial video. Filmed in portrait.</div>
@@ -154,9 +176,9 @@
 					playsinline
 					preload="none"
 					data-modal-video
-					{% if section.settings.video_poster != blank %}poster="{{ section.settings.video_poster | image_url: width: 800 }}"{% endif %}
+					{% if poster_image != blank %}poster="{{ poster_image | image_url: width: 800 }}"{% endif %}
 				>
-					<source src="{{ section.settings.video_url }}" type="video/mp4">
+					<source src="{{ video_src }}" type="video/mp4">
 				</video>
 			</div>
 		</div>
@@ -266,16 +288,22 @@
 			"content": "Video"
 		},
 		{
+			"type": "video",
+			"id": "video",
+			"label": "Upload video",
+			"info": "Upload a Shopify-hosted video, filmed in portrait (phone). Opens in a popup on click. Takes priority over the URL below."
+		},
+		{
 			"type": "url",
 			"id": "video_url",
-			"label": "Video MP4 URL",
-			"info": "Filmed in portrait (phone). Opens in a popup on click. Leave blank to show the placeholder. Use a Shopify-hosted .mp4 file URL."
+			"label": "Or paste an MP4 URL",
+			"info": "Alternative to uploading. Use a Shopify-hosted .mp4 file URL. Ignored when a video is uploaded above."
 		},
 		{
 			"type": "image_picker",
 			"id": "video_poster",
 			"label": "Video poster image",
-			"info": "Portrait (9:16) thumbnail shown before the popup opens."
+			"info": "Portrait (9:16) thumbnail shown before the popup opens. Falls back to the uploaded video's preview frame when blank."
 		},
 		{
 			"type": "text",

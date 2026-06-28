@@ -51,17 +51,6 @@
         "padding_vertical": "lg"
       }
     },
-    "mechanism": {
-      "type": "aira-difference",
-      "settings": {
-        "eyebrow": "THE AIRA DIFFERENCE",
-        "heading": "Most sleep problems are breathing problems.",
-        "body": "<p>The snoring that sends your partner to the sofa. The dry mouth at 6am. The eight hours that somehow weren't enough. They look like different problems, but they usually share one root: your nose closes, and your mouth takes over.</p><p>Keep your airway open through the night, and the dominoes fall the other way. Quieter rooms. Deeper sleep. Easier mornings, faster recovery. Nothing to learn, nothing to remember: it works while you sleep.</p>",
-        "kicker_line": "Fix the breathing. The rest follows.",
-        "cta_label": "How it works",
-        "cta_url": "/pages/how-it-works"
-      }
-    },
     "why_aira": {
       "type": "benefits-grid",
       "blocks": {
@@ -70,7 +59,7 @@
           "settings": {
             "heading": "Snore no more",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/snoring_destop.jpg",
+            "image": "shopify://shop_images/Design_sans_titre_1.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -84,7 +73,7 @@
           "settings": {
             "heading": "Deepest sleep",
             "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, oxygen intake is high, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
-            "image": "shopify://shop_images/deeper_sleep.jpg",
+            "image": "shopify://shop_images/IMG_4575.jpg",
             "stat_number": "2.4x",
             "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
             "stat_source": "YOUNG ET AL., 1997",
@@ -98,7 +87,7 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
-            "image": "shopify://shop_images/cycling.jpg",
+            "image": "shopify://shop_images/aira-cyclist.png",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",
@@ -407,6 +396,7 @@
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
         "guarantee_line": "Free shipping in the UAE.",
+        "image": "shopify://shop_images/41daOlqCBhL._AC_UF1000_1000_QL80__1.jpg",
         "image_alt": ""
       }
     }
@@ -414,7 +404,6 @@
   "order": [
     "hero",
     "before_after_slider",
-    "mechanism",
     "why_aira",
     "benefits_slider",
     "comparison_table",

@@ -67,7 +67,7 @@
 
 					<div class="grid lg:grid-cols-2 gap-6 lg:gap-8 mt-10 lg:items-stretch">
 						<div class="reveal">
-							<div class="rounded-2xl overflow-hidden ph ph-light" style="aspect-ratio: 4 / 5;">
+							<div class="rounded-2xl overflow-hidden{% if section.settings.visual_image == blank %} ph ph-light{% endif %}" style="aspect-ratio: 4 / 5;">
 								{%- if section.settings.visual_image != blank -%}
 									{{
 										section.settings.visual_image
@@ -140,7 +140,7 @@
 											<p class="text-sm text-main/85 mt-1 leading-relaxed">{{ block.settings.body }}</p>
 										{%- endif -%}
 									</div>
-									<div class="rounded-2xl overflow-hidden ph ph-light mt-auto" style="aspect-ratio: 1 / 1;">
+									<div class="rounded-2xl overflow-hidden{% if block.settings.image == blank %} ph ph-light{% endif %} mt-auto" style="aspect-ratio: 1 / 1;">
 										{%- if block.settings.image != blank -%}
 											{{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', alt: block.settings.title }}
 										{%- else -%}
@@ -204,7 +204,7 @@
 						<div class="grid md:grid-cols-3 gap-4 md:gap-6 mt-10">
 							{%- for block in apply_blocks -%}
 								<div class="reveal" {{ block.shopify_attributes }}>
-									<div class="rounded-2xl overflow-hidden ph ph-light mb-4" style="aspect-ratio: 4 / 5;">
+									<div class="rounded-2xl overflow-hidden{% if block.settings.image == blank %} ph ph-light{% endif %} mb-4" style="aspect-ratio: 4 / 5;">
 										{%- if block.settings.image != blank -%}
 											{{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover', alt: block.settings.title }}
 										{%- else -%}

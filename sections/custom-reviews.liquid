@@ -800,16 +800,13 @@
 
     <!-- ── Section header ── -->
     <div class="text-center mb-10 md:mb-14">
-      {%- if section.settings.eyebrow != blank -%}
-        <p class="text-xs uppercase tracking-widest {{ cr_eyebrow_class }} mb-3 font-semibold">
-          {{ section.settings.eyebrow }}
-        </p>
-      {%- endif -%}
-      {%- if section.settings.heading != blank -%}
-        <h2 class="text-3xl md:text-4xl font-heading font-bold {{ cr_heading_class }}">
-          {{ section.settings.heading }}
-        </h2>
-      {%- endif -%}
+      {%- render 'section-heading',
+        eyebrow:  section.settings.eyebrow,
+        heading:  section.settings.heading,
+        align:    'center',
+        size:     'sm',
+        surface:  cr_theme
+      -%}
       <div class="reviews-summary flex items-center justify-center gap-2 mt-3">
         <!-- Stars + "4.8 from 12 reviews" — populated by JS -->
       </div>

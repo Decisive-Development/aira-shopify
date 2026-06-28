@@ -44,13 +44,14 @@
 	<div class="container-contained relative z-10">
 
 		{%- comment -%} Section header {%- endcomment -%}
-		<div class="text-center mb-10 md:mb-14">
-			{%- if section.settings.eyebrow != blank -%}
-				<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light mb-3">{{ section.settings.eyebrow }}</p>
-			{%- endif -%}
-			{%- if section.settings.heading != blank -%}
-				<h2 class="font-heading heading-weight text-3xl md:text-4xl lg:text-5xl text-secondary tracking-tight">{{ section.settings.heading }}</h2>
-			{%- endif -%}
+		<div class="mb-10 md:mb-14">
+			{%- render 'section-heading',
+				eyebrow:  section.settings.eyebrow,
+				heading:  section.settings.heading,
+				align:    'center',
+				size:     'md',
+				surface:  'dark'
+			-%}
 		</div>
 
 	</div>

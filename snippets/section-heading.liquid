@@ -7,6 +7,7 @@
 	  subheading {String}  Supporting paragraph                  (optional)
 	  align      {String}  'left' | 'center' | 'right'          (default: 'center')
 	  size       {String}  'sm' | 'md' | 'lg'                   (default: 'md')
+	  surface    {String}  'light' | 'dark'                     (default: 'light')
 
 	Usage:
 	  {%- render 'section-heading',
@@ -14,13 +15,15 @@
 	      heading:    'Breathe freely.',
 	      subheading: 'Drag to compare.',
 	      align:      'center',
-	      size:       'md'
+	      size:       'md',
+	      surface:    'light'
 	  -%}
 {%- endcomment -%}
 
 {%- liquid
-	assign _align = align | default: 'center'
-	assign _size  = size  | default: 'md'
+	assign _align   = align   | default: 'center'
+	assign _size    = size    | default: 'md'
+	assign _surface = surface | default: 'light'
 
 	case _align
 		when 'left'
@@ -42,21 +45,31 @@
 		else
 			assign h_class = 'text-4xl md:text-5xl'
 	endcase
+
+	if _surface == 'dark'
+		assign eyebrow_color = 'text-tertiary-light'
+		assign heading_color = 'text-secondary'
+		assign sub_color     = 'text-secondary/80'
+	else
+		assign eyebrow_color = 'text-highlight'
+		assign heading_color = 'text-title'
+		assign sub_color     = 'text-copy'
+	endif
 -%}
 
 {%- if eyebrow != blank or heading != blank or subheading != blank -%}
 	<div class="flex flex-col gap-2 md:gap-3 {{ align_class }}">
 
 		{%- if eyebrow != blank -%}
-			<p class="text-xs font-bold uppercase tracking-widest text-highlight">{{ eyebrow }}</p>
+			<p class="text-xs font-bold uppercase tracking-widest {{ eyebrow_color }}">{{ eyebrow }}</p>
 		{%- endif -%}
 
 		{%- if heading != blank -%}
-			<h2 class="font-heading heading-weight {{ h_class }} leading-none tracking-tight text-title">{{ heading }}</h2>
+			<h2 class="font-heading font-bold {{ h_class }} leading-none tracking-tight {{ heading_color }}">{{ heading }}</h2>
 		{%- endif -%}
 
 		{%- if subheading != blank -%}
-			<p class="text-base md:text-lg leading-relaxed text-copy max-w-2xl {{ body_mx }}">{{ subheading }}</p>
+			<p class="text-base md:text-lg leading-relaxed {{ sub_color }} max-w-2xl {{ body_mx }}">{{ subheading }}</p>
 		{%- endif -%}
 
 	</div>

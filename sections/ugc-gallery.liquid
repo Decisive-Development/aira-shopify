@@ -48,25 +48,31 @@
 >
 	<div class="container-contained">
 
-		{%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
-			<div class="flex flex-col gap-2 md:gap-3 text-center">
-				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-xs font-bold uppercase tracking-widest {{ eyebrow_color }}">{{ section.settings.eyebrow }}</p>
-				{%- endif -%}
-				{%- if section.settings.heading != blank -%}
-					<h2 class="font-heading heading-weight text-4xl md:text-5xl leading-none tracking-tight {{ heading_color }}">{{ section.settings.heading }}</h2>
-				{%- endif -%}
-				{%- if section.settings.subheading != blank -%}
-					<p class="text-base md:text-lg {{ cta_color }} max-w-xl mx-auto mt-1">{{ section.settings.subheading }}</p>
-				{%- endif -%}
-			</div>
-		{%- endif -%}
+		{%- render 'section-heading',
+			eyebrow:    section.settings.eyebrow,
+			heading:    section.settings.heading,
+			subheading: section.settings.subheading,
+			align:      'center',
+			size:       'md',
+			surface:    theme
+		-%}
 
 		{%- comment -%} Image row {%- endcomment -%}
 		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
 			{%- for block in ugc_blocks -%}
 				<div class="relative shrink-0 w-[65%] md:w-[22%] rounded-2xl overflow-hidden" style="aspect-ratio: 9 / 16;" {{ block.shopify_attributes }}>
-					{%- if block.settings.image != blank -%}
+					{%- if block.settings.video != blank -%}
+						{{
+							block.settings.video
+							| video_tag:
+								image_size: '600x',
+								autoplay: true,
+								loop: true,
+								muted: true,
+								controls: false,
+								class: 'absolute inset-0 w-full h-full object-cover'
+						}}
+					{%- elsif block.settings.image != blank -%}
 						{{
 							block.settings.image
 							| image_url: width: 600
@@ -279,6 +285,12 @@
 			"name": "Testimonial",
 			"limit": 8,
 			"settings": [
+				{
+					"type": "video",
+					"id": "video",
+					"label": "Video",
+					"info": "Optional. Shopify-hosted video. Plays muted on loop. Takes priority over the image."
+				},
 				{
 					"type": "image_picker",
 					"id": "image",

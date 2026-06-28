@@ -16,37 +16,10 @@
     padding: 0 clamp(20px, 4vw, 48px);
   }
 
-  /* ── Section header ── */
+  /* ── Section header (text styling comes from the section-heading snippet) ── */
   #shopify-section-{{ section.id }} .sc-head {
-    text-align: center;
     max-width: 680px;
     margin: 0 auto clamp(36px, 5vw, 64px);
-  }
-  #shopify-section-{{ section.id }} .sc-eyebrow {
-    font-family: var(--font-heading, 'Satoshi', sans-serif);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--color-highlight, #FF4000);
-    margin: 0 0 16px;
-  }
-  #shopify-section-{{ section.id }} .sc-title {
-    font-family: var(--font-heading, 'Satoshi', sans-serif);
-    font-weight: 700;
-    font-size: clamp(28px, 4vw, 46px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--color-main, #0A1A34);
-    margin: 0;
-  }
-  #shopify-section-{{ section.id }} .sc-sub {
-    font-family: var(--font-body, sans-serif);
-    font-size: clamp(15px, 1.4vw, 17px);
-    line-height: 1.7;
-    color: var(--color-copy, #555);
-    margin: 16px auto 0;
-    max-width: 560px;
   }
 
   /* ── Stack ── */
@@ -233,15 +206,13 @@
   {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
     <div class="sc-container">
       <div class="sc-head">
-        {%- if section.settings.eyebrow != blank -%}
-          <p class="sc-eyebrow">{{ section.settings.eyebrow }}</p>
-        {%- endif -%}
-        {%- if section.settings.heading != blank -%}
-          <h2 class="sc-title">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-        {%- if section.settings.subheading != blank -%}
-          <p class="sc-sub">{{ section.settings.subheading }}</p>
-        {%- endif -%}
+        {%- render 'section-heading',
+          eyebrow:    section.settings.eyebrow,
+          heading:    section.settings.heading,
+          subheading: section.settings.subheading,
+          align:      'center',
+          size:       'md'
+        -%}
       </div>
     </div>
   {%- endif -%}
@@ -251,7 +222,10 @@
       {%- for block in section.blocks -%}
         {%- liquid
           assign card_image = block.settings.image | default: section.settings.image
+          assign card_image_mobile = block.settings.image_mobile | default: section.settings.image_mobile
           assign card_alt = block.settings.heading | default: section.settings.eyebrow | escape
+          assign desktop_src = card_image | default: card_image_mobile
+          assign mobile_src = card_image_mobile | default: card_image
         -%}
         <li class="sc-card{% cycle '', ' sc-card--flip' %}" style="--index: {{ forloop.index }};" {{ block.shopify_attributes }}>
           <div class="sc-card-inner">
@@ -293,17 +267,25 @@
             </div>
 
             <div class="sc-media">
-              {%- if card_image != blank -%}
-                {{
-                  card_image
-                  | image_url: width: 1200
-                  | image_tag:
-                    loading: 'lazy',
-                    class: 'sc-img',
-                    widths: '400, 600, 900, 1200',
-                    sizes: '(max-width: 768px) 100vw, 600px',
-                    alt: card_alt
-                }}
+              {%- if desktop_src != blank -%}
+                <picture>
+                  {%- if mobile_src != blank -%}
+                    <source
+                      media="(max-width: 768px)"
+                      srcset="{{ mobile_src | image_url: width: 400 }} 400w, {{ mobile_src | image_url: width: 600 }} 600w, {{ mobile_src | image_url: width: 900 }} 900w"
+                      sizes="100vw">
+                  {%- endif -%}
+                  {{
+                    desktop_src
+                    | image_url: width: 1200
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'sc-img',
+                      widths: '400, 600, 900, 1200',
+                      sizes: '(max-width: 768px) 100vw, 600px',
+                      alt: card_alt
+                  }}
+                </picture>
               {%- else -%}
                 <div class="sc-placeholder">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -375,8 +357,14 @@
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Default card image",
+      "label": "Default card image (desktop)",
       "info": "Shared across all cards unless a card has its own image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Default card image (mobile)",
+      "info": "Shown on phones. Falls back to the desktop image when blank."
     },
     {
       "type": "header",
@@ -425,8 +413,14 @@
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Card image (optional)",
+          "label": "Card image, desktop (optional)",
           "info": "Overrides the default image for this card only"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Card image, mobile (optional)",
+          "info": "Shown on phones. Falls back to the card or default desktop image when blank."
         },
         {
           "type": "header",

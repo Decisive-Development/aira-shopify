@@ -122,7 +122,7 @@
           "type": "size",
           "settings": {
             "code": "L3",
-            "tier": "Medium",
+            "tier": "Large",
             "description": "Most popular for sleep. Wider opening, longer wear."
           }
         },
@@ -130,7 +130,7 @@
           "type": "size",
           "settings": {
             "code": "L4",
-            "tier": "Large",
+            "tier": "Exra-large",
             "description": "For wider noses. Maximum airflow at rest."
           }
         }
@@ -149,7 +149,7 @@
         "eyebrow_color": "orange",
         "heading": "Find your size.",
         "lead": "Every aira kit comes with four sizes so you can find your fit whatever the activity. Simply measure the width of the strip against your nostrils.",
-        "visual_image": "shopify://shop_images/WhatsApp_Image_2026-05-17_at_16.06.15.jpg",
+        "visual_image": "shopify://shop_images/sizing-guide-4-5.png",
         "visual_alt": "",
         "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
         "size_note": "<p><strong>Important:</strong> Using a strip much too big will result in tabs pulling off early.</p>",
@@ -175,7 +175,7 @@
         "prep-1": {
           "type": "prep",
           "settings": {
-            "image": "shopify://shop_images/iii.jpg",
+            "image": "shopify://shop_images/IMG_3254.jpg",
             "image_label": "Clean — soap & water on the bridge",
             "title": "Clean",
             "body": "Use a gentle cleanser to remove makeup, oils, and dirt from your nose."
@@ -193,7 +193,7 @@
         "prep-3": {
           "type": "prep",
           "settings": {
-            "image": "shopify://shop_images/skincare.jpg",
+            "image": "shopify://shop_images/drop-the-skincare.png",
             "image_label": "Skip moisturiser & oils on the bridge",
             "title": "Skip the lotion",
             "body": "Moisturisers, serums, and oils are the #1 reason tabs lift early. Apply aira first, skincare around it."
@@ -215,6 +215,7 @@
         "lead": "Adhesive sticks to clean, dry skin. Twenty seconds of prep is the difference between tabs that hold for the full duration vs tabs that wander off a few hours later.",
         "visual_alt": "",
         "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
+        "size_note": "",
         "tip_title": "",
         "tip_body": "",
         "cta_title": "Running low on tabs?",
@@ -276,6 +277,7 @@
         "lead": "You'll get the hang of this quickly, take your time to get it right, for best results and no wasted attempts.",
         "visual_alt": "",
         "visual_label": "Sizing photo — strip on nose, callouts pointing to nostril edges",
+        "size_note": "",
         "tip_title": "",
         "tip_body": "",
         "cta_title": "",

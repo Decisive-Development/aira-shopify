@@ -95,7 +95,6 @@
         "info_4"
       ],
       "settings": {
-        "hero_image": "shopify://shop_images/IMG_4805.jpg",
         "hero_heading": "The aira kit",
         "hero_eyebrow": "",
         "product_subtitle": "A proven breathing aid, aira's magnetic nasal strip kit. Four strip sizes, fresh skin-safe tabs, and your nose held open all night. Less snoring. Deeper sleep. Train harder. Recover faster. Fit guaranteed.",
@@ -118,6 +117,8 @@
         "subheading": "Drag to compare your airways: with and without the aira nasal strip.",
         "heading_align": "center",
         "heading_size": "md",
+        "cta_label": "",
+        "cta_url": "",
         "before_label": "Without aira",
         "after_label": "With aira",
         "background_color": "#ffffff",
@@ -135,25 +136,11 @@
           "settings": {
             "heading": "Snore no more",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/IMG_4337.jpg",
+            "image": "shopify://shop_images/Design_sans_titre_1.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
             "stat_source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6073781/",
-            "button_label": "",
-            "button_url": ""
-          }
-        },
-        "benefit_2": {
-          "type": "benefit",
-          "settings": {
-            "heading": "Stronger under load",
-            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
-            "image": "shopify://shop_images/cycle_edits-33_websize.webp",
-            "stat_number": "22%",
-            "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
-            "stat_source": "DALLAM ET AL., 2018",
-            "stat_source_url": "https://doi.org/10.7575/aiac.ijkss.v.6n.2p.22",
             "button_label": "",
             "button_url": ""
           }
@@ -163,11 +150,25 @@
           "settings": {
             "heading": "Deepest sleep",
             "body": "<p>Deep, restorative sleep runs on nose breathing. Held open all night, oxygen intake is high, you drift into deeper stages, wake less often, and get up properly rested. In a four-week randomised trial, nasal dilation significantly improved sleep quality and daytime function (Krakow et al., 2006).</p>",
-            "image": "shopify://shop_images/IMG_4790-2.jpg",
+            "image": "shopify://shop_images/IMG_4575.jpg",
             "stat_number": "2.4x",
             "stat_finding": "more likely to be tired all day when your nose is blocked at night.",
             "stat_source": "YOUNG ET AL., 1997",
             "stat_source_url": "https://www.jacionline.org/article/S0091-6749(97)70124-6/fulltext",
+            "button_label": "",
+            "button_url": ""
+          }
+        },
+        "benefit_2": {
+          "type": "benefit",
+          "settings": {
+            "heading": "Stronger under load",
+            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "image": "shopify://shop_images/aira-cyclist.png",
+            "stat_number": "22%",
+            "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
+            "stat_source": "DALLAM ET AL., 2018",
+            "stat_source_url": "https://doi.org/10.7575/aiac.ijkss.v.6n.2p.22",
             "button_label": "",
             "button_url": ""
           }
@@ -182,7 +183,11 @@
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
         "subheading": "The strip does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep.",
-        "background_color": "#fafafa"
+        "background_color": "#fafafa",
+        "cta_primary_label": "",
+        "cta_primary_url": "",
+        "cta_secondary_label": "",
+        "cta_secondary_url": ""
       }
     },
     "social_proof": {
@@ -361,7 +366,6 @@
         "testimonial_N9zF6j": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "",
             "name": ""
           }
@@ -369,7 +373,6 @@
         "testimonial_wxmefq": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "",
             "name": ""
           }
@@ -377,7 +380,6 @@
         "ugc_1": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "I sleep so much better now",
             "name": "Sarah M."
           }
@@ -385,7 +387,6 @@
         "ugc_2": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "My partner noticed the difference immediately",
             "name": "James K."
           }
@@ -393,7 +394,6 @@
         "ugc_3": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "Game changer for my workouts",
             "name": "Aisha R."
           }
@@ -401,7 +401,6 @@
         "ugc_4": {
           "type": "testimonial",
           "settings": {
-            "image": "shopify://shop_images/Gemini_Generated_Image_t6ltf2t6ltf2t6lt.png",
             "quote": "Finally stopped mouth breathing at night",
             "name": "Omar D."
           }
@@ -418,6 +417,7 @@
       "settings": {
         "eyebrow": "The aira community",
         "heading": "See it in action.",
+        "subheading": "",
         "handle": "@aira.breathing",
         "cta_text": "Share your experience. Tag @aira.breathing",
         "theme": "dark",

@@ -17,35 +17,8 @@
     padding: clamp(48px, 8vw, 96px) 0;
   }
   #shopify-section-{{ section.id }} .cmp-head {
-    text-align: center;
     max-width: 640px;
     margin: 0 auto clamp(28px, 4vw, 44px);
-  }
-  #shopify-section-{{ section.id }} .cmp-eyebrow {
-    font-family: var(--font-heading, 'Satoshi', sans-serif);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--color-highlight, #FF4000);
-    margin: 0 0 14px;
-  }
-  #shopify-section-{{ section.id }} .cmp-title {
-    font-family: var(--font-heading, 'Satoshi', sans-serif);
-    font-weight: 700;
-    font-size: clamp(26px, 3.6vw, 42px);
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    color: var(--color-main, #0A1A34);
-    margin: 0;
-  }
-  #shopify-section-{{ section.id }} .cmp-sub {
-    font-family: var(--font-body, sans-serif);
-    font-size: clamp(15px, 1.4vw, 17px);
-    line-height: 1.6;
-    color: var(--color-copy, #5C6470);
-    margin: 14px auto 0;
-    max-width: 520px;
   }
 
   /* ── Table ── */
@@ -140,15 +113,13 @@
 
     {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
       <div class="cmp-head">
-        {%- if section.settings.eyebrow != blank -%}
-          <p class="cmp-eyebrow">{{ section.settings.eyebrow }}</p>
-        {%- endif -%}
-        {%- if section.settings.heading != blank -%}
-          <h2 class="cmp-title">{{ section.settings.heading }}</h2>
-        {%- endif -%}
-        {%- if section.settings.subheading != blank -%}
-          <p class="cmp-sub">{{ section.settings.subheading }}</p>
-        {%- endif -%}
+        {%- render 'section-heading',
+          eyebrow:    section.settings.eyebrow,
+          heading:    section.settings.heading,
+          subheading: section.settings.subheading,
+          align:      'center',
+          size:       'md'
+        -%}
       </div>
     {%- endif -%}
 
