@@ -54,6 +54,21 @@
     ]
   },
   {
+    "name": "Branding",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Square image, ideally 32 x 32px or larger. Leave blank to use the aira logo mark."
+      }
+    ]
+  },
+  {
     "name": "Brand colours",
     "settings": [
       {
@@ -185,6 +200,37 @@
         "type": "textarea",
         "id": "legal_business_address",
         "label": "Business address"
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram_handle",
+        "label": "Instagram handle",
+        "default": "@airabreathing",
+        "info": "Shown sitewide (e.g. the community gallery). Set once here."
+      }
+    ]
+  },
+  {
+    "name": "Before / after comparison",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shared by every Before / after slider. A slider can still override these with its own images in the section settings."
+      },
+      {
+        "type": "image_picker",
+        "id": "ba_before_image",
+        "label": "Before image (shared)"
+      },
+      {
+        "type": "image_picker",
+        "id": "ba_after_image",
+        "label": "After image (shared)"
       }
     ]
   }

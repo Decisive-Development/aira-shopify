@@ -23,9 +23,21 @@
 		assign cta_color = 'text-secondary opacity-75'
 		assign eyebrow_color = 'text-tertiary-light'
 	endif
+	assign ig_handle = settings.social_instagram_handle | default: section.settings.handle
+
+	# Content source: per-page blocks override the shared ugc_testimonial metaobject list
+	assign ugc_entries = shop.metaobjects.ugc_testimonial.values
+	assign ugc_use_blocks = false
+	if ugc_blocks.size > 0
+		assign ugc_use_blocks = true
+	endif
+	assign ugc_count = ugc_entries.size
+	if ugc_use_blocks
+		assign ugc_count = ugc_blocks.size
+	endif
 -%}
 
-{%- if ugc_blocks.size > 0 -%}
+{%- if ugc_count > 0 -%}
 
 <style>
 	#shopify-section-{{ section.id }} .ugc-track::-webkit-scrollbar { display: none; }
@@ -59,45 +71,15 @@
 
 		{%- comment -%} Image row {%- endcomment -%}
 		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
-			{%- for block in ugc_blocks -%}
-				<div class="relative shrink-0 w-[65%] md:w-[22%] rounded-2xl overflow-hidden" style="aspect-ratio: 9 / 16;" {{ block.shopify_attributes }}>
-					{%- if block.settings.video != blank -%}
-						{{
-							block.settings.video
-							| video_tag:
-								image_size: '600x',
-								autoplay: true,
-								loop: true,
-								muted: true,
-								controls: false,
-								class: 'absolute inset-0 w-full h-full object-cover'
-						}}
-					{%- elsif block.settings.image != blank -%}
-						{{
-							block.settings.image
-							| image_url: width: 600
-							| image_tag:
-								loading: 'lazy',
-								class: 'absolute inset-0 w-full h-full object-cover',
-								widths: '300, 400, 600',
-								draggable: 'false'
-						}}
-					{%- else -%}
-						<div class="absolute inset-0 bg-bg-muted"></div>
-					{%- endif -%}
-					<div class="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
-					{%- if block.settings.quote != blank or block.settings.name != blank -%}
-						<div class="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-							{%- if block.settings.quote != blank -%}
-								<p class="text-white text-sm md:text-base font-medium leading-snug">"{{ block.settings.quote }}"</p>
-							{%- endif -%}
-							{%- if block.settings.name != blank -%}
-								<p class="text-white/70 text-xs mt-1">{{ block.settings.name }}</p>
-							{%- endif -%}
-						</div>
-					{%- endif -%}
-				</div>
-			{%- endfor -%}
+			{%- if ugc_use_blocks -%}
+				{%- for block in ugc_blocks -%}
+					{%- render 'ugc-card', source: 'block', block: block -%}
+				{%- endfor -%}
+			{%- else -%}
+				{%- for entry in ugc_entries -%}
+					{%- render 'ugc-card', source: 'meta', entry: entry -%}
+				{%- endfor -%}
+			{%- endif -%}
 		</div>
 
 		{%- comment -%} Scroll progress bar {%- endcomment -%}
@@ -121,14 +103,34 @@
 		{%- comment -%} Divider + CTA {%- endcomment -%}
 		<div class="border-t {{ border_color }} mt-6 pt-6 text-center">
 			{%- if section.settings.handle != blank -%}
-				<p class="text-lg font-semibold {{ handle_color }}">{{ section.settings.handle }}</p>
+				<p class="text-lg font-semibold {{ handle_color }}">{{ ig_handle }}</p>
 			{%- endif -%}
 			{%- if section.settings.cta_text != blank -%}
-				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text }}</p>
+				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text | replace: section.settings.handle, ig_handle }}</p>
 			{%- endif -%}
 		</div>
 
 	</div>
+	{%- comment -%} Video lightbox modal — one per section, populated on click {%- endcomment -%}
+	<div
+		data-ugc-modal
+		class="fixed inset-0 z-100 hidden items-center justify-center bg-black/80 p-4"
+		role="dialog"
+		aria-modal="true"
+		aria-hidden="true"
+		aria-label="Video player"
+	>
+		<button
+			type="button"
+			data-ugc-close
+			class="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+			aria-label="Close video"
+		>
+			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+		</button>
+		<div data-ugc-modal-holder class="relative h-[80vh] max-h-[80vh] aspect-9/16 max-w-[92vw] rounded-2xl overflow-hidden bg-black"></div>
+	</div>
+
 </section>
 
 <script>
@@ -211,6 +213,58 @@
 	track.addEventListener('touchend', function () { userTouching = false; resetAutoplay(); }, { passive: true });
 	track.addEventListener('mouseenter', function () { clearInterval(autoTimer); });
 	track.addEventListener('mouseleave', function () { if (!isDown) resetAutoplay(); });
+
+	/* ── Video lightbox ── */
+	var modal = section.querySelector('[data-ugc-modal]');
+	var modalHolder = modal && modal.querySelector('[data-ugc-modal-holder]');
+	var closeBtn = modal && modal.querySelector('[data-ugc-close]');
+
+	function openModal(card) {
+		var tpl = card.querySelector('[data-ugc-modal-content]');
+		if (!tpl || !modalHolder || !modal) return;
+		modalHolder.innerHTML = '';
+		modalHolder.appendChild(tpl.content.cloneNode(true));
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.style.overflow = 'hidden';
+		var v = modalHolder.querySelector('video');
+		if (v) { v.play().catch(function () {}); }
+	}
+
+	function closeModal() {
+		if (!modal || !modalHolder) return;
+		var v = modalHolder.querySelector('video');
+		if (v) { try { v.pause(); } catch (e) {} }
+		modalHolder.innerHTML = '';
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+	}
+
+	section.querySelectorAll('[data-ugc-card]').forEach(function (card) {
+		card.addEventListener('click', function () {
+			if (hasDragged) return;
+			openModal(card);
+		});
+		card.addEventListener('keydown', function (e) {
+			if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+				e.preventDefault();
+				openModal(card);
+			}
+		});
+	});
+
+	if (closeBtn) closeBtn.addEventListener('click', closeModal);
+	if (modal) {
+		modal.addEventListener('click', function (e) {
+			if (e.target === modal) closeModal();
+		});
+	}
+	document.addEventListener('keydown', function (e) {
+		if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+	});
 
 	/* Start autoplay */
 	resetAutoplay();

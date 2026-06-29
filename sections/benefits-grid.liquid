@@ -206,9 +206,10 @@
   {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank -%}
     <div class="sc-container">
       <div class="sc-head">
+        {%- assign sc_heading = section.settings.heading | replace_first: '. ', '.<br class="md:hidden"> ' -%}
         {%- render 'section-heading',
           eyebrow:    section.settings.eyebrow,
-          heading:    section.settings.heading,
+          heading:    sc_heading,
           subheading: section.settings.subheading,
           align:      'center',
           size:       'md'

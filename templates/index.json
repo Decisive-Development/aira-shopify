@@ -233,42 +233,6 @@
     },
     "ugc_gallery": {
       "type": "ugc-gallery",
-      "blocks": {
-        "ugc_1": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "I sleep so much better now",
-            "name": "Sarah M."
-          }
-        },
-        "ugc_2": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "My partner noticed the difference immediately",
-            "name": "James K."
-          }
-        },
-        "ugc_3": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Game changer for my workouts",
-            "name": "Aisha R."
-          }
-        },
-        "ugc_4": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Finally stopped mouth breathing at night",
-            "name": "Omar D."
-          }
-        }
-      },
-      "block_order": [
-        "ugc_1",
-        "ugc_2",
-        "ugc_3",
-        "ugc_4"
-      ],
       "settings": {
         "eyebrow": "The aira community",
         "heading": "See it in action.",

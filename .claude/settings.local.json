@@ -61,7 +61,13 @@
       "Bash(xargs echo \"justify-center:\")",
       "Bash(xargs echo \"md:justify-start:\")",
       "Bash(xargs echo \".js .form-reveal rules:\")",
-      "Bash(xargs echo \"justify-end:\")"
+      "Bash(xargs echo \"justify-end:\")",
+      "Bash(xargs echo \"aspect-16/10:\")",
+      "Bash(xargs echo \"aspect-9/16:\")",
+      "Bash(grep -nE \"\\\\.aspect-9\\\\\\\\\\\\/16|\\\\.aspect-16\\\\\\\\\\\\/10\" assets/critical.css)",
+      "Bash(python -)",
+      "Bash(node)",
+      "Bash(grep -viE '\\\\.\\(liquid|json\\)$')"
     ]
   }
 }

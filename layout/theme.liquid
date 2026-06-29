@@ -35,6 +35,14 @@
     <script src="{{ 'lenis.min.js' | asset_url }}" defer></script>
     <script src="{{ 'smooth-scroll.js' | asset_url }}" defer></script>
 
+    {% # Favicon — theme setting if set, otherwise the aira logo mark %}
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+    {%- else -%}
+      <link rel="icon" type="image/svg+xml" href="{{ 'aira-logo-only-white.svg' | asset_url }}">
+    {%- endif -%}
+
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 

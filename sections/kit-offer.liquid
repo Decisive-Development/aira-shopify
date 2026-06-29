@@ -1,8 +1,9 @@
 {%- comment -%}
 	Kit Offer — the homepage close.
 	Navy treatment with the light-blue radial halo from the /pages/our-story
-	hero family. Content left / product image right; mobile stacks with a
-	full-width CTA. Replaces the two previous closing CTA blocks.
+	hero family. Content left / product image right; mobile stacks the image
+	between the copy and the bullet points. Replaces the two previous closing
+	CTA blocks.
 
 	price_suffix renders after the CTA label (e.g. "— AED 199") and is
 	hidden entirely when blank — pricing is not yet set.
@@ -14,6 +15,39 @@
 		assign kit_cta_label = kit_cta_label | append: ' ' | append: section.settings.price_suffix
 	endif
 -%}
+
+{%- comment -%} Product image captured once, rendered mobile (in copy) + desktop (right column) {%- endcomment -%}
+{%- capture kit_image_html -%}
+	<div
+		class="relative w-full aspect-square rounded-sm overflow-hidden border border-secondary/8"
+		{% if section.settings.image == blank %}
+			style="background:
+				repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-secondary) 4%, transparent) 0 2px, transparent 2px 18px),
+				linear-gradient(160deg, #071226 0%, #1a2540 60%, #2d3a5a 100%);"
+		{% endif %}
+	>
+		{%- if section.settings.image != blank -%}
+			{{
+				section.settings.image
+				| image_url: width: 1600
+				| image_tag:
+					loading: 'lazy',
+					class: 'absolute inset-0 w-full h-full object-cover',
+					widths: '600, 900, 1280, 1600',
+					alt: section.settings.image_alt
+			}}
+		{%- else -%}
+			<div
+				class="absolute inset-0 pointer-events-none"
+				style="background: radial-gradient(ellipse 60% 80% at 50% 50%, color-mix(in srgb, var(--color-tertiary-light) 10%, transparent), transparent 65%);"
+			></div>
+			<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5 md:gap-2">
+				<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">Product photograph</span>
+				<span class="font-body text-[10px] md:text-[11px] text-secondary/35">kit · contents</span>
+			</div>
+		{%- endif -%}
+	</div>
+{%- endcapture -%}
 
 <section
 	id="kit-offer-{{ section.id }}"
@@ -49,7 +83,10 @@
 					</p>
 				{%- endif -%}
 
-				{%- comment -%} ✓ checklist {%- endcomment -%}
+				{%- comment -%} Image — mobile only, sits between the copy and the bullets {%- endcomment -%}
+				<div class="lg:hidden mt-8">{{ kit_image_html }}</div>
+
+				{%- comment -%} Checklist {%- endcomment -%}
 				{%- if section.blocks.size > 0 -%}
 					<ul class="mt-7 md:mt-8 flex flex-col gap-4 list-none p-0 m-0">
 						{%- for block in section.blocks -%}
@@ -111,36 +148,8 @@
 
 			</div>
 
-			{%- comment -%} ── Product image column (graceful blank state) ── {%- endcomment -%}
-			<div
-				class="relative w-full aspect-square rounded-sm overflow-hidden border border-secondary/8"
-				{% if section.settings.image == blank %}
-					style="background:
-						repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-secondary) 4%, transparent) 0 2px, transparent 2px 18px),
-						linear-gradient(160deg, #071226 0%, #1a2540 60%, #2d3a5a 100%);"
-				{% endif %}
-			>
-				{%- if section.settings.image != blank -%}
-					{{
-						section.settings.image
-						| image_url: width: 1600
-						| image_tag:
-							loading: 'lazy',
-							class: 'absolute inset-0 w-full h-full object-cover',
-							widths: '600, 900, 1280, 1600',
-							alt: section.settings.image_alt
-					}}
-				{%- else -%}
-					<div
-						class="absolute inset-0 pointer-events-none"
-						style="background: radial-gradient(ellipse 60% 80% at 50% 50%, color-mix(in srgb, var(--color-tertiary-light) 10%, transparent), transparent 65%);"
-					></div>
-					<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5 md:gap-2">
-						<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">Product photograph</span>
-						<span class="font-body text-[10px] md:text-[11px] text-secondary/35">kit · contents</span>
-					</div>
-				{%- endif -%}
-			</div>
+			{%- comment -%} ── Product image column — desktop only (mobile renders it inline above the bullets) ── {%- endcomment -%}
+			<div class="hidden lg:block">{{ kit_image_html }}</div>
 
 		</div>
 	</div>

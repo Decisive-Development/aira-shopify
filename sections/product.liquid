@@ -101,7 +101,7 @@
 
 			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
 			{%- liquid
-				assign media_items = product.media | slice: 0, 6
+				assign media_items = product.media
 				assign media_count = media_items.size
 			-%}
 			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
@@ -167,8 +167,8 @@
 					{%- endif -%}
 				</div>
 
-				{%- comment -%} Thumbnail row {%- endcomment -%}
-				<div class="grid grid-cols-6 gap-2">
+				{%- comment -%} Thumbnail row — columns follow the media count so it reflows to fit however many there are {%- endcomment -%}
+				<div class="grid gap-2" style="grid-template-columns: repeat({{ media_count }}, minmax(0, 1fr));">
 					{%- for media in media_items -%}
 						<button
 							type="button"

@@ -14,6 +14,10 @@
 
 # Ignore CLI temp files (Windows hot-reload artefacts)
 *.tmp.*
+# Ignore atomic-save / `sed -i` temp files (e.g. sections/sed4tSofo) — extensionless
+# files an editor or sed writes mid-save. The dev/push watcher catches them and
+# fails with "Must have a .liquid file extension". Real theme files always have one.
+/(sections|snippets|templates|layout|locales|config|assets|blocks)/[^.]+$/
 claudeinfo.txt
 commands.txt
 assets/critical.source.css

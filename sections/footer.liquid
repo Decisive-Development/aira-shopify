@@ -39,9 +39,9 @@
 					{%- endcomment -%}
 					{%- form 'customer', id: 'footer-newsletter' -%}
 						<input type="hidden" name="contact[tags]" value="newsletter">
-						<p class="text-sm font-semibold mb-2 text-main">{{ section.settings.newsletter_heading }}</p>
+						<p class="text-base font-semibold mb-2 text-main">{{ section.settings.newsletter_heading }}</p>
 						{%- if section.settings.newsletter_body != blank -%}
-							<p class="text-sm text-copy mb-3" style="max-width: 40ch;">{{ section.settings.newsletter_body }}</p>
+							<p class="text-sm text-main mb-3" style="max-width: 40ch;">{{ section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-semibold">10% off your first kit</strong>' }}</p>
 						{%- endif -%}
 						<div class="flex flex-col sm:flex-row gap-2">
 							<input
@@ -112,9 +112,9 @@
 				<div>
 					<h4 class="text-xs font-bold tracking-widest uppercase mb-4 text-main">About</h4>
 					<ul class="flex flex-col gap-2.5">
-						<li><a href="/pages/our-story" class="text-sm text-main transition-opacity hover:opacity-70">Our Story</a></li>
-						<li><a href="/pages/how-it-works" class="text-sm text-main transition-opacity hover:opacity-70">How It Works</a></li>
-						<li><a href="/pages/backed-by-science" class="text-sm text-main transition-opacity hover:opacity-70">Backed by Science</a></li>
+						<li><a href="/pages/our-story" class="text-sm text-main transition-opacity hover:opacity-70">Our story</a></li>
+						<li><a href="/pages/how-it-works" class="text-sm text-main transition-opacity hover:opacity-70">How it works</a></li>
+						<li><a href="/pages/backed-by-science" class="text-sm text-main transition-opacity hover:opacity-70">Backed by science</a></li>
 					</ul>
 				</div>
 
@@ -153,7 +153,7 @@
 				</p>
 			{%- endif -%}
 			<div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-1 text-sm text-white">
-				<span>&copy; {{ 'now' | date: '%Y' }} aira Wellness.</span>
+				<span>&copy; {{ 'now' | date: '%Y' }} aira wellness FZCO.</span>
 			</div>
 		</div>
 

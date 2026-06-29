@@ -1,0 +1,111 @@
+{%- comment -%}
+	Snippet: ugc-card
+	One UGC testimonial card for the gallery. Sources from either a section
+	block (source: 'block') or a `ugc_testimonial` metaobject entry
+	(source: 'meta') so the gallery can use per-page blocks (override) or the
+	shared metaobject list (set once, used everywhere).
+
+	Params:
+	  source {String}  'block' | 'meta'
+	  block  {Object}  the section block          (when source == 'block')
+	  entry  {Object}  the metaobject entry        (when source == 'meta')
+{%- endcomment -%}
+
+{%- liquid
+	assign card_quote = ''
+	assign card_name  = ''
+	assign has_video  = false
+	assign has_image  = false
+-%}
+
+{%- if source == 'meta' -%}
+	{%- liquid
+		assign card_quote = entry.quote.value
+		assign card_name  = entry.name.value
+		assign m_image    = entry.image.value
+		assign m_video    = entry.video.value
+		if m_video != blank
+			assign has_video = true
+		endif
+		if m_image != blank
+			assign has_image = true
+		endif
+		# Resolve a playable URL whether the file is a video media object or a generic file
+		assign m_video_url = ''
+		if m_video.sources.size > 0
+			assign m_video_url = m_video.sources.last.url
+		elsif m_video.url != blank
+			assign m_video_url = m_video.url
+		endif
+	-%}
+	{%- capture inline_media -%}
+		{%- if has_video -%}
+			<video src="{{ m_video_url }}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+		{%- elsif has_image -%}
+			{{ m_image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'absolute inset-0 w-full h-full object-cover', widths: '300, 400, 600', draggable: 'false' }}
+		{%- else -%}
+			<div class="absolute inset-0 bg-bg-muted"></div>
+		{%- endif -%}
+	{%- endcapture -%}
+	{%- capture modal_media -%}
+		{%- if has_video -%}
+			<video src="{{ m_video_url }}" controls playsinline class="w-full h-full object-contain bg-black"></video>
+		{%- endif -%}
+	{%- endcapture -%}
+{%- else -%}
+	{%- liquid
+		assign card_quote = block.settings.quote
+		assign card_name  = block.settings.name
+		if block.settings.video != blank
+			assign has_video = true
+		endif
+		if block.settings.image != blank
+			assign has_image = true
+		endif
+	-%}
+	{%- capture inline_media -%}
+		{%- if block.settings.video != blank -%}
+			{{ block.settings.video | video_tag: image_size: '600x', autoplay: true, loop: true, muted: true, controls: false, class: 'absolute inset-0 w-full h-full object-cover' }}
+		{%- elsif block.settings.image != blank -%}
+			{{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'absolute inset-0 w-full h-full object-cover', widths: '300, 400, 600', draggable: 'false' }}
+		{%- else -%}
+			<div class="absolute inset-0 bg-bg-muted"></div>
+		{%- endif -%}
+	{%- endcapture -%}
+	{%- capture modal_media -%}
+		{%- if block.settings.video != blank -%}
+			{{ block.settings.video | video_tag: image_size: '1200x', autoplay: false, loop: false, muted: false, controls: true, class: 'w-full h-full object-contain bg-black' }}
+		{%- endif -%}
+	{%- endcapture -%}
+{%- endif -%}
+
+<div
+	class="relative shrink-0 w-[65%] md:w-[22%] rounded-2xl overflow-hidden{% if has_video %} group cursor-pointer{% endif %}"
+	style="aspect-ratio: 9 / 16;"
+	{% if has_video %}data-ugc-card role="button" tabindex="0" aria-label="Play video"{% endif %}
+	{% if source != 'meta' %}{{ block.shopify_attributes }}{% endif %}
+>
+	{{ inline_media }}
+
+	<div class="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
+
+	{%- if has_video -%}
+		<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+			<span class="w-14 h-14 rounded-full bg-black/45 ring-1 ring-white/30 flex items-center justify-center transition-colors group-hover:bg-black/65">
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+			</span>
+		</div>
+		<template data-ugc-modal-content>{{ modal_media }}</template>
+	{%- endif -%}
+
+	{%- if card_quote != blank or card_name != blank -%}
+		<div class="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+			{%- if card_quote != blank -%}
+				<p class="text-white text-sm md:text-base font-medium leading-snug">"{{ card_quote }}"</p>
+			{%- endif -%}
+			{%- if card_name != blank -%}
+				<p class="text-white/70 text-xs mt-1">{{ card_name }}</p>
+			{%- endif -%}
+		</div>
+	{%- endif -%}
+</div>

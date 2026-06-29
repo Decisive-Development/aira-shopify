@@ -119,6 +119,13 @@
 	.science-citations .cite-list li a:hover {
 		text-decoration-color: #F1EBE1;
 	}
+	@media (max-width: 767px) {
+		.science-citations .cite-list li {
+			grid-template-columns: 22px 1fr;
+			gap: 0.5rem;
+			padding: 0.4375rem 0;
+		}
+	}
 </style>
 
 {% schema %}

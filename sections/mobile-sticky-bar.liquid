@@ -6,7 +6,7 @@
 
 {%- unless request.page_type == 'product' -%}
 <div
-	class="fixed bottom-0 inset-x-0 z-40 px-4 pb-4 lg:hidden translate-y-full transition-transform duration-300 ease-out"
+	class="fixed bottom-0 inset-x-0 z-40 px-4 pb-[5px] lg:hidden translate-y-full transition-transform duration-300 ease-out"
 	data-mobile-sticky-cta
 >
 	<div class="rounded-2xl bg-main/60 backdrop-blur-lg px-5 py-3 flex items-center justify-between gap-4"
@@ -18,7 +18,7 @@
 			url: section.settings.button_url,
 			variant: 'shop',
 			size: 'sm',
-			extra_classes: 'shrink-0 !text-xs !px-5 !py-2'
+			extra_classes: 'shrink-0 !text-xs !px-5 !py-2 !rounded-lg'
 		-%}
 	</div>
 </div>
