@@ -223,10 +223,10 @@
 
 					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
 					{%- liquid
-						assign atc_label = 'Sold Out'
+						assign atc_label = 'Sold out'
 						assign atc_disabled = true
 						if current_variant.available
-							assign atc_label = 'Add to Cart'
+							assign atc_label = 'Add to cart'
 							assign atc_disabled = false
 						endif
 					-%}
@@ -341,7 +341,7 @@
 		endif
 	-%}
 	{%- render 'cta-button',
-		label: 'Add to Cart',
+		label: 'Add to cart',
 		variant: 'shop',
 		element: 'button',
 		disabled: sticky_disabled,

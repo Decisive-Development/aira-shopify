@@ -29,7 +29,17 @@
       "Bash(grep -o 'text-copy[\\\\\\\\/0-9]*' assets/critical.css)",
       "Bash(grep -o '[a-z-]*\\\\\\\\\\\\\\\\/50' assets/critical.css)",
       "WebSearch",
-      "PowerShell(npm run build:css)"
+      "PowerShell(npm run build:css)",
+      "PowerShell($env:GIT_PAGER=''; git -C 'c:\\\\code\\\\aira-shopify' --no-pager diff -- sections/ugc-gallery.liquid)",
+      "Bash(git fetch *)",
+      "Bash(git rev-list *)",
+      "Bash(shopify version *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

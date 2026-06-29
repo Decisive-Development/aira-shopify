@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Rollout note: the whole gate runs in REPORT-ONLY mode so it can't turn main red
+# while the audit cleanup is still pending. Once the theme is clean, switch to
+# enforcing by (1) removing `continue-on-error` below, (2) making the critical.css
+# diff exit 1, and (3) running the rule check with STRICT=1.
+
+jobs:
+  theme-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Shopify/theme-check-action@v2
+        continue-on-error: true   # report-only; remove to enforce
+        with:
+          theme_root: '.'
+          token: ${{ github.token }}
+
+  css-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build:css
+      - name: critical.css must match its source
+        run: |
+          git diff --quiet -- assets/critical.css \
+            || echo "::warning::critical.css is out of sync with critical.source.css. Run npm run build:css and commit. (Will fail the build once enforcing.)"
+
+  aira-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/aira-rules-check.sh   # set STRICT=1 to enforce

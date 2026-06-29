@@ -492,3 +492,6 @@
   .lenis.lenis-stopped { overflow: hidden; }
   .lenis.lenis-smooth iframe { pointer-events: none; }
 }
+
+/* Judge.me star gold — in :root so it always emits (Tailwind @theme tree-shakes unused vars) */
+:root { --color-star: #D4A853; }

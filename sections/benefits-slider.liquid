@@ -49,7 +49,7 @@
 		cursor: grab;
 		padding-left: 1.5rem;
 		padding-right: 1.5rem;
-		padding-bottom: 0;
+		padding-bottom: 4rem;
 	}
 	#shopify-section-{{ section.id }} .bs-track:active { cursor: grabbing; }
 
@@ -88,7 +88,7 @@
 	/* ─── Square media ─── */
 	#shopify-section-{{ section.id }} .bs-media {
 		position: relative;
-		background: var(--color-bg-muted, #F2F2F2);
+		background: var(--color-bg-muted);
 		border-radius: 1rem;
 		overflow: hidden;
 		isolation: isolate;
@@ -123,7 +123,7 @@
 		font-family: var(--font-heading, sans-serif);
 		font-weight: 600;
 		font-size: 1rem;
-		color: var(--color-title, #212121);
+		color: var(--color-title);
 		line-height: 1.3;
 		margin: 0 0 8px;
 	}
@@ -132,7 +132,7 @@
 		font-family: var(--font-body, sans-serif);
 		font-weight: 400;
 		font-size: 0.875rem;
-		color: var(--color-copy, #40464F);
+		color: var(--color-copy);
 		line-height: 1.65;
 		margin: 0;
 	}
@@ -142,23 +142,22 @@
 		#shopify-section-{{ section.id }} .bs-body p   { font-size: 0.9375rem; }
 	}
 
-	/* ─── Controls — centred below carousel, desktop only ─── */
+	/* ─── Controls — centred below carousel, all breakpoints ─── */
 	#shopify-section-{{ section.id }} .bs-controls {
 		position: absolute;
 		bottom: 0;
 		left: 50%;
 		transform: translateX(-50%);
-		display: none;
+		display: flex;
 		gap: 8px;
 		z-index: 2;
 	}
-	@media (min-width: 1024px) { #shopify-section-{{ section.id }} .bs-controls { display: flex; } }
 
 	#shopify-section-{{ section.id }} .bs-btn {
 		width: 44px; height: 44px;
 		border-radius: 50%; border: none;
-		background-color: var(--color-main, #0A1A34);
-		color: var(--color-secondary, #F1EBE1);
+		background-color: var(--color-main);
+		color: var(--color-secondary);
 		display: inline-flex; align-items: center; justify-content: center;
 		cursor: pointer;
 		transition: opacity 0.2s;
@@ -533,22 +532,15 @@
 				{
 					"type": "slide",
 					"settings": {
-						"heading": "Opens on contact",
-						"description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
-					}
-				},
-				{
-					"type": "slide",
-					"settings": {
-						"heading": "Holds all night",
-						"description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
-					}
-				},
-				{
-					"type": "slide",
-					"settings": {
 						"heading": "Built for the Gulf",
 						"description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Stronger than disposable",
+						"description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
 					}
 				},
 				{
@@ -563,6 +555,13 @@
 					"settings": {
 						"heading": "Reusable strip",
 						"description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
+					}
+				},
+				{
+					"type": "slide",
+					"settings": {
+						"heading": "Opens on contact",
+						"description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
 					}
 				}
 			]

@@ -41,7 +41,9 @@
 		assign has_video = true
 	endif
 
-	comment Poster falls back to the uploaded video's preview frame. endcomment
+	comment
+		Poster falls back to the uploaded video's preview frame.
+	endcomment
 	assign poster_image = section.settings.video_poster
 	if poster_image == blank and section.settings.video != blank
 		assign poster_image = section.settings.video.preview_image

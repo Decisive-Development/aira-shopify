@@ -121,7 +121,7 @@
 			variantInput.value  = variant.id;
 			priceEl.textContent = variant.price_formatted;
 			addBtn.disabled     = !variant.available;
-			addBtn.textContent  = variant.available ? 'Add to Cart' : 'Sold Out';
+			addBtn.textContent  = variant.available ? 'Add to cart' : 'Sold out';
 			if (variant.image && imgEl) {
 				imgEl.removeAttribute('srcset');
 				imgEl.removeAttribute('sizes');

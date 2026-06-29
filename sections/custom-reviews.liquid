@@ -144,7 +144,7 @@
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: var(--color-main, #0A1A34);
+    color: var(--color-main);
     z-index: 2;
     transition: opacity 0.2s;
   }
@@ -182,7 +182,7 @@
   .review-lightbox__dialog {
     position: relative;
     display: flex;
-    background: var(--color-bg-soft, #FAFAFA);
+    background: var(--color-bg-soft);
     border-radius: 16px;
     overflow: hidden;
     max-width: 900px;
@@ -228,7 +228,7 @@
     width: 45%;
     min-height: 400px;
     max-height: 85vh;
-    background: var(--color-bg-soft, #FAFAFA);
+    background: var(--color-bg-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -241,7 +241,7 @@
     height: 100%;
     object-fit: contain;
     display: block;
-    background: var(--color-bg-soft, #FAFAFA);
+    background: var(--color-bg-soft);
   }
 
   .review-lightbox__media iframe {
@@ -272,7 +272,7 @@
     font-family: var(--font-heading, 'Satoshi', sans-serif);
     font-size: 18px;
     font-weight: 700;
-    color: var(--color-main, #0A1A34);
+    color: var(--color-main);
   }
 
   .review-lightbox__reviewer-product {
@@ -299,7 +299,7 @@
     font-family: var(--font-heading, 'Satoshi', sans-serif);
     font-size: 18px;
     font-weight: 700;
-    color: var(--color-main, #0A1A34);
+    color: var(--color-main);
     margin: 0;
     line-height: 1.4;
   }
@@ -340,7 +340,7 @@
       min-height: 0;
       max-height: 45vh;
       flex-shrink: 0;
-      background: var(--color-bg-soft, #FAFAFA);
+      background: var(--color-bg-soft);
     }
 
     .review-lightbox__media img {
@@ -445,7 +445,7 @@
       border: none;
       padding: 6px 0 2px;
       cursor: pointer;
-      color: var(--color-main, #0A1A34);
+      color: var(--color-main);
     }
     .review-lightbox.is-video .review-lightbox__expand-tab svg {
       width: 22px;
@@ -470,11 +470,11 @@
   .jdgm-review-widget-modal,
   body .jdgm-write-review-modal,
   body .jdgm-review-widget-modal {
-    --jdgm-primary-color: #0A1A34 !important;
-    --jdgm-btn-primary-bg-color: #0A1A34 !important;
-    --jdgm-btn-primary-text-color: #F1EBE1 !important;
-    --jdgm-accent-color: #0A1A34 !important;
-    --jdgm-star-color: #D4A853 !important;
+    --jdgm-primary-color: var(--color-main) !important;
+    --jdgm-btn-primary-bg-color: var(--color-main) !important;
+    --jdgm-btn-primary-text-color: var(--color-secondary) !important;
+    --jdgm-accent-color: var(--color-main) !important;
+    --jdgm-star-color: var(--color-star) !important;
   }
 
   /* ── Overlay / Backdrop ── */
@@ -495,7 +495,7 @@
 
   /* ── Close Button (X) ── */
   .jdgm-write-review-modal__close-btn {
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     opacity: 0.5;
     transition: opacity 0.2s;
   }
@@ -507,7 +507,7 @@
   .jdgm-write-review-modal__title {
     font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
     font-weight: 700 !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     font-size: 22px !important;
     line-height: 1.3 !important;
   }
@@ -523,34 +523,34 @@
   .jdgm-write-review-modal__product-title {
     font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
     font-weight: 600 !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
   }
 
   /* ── Stars — Gold ── */
   .jdgm-write-review-modal .jdgm-star {
-    color: #D4A853 !important;
+    color: var(--color-star) !important;
   }
   .jdgm-write-review-modal .jdgm-star svg {
-    fill: #D4A853 !important;
-    color: #D4A853 !important;
+    fill: var(--color-star) !important;
+    color: var(--color-star) !important;
   }
   .jdgm-write-review-modal .jdgm-star svg path {
-    fill: #D4A853 !important;
-    stroke: #D4A853 !important;
+    fill: var(--color-star) !important;
+    stroke: var(--color-star) !important;
   }
 
   /* Empty/unselected stars */
   .jdgm-write-review-modal .jdgm-star.jdgm--off {
-    color: #D4A853 !important;
+    color: var(--color-star) !important;
     opacity: 0.3;
   }
   .jdgm-write-review-modal .jdgm-star.jdgm--off svg {
-    fill: #D4A853 !important;
-    color: #D4A853 !important;
+    fill: var(--color-star) !important;
+    color: var(--color-star) !important;
   }
   .jdgm-write-review-modal .jdgm-star.jdgm--off svg path {
     fill: transparent !important;
-    stroke: #D4A853 !important;
+    stroke: var(--color-star) !important;
   }
 
   /* Star labels (Poor / Great) */
@@ -565,7 +565,7 @@
   .jdgm-write-review-modal__field-label {
     font-family: var(--font-body, 'Nunito Sans', sans-serif) !important;
     font-weight: 600 !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     font-size: 14px !important;
   }
 
@@ -576,12 +576,12 @@
     padding: 12px 16px !important;
     font-family: var(--font-body, 'Nunito Sans', sans-serif) !important;
     font-size: 14px !important;
-    color: var(--color-main, #0A1A34) !important;
-    background: var(--color-bg-soft, #FAFAFA) !important;
+    color: var(--color-main) !important;
+    background: var(--color-bg-soft) !important;
     transition: border-color 0.2s;
   }
   .jdgm-write-review-modal__field-input:focus {
-    border-color: var(--color-main, #0A1A34) !important;
+    border-color: var(--color-main) !important;
     outline: none !important;
     box-shadow: 0 0 0 3px rgba(10, 26, 52, 0.08) !important;
   }
@@ -607,8 +607,8 @@
   .jdgm-write-review-modal__btn--submit,
   body .jdgm-write-review-modal__btn--next,
   body .jdgm-write-review-modal__btn--submit {
-    background-color: var(--color-main, #0A1A34) !important;
-    color: var(--color-secondary, #F1EBE1) !important;
+    background-color: var(--color-main) !important;
+    color: var(--color-secondary) !important;
     border: none !important;
     border-radius: 12px !important;
     padding: 14px 32px !important;
@@ -629,7 +629,7 @@
   .jdgm-write-review-modal__btn--back,
   body .jdgm-write-review-modal__btn--back {
     background: none !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     border: none !important;
     padding: 14px 16px !important;
     font-weight: 500 !important;
@@ -652,8 +652,8 @@
 
   .jdgm-write-review-modal__nav-btn-next,
   .jdgm-write-review-modal__nav-btn-close {
-    background-color: var(--color-main, #0A1A34) !important;
-    color: var(--color-secondary, #F1EBE1) !important;
+    background-color: var(--color-main) !important;
+    color: var(--color-secondary) !important;
     border: none !important;
     border-radius: 12px !important;
     padding: 14px 32px !important;
@@ -665,7 +665,7 @@
 
   .jdgm-write-review-modal__nav-btn-back {
     background: none !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     border: none !important;
     padding: 14px 16px !important;
     font-weight: 500 !important;
@@ -692,14 +692,14 @@
   /* ── Contact Us / Leave Review Links ── */
   .jdgm-write-review-modal__btn--contact-us,
   .jdgm-write-review-modal__btn--leave-review {
-    background-color: var(--color-main, #0A1A34) !important;
-    color: var(--color-secondary, #F1EBE1) !important;
+    background-color: var(--color-main) !important;
+    color: var(--color-secondary) !important;
     border-radius: 12px !important;
   }
 
   /* ── Links inside the modal ── */
   .jdgm-write-review-modal a {
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     text-decoration: underline;
     text-underline-offset: 2px;
   }
@@ -711,7 +711,7 @@
   .jdgm-write-review-modal__field-group--media-upload {
     border: 2px dashed rgba(10, 26, 52, 0.15) !important;
     border-radius: 12px !important;
-    background: var(--color-bg-soft, #FAFAFA) !important;
+    background: var(--color-bg-soft) !important;
     transition: border-color 0.2s;
   }
   .jdgm-write-review-modal__field-group--media-upload:hover {
@@ -721,7 +721,7 @@
   /* Upload icon/link color */
   .jdgm-write-review-modal__field-group--media-upload a,
   .jdgm-write-review-modal__field-group--media-upload span {
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
   }
 
   /* ── Checkbox (Post as anonymous) ── */
@@ -730,8 +730,8 @@
     border-radius: 4px !important;
   }
   .jdgm-write-review-modal__checkbox-input:checked + .jdgm-write-review-modal__checkbox-custom {
-    background-color: var(--color-main, #0A1A34) !important;
-    border-color: var(--color-main, #0A1A34) !important;
+    background-color: var(--color-main) !important;
+    border-color: var(--color-main) !important;
   }
   .jdgm-write-review-modal__checkbox-text {
     color: var(--color-copy, #555) !important;
@@ -740,13 +740,13 @@
 
   /* ── Thank You Screen ── */
   .jdgm-write-review-modal__form--thank-you .jdgm-write-review-modal__title {
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
   }
 
   /* ── Negative Resolution ── */
   .jdgm-write-review-modal__negative-resolution-title {
     font-family: var(--font-heading, 'Satoshi', sans-serif) !important;
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
   }
 
   /* ── Product Image — Rounded ── */
@@ -756,7 +756,7 @@
 
   /* ── Terms & Privacy Links ── */
   .jdgm-write-review-modal__terms a {
-    color: var(--color-main, #0A1A34) !important;
+    color: var(--color-main) !important;
     font-size: 12px !important;
   }
 
@@ -936,8 +936,8 @@
   var storedReviews = [];
 
   // ── Star SVGs ──
-  var filledStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="#D4A853" stroke="#D4A853" stroke-width="0.5"/></svg>';
-  var emptyStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="none" stroke="#D4A853" stroke-width="0.5"/></svg>';
+  var filledStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="var(--color-star)" stroke="var(--color-star)" stroke-width="0.5"/></svg>';
+  var emptyStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="none" stroke="var(--color-star)" stroke-width="0.5"/></svg>';
 
   function starsHTML(count) {
     var html = '';

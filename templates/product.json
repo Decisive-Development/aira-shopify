@@ -312,7 +312,7 @@
           "type": "slide",
           "settings": {
             "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
-            "heading": "Holds all night",
+            "heading": "Stronger than disposable",
             "description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
           }
         },
@@ -342,11 +342,11 @@
         }
       },
       "block_order": [
-        "slide_1",
-        "slide_3",
         "slide_2",
+        "slide_3",
         "slide_4",
-        "slide_5"
+        "slide_5",
+        "slide_1"
       ],
       "settings": {
         "eyebrow": "PRODUCT",
