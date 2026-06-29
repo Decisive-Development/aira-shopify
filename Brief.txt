@@ -1,40 +1,42 @@
-What if breathing well was the easiest part of your day? > You shouldn't have to think about breathing. So we did.
- Remove:aira · 2025 from image
+Our Story
+How It Works
+Backed by Science
 
-We make one thing properly — a magnetic nasal strip designed to disappear into your routine, and stay there. > We make one thing properly: a magnetic nasal strip, designed to improve your days and your nights.
+These should be sentence case
 
+Better breathing, in your inbox. - same size as Shop/about etc
 
-aira began with restless nights — partners who couldn't sleep through snoring, mornings that started tired, gyms where breath gave out before the legs did.
-
-The fix was always the same: breathe through the nose. Easy to say. Harder when your nasal passages are working against you. >
-
-We started aira from a goal to improve sleep. To improve deep sleep, to prevent snoring, to wake up rested and to exercise easier. One of the most obvious fixes, the nose. We used disposable nasal strips, however we agreed they just weren't good enough.
+Join the aira list for early access to new drops, giveaways, exclusive offers and 10% off your first kit.- Darker font. 10% off your first kit semibold
 
 
-We engineer for nights, not first impressions. > We engineer for performance, not first impressions.
-
-We didn't set out to sell tape. We set out to fix something almost everyone takes for granted — and almost no one does well. >
-We didn't set out to sell temporary. We set out to fix something almost everyone takes for granted and almost no one does well.
-
-We don't chase trends. We pay attention to physiology, materials, and the small details that make a product disappear into your routine. >
-We pay attention to physiology, materials, and the small details that make a product part of your daily routine.
-
-Remove Watch tutorial→
-
-What we won't compromise > Where we are going
-
-Built to last. Honest about what it is. > We are only starting with the nose.
-
-A reusable magnetic strip, replaceable adhesive tabs — designed for months of use, not landfill cycles. >
-At aira we aim to be the first and last stop for any sleep, performance or wellness accessories, aimed only at improving your life.
-
-A strip helps you breathe. It isn't a cure. We won't pretend otherwise, or invent stats to sell harder. Tested in heat, made for the GCC.>
-Our mission is to provide you with anything and everything you might need to improve every aspect of your life.
-
-Get my kit
-→ Remove
+© 2026 aira Wellness.> © 2026 aira wellness FZCO.
 
 
-Where we go from here > Thank you 
+The aira community
 
-— starting with the strip you came here for. >, starting with the strip you came here for.
+See it in action.
+
+I need this to be updated in one place and it updates everywhere. Not once per page. Is this possible?
+
+@aira.breathing > @airabreathing (sitewide)
+
+<div class="rounded-2xl bg-main/60 backdrop-blur-lg px-5 py-3 flex items-center justify-between gap-4" style="box-shadow: 0 -4px 24px rgba(10,26,52,0.15);">
+		<p class="text-secondary text-sm font-semibold leading-tight">Breathe better tonight</p><a href="/products/aira-kit" class="group inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-wide transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:duration-75 cursor-pointer bg-highlight text-white py-3 hover:brightness-95 hover:translate-y-px hover:shadow-md hover:shadow-highlight/20 px-6 text-sm shrink-0 !text-xs !px-5 !py-2">Get my kit
+</a></div>
+
+This element needs to move down slightly 5px from bottom.
+
+Make sure CTA in this box matches border radius- looks to rounded
+
+The stacking cards, on mobile. Move the citation close to the copy, then reduce the y padding on the span line by half
+
+On mobile, make this text stack Better nights. Stronger days.
+
+On mobile, reduce the size of this circle by half
+<div class="w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center pointer-events-auto cursor-grab touch-none" data-divider-handle="" style="">
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="text-main">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M8 9l-4 3 4 3M16 9l4 3-4 3"></path>
+					</svg>
+				</div>
+
+                On mobile this section Everything you need to improve your life. - move the image below the copy and above the bullet points
