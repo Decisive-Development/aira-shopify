@@ -81,6 +81,7 @@
         "headline": "Three steps to life-changing breathing.",
         "headline_accent": "life-changing breathing",
         "lead": "Watch the 90-second tutorial, then walk through each step at your own pace. The whole routine takes under a minute once you've got it.",
+        "video": "shopify://files/videos/Tutorial .mov",
         "video_url": "",
         "duration_label": "1:32"
       }
@@ -175,7 +176,7 @@
         "prep-1": {
           "type": "prep",
           "settings": {
-            "image": "shopify://shop_images/IMG_3254.jpg",
+            "image": "shopify://shop_images/clean-nose.png",
             "image_label": "Clean — soap & water on the bridge",
             "title": "Clean",
             "body": "Use a gentle cleanser to remove makeup, oils, and dirt from your nose."
@@ -238,6 +239,7 @@
         "apply-1": {
           "type": "apply",
           "settings": {
+            "image": "shopify://shop_images/peel-off.png",
             "image_label": "A · Peel a tab daintily by the edge",
             "title": "Peel carefully",
             "body": "Pinch the tab by its outer edge. The less you touch the adhesive, the longer it holds."
@@ -246,7 +248,7 @@
         "apply-2": {
           "type": "apply",
           "settings": {
-            "image": "shopify://shop_images/IMG_3393.jpg",
+            "image": "shopify://shop_images/place-as-shown.png",
             "image_label": "B · Place tab just above each nostril",
             "title": "Place as shown",
             "body": "One tab on each side of your nose, just above the nostril, rub firmly onto skin."
@@ -255,7 +257,7 @@
         "apply-3": {
           "type": "apply",
           "settings": {
-            "image": "shopify://shop_images/IMG_3504.jpg",
+            "image": "shopify://shop_images/place-as-shown_f557572e-f1ce-4f53-9b29-267438e5f34b.png",
             "image_label": "C · Apply strip, magnetic ends up",
             "title": "Strip fins face up",
             "body": "Place the magnetic strip over each tab and breathe."

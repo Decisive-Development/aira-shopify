@@ -104,6 +104,62 @@
   }
 
   /* ────────────────────────────────────────────────────────────
+     Form reveal — animated show/hide for JS-gated content.
+     Collapses height (grid 1fr → 0fr) and fades. Without JS it stays
+     OPEN (no .js class); with JS it collapses by default and the gate
+     adds `.is-open` to reveal it — so there's no flash of the open form
+     on load. Respects reduced motion.
+     (Distinct from the scroll-in `.reveal` helper further below.)
+     ──────────────────────────────────────────────────────────── */
+  .form-reveal {
+    display: grid;
+    grid-template-rows: 1fr;
+    opacity: 1;
+    transition: grid-template-rows 0.45s ease, opacity 0.45s ease;
+  }
+  .form-reveal > * {
+    overflow: hidden;
+    min-height: 0;
+  }
+  .js .form-reveal {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .js .form-reveal.is-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .form-reveal {
+      transition: none;
+    }
+  }
+
+  /* Progressive stepper (returns eligibility): hide inactive steps only once
+     JS has marked the gate with [data-js]. Without JS every step stays
+     visible (stacked), so the flow degrades to the old static list. */
+  [data-eligibility-gate][data-progressive][data-js] [data-step]:not([data-active]) {
+    display: none;
+  }
+
+  /* Fast, subtle fade for a resolved eligibility outcome. Replays whenever a
+     panel switches from hidden (display:none) to shown. */
+  @keyframes aira-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  [data-eligibility-result] [data-outcome] {
+    animation: aira-fade-in 0.18s ease-out both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-eligibility-result] [data-outcome] {
+      animation: none;
+    }
+  }
+
+  /* ────────────────────────────────────────────────────────────
      "How it works" page components
      ──────────────────────────────────────────────────────────── */
 

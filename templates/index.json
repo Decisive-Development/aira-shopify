@@ -116,12 +116,12 @@
     "benefits_slider": {
       "type": "benefits-slider",
       "blocks": {
-        "slide_1": {
+        "slide_2": {
           "type": "slide",
           "settings": {
-            "video": "shopify://files/videos/0612(1).mp4",
-            "heading": "Opens on contact",
-            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
+            "heading": "Built for the Gulf",
+            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "slide_3": {
@@ -130,14 +130,6 @@
             "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
             "heading": "Stronger than disposable",
             "description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
-          }
-        },
-        "slide_2": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
-            "heading": "Built for the Gulf",
-            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "slide_4": {
@@ -154,6 +146,14 @@
             "image": "shopify://shop_images/Reusable_band.png",
             "heading": "Reusable strip",
             "description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
+          }
+        },
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "video": "shopify://files/videos/0612(1).mp4",
+            "heading": "Opens on contact",
+            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
         }
       },

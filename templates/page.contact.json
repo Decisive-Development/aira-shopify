@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
 	"sections": {
 		"hero": {
@@ -5,12 +14,8 @@
 			"settings": {
 				"eyebrow": "We're here to help",
 				"heading": "Get in touch",
-				"subheading": "Message us on WhatsApp for the fastest response, or use one of the channels below."
+				"subheading": "Send us a message below and we'll get back to you as soon as possible, typically same day."
 			}
-		},
-		"channels": {
-			"type": "contact-channels",
-			"settings": {}
 		},
 		"form": {
 			"type": "contact-form",
@@ -19,19 +24,15 @@
 		"quick_links": {
 			"type": "contact-quick-links",
 			"blocks": {
-				"ql-1": { "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, and use.",     "url": "/pages/faq" } },
-				"ql-2": { "type": "link", "settings": { "title": "Start a return", "body": "Eligibility, timing, and how to send something back.",  "url": "/pages/returns" } },
-				"ql-3": { "type": "link", "settings": { "title": "Order tracking", "body": "Check the status of an order in flight.",                "url": "/pages/order-tracking" } }
+				"ql-1": { "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, how to apply and benefits.", "url": "/pages/faq" } },
+				"ql-2": { "type": "link", "settings": { "title": "Want to return?", "body": "Eligibility and how to send something back.",                       "url": "/pages/returns" } }
 			},
-			"block_order": ["ql-1", "ql-2", "ql-3"],
+			"block_order": ["ql-1", "ql-2"],
 			"settings": {
-				"heading": "Quick answers"
+				"heading": "Something specific?",
+				"subheading": "A lot of questions have already been answered.<br>If you need a return, please go to our returns page."
 			}
-		},
-		"business_info": {
-			"type": "contact-business-info",
-			"settings": {}
 		}
 	},
-	"order": ["hero", "channels", "form", "quick_links", "business_info"]
+	"order": ["hero", "form", "quick_links"]
 }

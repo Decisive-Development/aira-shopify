@@ -1,53 +1,116 @@
 {%- comment -%}
-	Returns — Eligibility gate (scaffold).
-	Vanilla JS toggle that gates the returns form. Customer answers three
-	questions; only when all three pass is the form below revealed.
-	The gate writes its outcome into hidden inputs so the support team
-	has an audit trail of what was confirmed at submission time.
+	Returns — Eligibility checker (progressive stepper).
+	One question at a time on a navy card: progress bar, Back, auto-advance.
+	Vanilla JS, progressive enhancement — without JS every step stays visible
+	(see the [data-js] rule in critical.source.css) and the form stays enabled.
 
-	NO React. NO frameworks. The form mount expects this gate to populate
-	#eligibility_within_window, #eligibility_unused, #eligibility_sealed
-	in the form below.
+	Four yes/no questions branch the customer to one of four outcomes:
+	  • damaged       → email a photo + order number; we cover return shipping
+	  • satisfaction  → reveal the returns form below; customer pays return shipping
+	  • window         → outside the 30-night window, not eligible
+	  • condition      → not in original packaging, not eligible
+	Answers mirror into the returns form's hidden audit fields. NO frameworks.
 {%- endcomment -%}
 
-<section class="bg-bg py-16 md:py-20">
-	<div class="container mx-auto px-4 max-w-[640px]">
+{%- liquid
+	assign support_email = settings.support_email | default: 'contact@shop-aira.com'
+	assign dmg_subject   = 'Return damaged item' | replace: ' ', '%20'
+	assign dmg_mailto    = 'mailto:' | append: support_email | append: '?subject=' | append: dmg_subject
+-%}
 
-		{%- if section.settings.heading != blank -%}
-			<header class="text-center mb-8">
-				{%- if section.settings.eyebrow != blank -%}
-					<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ section.settings.eyebrow }}</p>
-				{%- endif -%}
-				<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0">{{ section.settings.heading }}</h2>
-				{%- if section.settings.subheading != blank -%}
-					<p class="text-copy/80 text-base mt-3">{{ section.settings.subheading }}</p>
-				{%- endif -%}
-			</header>
-		{%- endif -%}
+<section class="bg-bg py-10 md:py-12 flex flex-col justify-center items-center min-h-[60vh]">
+	<div class="w-full max-w-[640px] px-4">
 
-		<div data-eligibility-gate class="flex flex-col gap-4">
+		<div data-eligibility-gate data-progressive class="relative">
 
-			{%- for block in section.blocks -%}
-				{%- if block.type == 'question' -%}
-					<fieldset class="rounded-xl bg-secondary p-5" data-question="{{ block.settings.field_id }}" {{ block.shopify_attributes }}>
-						<legend class="text-sm font-semibold text-title mb-3">{{ block.settings.question }}</legend>
-						<div class="flex gap-2">
-							<label class="flex-1">
-								<input type="radio" name="{{ block.settings.field_id }}" value="yes" class="peer sr-only" data-pass>
-								<span class="block text-center rounded-lg border border-main/20 px-4 py-2 text-sm cursor-pointer peer-checked:bg-main peer-checked:text-secondary peer-checked:border-main">Yes</span>
-							</label>
-							<label class="flex-1">
-								<input type="radio" name="{{ block.settings.field_id }}" value="no" class="peer sr-only">
-								<span class="block text-center rounded-lg border border-main/20 px-4 py-2 text-sm cursor-pointer peer-checked:bg-main peer-checked:text-secondary peer-checked:border-main">No</span>
-							</label>
-						</div>
-					</fieldset>
-				{%- endif -%}
-			{%- endfor -%}
+			<div class="rounded-2xl bg-main p-8 md:p-12 text-secondary" data-card>
 
-			<div data-eligibility-status class="rounded-xl border border-main/15 px-5 py-4 text-sm text-copy/70" hidden>
-				<p class="m-0" data-status-pass hidden>{{ section.settings.pass_message | default: "You're eligible — please complete the form below." }}</p>
-				<p class="m-0" data-status-fail hidden>{{ section.settings.fail_message | default: "Based on your answers, this order isn't eligible for a return. If you believe something's damaged or wrong, message support and we'll review it directly." }}</p>
+				{%- comment -%} Progress bar — one segment per question {%- endcomment -%}
+				<div class="flex gap-1.5 mb-7" data-progress>
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'question' -%}
+							<i class="h-1 flex-1 rounded-full bg-secondary/15 transition-colors duration-300"></i>
+						{%- endif -%}
+					{%- endfor -%}
+				</div>
+
+				<p class="text-xs font-bold uppercase tracking-widest text-tertiary-light mb-4" data-step-counter></p>
+
+				{%- assign q_index = 0 -%}
+				{%- for block in section.blocks -%}
+					{%- if block.type == 'question' -%}
+						<fieldset
+							class="m-0 p-0 border-0"
+							data-question="{{ block.settings.field_id }}"
+							data-step="{{ q_index }}"
+							{% if q_index == 0 %}data-active{% endif %}
+							{{ block.shopify_attributes }}>
+							<legend class="font-heading text-2xl md:text-3xl text-secondary leading-tight mb-8 p-0">{{ block.settings.question }}</legend>
+							<div class="grid grid-cols-2 gap-3">
+								<label class="block">
+									<input type="radio" name="{{ block.settings.field_id }}" value="yes" class="peer sr-only">
+									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">Yes</span>
+								</label>
+								<label class="block">
+									<input type="radio" name="{{ block.settings.field_id }}" value="no" class="peer sr-only">
+									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">No</span>
+								</label>
+							</div>
+						</fieldset>
+						{%- assign q_index = q_index | plus: 1 -%}
+					{%- endif -%}
+				{%- endfor -%}
+
+				{%- comment -%} Nav row {%- endcomment -%}
+				<div class="flex items-center justify-between mt-9">
+					<button type="button" data-back class="inline-flex items-center gap-1.5 text-sm font-heading font-semibold text-tertiary-light hover:text-secondary disabled:opacity-0 transition" disabled>
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+						Back
+					</button>
+					<span class="text-xs text-tertiary-light">Takes around 20 seconds</span>
+				</div>
+			</div>
+
+			<div data-eligibility-result aria-live="polite" class="mt-4">
+
+				{%- comment -%} Eligible — change of mind {%- endcomment -%}
+				<div data-outcome="satisfaction" class="rounded-xl border border-highlight-green/30 bg-highlight-green/10 p-6" hidden>
+					<p class="text-xl font-bold text-highlight-green m-0 mb-2">You're eligible for a return.</p>
+					<p class="text-base text-copy m-0">Complete the form below to start it. Used is fine for a change of mind, we just need the original packaging and your receipt. Return shipping is yours.</p>
+				</div>
+
+				{%- comment -%} Damaged or faulty — free, by email. In-form photo upload is still TBD (Shopify's contact form can't attach files without an app). {%- endcomment -%}
+				<div data-outcome="damaged" class="rounded-xl border border-main/15 bg-secondary p-6" hidden>
+					<p class="text-xl font-bold text-title m-0 mb-2">Sorry your order arrived damaged.</p>
+					<p class="text-base text-copy m-0 mb-3">Email us and we'll replace or refund it, with shipping on us.</p>
+					<ul class="text-base text-copy list-disc pl-5 space-y-1 m-0 mb-5">
+						<li>Subject: Return damaged item</li>
+						<li>Include order number</li>
+						<li>Attach photograph of damage</li>
+					</ul>
+					<div class="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2">
+						{%- render 'cta-button', label: 'Email a photo to support', url: dmg_mailto, variant: 'solid', size: 'sm' -%}
+						<a href="mailto:{{ support_email }}" class="text-base font-semibold text-title hover:text-highlight transition-colors">{{ support_email }}</a>
+					</div>
+				</div>
+
+				{%- comment -%} Not eligible — outside the 30-night window {%- endcomment -%}
+				<div data-outcome="window" class="rounded-xl border border-highlight/30 bg-highlight/10 p-6" hidden>
+					<p class="text-xl font-bold text-highlight m-0 mb-2">This order is outside the return window.</p>
+					<p class="text-base text-copy m-0">Our 30-night guarantee covers the 30 nights after delivery, so this order isn't eligible for a return. If you think something's faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> and we'll take a look.</p>
+				</div>
+
+				{%- comment -%} Not eligible — not in original packaging {%- endcomment -%}
+				<div data-outcome="condition" class="rounded-xl border border-highlight/30 bg-highlight/10 p-6" hidden>
+					<p class="text-xl font-bold text-highlight m-0 mb-2">This order isn't eligible for a return.</p>
+					<p class="text-base text-copy m-0">Change-of-mind returns need to come back in their original packaging with your receipt. If something's damaged or faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> with a photo and we'll make it right.</p>
+				</div>
+
+				{%- comment -%} Needs the order number first {%- endcomment -%}
+				<div data-outcome="order" class="rounded-xl border border-main/15 p-6" hidden>
+					<p class="text-base text-copy m-0">You'll need your order number to continue. Find it in your order confirmation email, then answer "Yes" above.</p>
+				</div>
+
 			</div>
 
 		</div>
@@ -56,86 +119,154 @@
 
 <script>
 	(function () {
-		var gate = document.currentScript.previousElementSibling.querySelector('[data-eligibility-gate]');
+		var section = document.currentScript.previousElementSibling;
+		var gate = section && section.querySelector('[data-eligibility-gate]');
 		if (!gate) return;
 
-		var status     = gate.querySelector('[data-eligibility-status]');
-		var statusPass = gate.querySelector('[data-status-pass]');
-		var statusFail = gate.querySelector('[data-status-fail]');
-		var questions  = gate.querySelectorAll('[data-question]');
+		// Mark the gate so the CSS only collapses inactive steps when JS is on.
+		gate.setAttribute('data-js', '');
+
+		var questions = gate.querySelectorAll('[data-question]');
+		var panels    = {};
+		gate.querySelectorAll('[data-eligibility-result] [data-outcome]').forEach(function (p) {
+			panels[p.getAttribute('data-outcome')] = p;
+		});
+
+		var card = gate.querySelector('[data-card]');
+
+		// Vertically centre the card while stepping; drop the min-height once an
+		// outcome resolves so the result sits right above the form (no big gap).
+		function setCentered(on) {
+			if (!section) return;
+			section.classList.toggle('min-h-[60vh]', on);
+			section.classList.toggle('justify-center', on);
+		}
+
+		function showPanel(name) {
+			Object.keys(panels).forEach(function (key) {
+				panels[key].hidden = key !== name;
+			});
+			// Terminal outcomes stand alone; 'order' keeps the card so Q4 can be re-answered.
+			if (card) card.classList.toggle('hidden', name !== 'order');
+			setCentered(false);
+		}
+
+		function hideAllPanels() {
+			Object.keys(panels).forEach(function (key) { panels[key].hidden = true; });
+			if (card) card.classList.remove('hidden');
+			setCentered(true);
+		}
+
+		function setFormState(show) {
+			// Animate the form section in/out via the shared .form-reveal helper.
+			var reveal = document.getElementById('returns-form-reveal');
+			if (reveal) reveal.classList.toggle('is-open', show);
+
+			// Enable/disable inputs so collapsed fields stay out of the tab order.
+			var mount = document.getElementById('returns-form-mount');
+			if (!mount) return;
+			mount.querySelectorAll('input, select, textarea, button').forEach(function (el) {
+				if (el.type === 'hidden') return;
+				el.disabled = !show;
+			});
+		}
 
 		function evaluate() {
-			var totalQuestions = questions.length;
-			var answeredCount  = 0;
-			var passCount      = 0;
-			var values         = {};
+			var values   = {};
+			var answered = 0;
 
 			questions.forEach(function (q) {
 				var name    = q.getAttribute('data-question');
 				var checked = q.querySelector('input[type="radio"]:checked');
-				if (checked) {
-					answeredCount++;
-					values[name] = checked.value;
-					if (checked.value === 'yes') passCount++;
-				}
+				if (checked) { answered++; values[name] = checked.value; }
 			});
 
-			// Mirror values into the form's hidden audit fields if it's mounted.
+			// Mirror answers into the form's hidden audit fields if it's mounted.
 			Object.keys(values).forEach(function (name) {
 				var hidden = document.getElementById(name);
 				if (hidden) hidden.value = values[name];
 			});
 
-			if (answeredCount < totalQuestions) {
-				status.hidden = true;
-				toggleForm(false);
+			if (answered < questions.length) {
+				hideAllPanels();
+				setFormState(false);
 				return;
 			}
 
-			status.hidden     = false;
-			var allPass       = passCount === totalQuestions;
-			statusPass.hidden = !allPass;
-			statusFail.hidden = allPass;
-			toggleForm(allPass);
+			var withinWindow = values.eligibility_within_window === 'yes';
+			var packaging    = values.eligibility_original_packaging === 'yes';
+			var damaged      = values.eligibility_damaged === 'yes';
+			var hasOrderNo   = values.eligibility_order_number === 'yes';
+
+			var outcome;
+			if (!withinWindow)   outcome = 'window';
+			else if (damaged)    outcome = 'damaged';
+			else if (!packaging) outcome = 'condition';
+			else                 outcome = 'satisfaction';
+
+			// Both action paths need the order number before continuing.
+			if ((outcome === 'satisfaction' || outcome === 'damaged') && !hasOrderNo) {
+				showPanel('order');
+				setFormState(false);
+				return;
+			}
+
+			showPanel(outcome);
+			setFormState(outcome === 'satisfaction');
 		}
 
-		function toggleForm(enabled) {
-			var mount = document.getElementById('returns-form-mount');
-			if (!mount) return;
-			mount.querySelectorAll('input, select, textarea, button').forEach(function (el) {
-				if (el.type === 'hidden') return;
-				el.disabled = !enabled;
+		// ── Progressive stepper ────────────────────────────────────────────
+		var steps   = Array.prototype.slice.call(gate.querySelectorAll('[data-step]'));
+		var bars    = gate.querySelectorAll('[data-progress] i');
+		var counter = gate.querySelector('[data-step-counter]');
+		var backBtn = gate.querySelector('[data-back]');
+		var current = 0;
+
+		function renderStep() {
+			steps.forEach(function (s, i) {
+				if (i === current) s.setAttribute('data-active', ''); else s.removeAttribute('data-active');
 			});
-			mount.classList.toggle('opacity-50', !enabled);
-			mount.classList.toggle('pointer-events-none', !enabled);
+			bars.forEach(function (b, i) {
+				b.classList.toggle('bg-highlight', i === current);
+				b.classList.toggle('bg-secondary', i < current);
+				b.classList.toggle('bg-secondary/15', i > current);
+			});
+			if (counter) counter.textContent = 'Question ' + (current + 1) + ' of ' + steps.length;
+			if (backBtn) backBtn.disabled = current === 0;
 		}
 
-		gate.querySelectorAll('input[type="radio"]').forEach(function (r) {
-			r.addEventListener('change', evaluate);
+		function advance() {
+			if (current < steps.length - 1) { current++; renderStep(); }
+			else { evaluate(); }
+		}
+
+		if (backBtn) backBtn.addEventListener('click', function () {
+			if (current > 0) { current--; renderStep(); }
 		});
 
-		// Start with the form mount disabled.
-		toggleForm(false);
+		// Every answer mirrors live; the last answer triggers the branching.
+		gate.querySelectorAll('input[type="radio"]').forEach(function (r) {
+			r.addEventListener('change', function () {
+				evaluate();
+				setTimeout(advance, 220);
+			});
+		});
+
+		renderStep();
 	})();
 </script>
 
 {% schema %}
 {
 	"name": "Returns - Eligibility",
-	"settings": [
-		{ "type": "text",     "id": "eyebrow",       "label": "Eyebrow",      "default": "Step 1" },
-		{ "type": "text",     "id": "heading",       "label": "Heading",      "default": "Check eligibility" },
-		{ "type": "textarea", "id": "subheading",    "label": "Subheading",   "default": "Three quick questions before you continue." },
-		{ "type": "textarea", "id": "pass_message",  "label": "Pass message", "default": "You're eligible — please complete the form below." },
-		{ "type": "textarea", "id": "fail_message",  "label": "Fail message", "default": "Based on your answers, this order isn't eligible for a return. If you believe something's damaged or wrong, message support and we'll review it directly." }
-	],
+	"settings": [],
 	"blocks": [
 		{
 			"type": "question",
 			"name": "Question",
 			"settings": [
-				{ "type": "text", "id": "question", "label": "Question",            "default": "Was the order placed within the last 14 days?" },
-				{ "type": "text", "id": "field_id", "label": "Hidden field id",     "info": "Lowercase, snake_case. Mirrored into the form's audit fields.", "default": "eligibility_within_window" }
+				{ "type": "text", "id": "question", "label": "Question",        "default": "Did your order arrive in the last 30 nights?" },
+				{ "type": "text", "id": "field_id", "label": "Hidden field id", "info": "Lowercase, snake_case. Mirrored into the form's audit fields.", "default": "eligibility_within_window" }
 			]
 		}
 	],
@@ -143,9 +274,10 @@
 		{
 			"name": "Returns - Eligibility",
 			"blocks": [
-				{ "type": "question", "settings": { "question": "Was the order placed within the last 14 days?",        "field_id": "eligibility_within_window" } },
-				{ "type": "question", "settings": { "question": "Are the products unused?",                              "field_id": "eligibility_unused" } },
-				{ "type": "question", "settings": { "question": "Is the original packaging sealed and undamaged?",       "field_id": "eligibility_sealed" } }
+				{ "type": "question", "settings": { "question": "Did your order arrive in the last 30 nights?",        "field_id": "eligibility_within_window" } },
+				{ "type": "question", "settings": { "question": "Is the product in its original packaging?",           "field_id": "eligibility_original_packaging" } },
+				{ "type": "question", "settings": { "question": "Is the product damaged or faulty?",                   "field_id": "eligibility_damaged" } },
+				{ "type": "question", "settings": { "question": "Do you have your order number?",                      "field_id": "eligibility_order_number" } }
 			]
 		}
 	]

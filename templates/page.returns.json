@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
 	"sections": {
 		"hero": {
@@ -5,42 +14,24 @@
 			"settings": {
 				"eyebrow": "Returns",
 				"heading": "Start a return",
-				"subheading": "We accept returns of unused, sealed aira Kits within 14 days. Open packs aren't eligible for hygiene reasons."
+				"subheading": "We accept returns of damaged or faulty items if unused, and every order is backed by our 30-night satisfaction guarantee."
 			}
 		},
 		"eligibility_gate": {
 			"type": "returns-eligibility-gate",
 			"blocks": {
-				"q-1": { "type": "question", "settings": { "question": "Was the order placed within the last 14 days?",  "field_id": "eligibility_within_window" } },
-				"q-2": { "type": "question", "settings": { "question": "Are the products unused?",                        "field_id": "eligibility_unused" } },
-				"q-3": { "type": "question", "settings": { "question": "Is the original packaging sealed and undamaged?", "field_id": "eligibility_sealed" } }
+				"q-1": { "type": "question", "settings": { "question": "Did your order arrive in the last 30 nights?",  "field_id": "eligibility_within_window" } },
+				"q-2": { "type": "question", "settings": { "question": "Is the product in its original packaging?",     "field_id": "eligibility_original_packaging" } },
+				"q-3": { "type": "question", "settings": { "question": "Is the product damaged or faulty?",             "field_id": "eligibility_damaged" } },
+				"q-4": { "type": "question", "settings": { "question": "Do you have your order number?",                "field_id": "eligibility_order_number" } }
 			},
-			"block_order": ["q-1", "q-2", "q-3"],
-			"settings": {
-				"eyebrow":    "Step 1",
-				"heading":    "Check eligibility",
-				"subheading": "Three quick questions before you continue."
-			}
-		},
-		"damaged_flow": {
-			"type": "returns-damaged-flow",
+			"block_order": ["q-1", "q-2", "q-3", "q-4"],
 			"settings": {}
 		},
 		"form": {
 			"type": "returns-form",
 			"settings": {}
-		},
-		"policy_summary": {
-			"type": "returns-policy-summary",
-			"blocks": {
-				"f-1": { "type": "fact", "settings": { "label": "Window",    "body": "14 days from delivery." } },
-				"f-2": { "type": "fact", "settings": { "label": "Condition", "body": "Unused. Original packaging sealed." } },
-				"f-3": { "type": "fact", "settings": { "label": "Refund",    "body": "Full refund to original payment method." } },
-				"f-4": { "type": "fact", "settings": { "label": "Damaged?",  "body": "Skip the gate — message support directly." } }
-			},
-			"block_order": ["f-1", "f-2", "f-3", "f-4"],
-			"settings": {}
 		}
 	},
-	"order": ["hero", "eligibility_gate", "damaged_flow", "form", "policy_summary"]
+	"order": ["hero", "eligibility_gate", "form"]
 }

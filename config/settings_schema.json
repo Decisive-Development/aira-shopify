@@ -145,13 +145,7 @@
         "type": "text",
         "id": "support_email",
         "label": "Customer support email",
-        "default": "support@aira.com"
-      },
-      {
-        "type": "text",
-        "id": "partnerships_email",
-        "label": "Partnerships / affiliate email",
-        "default": "partnerships@aira.com"
+        "default": "contact@shop-aira.com"
       },
       {
         "type": "header",
@@ -162,6 +156,16 @@
         "id": "business_hours_label",
         "label": "Hours label",
         "default": "Mon-Fri 9am-6pm GST"
+      },
+      {
+        "type": "header",
+        "content": "Returns"
+      },
+      {
+        "type": "textarea",
+        "id": "returns_address",
+        "label": "Return address",
+        "info": "Shown on the returns page for change-of-mind returns. Leave blank to hide."
       },
       {
         "type": "header",
