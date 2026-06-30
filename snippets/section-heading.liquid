@@ -21,11 +21,11 @@
 {%- endcomment -%}
 
 {%- liquid
-	assign _align   = align   | default: 'center'
-	assign _size    = size    | default: 'md'
-	assign _surface = surface | default: 'light'
+	assign align   = align   | default: 'center'
+	assign size    = size    | default: 'md'
+	assign surface = surface | default: 'light'
 
-	case _align
+	case align
 		when 'left'
 			assign align_class = 'text-left'
 			assign body_mx     = ''
@@ -37,7 +37,7 @@
 			assign body_mx     = 'mx-auto'
 	endcase
 
-	case _size
+	case size
 		when 'sm'
 			assign h_class = 'text-3xl md:text-4xl'
 		when 'lg'
@@ -46,7 +46,7 @@
 			assign h_class = 'text-4xl md:text-5xl'
 	endcase
 
-	if _surface == 'dark'
+	if surface == 'dark'
 		assign eyebrow_color = 'text-tertiary-light'
 		assign heading_color = 'text-secondary'
 		assign sub_color     = 'text-secondary/80'

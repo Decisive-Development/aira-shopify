@@ -138,7 +138,7 @@
           "settings": {
             "heading": "Snore no more",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/Design_sans_titre_1.png",
+            "image": "shopify://shop_images/snore-no-more.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -364,49 +364,13 @@
     },
     "ugc_gallery": {
       "type": "ugc-gallery",
-      "blocks": {
-        "testimonial_N9zF6j": {
-          "type": "testimonial",
-          "settings": {
-            "video": "shopify://files/videos/Momen_levels_reviews.mp4",
-            "quote": "You're always going to see me wearing this",
-            "name": "Momen O."
-          }
-        },
-        "ugc_1": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "I sleep so much better now",
-            "name": "Sarah M."
-          }
-        },
-        "ugc_3": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Game changer for my workouts",
-            "name": "Aisha R."
-          }
-        },
-        "ugc_4": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Finally stopped mouth breathing at night",
-            "name": "Omar D."
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_N9zF6j",
-        "ugc_1",
-        "ugc_3",
-        "ugc_4"
-      ],
       "settings": {
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "subheading": "",
         "handle": "@airabreathing",
         "cta_text": "Tag us and share your experience. @airabreathing",
+        "offer_text": "Claim a discount or free gift!",
         "theme": "dark",
         "shop_cta_label": "",
         "shop_cta_url": ""

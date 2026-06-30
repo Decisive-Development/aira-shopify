@@ -1,4 +1,12 @@
-
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -51,7 +59,7 @@
           "settings": {
             "heading": "Snore no more",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/Design_sans_titre_1.png",
+            "image": "shopify://shop_images/snore-no-more.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -231,6 +239,7 @@
         "subheading": "",
         "handle": "@airabreathing",
         "cta_text": "Tag us and share your experience. @airabreathing",
+        "offer_text": "Claim a discount or free gift!",
         "theme": "light",
         "shop_cta_label": "",
         "shop_cta_url": ""

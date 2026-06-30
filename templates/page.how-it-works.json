@@ -17,25 +17,25 @@
           "settings": {
             "timestamp": "00:00",
             "time_seconds": 0,
-            "title": "Find your size",
-            "subtitle": "L1–L4"
+            "title": "Prep your skin",
+            "subtitle": "Clean & dry your nose"
           }
         },
         "ch-2": {
           "type": "chapter",
           "settings": {
-            "timestamp": "00:32",
-            "time_seconds": 32,
-            "title": "Prep your skin",
-            "subtitle": "Clean, dry, gentle"
+            "timestamp": "00:08",
+            "time_seconds": 8,
+            "title": "Peel off the adhesive tabs",
+            "subtitle": "Gently"
           }
         },
         "ch-3": {
           "type": "chapter",
           "settings": {
-            "timestamp": "00:58",
-            "time_seconds": 58,
-            "title": "Apply tabs & strip",
+            "timestamp": "00:29",
+            "time_seconds": 29,
+            "title": "Find your size & apply Aira",
             "subtitle": "Shark fins up"
           }
         },
@@ -80,9 +80,10 @@
       "settings": {
         "headline": "Three steps to life-changing breathing.",
         "headline_accent": "life-changing breathing",
-        "lead": "Watch the 90-second tutorial, then walk through each step at your own pace. The whole routine takes under a minute once you've got it.",
-        "video": "shopify://files/videos/Tutorial .mov",
+        "lead": "Watch the 50-seconds tutorial - we walk you through each step. The whole routine takes under a minute once you've got it!",
+        "video": "shopify://files/videos/Tutorial-final.mov",
         "video_url": "",
+        "video_poster": "shopify://shop_images/Tutorial-cover.png",
         "duration_label": "1:32"
       }
     },
