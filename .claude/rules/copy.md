@@ -17,7 +17,7 @@ Full law and the Claims Register live in `AIRA_Brand_Copy_Standards.md`; SEO in 
 4. **Units and sizes:** pairs (1 pair = 1 night), never "tabs" as a unit. Strip sizes are L1–L4.
 5. **CTAs:** primary "Get my kit" · refills "Get refills" · PDP button "Add to cart". Never "Shop Now", "Buy Now", "Learn more".
 6. **Guarantee:** "30-night guarantee" (nights, not days).
-7. **Shipping line:** "Free shipping across the GCC." exactly.
+7. **Shipping line:** "Free shipping in the UAE." exactly. Free shipping is UAE-only; never write "Free shipping across the GCC".
 8. **Claims:** no stat without a named source. New claims must exist in the Claims Register (standards doc section 6) before they enter copy. Never invent numbers, reviews, or ratings.
 9. **Placement wording:** tabs go "just above the nostril", never "nose bridge".
 10. **Spoken voice:** if you would not say the sentence to someone's face, rewrite it. Short beats thorough. Never phrase a promise so it implies a limit ("all night", not "until morning").

@@ -115,7 +115,7 @@
           "settings": {
             "heading": "Snore no more",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/snoring_destop.jpg",
+            "image": "shopify://shop_images/Design_sans_titre_1.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -142,7 +142,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Stronger under load",
-            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "body": "<p>Built for athletes to keep your airway fully open, and non-collapsing. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
             "image": "shopify://shop_images/aira-cyclist.png",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
@@ -161,7 +161,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The strip does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep.",
+        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can stop snoring, deepen your sleep and streamline your breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "",
         "cta_primary_url": "",
@@ -187,7 +187,7 @@
             "step_number": "02",
             "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
-            "step_description": "Place a tab on each side of your nose, just above the nostril. (Think, where I would pinch my nose)"
+            "step_description": "Place a tab on each side of your nose, just above the nostril. Think... \"where I would pinch my nose\"."
           }
         },
         "step_3": {
@@ -222,7 +222,9 @@
         "heading_size": "md",
         "cta_label": "",
         "cta_url": "",
+        "before_image": "shopify://shop_images/without-aira.jpg",
         "before_label": "Without aira",
+        "after_image": "shopify://shop_images/with-aira.jpg",
         "after_label": "With aira",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -234,12 +236,12 @@
     "benefits_slider": {
       "type": "benefits-slider",
       "blocks": {
-        "slide_1": {
+        "slide_2": {
           "type": "slide",
           "settings": {
-            "video": "shopify://files/videos/0612(1).mp4",
-            "heading": "Opens on contact",
-            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
+            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
+            "heading": "Built for the Gulf",
+            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "slide_3": {
@@ -248,14 +250,6 @@
             "video": "shopify://files/videos/copy_E533FA15-8C1B-4AE3-AA10-FA2DF878582D.MOV",
             "heading": "Stronger than disposable",
             "description": "Disposable strips lack the strength to hold your nostrils open. The aira strip not only opens your nose more, but it will not collapse under intense breathing."
-          }
-        },
-        "slide_2": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Screenshot_2026-05-26_at_12.09.52.png",
-            "heading": "Built for the Gulf",
-            "description": "Engineered for sweat, humidity, and summer heat. The tabs grip through hard sessions and restless nights."
           }
         },
         "slide_4": {
@@ -273,6 +267,14 @@
             "heading": "Reusable strip",
             "description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
           }
+        },
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "video": "shopify://files/videos/0612(1).mp4",
+            "heading": "Opens on contact",
+            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
+          }
         }
       },
       "block_order": [
@@ -285,7 +287,7 @@
       "settings": {
         "eyebrow": "PRODUCT",
         "heading": "Built for better breathing.",
-        "subheading": "The aira strip was designed with one goal: to keep your airway open, all day or all night long.",
+        "subheading": "The aira strip was designed to be effective, comfortable, safe and subtle.",
         "heading_size": "md",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -344,8 +346,8 @@
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "subheading": "",
-        "handle": "@aira.breathing",
-        "cta_text": "Share your experience. Tag @aira.breathing",
+        "handle": "@airabreathing",
+        "cta_text": "Tag us and share your experience. @airabreathing",
         "theme": "dark",
         "shop_cta_label": "",
         "shop_cta_url": ""

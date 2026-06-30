@@ -60,7 +60,7 @@ Principles:
 | Refills CTA | Get refills | — |
 | PDP button | Add to cart (sentence-cased 2026-06-12) | Add to Cart |
 | Secondary CTA | How it works / The science | Learn more |
-| Shipping line | Free shipping across the GCC. | "free UAE delivery", "above a certain order value" |
+| Shipping line | Free shipping in the UAE. | "Free shipping across the GCC." (free shipping is UAE-only), "above a certain order value" |
 | Athlete framing | designed for athletes (decided 2026-06-12: broad, targets everyone) | leading with motocross in sales copy (niche, doesn't land in the GCC; the motocross origin survives only as About-page storytelling if ever) |
 
 **Banned outright:** competitor names in our copy (Intake, Breathe Right, Hostage — comparison pages excepted, with sign-off); "Doctor Recommended"; "High Success Rate"; "FDA registered / made in the USA" (until documented); any percentage without a citation.

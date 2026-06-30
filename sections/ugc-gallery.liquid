@@ -5,21 +5,17 @@
 	if theme == 'light'
 		assign bg_class = 'bg-cream-light'
 		assign bg_style = ''
-		assign heading_color = 'text-title'
 		assign progress_track = 'bg-bg-muted'
 		assign progress_fill = 'bg-main'
 		assign border_color = 'border-bg-muted'
-		assign handle_color = 'text-main'
 		assign cta_color = 'text-copy'
 		assign eyebrow_color = 'text-highlight'
 	else
 		assign bg_class = 'bg-main'
 		assign bg_style = 'background-image: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(155,183,212,0.10), transparent 65%), radial-gradient(ellipse 60% 50% at 15% 90%, rgba(80,162,167,0.12), transparent 70%);'
-		assign heading_color = 'text-secondary'
 		assign progress_track = 'bg-white/10'
 		assign progress_fill = 'bg-secondary'
 		assign border_color = 'border-white/10'
-		assign handle_color = 'text-secondary'
 		assign cta_color = 'text-secondary opacity-75'
 		assign eyebrow_color = 'text-tertiary-light'
 	endif
@@ -102,11 +98,11 @@
 
 		{%- comment -%} Divider + CTA {%- endcomment -%}
 		<div class="border-t {{ border_color }} mt-6 pt-6 text-center">
-			{%- if section.settings.handle != blank -%}
-				<p class="text-lg font-semibold {{ handle_color }}">{{ ig_handle }}</p>
+			{%- if section.settings.offer_text != blank -%}
+				<p class="text-lg font-semibold {{ eyebrow_color }} mt-1">{{ section.settings.offer_text }}</p>
 			{%- endif -%}
 			{%- if section.settings.cta_text != blank -%}
-				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text | replace: section.settings.handle, ig_handle }}</p>
+				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text | replace: section.settings.handle, '' | replace: ig_handle, '' | strip }} <strong class="font-bold">{{ ig_handle }}</strong></p>
 			{%- endif -%}
 		</div>
 
@@ -299,13 +295,20 @@
 			"type": "text",
 			"id": "handle",
 			"label": "Handle",
-			"default": "@aira.breathing"
+			"default": "@airabreathing"
 		},
 		{
 			"type": "text",
 			"id": "cta_text",
 			"label": "Bottom text",
-			"default": "Share your experience. Tag @aira.breathing"
+			"default": "Tag us and share your experience. @airabreathing"
+		},
+		{
+			"type": "text",
+			"id": "offer_text",
+			"label": "Offer line",
+			"info": "Shown above the handle in the bottom call-to-action. Leave blank to hide.",
+			"default": "Claim a discount or free gift!"
 		},
 		{
 			"type": "select",

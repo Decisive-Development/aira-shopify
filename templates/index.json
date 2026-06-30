@@ -1,18 +1,10 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
+
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
-        "eyebrow": "BREATHE. SLEEP. RECOVER.",
+        "eyebrow": "BREATHE. SLEEP. PERFORM.",
         "heading": "Life changing breathing, every single day.",
         "heading_accent": "Life changing breathing",
         "subheading": "Quiet nights, deep sleep, peak performance and a nose that's got your back.",
@@ -86,7 +78,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Stronger under load",
-            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "body": "<p>Built for athletes to keep your airway fully open, and non-collapsing. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
             "image": "shopify://shop_images/aira-cyclist.png",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
@@ -105,7 +97,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The strip does one thing: it keeps a blocked, collapsing airway open. That one change stops snoring, deepens your sleep and steadies your breath when exercising, helping you get into the flow.",
+        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can stop snoring, deepen your sleep and streamline your breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "Get my kit",
         "cta_primary_url": "/products/aira-kit",
@@ -167,7 +159,7 @@
       "settings": {
         "eyebrow": "PRODUCT",
         "heading": "Built for better breathing.",
-        "subheading": "The aira strip was designed with one goal: to keep your airway open, all day or all night long.",
+        "subheading": "The aira strip was designed to be effective, comfortable, safe and subtle.",
         "heading_size": "md",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -180,7 +172,7 @@
       "type": "comparison-table",
       "settings": {
         "eyebrow": "How we compare",
-        "heading": "Not your average nasal strip.",
+        "heading": "Outperform disposable nasal strips.",
         "subheading": "Magnetic hold, reusable, adjustable. Here's how aira compares to an ordinary nasal strip.",
         "col_feature": "",
         "col_aira": "aira",
@@ -206,7 +198,7 @@
             "step_number": "02",
             "step_image": "shopify://shop_images/Application-3-cropped.jpg",
             "step_heading": "Place",
-            "step_description": "Place a tab on each side of your nose, just above the nostril. (Think, where I would pinch my nose)"
+            "step_description": "Place a tab on each side of your nose, just above the nostril. Think... \"where I would pinch my nose\"."
           }
         },
         "step_3": {
@@ -237,8 +229,8 @@
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "subheading": "",
-        "handle": "@aira.breathing",
-        "cta_text": "Share your experience. Tag @aira.breathing",
+        "handle": "@airabreathing",
+        "cta_text": "Tag us and share your experience. @airabreathing",
         "theme": "light",
         "shop_cta_label": "",
         "shop_cta_url": ""
@@ -342,7 +334,7 @@
         "item_4": {
           "type": "item",
           "settings": {
-            "text": "30-night guarantee: sleep on it for a month, decide after"
+            "text": "30-night guarantee: sleep on it for a month."
           }
         }
       },

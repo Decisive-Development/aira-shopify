@@ -10,7 +10,7 @@
 
 ### Homepage `/`
 - **Title tag:** Magnetic nasal strips, reusable | aira
-- **Meta description:** Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping across the GCC.
+- **Meta description:** Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping in the UAE.
 - **H1:** existing hero headline (voice wins over keyword here; keyword lives in title tag and body)
 - **Primary keyword:** magnetic nasal strips · Secondary: reusable nasal strips, nasal strips for snoring, nasal breathing
 

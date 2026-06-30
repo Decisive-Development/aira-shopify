@@ -343,6 +343,9 @@
   .-z-10 {
     z-index: calc(10 * -1);
   }
+  .z-5 {
+    z-index: 5;
+  }
   .z-10 {
     z-index: 10;
   }
@@ -359,9 +362,6 @@
     z-index: 61;
   }
   .z-100 {
-    z-index: 100;
-  }
-  .z-\[100\] {
     z-index: 100;
   }
   .order-1 {
@@ -535,9 +535,6 @@
   .aspect-16\/10 {
     aspect-ratio: 16/10;
   }
-  .aspect-\[16\/10\] {
-    aspect-ratio: 16/10;
-  }
   .aspect-square {
     aspect-ratio: 1 / 1;
   }
@@ -652,6 +649,9 @@
   }
   .min-h-screen {
     min-height: 100vh;
+  }
+  .min-h-svh {
+    min-height: 100svh;
   }
   .w-0\.5 {
     width: calc(var(--spacing) * 0.5);

@@ -119,7 +119,9 @@
         "heading_size": "md",
         "cta_label": "",
         "cta_url": "",
+        "before_image": "shopify://shop_images/without-aira.jpg",
         "before_label": "Without aira",
+        "after_image": "shopify://shop_images/with-aira.jpg",
         "after_label": "With aira",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -163,7 +165,7 @@
           "type": "benefit",
           "settings": {
             "heading": "Stronger under load",
-            "body": "<p>Built for athletes first. With your airway fully open, you hold deep, steady nose breathing while you work: smoother rhythm, more from every breath, no gasping at the peak.</p>",
+            "body": "<p>Built for athletes to keep your airway fully open, and non-collapsing. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
             "image": "shopify://shop_images/aira-cyclist.png",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
@@ -182,7 +184,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The strip does one thing: it keeps a blocked, collapsing airway open. That one change quiets snoring, steadies your breathing under load, and deepens your sleep.",
+        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can stop snoring, deepen your sleep and streamline your breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "",
         "cta_primary_url": "",
@@ -351,7 +353,7 @@
       "settings": {
         "eyebrow": "PRODUCT",
         "heading": "Built for better breathing.",
-        "subheading": "The aira strip was designed with one goal: to keep your airway open, all day or all night long.",
+        "subheading": "The aira strip was designed to be effective, comfortable, safe and subtle.",
         "heading_size": "md",
         "background_color": "#ffffff",
         "overlay_color": "#000000",
@@ -403,8 +405,8 @@
         "eyebrow": "The aira community",
         "heading": "See it in action.",
         "subheading": "",
-        "handle": "@aira.breathing",
-        "cta_text": "Share your experience. Tag @aira.breathing",
+        "handle": "@airabreathing",
+        "cta_text": "Tag us and share your experience. @airabreathing",
         "theme": "dark",
         "shop_cta_label": "",
         "shop_cta_url": ""

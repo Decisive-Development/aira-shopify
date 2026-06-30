@@ -185,7 +185,7 @@
         "prep-2": {
           "type": "prep",
           "settings": {
-            "image": "shopify://shop_images/IMG_3254.jpg",
+            "image": "shopify://shop_images/dry-nose.png",
             "image_label": "Dry — pat with a towel",
             "title": "Dry",
             "body": "Make sure the nose is fully dry from moisture and oils. Be sure."
@@ -248,7 +248,7 @@
         "apply-2": {
           "type": "apply",
           "settings": {
-            "image": "shopify://shop_images/place-as-shown.png",
+            "image": "shopify://shop_images/place-as-shown_1ade8ab7-a229-4d69-91e2-580d97f2e3ff.png",
             "image_label": "B · Place tab just above each nostril",
             "title": "Place as shown",
             "body": "One tab on each side of your nose, just above the nostril, rub firmly onto skin."
@@ -257,7 +257,7 @@
         "apply-3": {
           "type": "apply",
           "settings": {
-            "image": "shopify://shop_images/place-as-shown_f557572e-f1ce-4f53-9b29-267438e5f34b.png",
+            "image": "shopify://shop_images/face-up.png",
             "image_label": "C · Apply strip, magnetic ends up",
             "title": "Strip fins face up",
             "body": "Place the magnetic strip over each tab and breathe."

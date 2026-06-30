@@ -155,8 +155,9 @@
       "settings": {
         "eyebrow": "The aira community",
         "heading": "See it in action.",
-        "handle": "@aira.breathing",
-        "cta_text": "Share your experience, tag @aira.breathing",
+        "subheading": "",
+        "handle": "@airabreathing",
+        "cta_text": "Tag us and share your experience. @airabreathing",
         "theme": "light",
         "shop_cta_label": "Get my kit",
         "shop_cta_url": "/products/aira-kit"
