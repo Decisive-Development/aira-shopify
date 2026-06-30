@@ -41,7 +41,7 @@
 						<input type="hidden" name="contact[tags]" value="newsletter">
 						<p class="text-base font-semibold mb-2 text-main">{{ section.settings.newsletter_heading }}</p>
 						{%- if section.settings.newsletter_body != blank -%}
-							<p class="text-sm text-main mb-3" style="max-width: 40ch;">{{ section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-bold">10% off your first kit</strong>' }}</p>
+							<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-bold">10% off your first kit</strong>' }}</p>
 						{%- endif -%}
 						<div class="flex flex-col sm:flex-row gap-2">
 							<input

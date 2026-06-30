@@ -35,21 +35,7 @@
 									widths: '400, 600, 900, 1200',
 									alt: block.settings.image_alt
 							}}
-						{%- else -%}
-							<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5">
-								<span class="font-body text-[10.5px] md:text-[11px] uppercase tracking-[0.18em] text-copy/60">
-									{{ block.settings.image_label }}
-								</span>
-								<span class="font-body text-[10px] md:text-[10.5px] text-copy/40">
-									4:5 placeholder
-								</span>
-							</div>
 						{%- endif -%}
-
-						{%- comment -%} Index marker (top-left) {%- endcomment -%}
-						<span class="absolute top-4 left-4 md:top-5 md:left-5 font-body text-[10.5px] md:text-[11px] uppercase tracking-[0.16em] text-tertiary-light">
-							{{ forloop.index | prepend: '0' | slice: -2, 2 }}
-						</span>
 					</div>
 
 					{%- comment -%} Copy {%- endcomment -%}
@@ -143,13 +129,6 @@
 					"label": "Image alt text"
 				},
 				{
-					"type": "text",
-					"id": "image_label",
-					"label": "Placeholder label",
-					"info": "Shown when no image is set.",
-					"default": "Origin · workshop"
-				},
-				{
 					"type": "checkbox",
 					"id": "reverse",
 					"label": "Image on right (desktop)",
@@ -183,7 +162,6 @@
 						"eyebrow": "Where it began",
 						"heading": "A small thing, missed by most.",
 						"body": "<p>We started aira from a goal to improve sleep. To improve deep sleep, to prevent snoring, to wake up rested and to exercise easier.</p><p>One of the most obvious fixes, the nose. We used disposable nasal strips, however we agreed they just weren't good enough.</p>",
-						"image_label": "Origin · workshop",
 						"reverse": false
 					}
 				},
@@ -193,7 +171,6 @@
 						"eyebrow": "How we work",
 						"heading": "We engineer for performance, not first impressions.",
 						"body": "<p>We didn't set out to sell temporary. We set out to fix something almost everyone takes for granted and almost no one does well.</p><p>We pay attention to physiology, materials, and the small details that make a product part of your daily routine.</p>",
-						"image_label": "Materials · detail",
 						"reverse": true
 					}
 				},
@@ -203,7 +180,6 @@
 						"eyebrow": "Where we are going",
 						"heading": "We are only starting with the nose.",
 						"body": "<p>At aira we aim to be the first and last stop for any sleep, performance or wellness accessories, aimed only at improving your life.</p><p>Our mission is to provide you with anything and everything you might need to improve every aspect of your life.</p>",
-						"image_label": "Product · still life",
 						"reverse": false
 					}
 				}
