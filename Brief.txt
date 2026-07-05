@@ -1,0 +1,17 @@
+The text around figures is too small and hard to read, minimum font size anywhere is 12px
+
+Study 1:
+
+Make semibold: "a nasal... by about"
+
+2: ''a dilator strip cut.. by about''
+
+3: "nasal dialator... impariment''
+
+You get the idea, make semibold all parts referencing the strip/dialator
+
+
+
+On the last page remove the massive copy block and replace with:
+
+"The research is clear, using the aira strip will provide you with many benefits, from reduced snoring to increase sporting performance. We belive it will be a benefit to everyone, in one way or another. That is why we offer a 30 day satisfaction garuntee."

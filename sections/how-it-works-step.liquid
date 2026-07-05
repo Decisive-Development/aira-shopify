@@ -57,7 +57,7 @@
 								<p class="font-heading font-bold text-base md:text-lg text-highlight">{{ section.settings.tip_title }}</p>
 							{%- endif -%}
 							{%- if section.settings.tip_body != blank -%}
-								<div class="text-sm md:text-base text-main/85 mt-1.5 leading-relaxed [&_p+p]:mt-1.5">{{ section.settings.tip_body }}</div>
+								<div class="text-sm md:text-base text-main/85 mt-1.5 leading-relaxed [&_p+p]:mt-1.5 [&_strong]:font-bold [&_strong]:text-main">{{ section.settings.tip_body | replace: 'Sleep:', '<strong>Sleep:</strong>' | replace: 'Sport:', '<strong>Sport:</strong>' }}</div>
 							{%- endif -%}
 							{%- if section.settings.size_note != blank -%}
 								<div class="text-sm md:text-base text-main/85 mt-3 pt-3 border-t border-highlight/20 leading-relaxed [&_strong]:font-semibold [&_strong]:text-main">{{ section.settings.size_note }}</div>

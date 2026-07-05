@@ -84,7 +84,7 @@
 						{%- for block in chapter_blocks -%}
 							<button
 								type="button"
-								class="flex flex-col gap-1 text-left rounded-xl px-3 py-3 md:px-4 md:py-3.5 transition min-w-0"
+								class="flex flex-col gap-1 text-left rounded-xl px-3 py-3 md:px-4 md:py-3.5 transition min-w-0 cursor-pointer border border-transparent hover:border-highlight"
 								style="background: rgba(241, 235, 225, 0.06);"
 								data-chapter-btn
 								data-time="{{ block.settings.time_seconds }}"
@@ -104,7 +104,7 @@
 			{%- comment -%} Right — portrait video + chapter strip {%- endcomment -%}
 			<div class="reveal">
 				<div class="max-w-[320px] mx-auto">
-					<div class="video-frame video-frame--portrait" id="tutorialVideo" data-tutorial-video>
+					<div class="video-frame video-frame--portrait{% if has_video %} cursor-pointer{% endif %}" id="tutorialVideo" data-tutorial-video>
 						{%- if poster_image != blank -%}
 							<img
 								class="video-cover"
@@ -120,15 +120,6 @@
 							</video>
 						{%- else -%}
 							<div class="video-placeholder">Tutorial video. Filmed in portrait.</div>
-						{%- endif -%}
-
-						{%- if section.settings.duration_label != blank -%}
-							<span class="pill video-cinema-mark">
-								<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
-									<circle cx="5" cy="5" r="4" fill="currentColor" style="color: var(--color-highlight, #FF4000);"/>
-								</svg>
-								{{ section.settings.duration_label }}
-							</span>
 						{%- endif -%}
 
 						{%- if has_video -%}
@@ -195,7 +186,7 @@
 
 	var modal    = section.querySelector('[data-video-modal]');
 	var video    = modal ? modal.querySelector('[data-modal-video]') : null;
-	var playBtn  = section.querySelector('[data-tutorial-play]');
+	var frameEl  = section.querySelector('[data-tutorial-video]');
 	var chapters = section.querySelectorAll('[data-chapter-btn]');
 	var STORAGE_KEY = 'aira.howItWorks.video.t';
 	var lastFocus = null;
@@ -232,9 +223,9 @@
 		if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
 	}
 
-	/* Play button / poster opens the popup, resuming where you left off */
-	if (playBtn) {
-		playBtn.addEventListener('click', function () {
+	/* Clicking anywhere on the video frame opens the popup, resuming where you left off */
+	if (frameEl) {
+		frameEl.addEventListener('click', function () {
 			var saved = parseFloat(localStorage.getItem(STORAGE_KEY) || '0');
 			open(saved > 1 && isFinite(saved) ? saved : 0);
 		});
@@ -306,12 +297,6 @@
 			"id": "video_poster",
 			"label": "Video poster image",
 			"info": "Portrait (9:16) thumbnail shown before the popup opens. Falls back to the uploaded video's preview frame when blank."
-		},
-		{
-			"type": "text",
-			"id": "duration_label",
-			"label": "Duration label",
-			"default": "1:32"
 		}
 	],
 	"blocks": [

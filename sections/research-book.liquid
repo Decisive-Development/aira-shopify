@@ -1,0 +1,1194 @@
+{%- comment -%}
+	Research book — the /pages/backed-by-science page as a bound book.
+
+	Reference: design_handoff_science/designs/Backed by Science.html.
+	A viewport-tall desk scene in normal page flow (site header and footer
+	stay). Sheets: cover, contents (auto-built from blocks), one sheet per
+	study block, closing. Pages turn in 3D around the spine; drag bends the
+	active sheet; pager, arrow keys, and contents rows all navigate.
+	Current page persists in localStorage.
+
+	All copy is schema-driven. Figures are deliberately schematic (the
+	studies' licensed figures are not ours to reproduce): pick a shape per
+	study block, label it from settings.
+{%- endcomment -%}
+
+{%- liquid
+	assign studies = section.blocks | where: 'type', 'study'
+	assign study_count = studies.size
+	assign study_total = study_count | prepend: '0' | slice: -2, 2
+-%}
+
+<section
+	class="research-book"
+	data-research-book
+	data-screen-label="00 Research book"
+>
+	<div class="rb-scene">
+		<div class="rb-shift">
+			<div class="rb-bookwrap" data-rb-book>
+				<div class="rb-stack rb-stack--right" data-rb-stack-r></div>
+				<div class="rb-stack rb-stack--left" data-rb-stack-l></div>
+				<p class="rb-hint">{{ section.settings.hint_text }}</p>
+
+				{%- comment -%} Cover {%- endcomment -%}
+				<div class="rb-sheet" data-rb-title="{{ section.settings.cover_pager_title | escape }}" data-rb-label="Cover">
+					<div class="rb-face rb-face--front rb-cover">
+						<div class="rb-cover-in">
+							<img
+								class="rb-cover-logo"
+								src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
+								alt="aira"
+								width="560"
+								height="144"
+								loading="eager"
+							>
+							<div class="rb-cover-heads">
+								<h1 class="rb-cover-title">
+									{{- section.settings.cover_title_line -}}
+									{%- if section.settings.cover_title_accent != blank -%}
+										<br><em>{{ section.settings.cover_title_accent }}</em>
+									{%- endif -%}
+								</h1>
+								{%- if section.settings.cover_subtitle != blank -%}
+									<p class="rb-cover-sub">{{ section.settings.cover_subtitle }}</p>
+								{%- endif -%}
+							</div>
+							<div class="rb-cover-meta">
+								<span class="rb-cover-rule" aria-hidden="true"></span>
+								{%- if section.settings.cover_meta_1 != blank -%}<p>{{ section.settings.cover_meta_1 }}</p>{%- endif -%}
+								{%- if section.settings.cover_meta_2 != blank -%}<p>{{ section.settings.cover_meta_2 }}</p>{%- endif -%}
+							</div>
+						</div>
+					</div>
+					<div class="rb-face rb-face--back rb-paper">
+						<div class="rb-backghost" aria-hidden="true">&#10733;</div>
+						<div class="rb-backfoot">{{ section.settings.back_foot }}</div>
+					</div>
+				</div>
+
+				{%- comment -%} Contents — rows build from the study blocks {%- endcomment -%}
+				<div class="rb-sheet" data-rb-title="{{ section.settings.toc_pager_title | escape }}" data-rb-label="Contents">
+					<div class="rb-face rb-face--front rb-paper">
+						<div class="rb-pg rb-toc">
+							<div class="rb-pg-head">
+								<span class="rb-pg-no">{{ section.settings.toc_kicker }}</span>
+								<span class="rb-pg-field">{{ section.settings.toc_field }}</span>
+							</div>
+							<h2 class="rb-pg-title">{{ section.settings.toc_heading }}</h2>
+							<ol class="rb-toc-list">
+								{%- for block in studies -%}
+									<li>
+										<button type="button" data-rb-goto="{{ forloop.index | plus: 1 }}">
+											<span class="rb-toc-no">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+											<span class="rb-toc-title">{{ block.settings.toc_title }}</span>
+											<span class="rb-toc-year">{{ block.settings.toc_year }}</span>
+										</button>
+									</li>
+								{%- endfor -%}
+							</ol>
+							{%- if section.settings.toc_note != blank -%}
+								<p class="rb-toc-foot">{{ section.settings.toc_note }}</p>
+							{%- endif -%}
+						</div>
+					</div>
+					<div class="rb-face rb-face--back rb-paper">
+						<div class="rb-backghost" aria-hidden="true">01</div>
+						<div class="rb-backfoot">{{ section.settings.back_foot }}</div>
+					</div>
+				</div>
+
+				{%- comment -%} One sheet per study {%- endcomment -%}
+				{%- for block in studies -%}
+					{%- liquid
+						assign study_no = forloop.index | prepend: '0' | slice: -2, 2
+						if forloop.last
+							assign ghost = '&#10733;'
+						else
+							assign next_no = forloop.index | plus: 1 | prepend: '0' | slice: -2, 2
+							assign ghost = next_no
+						endif
+						assign pager_label = 'Study ' | append: study_no | append: ' of ' | append: study_total
+					-%}
+					<div
+						class="rb-sheet"
+						data-rb-title="{{ block.settings.pager_title | escape }}"
+						data-rb-label="{{ pager_label | escape }}"
+						{{ block.shopify_attributes }}
+					>
+						<div class="rb-face rb-face--front rb-paper">
+							<div class="rb-pg">
+								<div class="rb-pg-head">
+									<span class="rb-pg-no">Study {{ study_no }}</span>
+									<span class="rb-pg-field">{{ block.settings.field }}</span>
+								</div>
+								<h2 class="rb-pg-title">{{ block.settings.headline }}</h2>
+								<p class="rb-lead">
+									{{- block.settings.lead_before -}}
+									{%- if block.settings.stat != blank -%}
+										<span class="rb-hl"><span class="rb-count" data-rb-count="{{ block.settings.stat | escape }}">{{ block.settings.stat }}</span></span>
+									{%- endif -%}
+									{{- block.settings.lead_after -}}
+								</p>
+
+								<div class="rb-figwrap">
+									{%- case block.settings.figure -%}
+										{%- when 'table' -%}
+											<table class="rb-figtable">
+												<thead>
+													<tr>
+														<th scope="col">{{ block.settings.table_head_a }}</th>
+														<th scope="col">{{ block.settings.table_head_b }}</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr><td>{{ block.settings.table_r1a }}</td><td><b>{{ block.settings.table_r1b }}</b></td></tr>
+													<tr><td>{{ block.settings.table_r2a }}</td><td>{{ block.settings.table_r2b }}</td></tr>
+												</tbody>
+											</table>
+										{%- when 'bars-rise' -%}
+											<svg viewBox="0 0 340 190" fill="none" aria-hidden="true" class="rb-fig">
+												<line x1="60" y1="160" x2="280" y2="160" class="rb-fig-axis"/>
+												<line x1="60" y1="160" x2="60" y2="26" class="rb-fig-axis"/>
+												<rect x="98" y="106" width="52" height="54" rx="3" class="rb-fig-comp"/>
+												<rect x="198" y="30" width="52" height="130" rx="3" class="rb-fig-data"/>
+												<text x="224" y="20" text-anchor="middle" class="rb-fig-note">{{ block.settings.fig_note }}</text>
+												<g class="rb-fig-xlab">
+													<text x="124" y="178" text-anchor="middle">{{ block.settings.fig_label_a }}</text>
+													<text x="224" y="178" text-anchor="middle">{{ block.settings.fig_label_b }}</text>
+												</g>
+												<text x="20" y="158" transform="rotate(-90 20 158)" class="rb-fig-ylab">{{ block.settings.fig_axis }}</text>
+											</svg>
+										{%- when 'bars-fall' -%}
+											<svg viewBox="0 0 340 190" fill="none" aria-hidden="true" class="rb-fig">
+												<line x1="60" y1="160" x2="280" y2="160" class="rb-fig-axis"/>
+												<line x1="60" y1="160" x2="60" y2="26" class="rb-fig-axis"/>
+												<rect x="98" y="44" width="52" height="116" rx="3" class="rb-fig-comp"/>
+												<rect x="198" y="98" width="52" height="62" rx="3" class="rb-fig-data"/>
+												<line x1="150" y1="44" x2="292" y2="44" class="rb-fig-ref"/>
+												<text x="224" y="88" text-anchor="middle" class="rb-fig-note rb-fig-note--sm">{{ block.settings.fig_note }}</text>
+												<g class="rb-fig-xlab">
+													<text x="124" y="178" text-anchor="middle">{{ block.settings.fig_label_a }}</text>
+													<text x="224" y="178" text-anchor="middle">{{ block.settings.fig_label_b }}</text>
+												</g>
+												<text x="20" y="158" transform="rotate(-90 20 158)" class="rb-fig-ylab">{{ block.settings.fig_axis }}</text>
+											</svg>
+										{%- when 'line' -%}
+											<svg viewBox="0 0 340 190" fill="none" aria-hidden="true" class="rb-fig">
+												<line x1="46" y1="160" x2="300" y2="160" class="rb-fig-axis"/>
+												<line x1="46" y1="160" x2="46" y2="28" class="rb-fig-axis"/>
+												<path d="M58 138 C 110 132, 150 118, 196 86 C 232 62, 262 50, 288 44" class="rb-fig-line"/>
+												<circle cx="288" cy="44" r="5" class="rb-fig-dot"/>
+												<g class="rb-fig-xlab">
+													<text x="58" y="178">{{ block.settings.fig_label_a }}</text>
+													<text x="288" y="178" text-anchor="end">{{ block.settings.fig_label_b }}</text>
+												</g>
+												<text x="20" y="34" transform="rotate(-90 20 34)" text-anchor="end" class="rb-fig-ylab">{{ block.settings.fig_axis }}</text>
+											</svg>
+										{%- when 'proportion' -%}
+											{%- liquid
+												assign bar_a = 268.0 | times: block.settings.fig_value_a | divided_by: 100.0 | round
+												assign bar_b = 268.0 | times: block.settings.fig_value_b | divided_by: 100.0 | round
+												assign note_a_x = bar_a | plus: 45
+												assign note_b_x = bar_b | plus: 45
+											-%}
+											<svg viewBox="0 0 340 190" fill="none" aria-hidden="true" class="rb-fig">
+												<g class="rb-fig-rowlab">
+													<text x="36" y="52">{{ block.settings.fig_label_a }}</text>
+													<text x="36" y="120">{{ block.settings.fig_label_b }}</text>
+												</g>
+												<rect x="36" y="60" width="268" height="14" rx="7" class="rb-fig-track"/>
+												<rect x="36" y="60" width="{{ bar_a }}" height="14" rx="7" class="rb-fig-data"/>
+												<text x="{{ note_a_x }}" y="72" class="rb-fig-note rb-fig-note--sm">{{ block.settings.fig_note }}</text>
+												<rect x="36" y="128" width="268" height="14" rx="7" class="rb-fig-track"/>
+												<rect x="36" y="128" width="{{ bar_b }}" height="14" rx="7" class="rb-fig-comp rb-fig-comp--solid"/>
+												<text x="{{ note_b_x }}" y="140" class="rb-fig-note rb-fig-note--ink">{{ block.settings.fig_note_b }}</text>
+											</svg>
+									{%- endcase -%}
+									{%- if block.settings.fig_caption != blank -%}
+										<p class="rb-figcap"><b>{{ block.settings.fig_caption_label }}</b>&nbsp; {{ block.settings.fig_caption }}</p>
+									{%- endif -%}
+								</div>
+
+								<p class="rb-cite">
+									{%- if block.settings.citation_url != blank -%}
+										<a href="{{ block.settings.citation_url }}" title="{{ block.settings.citation | escape }}" target="_blank" rel="noopener noreferrer">{{ block.settings.citation }}</a>
+									{%- else -%}
+										{{- block.settings.citation -}}
+									{%- endif -%}
+								</p>
+							</div>
+						</div>
+						<div class="rb-face rb-face--back rb-paper">
+							<div class="rb-backghost" aria-hidden="true">{{ ghost }}</div>
+							<div class="rb-backfoot">{{ section.settings.back_foot }}</div>
+						</div>
+					</div>
+				{%- endfor -%}
+
+				{%- comment -%} Closing {%- endcomment -%}
+				<div class="rb-sheet" data-rb-title="{{ section.settings.closing_pager_title | escape }}" data-rb-label="Closing note">
+					<div class="rb-face rb-face--front rb-paper">
+						<div class="rb-pg rb-closing">
+							<div class="rb-pg-head">
+								<span class="rb-pg-no">{{ section.settings.closing_kicker }}</span>
+								<span class="rb-pg-field">{{ section.settings.closing_field }}</span>
+							</div>
+							<h2 class="rb-pg-title">{{ section.settings.closing_headline }}</h2>
+							<p class="rb-lead">{{ section.settings.closing_lead }}</p>
+							<div class="rb-closing-mid">
+								{%- render 'cta-button',
+									label: section.settings.cta_label,
+									url: section.settings.cta_url,
+									variant: 'shop'
+								-%}
+								{%- if section.settings.ship_line != blank -%}
+									<p class="rb-ship">{{ section.settings.ship_line }}</p>
+								{%- endif -%}
+							</div>
+							<p class="rb-smallprint">{{ section.settings.small_print }}</p>
+						</div>
+					</div>
+					<div class="rb-face rb-face--back rb-paper">
+						<div class="rb-backghost" aria-hidden="true">&#10733;</div>
+						<div class="rb-backfoot">{{ section.settings.back_foot }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<nav class="rb-pager" aria-label="Pages">
+		<button type="button" class="rb-arrow" data-rb-prev aria-label="Previous page">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</button>
+		<div class="rb-ticks" data-rb-ticks></div>
+		<span class="rb-pagelabel" data-rb-pagelabel></span>
+		<button type="button" class="rb-arrow" data-rb-next aria-label="Next page">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+		</button>
+	</nav>
+
+	{%- comment -%}
+		Without JS the book cannot turn, so ship the whole thing as a plain
+		readable list instead. The noscript style hides the scene and pager
+		and lets the section scroll normally.
+	{%- endcomment -%}
+	<noscript>
+		<style>
+			.research-book .rb-scene, .research-book .rb-pager { display: none; }
+		</style>
+		<div class="rb-fallback">
+			<h1>{{ section.settings.cover_title_line }} {{ section.settings.cover_title_accent }}</h1>
+			<p>{{ section.settings.cover_meta_1 }} {{ section.settings.cover_meta_2 }}</p>
+			<ol>
+				{%- for block in studies -%}
+					<li>
+						<h2>{{ block.settings.headline }}</h2>
+						<p>{{ block.settings.lead_before }}{{ block.settings.stat }}{{ block.settings.lead_after }}</p>
+						<p class="rb-fallback-cite">{{ block.settings.citation }}</p>
+					</li>
+				{%- endfor -%}
+			</ol>
+			<h2>{{ section.settings.closing_headline }}</h2>
+			<p>{{ section.settings.closing_lead }}</p>
+			<p>
+				{%- render 'cta-button',
+					label: section.settings.cta_label,
+					url: section.settings.cta_url,
+					variant: 'shop'
+				-%}
+			</p>
+			<p>{{ section.settings.ship_line }}</p>
+			<p class="rb-fallback-cite">{{ section.settings.small_print }}</p>
+		</div>
+	</noscript>
+</section>
+
+<style>
+	.research-book {
+		/* Page tokens. The first four map straight onto theme tokens; the
+		   rest are defined by the design handoff for this page only (paper,
+		   ink, cover cloth, spine, desk shades) and exist nowhere else in
+		   the theme. Change them here, never inline below. */
+		--rb-navy: var(--color-main);
+		--rb-cream: var(--color-secondary);
+		--rb-orange: var(--color-highlight);
+		--rb-blue: var(--color-tertiary-light);
+		/* Brand blue for the page-foot copy (citations, notes). Nudged toward
+		   navy so it clears AA on the warm paper while reading as the token. */
+		--rb-brand-blue: color-mix(in srgb, var(--color-highlight-blue) 88%, var(--color-main));
+		--rb-ink: #16223A;
+		--rb-paper: #FBF7EF;
+		--rb-paper-2: #F4EDDF;
+		--rb-cover-hi: #F7F1E6;
+		--rb-cover-lo: #EBE1CD;
+		--rb-spine-dark: #c33302;
+		--rb-spine-lite: #d63a05;
+		--rb-desk-mid: #0c2044;
+		--rb-desk-deep: #081228;
+		--rb-ember: #B84400;
+		--rb-shade: #02060E;
+		--rb-stack-a: #e9e1cf;
+		--rb-stack-b: #f7f2e6;
+
+		--rb-ink-85: color-mix(in srgb, var(--rb-ink) 85%, transparent);
+		--rb-ink-70: color-mix(in srgb, var(--rb-ink) 72%, transparent);
+		--rb-ink-55: color-mix(in srgb, var(--rb-ink) 55%, transparent);
+		--rb-ink-12: color-mix(in srgb, var(--rb-ink) 12%, transparent);
+
+		--rb-ph: min(74vh, 640px);
+		--rb-pw: min(calc(var(--rb-ph) * 0.75), 88vw);
+		--rb-turn: 1s cubic-bezier(0.65, 0.05, 0.18, 1);
+
+		position: relative;
+		overflow: hidden;
+		font-family: var(--font-body);
+		color: var(--rb-ink);
+		background:
+			radial-gradient(ellipse 90% 70% at 50% 20%, color-mix(in srgb, var(--rb-blue) 14%, transparent) 0%, transparent 60%),
+			radial-gradient(ellipse 120% 90% at 50% 115%, color-mix(in srgb, var(--rb-ember) 8%, transparent) 0%, transparent 55%),
+			linear-gradient(180deg, var(--rb-navy) 0%, var(--rb-desk-mid) 55%, var(--rb-desk-deep) 100%);
+	}
+
+	/* ---------- scene / book ---------- */
+	.research-book .rb-scene {
+		position: relative;
+		min-height: 100vh;
+		min-height: 100svh;
+		display: flex; align-items: center; justify-content: center;
+		/* Top clears the fixed site header; bottom leaves room for the pager. */
+		padding: 112px 0 110px;
+		/* Dragging turns pages, so text selection would fight the gesture. */
+		user-select: none; -webkit-user-select: none;
+	}
+	.research-book .rb-shift { transform: translateX(calc(var(--rb-pw) / 2)); }
+	@media (max-width: 980px) { .research-book .rb-shift { transform: none; } }
+
+	.research-book .rb-bookwrap {
+		position: relative;
+		width: var(--rb-pw); height: var(--rb-ph);
+		perspective: 3000px;
+		/* Horizontal drags turn pages; vertical swipes keep scrolling the page. */
+		touch-action: pan-y;
+	}
+	.research-book .rb-bookwrap::after {
+		content: ""; position: absolute; left: -14%; right: -14%; bottom: -34px; height: 60px;
+		background: radial-gradient(ellipse 60% 100% at 50% 50%, color-mix(in srgb, var(--rb-shade) 55%, transparent), transparent 70%);
+		z-index: 0; pointer-events: none;
+	}
+	.research-book .rb-stack {
+		position: absolute; top: 5px; bottom: 3px; width: 7px; z-index: 0;
+		background: repeating-linear-gradient(90deg, var(--rb-stack-a) 0 1px, var(--rb-stack-b) 1px 2.4px);
+		transition: transform 0.6s ease;
+	}
+	.research-book .rb-stack--right {
+		right: -7px; border-radius: 0 3px 3px 0;
+		box-shadow: 2px 3px 10px color-mix(in srgb, var(--rb-shade) 35%, transparent);
+		transform-origin: right center;
+	}
+	.research-book .rb-stack--left {
+		left: -7px; border-radius: 3px 0 0 3px;
+		box-shadow: -2px 3px 10px color-mix(in srgb, var(--rb-shade) 35%, transparent);
+		transform-origin: left center;
+	}
+
+	/* ---------- sheets ---------- */
+	.research-book .rb-sheet {
+		position: absolute; inset: 0;
+		transform-origin: left center;
+		transform-style: preserve-3d;
+		transition: transform var(--rb-turn);
+		will-change: transform;
+	}
+	.research-book .rb-sheet.rb-no-anim { transition: none; }
+	.research-book .rb-face {
+		position: absolute; inset: 0;
+		backface-visibility: hidden; -webkit-backface-visibility: hidden;
+		border-radius: 2px 6px 6px 2px;
+		overflow: hidden;
+	}
+	.research-book .rb-face--back { transform: rotateY(180deg); border-radius: 6px 2px 2px 6px; }
+
+	.research-book .rb-paper {
+		background:
+			linear-gradient(90deg, color-mix(in srgb, var(--rb-navy) 10%, transparent), color-mix(in srgb, var(--rb-navy) 2%, transparent) 26px, transparent 48px),
+			linear-gradient(160deg, var(--rb-paper) 0%, var(--rb-paper-2) 100%);
+		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rb-navy) 5%, transparent);
+	}
+	.research-book .rb-face--back.rb-paper {
+		background:
+			linear-gradient(-90deg, color-mix(in srgb, var(--rb-navy) 10%, transparent), color-mix(in srgb, var(--rb-navy) 2%, transparent) 26px, transparent 48px),
+			linear-gradient(160deg, var(--rb-paper) 0%, var(--rb-paper-2) 100%);
+	}
+	.research-book .rb-backghost {
+		position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+		font-family: var(--font-heading); font-weight: 700;
+		font-size: calc(var(--rb-ph) * 0.3);
+		color: color-mix(in srgb, var(--rb-navy) 3.5%, transparent);
+		user-select: none;
+	}
+	.research-book .rb-backfoot {
+		position: absolute; bottom: 18px; left: 0; right: 0; text-align: center;
+		font-family: var(--font-heading); font-size: 12px; font-weight: 600;
+		letter-spacing: 0.22em; text-transform: uppercase;
+		color: color-mix(in srgb, var(--rb-navy) 18%, transparent);
+	}
+
+	/* ---------- cover ---------- */
+	.research-book .rb-cover {
+		background:
+			radial-gradient(ellipse 120% 90% at 30% 0%, color-mix(in srgb, white 50%, transparent), transparent 55%),
+			linear-gradient(160deg, var(--rb-cover-hi) 0%, var(--rb-cream) 55%, var(--rb-cover-lo) 100%);
+		color: var(--rb-ink);
+		display: flex; flex-direction: column;
+	}
+	.research-book .rb-cover::before {
+		content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 12px;
+		background: linear-gradient(90deg, var(--rb-spine-dark), var(--rb-orange) 55%, var(--rb-spine-lite));
+		box-shadow: 4px 0 14px color-mix(in srgb, black 30%, transparent);
+	}
+	.research-book .rb-cover-in {
+		flex: 1; display: flex; flex-direction: column; justify-content: space-between;
+		padding: 12% 11% 10% 15%; position: relative;
+	}
+	.research-book .rb-cover-logo {
+		display: block; align-self: flex-start; width: auto;
+		height: clamp(32px, calc(var(--rb-ph) * 0.065), 46px);
+	}
+	.research-book .rb-cover-heads { display: flex; flex-direction: column; gap: 14px; }
+	.research-book .rb-cover-sub {
+		font-family: var(--font-heading); font-weight: 500;
+		font-size: clamp(15px, calc(var(--rb-ph) * 0.03), 20px);
+		line-height: 1.25; letter-spacing: -0.01em; color: var(--rb-navy);
+	}
+	.research-book .rb-cover-title {
+		font-family: var(--font-heading); font-weight: 500;
+		font-size: clamp(30px, calc(var(--rb-ph) * 0.062), 42px);
+		line-height: 1.06; letter-spacing: -0.02em;
+		color: var(--rb-ink);
+		text-shadow: 0 1px 0 color-mix(in srgb, white 55%, transparent), 0 2px 3px color-mix(in srgb, var(--rb-navy) 10%, transparent);
+	}
+	.research-book .rb-cover-title em { font-style: normal; color: var(--rb-orange); }
+	.research-book .rb-cover-meta { display: flex; flex-direction: column; gap: 7px; }
+	.research-book .rb-cover-rule { width: 42px; height: 2px; background: var(--rb-orange); }
+	.research-book .rb-cover-meta p {
+		font-family: var(--font-heading); font-weight: 600; font-size: 12px;
+		letter-spacing: 0.2em; text-transform: uppercase; color: var(--rb-ink-85);
+	}
+
+	/* Cue sits just below the book's bottom-right, outside the sheets so it
+	   never gets clipped by a page turn. Hidden on the last page. */
+	.research-book .rb-hint {
+		position: absolute; top: calc(100% + 18px); right: 0;
+		text-align: right; z-index: 5; pointer-events: none;
+		font-family: var(--font-heading); font-size: 12px; font-weight: 600;
+		letter-spacing: 0.18em; text-transform: uppercase;
+		color: color-mix(in srgb, var(--rb-cream) 82%, transparent);
+		opacity: 1; transition: opacity 0.5s ease;
+	}
+	.research-book .rb-bookwrap[data-rb-last] .rb-hint { opacity: 0; }
+
+	/* ---------- page content ---------- */
+	.research-book .rb-pg { display: flex; flex-direction: column; padding: 7.5% 9% 6.5% 12%; height: 100%; position: relative; }
+	.research-book .rb-pg-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+	.research-book .rb-pg-no {
+		font-family: var(--font-heading); font-weight: 700; font-size: 12px;
+		letter-spacing: 0.2em; text-transform: uppercase; color: var(--rb-orange);
+	}
+	.research-book .rb-pg-field {
+		font-family: var(--font-heading); font-weight: 600; font-size: 12px;
+		letter-spacing: 0.18em; text-transform: uppercase; color: var(--rb-ink-55);
+	}
+	.research-book .rb-pg-title {
+		font-family: var(--font-heading); font-weight: 500;
+		font-size: clamp(20px, calc(var(--rb-ph) * 0.042), 28px);
+		line-height: 1.12; letter-spacing: -0.02em; margin-top: 14px;
+	}
+	.research-book .rb-lead {
+		font-size: clamp(13px, calc(var(--rb-ph) * 0.024), 15.5px);
+		line-height: 1.6; color: var(--rb-ink-70); margin-top: 10px;
+	}
+	.research-book .rb-lead b { color: var(--rb-ink); font-weight: 600; }
+	.research-book .rb-hl { color: var(--rb-orange); font-weight: 700; }
+
+	.research-book .rb-figwrap {
+		flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+		min-height: 0; padding: 4% 0 2%;
+	}
+	.research-book .rb-fig { display: block; width: min(100%, 340px); height: auto; max-height: 100%; }
+	.research-book .rb-figcap { font-size: 12px; color: var(--rb-ink-55); text-align: center; margin-top: 8px; font-style: italic; }
+	.research-book .rb-figcap b {
+		font-style: normal; font-family: var(--font-heading); font-weight: 700; font-size: 12px;
+		letter-spacing: 0.14em; text-transform: uppercase; color: var(--rb-ink-55);
+	}
+
+	.research-book .rb-cite {
+		border-top: 1px solid var(--rb-ink-12); padding-top: 10px;
+		font-size: 12px; line-height: 1.5; color: var(--rb-brand-blue);
+		/* One line only: the full reference stays on the link (href + title). */
+		white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	}
+	.research-book .rb-cite a {
+		color: inherit; text-decoration: underline;
+		text-underline-offset: 2px; text-decoration-thickness: 1px;
+		transition: opacity 0.2s ease;
+	}
+	.research-book .rb-cite a:hover { opacity: 0.72; }
+
+	/* ---------- figures ---------- */
+	.research-book .rb-fig-axis { stroke: var(--rb-ink); stroke-width: 1.5; opacity: 0.4; }
+	.research-book .rb-fig-ref { stroke: var(--rb-ink); stroke-width: 1.2; stroke-dasharray: 3 4; opacity: 0.45; }
+	.research-book .rb-fig-comp { fill: var(--rb-blue); opacity: 0.55; }
+	.research-book .rb-fig-comp--solid { opacity: 1; }
+	.research-book .rb-fig-data { fill: var(--rb-orange); opacity: 0.9; }
+	.research-book .rb-fig-line { stroke: var(--rb-orange); stroke-width: 2.6; stroke-linecap: round; }
+	.research-book .rb-fig-dot { fill: var(--rb-orange); }
+	.research-book .rb-fig-track { fill: var(--rb-ink); opacity: 0.08; }
+	.research-book .rb-fig-note { font-family: var(--font-heading); font-size: 14px; font-weight: 700; fill: var(--rb-orange); }
+	.research-book .rb-fig-note--sm { font-size: 12px; }
+	.research-book .rb-fig-note--ink { font-family: var(--font-heading); font-size: 12px; font-weight: 700; fill: var(--rb-ink); opacity: 0.75; }
+	.research-book .rb-fig-xlab text { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.65; }
+	.research-book .rb-fig-ylab { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.55; }
+	.research-book .rb-fig-rowlab text { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.7; }
+
+	.research-book .rb-figtable { width: min(100%, 320px); border-collapse: collapse; }
+	.research-book .rb-figtable th {
+		font-family: var(--font-heading); font-weight: 700; font-size: 12px;
+		letter-spacing: 0.14em; text-transform: uppercase; color: var(--rb-ink-55);
+		text-align: left; padding: 0 12px 9px 2px;
+		border-bottom: 1.5px solid color-mix(in srgb, var(--rb-ink) 35%, transparent);
+	}
+	.research-book .rb-figtable td {
+		font-size: 13px; line-height: 1.45; color: var(--rb-ink-70);
+		padding: 11px 12px 11px 2px; border-bottom: 1px solid var(--rb-ink-12);
+	}
+	.research-book .rb-figtable td b { color: var(--rb-ink); font-weight: 700; }
+
+	/* ---------- contents ---------- */
+	.research-book .rb-toc .rb-pg-title { margin-top: 12px; }
+	.research-book .rb-toc-list {
+		list-style: none; margin: 18px 0 0; padding: 0; flex: 1;
+		display: flex; flex-direction: column; justify-content: center; gap: 2px;
+	}
+	.research-book .rb-toc-list button {
+		width: 100%; background: none; border: none; cursor: pointer; text-align: left;
+		display: flex; align-items: baseline; gap: 12px; padding: 7px 4px;
+		border-radius: 6px; transition: background 0.2s ease;
+		font-family: var(--font-body);
+	}
+	.research-book .rb-toc-list button:hover { background: color-mix(in srgb, var(--rb-navy) 5%, transparent); }
+	.research-book .rb-toc-no { font-family: var(--font-heading); font-weight: 700; font-size: 12px; color: var(--rb-orange); flex: none; width: 20px; }
+	.research-book .rb-toc-title {
+		font-family: var(--font-heading); font-weight: 600;
+		font-size: clamp(12.5px, calc(var(--rb-ph) * 0.023), 15px); color: var(--rb-ink); flex: 1;
+	}
+	.research-book .rb-toc-year { font-size: 12px; color: var(--rb-ink-55); flex: none; font-variant-numeric: tabular-nums; }
+	.research-book .rb-toc-foot { font-size: 12px; line-height: 1.5; color: var(--rb-brand-blue); border-top: 1px solid var(--rb-ink-12); padding-top: 10px; }
+
+	/* ---------- closing ---------- */
+	.research-book .rb-closing .rb-lead { margin-top: 14px; }
+	.research-book .rb-closing-mid {
+		flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 18px;
+	}
+	.research-book .rb-ship { font-size: 12px; color: var(--rb-ink-55); }
+	.research-book .rb-smallprint {
+		font-size: 12px; line-height: 1.55; color: var(--rb-brand-blue);
+		border-top: 1px solid var(--rb-ink-12); padding-top: 10px;
+	}
+
+	/* ---------- pager ---------- */
+	.research-book .rb-pager {
+		position: absolute; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 50;
+		display: flex; align-items: center; gap: 14px;
+		background: color-mix(in srgb, var(--rb-desk-deep) 55%, transparent);
+		border: 1px solid color-mix(in srgb, var(--rb-orange) 72%, transparent);
+		border-radius: 999px; padding: 9px 13px;
+		backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+	}
+	.research-book .rb-arrow {
+		width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+		background: color-mix(in srgb, var(--rb-cream) 10%, transparent); color: var(--rb-cream);
+		display: flex; align-items: center; justify-content: center;
+		transition: background 0.25s ease, opacity 0.25s ease;
+	}
+	.research-book .rb-arrow:hover { background: color-mix(in srgb, var(--rb-cream) 22%, transparent); }
+	.research-book .rb-arrow[disabled] { opacity: 0.3; cursor: default; }
+	.research-book .rb-ticks { display: flex; gap: 5px; align-items: center; }
+	.research-book .rb-ticks button {
+		width: 7px; height: 12px; border-radius: 2px; border: none; cursor: pointer; padding: 0;
+		background: color-mix(in srgb, var(--rb-cream) 28%, transparent);
+		transition: background 0.25s ease, transform 0.25s ease;
+	}
+	.research-book .rb-ticks button:hover { background: color-mix(in srgb, var(--rb-cream) 60%, transparent); }
+	.research-book .rb-ticks button[aria-current="true"] { background: var(--rb-orange); transform: scaleY(1.25); }
+	.research-book .rb-pagelabel {
+		font-family: var(--font-heading); font-weight: 600; font-size: 12px;
+		letter-spacing: 0.05em; color: var(--rb-cream);
+		white-space: nowrap; min-width: 150px; text-align: left;
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* ---------- fallback (no JS) ---------- */
+	.research-book .rb-fallback {
+		max-width: 640px; margin: 0 auto; padding: 96px 24px;
+		color: var(--rb-cream);
+	}
+	.research-book .rb-fallback h1, .research-book .rb-fallback h2 { font-family: var(--font-heading); font-weight: 500; margin: 1.5em 0 0.4em; }
+	.research-book .rb-fallback ol { list-style: none; padding: 0; }
+	.research-book .rb-fallback p { margin: 0.4em 0; line-height: 1.6; }
+	.research-book .rb-fallback-cite { font-size: 12px; opacity: 0.65; }
+
+	@media (max-width: 640px) {
+		.research-book { --rb-ph: min(72vh, 620px); }
+		.research-book .rb-pagelabel { display: none; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.research-book .rb-sheet { transition: transform 0.01s linear; }
+		.research-book .rb-stack { transition: none; }
+	}
+</style>
+
+<script>
+	(function () {
+		function initResearchBook(root) {
+			if (root.dataset.rbInit) return;
+			root.dataset.rbInit = '1';
+
+			var book = root.querySelector('[data-rb-book]');
+			var sheets = Array.prototype.slice.call(book.querySelectorAll('.rb-sheet'));
+			var n = sheets.length;
+			var ticksWrap = root.querySelector('[data-rb-ticks]');
+			var pagelabel = root.querySelector('[data-rb-pagelabel]');
+			var prevBtn = root.querySelector('[data-rb-prev]');
+			var nextBtn = root.querySelector('[data-rb-next]');
+			var stackL = root.querySelector('[data-rb-stack-l]');
+			var stackR = root.querySelector('[data-rb-stack-r]');
+			var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			var STORE_KEY = 'aira-research-page';
+
+			function readStore() {
+				try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
+			}
+			function writeStore(v) {
+				try { localStorage.setItem(STORE_KEY, v); } catch (e) { /* private mode */ }
+			}
+
+			/* cur = index of the page currently face-up on the right stack */
+			var cur = parseInt(readStore() || '0', 10);
+			if (isNaN(cur) || cur < 0 || cur >= n) cur = 0;
+
+			sheets.forEach(function (s, i) {
+				var b = document.createElement('button');
+				b.type = 'button';
+				b.setAttribute('aria-label', s.dataset.rbTitle);
+				b.addEventListener('click', function () { go(i); });
+				ticksWrap.appendChild(b);
+			});
+			var ticks = Array.prototype.slice.call(ticksWrap.children);
+
+			var boostTimer = null;
+			var lastCounted = -1;
+
+			function render(boostIdx) {
+				sheets.forEach(function (s, i) {
+					var turned = i < cur;
+					s.style.transform = turned ? 'rotateY(-180deg)' : 'rotateY(0deg)';
+					s.style.zIndex = (boostIdx === i) ? String(2 * n + 2) : (turned ? String(i + 1) : String(n - i));
+					if (i === cur) s.setAttribute('data-active', ''); else s.removeAttribute('data-active');
+				});
+				ticks.forEach(function (t, i) { t.setAttribute('aria-current', i === cur ? 'true' : 'false'); });
+				/* Cover and Contents carry the same label and title, so show one. */
+				var pLabel = sheets[cur].dataset.rbLabel || '';
+				var pTitle = sheets[cur].dataset.rbTitle || '';
+				pagelabel.textContent = (pLabel.toLowerCase() === pTitle.toLowerCase())
+					? pTitle
+					: pLabel + '  ·  ' + pTitle;
+				prevBtn.disabled = cur === 0;
+				nextBtn.disabled = cur === n - 1;
+				if (cur === n - 1) book.setAttribute('data-rb-last', ''); else book.removeAttribute('data-rb-last');
+				/* stacks thin out / grow */
+				stackR.style.transform = 'scaleX(' + Math.max(0.15, (n - cur) / n) + ')';
+				stackL.style.transform = 'scaleX(' + Math.max(0.001, cur / n) + ')';
+				writeStore(String(cur));
+				countUps(sheets[cur]);
+			}
+
+			function go(i) {
+				i = Math.max(0, Math.min(n - 1, i));
+				if (i === cur) return;
+				var moving = i > cur ? cur : i; /* the sheet that visually turns */
+				cur = i;
+				if (boostTimer) clearTimeout(boostTimer);
+				render(moving);
+				boostTimer = setTimeout(function () { render(); }, 1050);
+			}
+			function next() { go(cur + 1); }
+			function prev() { go(cur - 1); }
+
+			/* Count-ups. The stat string carries its own format: "2.4x" ->
+			   target 2.4, one decimal, suffix "x". Runs once per arrival
+			   (render fires again after the z-boost clears; don't restart). */
+			function countUps(sheet) {
+				if (lastCounted === cur) return;
+				lastCounted = cur;
+				sheet.querySelectorAll('.rb-count[data-rb-count]').forEach(function (el) {
+					var m = /^(\d+(?:\.(\d+))?)(.*)$/.exec(el.dataset.rbCount);
+					if (!m) return;
+					var target = parseFloat(m[1]);
+					var dec = m[2] ? m[2].length : 0;
+					var suf = m[3] || '';
+					if (reduce) { el.textContent = target.toFixed(dec) + suf; return; }
+					var dur = 1100, t0 = performance.now();
+					function tick(now) {
+						var t = Math.min(1, (now - t0) / dur);
+						var e = 1 - Math.pow(1 - t, 3);
+						el.textContent = (target * e).toFixed(dec) + suf;
+						if (t < 1) requestAnimationFrame(tick);
+					}
+					requestAnimationFrame(tick);
+				});
+			}
+
+			prevBtn.addEventListener('click', prev);
+			nextBtn.addEventListener('click', next);
+			root.querySelectorAll('[data-rb-goto]').forEach(function (b) {
+				b.addEventListener('click', function (e) { e.stopPropagation(); go(parseInt(b.dataset.rbGoto, 10)); });
+			});
+
+			/* click page: right side next, left side prev */
+			var justDragged = 0;
+			book.addEventListener('click', function (e) {
+				if (Date.now() - justDragged < 300) return;
+				if (e.target.closest('button, a')) return;
+				var r = book.getBoundingClientRect();
+				var x = (e.clientX - r.left) / r.width;
+				if (x > 0.5) next(); else prev();
+			});
+
+			/* Arrow keys only: the page scrolls normally, so Space, PageUp,
+			   PageDown, Home and End must keep their scrolling jobs. Ignore
+			   keys while the book is off screen. */
+			window.addEventListener('keydown', function (e) {
+				if (!document.contains(book)) return;
+				if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+				if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+				var r = book.getBoundingClientRect();
+				if (r.bottom < 0 || r.top > window.innerHeight) return;
+				e.preventDefault();
+				if (e.key === 'ArrowRight') next(); else prev();
+			});
+
+			/* drag: live page bend, then commit past the threshold or spring back */
+			var dragging = false, sx = 0, dx = 0, dragSheet = null, dragDir = 0;
+			book.addEventListener('pointerdown', function (e) {
+				if (e.target.closest('button, a')) return;
+				dragging = true; sx = e.clientX; dx = 0; dragSheet = null; dragDir = 0;
+				book.setPointerCapture(e.pointerId);
+			});
+			book.addEventListener('pointermove', function (e) {
+				if (!dragging) return;
+				dx = e.clientX - sx;
+				if (!dragSheet && Math.abs(dx) > 6) {
+					if (dx < 0 && cur < n - 1) { dragDir = 1; dragSheet = sheets[cur]; }
+					else if (dx > 0 && cur > 0) { dragDir = -1; dragSheet = sheets[cur - 1]; }
+					if (dragSheet) {
+						dragSheet.classList.add('rb-no-anim');
+						dragSheet.style.zIndex = String(2 * n + 2);
+					}
+				}
+				if (!dragSheet) return;
+				var deg;
+				if (dragDir === 1) deg = Math.max(-180, Math.min(0, dx * 0.45));
+				else deg = Math.max(-180, Math.min(0, -180 + dx * 0.45));
+				dragSheet.style.transform = 'rotateY(' + deg + 'deg)';
+			});
+			function endDrag() {
+				if (!dragging) return;
+				dragging = false;
+				if (!dragSheet) return;
+				if (Math.abs(dx) > 8) justDragged = Date.now();
+				dragSheet.classList.remove('rb-no-anim');
+				var commit;
+				if (dragDir === 1) commit = dx * 0.45 < -38;
+				else commit = (-180 + dx * 0.45) > -142;
+				if (commit) { if (dragDir === 1) next(); else prev(); }
+				else {
+					dragSheet.style.transform = dragDir === 1 ? 'rotateY(0deg)' : 'rotateY(-180deg)';
+					setTimeout(function () { render(); }, 1050);
+				}
+				dragSheet = null;
+			}
+			book.addEventListener('pointerup', endDrag);
+			book.addEventListener('pointercancel', endDrag);
+
+			/* init: place sheets without animating the restored position */
+			sheets.forEach(function (s) { s.classList.add('rb-no-anim'); });
+			render();
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					sheets.forEach(function (s) { s.classList.remove('rb-no-anim'); });
+				});
+			});
+		}
+
+		document.querySelectorAll('[data-research-book]').forEach(initResearchBook);
+		document.addEventListener('shopify:section:load', function (e) {
+			var root = e.target.querySelector('[data-research-book]');
+			if (root) initResearchBook(root);
+		});
+	})();
+</script>
+
+{% schema %}
+{
+	"name": "Research book",
+	"tag": "div",
+	"class": "research-book-section",
+	"settings": [
+		{
+			"type": "paragraph",
+			"content": "A viewport-tall desk scene with the research book centred in it. Reads like a physical book: pages turn in 3D, drag bends them, the contents page jumps."
+		},
+		{
+			"type": "text",
+			"id": "hint_text",
+			"label": "Turn-page cue",
+			"info": "Small cue at the book's bottom-right; hidden on the last page.",
+			"default": "Turn page"
+		},
+		{
+			"type": "text",
+			"id": "back_foot",
+			"label": "Page-back footer",
+			"default": "aira · backed by science"
+		},
+		{ "type": "header", "content": "Cover" },
+		{
+			"type": "text",
+			"id": "cover_title_line",
+			"label": "Title line",
+			"default": "[Cover title line,]"
+		},
+		{
+			"type": "text",
+			"id": "cover_title_accent",
+			"label": "Title accent line",
+			"info": "Rendered in orange on its own line.",
+			"default": "[accent.]"
+		},
+		{
+			"type": "text",
+			"id": "cover_subtitle",
+			"label": "Cover subtitle",
+			"info": "Second line under the title, e.g. the benefit framing.",
+			"default": "[Cover subtitle]"
+		},
+		{
+			"type": "text",
+			"id": "cover_meta_1",
+			"label": "Meta line 1",
+			"default": "[Meta line one]"
+		},
+		{
+			"type": "text",
+			"id": "cover_meta_2",
+			"label": "Meta line 2",
+			"default": "[Meta line two]"
+		},
+		{
+			"type": "text",
+			"id": "cover_pager_title",
+			"label": "Pager title",
+			"default": "Cover"
+		},
+		{ "type": "header", "content": "Contents page" },
+		{
+			"type": "text",
+			"id": "toc_kicker",
+			"label": "Kicker",
+			"default": "Contents"
+		},
+		{
+			"type": "text",
+			"id": "toc_field",
+			"label": "Top-right label",
+			"default": "[In order of publication]"
+		},
+		{
+			"type": "text",
+			"id": "toc_heading",
+			"label": "Heading",
+			"default": "[Contents heading.]"
+		},
+		{
+			"type": "text",
+			"id": "toc_note",
+			"label": "Footer note",
+			"default": "[Contents footer note: citations and schematic figures.]"
+		},
+		{
+			"type": "text",
+			"id": "toc_pager_title",
+			"label": "Pager title",
+			"default": "Contents"
+		},
+		{ "type": "header", "content": "Closing page" },
+		{
+			"type": "text",
+			"id": "closing_kicker",
+			"label": "Kicker",
+			"default": "Closing note"
+		},
+		{
+			"type": "text",
+			"id": "closing_field",
+			"label": "Top-right label",
+			"default": "[What it adds up to]"
+		},
+		{
+			"type": "text",
+			"id": "closing_headline",
+			"label": "Headline",
+			"default": "[Closing headline.]"
+		},
+		{
+			"type": "textarea",
+			"id": "closing_lead",
+			"label": "Lead paragraph",
+			"default": "[Closing through-line paragraph placeholder.]"
+		},
+		{
+			"type": "text",
+			"id": "cta_label",
+			"label": "CTA label",
+			"default": "Get my kit"
+		},
+		{
+			"type": "url",
+			"id": "cta_url",
+			"label": "CTA link"
+		},
+		{
+			"type": "text",
+			"id": "ship_line",
+			"label": "Shipping and guarantee line",
+			"default": "[Shipping and guarantee line]"
+		},
+		{
+			"type": "textarea",
+			"id": "small_print",
+			"label": "Small print",
+			"info": "Medical boundary line. Must ship with the page: mechanical support, not medical treatment, and figures are schematic.",
+			"default": "[Medical boundary small print placeholder. Figures are schematic representations of reported outcomes.]"
+		},
+		{
+			"type": "text",
+			"id": "closing_pager_title",
+			"label": "Pager title",
+			"default": "Closing"
+		}
+	],
+	"blocks": [
+		{
+			"type": "study",
+			"name": "Study page",
+			"limit": 10,
+			"settings": [
+				{
+					"type": "text",
+					"id": "field",
+					"label": "Field label",
+					"info": "Top-right kicker, e.g. the study's discipline.",
+					"default": "[Field]"
+				},
+				{
+					"type": "text",
+					"id": "headline",
+					"label": "Headline",
+					"default": "[Study headline.]"
+				},
+				{
+					"type": "textarea",
+					"id": "lead_before",
+					"label": "Finding, before the stat",
+					"default": "[Approved study finding placeholder.]"
+				},
+				{
+					"type": "text",
+					"id": "stat",
+					"label": "Count-up stat",
+					"info": "Optional, e.g. 2.4x or 22%. Counts up when the page arrives; sits between the two finding parts."
+				},
+				{
+					"type": "textarea",
+					"id": "lead_after",
+					"label": "Finding, after the stat"
+				},
+				{
+					"type": "textarea",
+					"id": "citation",
+					"label": "Citation",
+					"info": "Full academic citation. Keep the study's original published spelling.",
+					"default": "[Full citation placeholder.]"
+				},
+				{
+					"type": "url",
+					"id": "citation_url",
+					"label": "Citation link",
+					"info": "Optional. Links the citation to the study, e.g. its DOI. Opens in a new tab."
+				},
+				{ "type": "header", "content": "Figure (schematic)" },
+				{
+					"type": "select",
+					"id": "figure",
+					"label": "Figure shape",
+					"options": [
+						{ "value": "none", "label": "None" },
+						{ "value": "table", "label": "Two-row table" },
+						{ "value": "bars-rise", "label": "Bars, second higher" },
+						{ "value": "bars-fall", "label": "Bars, second lower" },
+						{ "value": "line", "label": "Rising line" },
+						{ "value": "proportion", "label": "Proportion bars" }
+					],
+					"default": "bars-rise"
+				},
+				{
+					"type": "text",
+					"id": "fig_label_a",
+					"label": "Label A",
+					"info": "First bar, line start, or first row.",
+					"default": "[Label A]"
+				},
+				{
+					"type": "text",
+					"id": "fig_label_b",
+					"label": "Label B",
+					"default": "[Label B]"
+				},
+				{
+					"type": "text",
+					"id": "fig_axis",
+					"label": "Axis label",
+					"default": "[Axis label]"
+				},
+				{
+					"type": "text",
+					"id": "fig_note",
+					"label": "Annotation",
+					"info": "Orange note on the data bar, e.g. the stat.",
+					"default": "[Note]"
+				},
+				{
+					"type": "text",
+					"id": "fig_note_b",
+					"label": "Annotation B (proportion only)",
+					"default": "[Note B]"
+				},
+				{
+					"type": "range",
+					"id": "fig_value_a",
+					"label": "Proportion A",
+					"min": 5,
+					"max": 100,
+					"step": 1,
+					"unit": "%",
+					"default": 33
+				},
+				{
+					"type": "range",
+					"id": "fig_value_b",
+					"label": "Proportion B",
+					"min": 5,
+					"max": 100,
+					"step": 1,
+					"unit": "%",
+					"default": 47
+				},
+				{
+					"type": "text",
+					"id": "fig_caption_label",
+					"label": "Caption label",
+					"info": "E.g. Fig. 1 or Table 1.",
+					"default": "Fig. 1"
+				},
+				{
+					"type": "text",
+					"id": "fig_caption",
+					"label": "Caption",
+					"info": "Always end schematic figures with the word 'schematic'.",
+					"default": "[Figure caption, schematic.]"
+				},
+				{ "type": "header", "content": "Table cells (table figure only)" },
+				{
+					"type": "text",
+					"id": "table_head_a",
+					"label": "Column A heading",
+					"default": "[Column A]"
+				},
+				{
+					"type": "text",
+					"id": "table_head_b",
+					"label": "Column B heading",
+					"default": "[Column B]"
+				},
+				{
+					"type": "text",
+					"id": "table_r1a",
+					"label": "Row 1, cell A",
+					"default": "[Row 1 A]"
+				},
+				{
+					"type": "text",
+					"id": "table_r1b",
+					"label": "Row 1, cell B (bold)",
+					"default": "[Row 1 B]"
+				},
+				{
+					"type": "text",
+					"id": "table_r2a",
+					"label": "Row 2, cell A",
+					"default": "[Row 2 A]"
+				},
+				{
+					"type": "text",
+					"id": "table_r2b",
+					"label": "Row 2, cell B",
+					"default": "[Row 2 B]"
+				},
+				{ "type": "header", "content": "Contents row and pager" },
+				{
+					"type": "text",
+					"id": "toc_title",
+					"label": "Contents title",
+					"default": "[Study title]"
+				},
+				{
+					"type": "text",
+					"id": "toc_year",
+					"label": "Contents year",
+					"default": "[Year]"
+				},
+				{
+					"type": "text",
+					"id": "pager_title",
+					"label": "Pager title",
+					"info": "Short label in the bottom pager, e.g. author and year.",
+					"default": "[Author year]"
+				}
+			]
+		}
+	],
+	"presets": [
+		{
+			"name": "Research book",
+			"blocks": [
+				{ "type": "study" },
+				{ "type": "study" },
+				{ "type": "study" }
+			]
+		}
+	]
+}
+{% endschema %}

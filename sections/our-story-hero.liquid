@@ -35,24 +35,37 @@
 		</h1>
 
 		{%- comment -%} Landscape photograph (21:9 desktop / 4:5 mobile) {%- endcomment -%}
+		{%- liquid
+			assign hero_desktop = section.settings.hero_image | default: section.settings.hero_image_mobile
+			assign hero_mobile  = section.settings.hero_image_mobile | default: section.settings.hero_image
+		-%}
 		<div
 			class="relative w-full aspect-4/5 md:aspect-21/9 rounded-sm overflow-hidden border border-secondary/8"
-			{% if section.settings.hero_image == blank %}
+			{% if hero_desktop == blank %}
 				style="background:
 					repeating-linear-gradient(135deg, rgba(241,235,225,0.04) 0 2px, transparent 2px 18px),
 					linear-gradient(160deg, #071226 0%, #1a2540 60%, #2d3a5a 100%);"
 			{% endif %}
 		>
-			{%- if section.settings.hero_image != blank -%}
-				{{
-					section.settings.hero_image
-					| image_url: width: 2400
-					| image_tag:
-						loading: 'eager',
-						class: 'absolute inset-0 w-full h-full object-cover',
-						widths: '600, 900, 1280, 1600, 2000, 2400',
-						alt: section.settings.hero_image_alt
-				}}
+			{%- if hero_desktop != blank -%}
+				<picture>
+					{%- if hero_mobile != blank -%}
+						<source
+							media="(max-width: 768px)"
+							srcset="{{ hero_mobile | image_url: width: 600 }} 600w, {{ hero_mobile | image_url: width: 900 }} 900w, {{ hero_mobile | image_url: width: 1200 }} 1200w"
+							sizes="100vw">
+					{%- endif -%}
+					{{
+						hero_desktop
+						| image_url: width: 2400
+						| image_tag:
+							loading: 'eager',
+							class: 'absolute inset-0 w-full h-full object-cover',
+							widths: '600, 900, 1280, 1600, 2000, 2400',
+							sizes: '100vw',
+							alt: section.settings.hero_image_alt
+					}}
+				</picture>
 			{%- else -%}
 				<div
 					class="absolute inset-0 pointer-events-none"
@@ -152,8 +165,14 @@
 		{
 			"type": "image_picker",
 			"id": "hero_image",
-			"label": "Hero photograph",
-			"info": "21:9 landscape on desktop, 4:5 portrait on mobile. Editorial / dim-lit."
+			"label": "Hero photograph (desktop)",
+			"info": "21:9 landscape, shown on desktop. Editorial / dim-lit."
+		},
+		{
+			"type": "image_picker",
+			"id": "hero_image_mobile",
+			"label": "Hero photograph (mobile)",
+			"info": "4:5 portrait, shown on phones. Falls back to the desktop image when blank."
 		},
 		{
 			"type": "text",

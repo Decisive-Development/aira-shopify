@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Backed by science, the research | aira</title>
+<meta name="description" content="Seven peer-reviewed studies on nasal breathing, bound as a small book. The research behind aira." />
+<style>
+  @font-face {
+    font-family: "Satoshi";
+    src: url("assets/satoshi-variable.woff2") format("woff2 supports variations"),
+         url("assets/satoshi-variable.woff2") format("woff2");
+    font-weight: 300 900; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Nunito Sans";
+    src: url("assets/nunito-sans-variable.ttf") format("truetype supports variations"),
+         url("assets/nunito-sans-variable.ttf") format("truetype");
+    font-weight: 200 900; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    --navy: #0A1A34;
+    --cream: #F1EBE1;
+    --paper: #FBF7EF;
+    --paper-2: #F4EDDF;
+    --orange: #FF4000;
+    --blue: #9BB7D4;
+    --ink: #16223A;
+    --ink-70: rgba(22,34,58,0.72);
+    --ink-55: rgba(22,34,58,0.55);
+    --ink-12: rgba(22,34,58,0.12);
+    --ph: min(74vh, 640px);
+    --pw: min(calc(var(--ph) * 0.75), 88vw);
+    --turn: 1s cubic-bezier(.65,.05,.18,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Nunito Sans", system-ui, sans-serif;
+    color: var(--ink);
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 20%, rgba(155,183,212,0.14) 0%, rgba(10,26,52,0) 60%),
+      radial-gradient(ellipse 120% 90% at 50% 115%, rgba(184,68,0,0.08) 0%, rgba(10,26,52,0) 55%),
+      linear-gradient(180deg, #0A1A34 0%, #0c2044 55%, #081228 100%);
+  }
+
+  /* ================= chrome ================= */
+  .mast {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 20px clamp(20px, 3.5vw, 40px);
+    pointer-events: none;
+  }
+  .mast .brand { font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.01em; color: var(--cream); }
+  .mast .sub { font-family: "Satoshi", sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(241,235,225,0.6); }
+
+  /* ================= scene / book ================= */
+  .scene {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 64px 0 96px;
+  }
+  .shift { transform: translateX(calc(var(--pw) / 2)); }
+  @media (max-width: 980px) { .shift { transform: none; } }
+
+  .bookwrap {
+    position: relative;
+    width: var(--pw); height: var(--ph);
+    perspective: 3000px;
+  }
+  /* desk shadow */
+  .bookwrap::after {
+    content: ""; position: absolute; left: -14%; right: -14%; bottom: -34px; height: 60px;
+    background: radial-gradient(ellipse 60% 100% at 50% 50%, rgba(2,6,14,0.55), transparent 70%);
+    z-index: 0; pointer-events: none;
+  }
+  /* unread stack edge, right */
+  .stackR {
+    position: absolute; top: 5px; bottom: 3px; right: -7px; width: 7px; z-index: 0;
+    background:
+      repeating-linear-gradient(90deg, #e9e1cf 0 1px, #f7f2e6 1px 2.4px);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 2px 3px 10px rgba(2,6,14,0.35);
+    transform-origin: right center;
+    transition: transform .6s ease;
+  }
+  /* read stack edge, left of spine */
+  .stackL {
+    position: absolute; top: 5px; bottom: 3px; left: -7px; width: 7px; z-index: 0;
+    background: repeating-linear-gradient(90deg, #e9e1cf 0 1px, #f7f2e6 1px 2.4px);
+    border-radius: 3px 0 0 3px;
+    box-shadow: -2px 3px 10px rgba(2,6,14,0.35);
+    transform-origin: left center;
+    transition: transform .6s ease;
+  }
+
+  /* ================= sheets ================= */
+  .sheet {
+    position: absolute; inset: 0;
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    transition: transform var(--turn);
+    will-change: transform;
+  }
+  .sheet.no-anim { transition: none; }
+  .face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 2px 6px 6px 2px;
+    overflow: hidden;
+  }
+  .face.back { transform: rotateY(180deg); border-radius: 6px 2px 2px 6px; }
+
+  /* paper */
+  .paper {
+    background:
+      linear-gradient(90deg, rgba(10,26,52,0.10), rgba(10,26,52,0.02) 26px, transparent 48px),
+      linear-gradient(160deg, var(--paper) 0%, var(--paper-2) 100%);
+    box-shadow: inset 0 0 0 1px rgba(10,26,52,0.05);
+  }
+  .face.back.paper {
+    background:
+      linear-gradient(-90deg, rgba(10,26,52,0.10), rgba(10,26,52,0.02) 26px, transparent 48px),
+      linear-gradient(160deg, var(--paper) 0%, var(--paper-2) 100%);
+  }
+  .backghost {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: "Satoshi", sans-serif; font-weight: 700;
+    font-size: calc(var(--ph) * 0.3);
+    color: rgba(10,26,52,0.035);
+    user-select: none;
+  }
+  .backfoot {
+    position: absolute; bottom: 18px; left: 0; right: 0; text-align: center;
+    font-family: "Satoshi", sans-serif; font-size: 9px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase; color: rgba(10,26,52,0.18);
+  }
+
+  /* ================= cover ================= */
+  .coverface {
+    background:
+      radial-gradient(ellipse 120% 90% at 30% 0%, rgba(255,255,255,0.5), transparent 55%),
+      linear-gradient(160deg, #F7F1E6 0%, #F1EBE1 55%, #EBE1CD 100%);
+    color: var(--ink);
+    display: flex; flex-direction: column;
+  }
+  .coverface::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 12px;
+    background: linear-gradient(90deg, #c33302, var(--orange) 55%, #d63a05);
+    box-shadow: 4px 0 14px rgba(0,0,0,0.3);
+  }
+  .coverface .in { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 12% 11% 10% 15%; position: relative; }
+  .cover-mark { font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 19px; color: var(--navy); }
+  .cover-title {
+    font-family: "Satoshi", sans-serif; font-weight: 500;
+    font-size: clamp(30px, calc(var(--ph) * 0.062), 42px);
+    line-height: 1.06; letter-spacing: -0.02em;
+    color: var(--ink);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.55), 0 2px 3px rgba(10,26,52,0.10);
+  }
+  .cover-title em { font-style: normal; color: var(--orange); }
+  .cover-meta { display: flex; flex-direction: column; gap: 7px; }
+  .cover-meta .rule { width: 42px; height: 2px; background: var(--orange); }
+  .cover-meta p { font-family: "Satoshi", sans-serif; font-weight: 600; font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-55); }
+  /* hint lives OUTSIDE the sheets so it never gets clipped; shown only on the cover */
+  .book-hint {
+    position: absolute; top: calc(100% + 24px); left: -20%; right: -20%;
+    text-align: center; z-index: 5; pointer-events: none;
+    font-family: "Satoshi", sans-serif; font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.22em; text-transform: uppercase; color: rgba(241,235,225,0.5);
+    opacity: 0; transition: opacity .5s ease;
+  }
+  .bookwrap[data-oncover] .book-hint { opacity: 1; }
+
+  /* ================= page content ================= */
+  .pg { display: flex; flex-direction: column; padding: 7.5% 9% 6.5% 12%; height: 100%; position: relative; }
+  .pg-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .pg-no { font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
+  .pg-field { font-family: "Satoshi", sans-serif; font-weight: 600; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-55); }
+  .pg h3 {
+    font-family: "Satoshi", sans-serif; font-weight: 500;
+    font-size: clamp(20px, calc(var(--ph) * 0.042), 28px);
+    line-height: 1.12; letter-spacing: -0.02em; margin-top: 14px;
+  }
+  .pg .lead { font-size: clamp(13px, calc(var(--ph) * 0.024), 15.5px); line-height: 1.6; color: var(--ink-70); margin-top: 10px; }
+  .pg .lead b { color: var(--ink); font-weight: 700; }
+  .pg .lead .hl { color: var(--orange); font-weight: 700; }
+
+  .figwrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; padding: 4% 0 2%; }
+  .figwrap svg { display: block; width: min(100%, 340px); height: auto; max-height: 100%; }
+  .figcap { font-size: 10.5px; color: var(--ink-55); text-align: center; margin-top: 8px; font-style: italic; }
+  .figcap b { font-style: normal; font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-55); }
+
+  .cite {
+    border-top: 1px solid var(--ink-12); padding-top: 10px;
+    font-size: 10.5px; line-height: 1.5; color: var(--ink-55);
+  }
+  .cite em { font-style: italic; }
+  .cite .doi { font-family: "Satoshi", sans-serif; font-weight: 600; letter-spacing: 0.02em; }
+
+  /* ================= contents page ================= */
+  .toc h3 { margin-top: 12px; }
+  .toc-list { list-style: none; margin-top: 18px; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+  .toc-list button {
+    width: 100%; background: none; border: none; cursor: pointer; text-align: left;
+    display: flex; align-items: baseline; gap: 12px; padding: 7px 4px;
+    border-radius: 6px; transition: background .2s ease;
+    font-family: "Nunito Sans", sans-serif;
+  }
+  .toc-list button:hover { background: rgba(10,26,52,0.05); }
+  .toc-list .tn { font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 11px; color: var(--orange); flex: none; width: 20px; }
+  .toc-list .tt { font-family: "Satoshi", sans-serif; font-weight: 600; font-size: clamp(12.5px, calc(var(--ph) * 0.023), 15px); color: var(--ink); flex: 1; }
+  .toc-list .ty { font-size: 11px; color: var(--ink-55); flex: none; font-variant-numeric: tabular-nums; }
+  .toc-foot { font-size: 10.5px; color: var(--ink-55); border-top: 1px solid var(--ink-12); padding-top: 10px; }
+
+  /* ================= closing page ================= */
+  .closing .lead { margin-top: 14px; }
+  .closing .mid { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 18px; }
+  .btn-shop {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--orange); color: #fff;
+    font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 14.5px;
+    padding: 13px 28px; border-radius: 11px; border: none; cursor: pointer; text-decoration: none;
+    transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1), filter .3s ease;
+  }
+  .btn-shop:hover { transform: translateY(1px); filter: brightness(0.96); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 2px 10px rgba(255,64,0,0.28); }
+  .ship { font-size: 12px; color: var(--ink-55); }
+  .smallprint { font-size: 10px; line-height: 1.55; color: var(--ink-55); border-top: 1px solid var(--ink-12); padding-top: 10px; }
+
+  /* ================= figures: data tables ================= */
+  .figtable { width: min(100%, 320px); border-collapse: collapse; }
+  .figtable th {
+    font-family: "Satoshi", sans-serif; font-weight: 700; font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-55);
+    text-align: left; padding: 0 12px 9px 2px; border-bottom: 1.5px solid rgba(22,34,58,0.35);
+  }
+  .figtable td { font-size: 13px; line-height: 1.45; color: var(--ink-70); padding: 11px 12px 11px 2px; border-bottom: 1px solid var(--ink-12); }
+  .figtable td b { color: var(--ink); font-weight: 700; }
+
+  /* ================= pager ================= */
+  .pager {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(8,18,38,0.55);
+    border: 1px solid rgba(241,235,225,0.14);
+    border-radius: 999px; padding: 9px 13px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  .pager .arrow {
+    width: 32px; height: 32px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(241,235,225,0.1); color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .25s ease, opacity .25s ease;
+  }
+  .pager .arrow:hover { background: rgba(241,235,225,0.22); }
+  .pager .arrow[disabled] { opacity: 0.3; cursor: default; }
+  .ticks { display: flex; gap: 5px; align-items: center; }
+  .ticks button {
+    width: 7px; height: 12px; border-radius: 2px; border: none; cursor: pointer; padding: 0;
+    background: rgba(241,235,225,0.28);
+    transition: background .25s ease, transform .25s ease;
+  }
+  .ticks button:hover { background: rgba(241,235,225,0.6); }
+  .ticks button[aria-current="true"] { background: var(--orange); transform: scaleY(1.25); }
+  .pagelabel {
+    font-family: "Satoshi", sans-serif; font-weight: 600; font-size: 12px;
+    letter-spacing: 0.05em; color: rgba(241,235,225,0.85); white-space: nowrap; min-width: 150px; text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 640px) {
+    .pagelabel { display: none; }
+    .mast .sub { display: none; }
+    :root { --ph: min(72vh, 620px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheet { transition: transform .01s linear; }
+    .stackL, .stackR { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <span class="brand">&#10733; aira</span>
+  <span class="sub">Backed by science</span>
+</header>
+
+<div class="scene">
+  <div class="shift">
+    <div class="bookwrap" id="book">
+      <div class="stackR" id="stackR"></div>
+      <div class="stackL" id="stackL"></div>
+      <div class="book-hint">Flick, tap the page edge or use your arrow keys</div>
+
+      <!-- ============ COVER ============ -->
+      <div class="sheet" data-title="Cover" data-label="Cover" data-screen-label="00 Cover">
+        <div class="face front coverface">
+          <div class="in">
+            <span class="cover-mark">&#10733; aira</span>
+            <h1 class="cover-title">The evidence,<br /><em>bound.</em></h1>
+            <div class="cover-meta">
+              <span class="rule"></span>
+              <p>7 peer-reviewed studies</p>
+              <p>1995 to 2018</p>
+            </div>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">&#10733;</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ CONTENTS ============ -->
+      <div class="sheet" data-title="Contents" data-label="Contents" data-screen-label="01 Contents">
+        <div class="face front paper">
+          <div class="pg toc">
+            <div class="pg-head"><span class="pg-no">Contents</span><span class="pg-field">In order of publication</span></div>
+            <h3>7 studies on the nose at night.</h3>
+            <ol class="toc-list">
+              <li><button data-goto="2"><span class="tn">01</span><span class="tt">Nitric oxide in the sinuses</span><span class="ty">1995</span></button></li>
+              <li><button data-goto="3"><span class="tn">02</span><span class="tt">Blocked noses, tired days</span><span class="ty">1997</span></button></li>
+              <li><button data-goto="4"><span class="tn">03</span><span class="tt">Snoring, rated by partners</span><span class="ty">1997</span></button></li>
+              <li><button data-goto="5"><span class="tn">04</span><span class="tt">Airflow with a deviated septum</span><span class="ty">1998</span></button></li>
+              <li><button data-goto="6"><span class="tn">05</span><span class="tt">A randomised trial of nasal dilation</span><span class="ty">2006</span></button></li>
+              <li><button data-goto="7"><span class="tn">06</span><span class="tt">Nasal breathing in runners</span><span class="ty">2018</span></button></li>
+              <li><button data-goto="8"><span class="tn">07</span><span class="tt">Snoring in the UAE</span><span class="ty">2018</span></button></li>
+            </ol>
+            <p class="toc-foot">Every page carries its full citation. Figures are schematic representations of reported outcomes.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">01</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 01 · LUNDBERG 1995 ============ -->
+      <div class="sheet" data-title="Lundberg 1995" data-label="Study 01 of 07" data-screen-label="02 Study 01 Lundberg">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 01</span><span class="pg-field">Physiology</span></div>
+            <h3>Your sinuses make nitric oxide.</h3>
+            <p class="lead">Breathing through the nose produces <b>nitric oxide</b> in the paranasal sinuses, a molecule that helps widen blood vessels and supports oxygen uptake. Mouth breathing skips it entirely.</p>
+            <div class="figwrap">
+              <table class="figtable">
+                <thead><tr><th>Breathing route</th><th>Sinus nitric oxide</th></tr></thead>
+                <tbody>
+                  <tr><td>Through the nose</td><td><b>Carried into the airway</b></td></tr>
+                  <tr><td>Through the mouth</td><td>Bypassed entirely</td></tr>
+                </tbody>
+              </table>
+              <p class="figcap"><b>Table 1</b> &nbsp;Nitric oxide delivery by breathing route.</p>
+            </div>
+            <p class="cite">Lundberg, J.O.N., et al. (1995). High nitric oxide production in human paranasal sinuses. <em>Acta Physiologica Scandinavica</em>, 154(4), 431-434.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">02</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 02 · YOUNG 1997 ============ -->
+      <div class="sheet" data-title="Young 1997" data-label="Study 02 of 07" data-screen-label="03 Study 02 Young">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 02</span><span class="pg-field">Epidemiology</span></div>
+            <h3>Blocked noses make for tired days.</h3>
+            <p class="lead">Adults with night-time nasal obstruction were <span class="hl"><span class="count" data-count="2.4" data-dec="1" data-suf="x">2.4x</span></span> more likely to report being tired all day than those breathing freely.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <line x1="60" y1="160" x2="280" y2="160" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <line x1="60" y1="160" x2="60" y2="26" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <rect x="98" y="106" width="52" height="54" rx="3" fill="#9BB7D4" opacity="0.55"/>
+                <rect x="198" y="30" width="52" height="130" rx="3" fill="#FF4000" opacity="0.9"/>
+                <text x="206" y="20" font-family="Satoshi, sans-serif" font-size="14" font-weight="700" fill="#FF4000">2.4x</text>
+                <g font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#16223A" opacity="0.65">
+                  <text x="99" y="178">Nose clear</text>
+                  <text x="194" y="178">Nose blocked</text>
+                </g>
+                <text x="20" y="158" transform="rotate(-90 20 158)" font-family="Satoshi, sans-serif" font-size="10.5" font-weight="600" fill="#16223A" opacity="0.55">Odds of tiredness</text>
+              </svg>
+              <p class="figcap"><b>Fig. 1</b> &nbsp;Relative odds of daytime sleepiness, schematic.</p>
+            </div>
+            <p class="cite">Young, T., Finn, L., Kim, H. (1997). Nasal obstruction as a risk factor for sleep-disordered breathing. <em>Journal of Allergy and Clinical Immunology</em>, 99(2), S757-S762.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">03</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 03 · ULFBERG 1997 ============ -->
+      <div class="sheet" data-title="Ulfberg 1997" data-label="Study 03 of 07" data-screen-label="04 Study 03 Ulfberg">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 03</span><span class="pg-field">Rhinology</span></div>
+            <h3>The people who really judge snoring: partners.</h3>
+            <p class="lead">Over a <b>14-night</b> trial of nasal strips, partners rated the snoring quieter. Not a lab score: the verdict of the person lying next to it.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <line x1="60" y1="160" x2="280" y2="160" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <line x1="60" y1="160" x2="60" y2="26" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <rect x="98" y="44" width="52" height="116" rx="3" fill="#9BB7D4" opacity="0.55"/>
+                <rect x="198" y="98" width="52" height="62" rx="3" fill="#FF4000" opacity="0.9"/>
+                <line x1="150" y1="44" x2="292" y2="44" stroke="#16223A" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.45"/>
+                <text x="202" y="88" font-family="Satoshi, sans-serif" font-size="11" font-weight="700" fill="#FF4000">rated quieter</text>
+                <g font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#16223A" opacity="0.65">
+                  <text x="105" y="178">Night 1</text>
+                  <text x="201" y="178">Night 14</text>
+                </g>
+                <text x="20" y="158" transform="rotate(-90 20 158)" font-family="Satoshi, sans-serif" font-size="10.5" font-weight="600" fill="#16223A" opacity="0.55">Partner-rated snoring</text>
+              </svg>
+              <p class="figcap"><b>Fig. 2</b> &nbsp;Partner-rated snoring intensity across the trial, schematic.</p>
+            </div>
+            <p class="cite">Ulfberg, J., Fenton, G. (1997). Effect of Breathe Right nasal strip on snoring. <em>Rhinology</em>, 35(2), 50-52.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">04</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 04 · ROITHMANN 1998 ============ -->
+      <div class="sheet" data-title="Roithmann 1998" data-label="Study 04 of 07" data-screen-label="05 Study 04 Roithmann">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 04</span><span class="pg-field">Otolaryngology</span></div>
+            <h3>It works even when the septum doesn't.</h3>
+            <p class="lead">Even with a <b>deviated septum</b>, opening the nasal valve from the outside increases airflow. The valve, not the septum, is the gatekeeper.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <line x1="60" y1="160" x2="280" y2="160" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <line x1="60" y1="160" x2="60" y2="26" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <rect x="98" y="96" width="52" height="64" rx="3" fill="#9BB7D4" opacity="0.55"/>
+                <rect x="198" y="44" width="52" height="116" rx="3" fill="#FF4000" opacity="0.9"/>
+                <text x="198" y="34" font-family="Satoshi, sans-serif" font-size="11" font-weight="700" fill="#FF4000">airflow up</text>
+                <g font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#16223A" opacity="0.65">
+                  <text x="99" y="178">No dilator</text>
+                  <text x="197" y="178">With dilator</text>
+                </g>
+                <text x="20" y="158" transform="rotate(-90 20 158)" font-family="Satoshi, sans-serif" font-size="10.5" font-weight="600" fill="#16223A" opacity="0.55">Nasal airflow</text>
+              </svg>
+              <p class="figcap"><b>Fig. 3</b> &nbsp;Airflow with external dilation, deviated-septum subjects, schematic.</p>
+            </div>
+            <p class="cite">Roithmann, R., Chapnik, J., Cole, P., Szalai, J., Zamel, N. (1998). Role of the external nasal dilator in the management of nasal obstruction. <em>Laryngoscope</em>, 108(5), 712-715.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">05</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 05 · KRAKOW 2006 ============ -->
+      <div class="sheet" data-title="Krakow 2006" data-label="Study 05 of 07" data-screen-label="06 Study 05 Krakow">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 05</span><span class="pg-field">Sleep medicine, RCT</span></div>
+            <h3>The gold standard: a randomised trial.</h3>
+            <p class="lead">In a <b>four-week randomised controlled trial</b>, nasal dilation significantly improved sleep quality and daytime function in people with chronic sleep-maintenance insomnia.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <line x1="46" y1="160" x2="300" y2="160" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <line x1="46" y1="160" x2="46" y2="28" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <path d="M58 138 C 110 132, 150 118, 196 86 C 232 62, 262 50, 288 44" stroke="#FF4000" stroke-width="2.6" stroke-linecap="round"/>
+                <circle cx="288" cy="44" r="5" fill="#FF4000"/>
+                <g font-family="Satoshi, sans-serif" font-size="10.5" font-weight="600" fill="#16223A" opacity="0.55">
+                  <text x="52" y="178">Week 0</text>
+                  <text x="262" y="178">Week 4</text>
+                  <text x="20" y="34" transform="rotate(-90 20 34)" text-anchor="end">Sleep quality</text>
+                </g>
+              </svg>
+              <p class="figcap"><b>Fig. 4</b> &nbsp;Sleep quality across the four-week trial, schematic.</p>
+            </div>
+            <p class="cite">Krakow, B., Melendrez, D., Sisley, B., et al. (2006). Nasal dilator strip therapy for chronic sleep-maintenance insomnia and symptoms of sleep-disordered breathing: a randomized controlled trial. <em>Sleep and Breathing</em>, 10(1), 16-28.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">06</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 06 · DALLAM 2018 ============ -->
+      <div class="sheet" data-title="Dallam 2018" data-label="Study 06 of 07" data-screen-label="07 Study 06 Dallam">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 06</span><span class="pg-field">Sports science</span></div>
+            <h3>Trained noses run more efficiently.</h3>
+            <p class="lead">Recreational runners moved <span class="hl"><span class="count" data-count="22" data-dec="0" data-suf="%">22%</span></span> less air for the same pace when breathing through the nose, the same work on far less ventilation.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <line x1="60" y1="160" x2="280" y2="160" stroke="#16223A" stroke-width="1.5" opacity="0.4"/>
+                <rect x="92" y="34" width="52" height="126" rx="3" fill="#9BB7D4" opacity="0.55"/>
+                <rect x="196" y="62" width="52" height="98" rx="3" fill="#FF4000" opacity="0.9"/>
+                <line x1="150" y1="34" x2="292" y2="34" stroke="#16223A" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.5"/>
+                <path d="M270 40 L 270 56" stroke="#16223A" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/>
+                <text x="256" y="50" font-family="Satoshi, sans-serif" font-size="13" font-weight="700" fill="#FF4000">-22%</text>
+                <g font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#16223A" opacity="0.65">
+                  <text x="97" y="178">Mouth</text>
+                  <text x="203" y="178">Nose</text>
+                </g>
+              </svg>
+              <p class="figcap"><b>Fig. 5</b> &nbsp;Minute ventilation at a fixed pace, schematic.</p>
+            </div>
+            <p class="cite">Dallam, G.M., McClaran, S.R., Cox, D.G., Foust, C.P. (2018). Effect of nasal versus oral breathing on VO2max and physiological economy in recreational runners. <em>International Journal of Kinesiology and Sports Science</em>, 6(2), 22-29.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">07</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ STUDY 07 · AL SHAIKH 2018 ============ -->
+      <div class="sheet" data-title="Al Shaikh 2018" data-label="Study 07 of 07" data-screen-label="08 Study 07 Al Shaikh">
+        <div class="face front paper">
+          <div class="pg">
+            <div class="pg-head"><span class="pg-no">Study 07</span><span class="pg-field">Epidemiology, UAE</span></div>
+            <h3>This is not a faraway problem.</h3>
+            <p class="lead">In a UAE study, <b>1 in 3 adults snored</b>, and nearly half of snorers were at high risk for sleep apnoea. The nights this research describes are happening here.</p>
+            <div class="figwrap">
+              <svg viewBox="0 0 340 190" fill="none" aria-hidden="true">
+                <g font-family="Satoshi, sans-serif" font-size="11" font-weight="600" fill="#16223A" opacity="0.7">
+                  <text x="36" y="52">Adults who snore</text>
+                  <text x="36" y="120">Snorers at high apnoea risk</text>
+                </g>
+                <rect x="36" y="60" width="268" height="14" rx="7" fill="#16223A" opacity="0.08"/>
+                <rect x="36" y="60" width="89" height="14" rx="7" fill="#FF4000"/>
+                <text x="134" y="72" font-family="Satoshi, sans-serif" font-size="12" font-weight="700" fill="#FF4000">1 in 3</text>
+                <rect x="36" y="128" width="268" height="14" rx="7" fill="#16223A" opacity="0.08"/>
+                <rect x="36" y="128" width="126" height="14" rx="7" fill="#9BB7D4"/>
+                <text x="171" y="140" font-family="Satoshi, sans-serif" font-size="12" font-weight="700" fill="#16223A" opacity="0.75">Nearly half</text>
+              </svg>
+              <p class="figcap"><b>Fig. 6</b> &nbsp;Self-reported snoring and apnoea risk, UAE adults, schematic.</p>
+            </div>
+            <p class="cite">Al Shaikh, Y.G., et al. (2018). The symptoms and risk of sleep apnea among adults in the United Arab Emirates. <em>Annals of Thoracic Medicine</em>, 13(3), 168-174.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">&#10733;</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+      <!-- ============ CLOSING ============ -->
+      <div class="sheet" data-title="Closing" data-label="Closing note" data-screen-label="09 Closing">
+        <div class="face front paper">
+          <div class="pg closing">
+            <div class="pg-head"><span class="pg-no">Closing note</span><span class="pg-field">What it adds up to</span></div>
+            <h3>Keep the nose open, and the night improves.</h3>
+            <p class="lead">That is the through-line of 23 years of research: conditioned air, nitric oxide, quieter snoring, better-rated sleep, more efficient breathing. The aira band exists to hold that airway open, mechanically, all night.</p>
+            <div class="mid">
+              <a class="btn-shop" href="#">Get my kit</a>
+              <p class="ship">Free shipping across the GCC. 30-night guarantee.</p>
+            </div>
+            <p class="smallprint">The band opens the nasal airway mechanically and supports nasal breathing. It does not replace medical treatment for sleep apnoea, chronic congestion, or structural issues: if you think you have those, see a doctor. Figures are schematic representations of reported outcomes.</p>
+          </div>
+        </div>
+        <div class="face back paper">
+          <div class="backghost">&#10733;</div>
+          <div class="backfoot">aira &middot; backed by science</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<nav class="pager" aria-label="Pages">
+  <button class="arrow" id="prevBtn" aria-label="Previous page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div class="ticks" id="ticks"></div>
+  <span class="pagelabel" id="pagelabel"></span>
+  <button class="arrow" id="nextBtn" aria-label="Next page"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</nav>
+
+<script>
+(function () {
+  var book = document.getElementById('book');
+  var sheets = Array.prototype.slice.call(book.querySelectorAll('.sheet'));
+  var n = sheets.length;
+  var ticksWrap = document.getElementById('ticks');
+  var pagelabel = document.getElementById('pagelabel');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var stackL = document.getElementById('stackL');
+  var stackR = document.getElementById('stackR');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // cur = index of the page currently face-up on the right stack
+  var cur = parseInt(localStorage.getItem('aira-research-page') || '0', 10);
+  if (isNaN(cur) || cur < 0 || cur >= n) cur = 0;
+
+  sheets.forEach(function (s, i) {
+    var b = document.createElement('button');
+    b.setAttribute('aria-label', s.dataset.title);
+    b.addEventListener('click', function () { go(i); });
+    ticksWrap.appendChild(b);
+  });
+  var ticks = Array.prototype.slice.call(ticksWrap.children);
+
+  var boostTimer = null;
+  function render(boostIdx) {
+    sheets.forEach(function (s, i) {
+      var turned = i < cur;
+      s.style.transform = turned ? 'rotateY(-180deg)' : 'rotateY(0deg)';
+      s.style.zIndex = (boostIdx === i) ? String(2 * n + 2) : (turned ? String(i + 1) : String(n - i));
+      if (i === cur) s.setAttribute('data-active', ''); else s.removeAttribute('data-active');
+    });
+    ticks.forEach(function (t, i) { t.setAttribute('aria-current', i === cur ? 'true' : 'false'); });
+    pagelabel.textContent = sheets[cur].dataset.label + '  \u00b7  ' + sheets[cur].dataset.title;
+    prevBtn.disabled = cur === 0;
+    nextBtn.disabled = cur === n - 1;
+    if (cur === 0) book.setAttribute('data-oncover', ''); else book.removeAttribute('data-oncover');
+    // stacks thin out / grow
+    var doneR = (n - cur) / n;
+    var doneL = cur / n;
+    stackR.style.transform = 'scaleX(' + Math.max(0.15, doneR) + ')';
+    stackL.style.transform = 'scaleX(' + Math.max(0.001, doneL) + ')';
+    localStorage.setItem('aira-research-page', String(cur));
+    countUps(sheets[cur]);
+  }
+
+  function go(i) {
+    i = Math.max(0, Math.min(n - 1, i));
+    if (i === cur) return;
+    var moving = i > cur ? cur : i; // sheet that visually turns
+    // multi-jump (contents): turn them without boost chaos, boost nearest
+    cur = i;
+    if (boostTimer) clearTimeout(boostTimer);
+    render(moving);
+    boostTimer = setTimeout(function () { render(); }, 1050);
+  }
+  function next() { go(cur + 1); }
+  function prev() { go(cur - 1); }
+
+  /* count-ups */
+  function countUps(sheet) {
+    sheet.querySelectorAll('.count[data-count]').forEach(function (el) {
+      var target = parseFloat(el.dataset.count);
+      var dec = parseInt(el.dataset.dec || '0', 10);
+      var suf = el.dataset.suf || '';
+      if (reduce) { el.textContent = target.toFixed(dec) + suf; return; }
+      var dur = 1100, t0 = performance.now();
+      function tick(now) {
+        var t = Math.min(1, (now - t0) / dur);
+        var e = 1 - Math.pow(1 - t, 3);
+        el.textContent = (target * e).toFixed(dec) + suf;
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  /* buttons */
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  document.querySelectorAll('[data-goto]').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.stopPropagation(); go(parseInt(b.dataset.goto, 10)); });
+  });
+
+  /* click page: right side next, left side prev */
+  var justDragged = 0;
+  book.addEventListener('click', function (e) {
+    if (Date.now() - justDragged < 300) return;
+    if (e.target.closest('button, a')) return;
+    var r = book.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width;
+    if (x > 0.5) next(); else prev();
+  });
+
+  /* keyboard */
+  window.addEventListener('keydown', function (e) {
+    if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(n - 1); }
+  });
+
+  /* drag: live page bend, then commit or spring back */
+  var dragging = false, sx = 0, dx = 0, dragSheet = null, dragDir = 0;
+  book.addEventListener('pointerdown', function (e) {
+    if (e.target.closest('button, a')) return;
+    dragging = true; sx = e.clientX; dx = 0; dragSheet = null; dragDir = 0;
+    book.setPointerCapture(e.pointerId);
+  });
+  book.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    dx = e.clientX - sx;
+    if (!dragSheet && Math.abs(dx) > 6) {
+      if (dx < 0 && cur < n - 1) { dragDir = 1; dragSheet = sheets[cur]; }
+      else if (dx > 0 && cur > 0) { dragDir = -1; dragSheet = sheets[cur - 1]; }
+      if (dragSheet) {
+        dragSheet.classList.add('no-anim');
+        dragSheet.style.zIndex = String(2 * n + 2);
+      }
+    }
+    if (!dragSheet) return;
+    var deg;
+    if (dragDir === 1) deg = Math.max(-180, Math.min(0, dx * 0.45));
+    else deg = Math.max(-180, Math.min(0, -180 + dx * 0.45));
+    dragSheet.style.transform = 'rotateY(' + deg + 'deg)';
+  });
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    if (!dragSheet) return;
+    if (Math.abs(dx) > 8) justDragged = Date.now();
+    dragSheet.classList.remove('no-anim');
+    var commit;
+    if (dragDir === 1) commit = dx * 0.45 < -38;
+    else commit = (-180 + dx * 0.45) > -142;
+    if (commit) { if (dragDir === 1) next(); else prev(); }
+    else {
+      var s = dragSheet;
+      s.style.transform = dragDir === 1 ? 'rotateY(0deg)' : 'rotateY(-180deg)';
+      setTimeout(function () { render(); }, 1050);
+    }
+    dragSheet = null;
+  }
+  book.addEventListener('pointerup', endDrag);
+  book.addEventListener('pointercancel', endDrag);
+
+  /* init */
+  sheets.forEach(function (s) { s.classList.add('no-anim'); });
+  render();
+  requestAnimationFrame(function () { requestAnimationFrame(function () {
+    sheets.forEach(function (s) { s.classList.remove('no-anim'); });
+  }); });
+})();
+</script>
+</body>
+</html>

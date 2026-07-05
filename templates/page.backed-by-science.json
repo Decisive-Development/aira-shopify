@@ -1,293 +1,225 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "hero": {
-      "type": "science-hero",
+    "book": {
+      "type": "research-book",
       "blocks": {
-        "pill-1": {
-          "type": "pill",
+        "study-1": {
+          "type": "study",
           "settings": {
-            "label": "Peer-reviewed research"
+            "field": "Sleep medicine, RCT",
+            "headline": "Your snoring keeps you both awake.",
+            "lead_before": "Snoring is the sound of your mouth doing your nose's job. In a controlled trial of congested snorers, <b>a nasal dilator cut snoring frequency by about</b> ",
+            "stat": "33%",
+            "lead_after": " against a dummy strip. The band holds that same airway open, all night.",
+            "citation": "Pevernagie, D., Hamans, E., Van Cauwenberge, P., Pauwels, R. (2000). External nasal dilation reduces snoring in chronic rhinitis patients: a randomized controlled trial. European Respiratory Journal, 15(6), 996-1000.",
+            "citation_url": "https://doi.org/10.1034/j.1399-3003.2000.01504.x",
+            "figure": "bars-fall",
+            "fig_label_a": "Dummy strip",
+            "fig_label_b": "Nasal dilator",
+            "fig_axis": "Snores per hour",
+            "fig_note": "33% fewer",
+            "fig_caption_label": "Fig. 1",
+            "fig_caption": "Snoring frequency, dummy strip versus nasal dilator, schematic.",
+            "toc_title": "Snoring and the person beside you",
+            "toc_year": "2000",
+            "pager_title": "Pevernagie 2000"
           }
         },
-        "pill-2": {
-          "type": "pill",
+        "study-2": {
+          "type": "study",
           "settings": {
-            "label": "Mechanical, not pharmacological"
+            "field": "Applied physiology",
+            "headline": "Opening the narrowest part changes everything.",
+            "lead_before": "One nostril always feels blocked. Widen the nasal valve and the effort of breathing through your nose drops. In a congested nose, <b>a dilator strip cut nasal resistance by about</b> ",
+            "stat": "33%",
+            "lead_after": ". That is the whole job of the band.",
+            "citation": "Gehring, J.M., Garlick, S.R., Wheatley, J.R., Amis, T.C. (2000). Nasal resistance and flow resistive work of nasal breathing during exercise: effects of a nasal dilator strip. Journal of Applied Physiology, 89(3), 1114-1122.",
+            "citation_url": "https://doi.org/10.1152/jappl.2000.89.3.1114",
+            "figure": "bars-fall",
+            "fig_label_a": "No strip",
+            "fig_label_b": "Dilator strip",
+            "fig_axis": "Nasal resistance",
+            "fig_note": "33% lower",
+            "fig_caption_label": "Fig. 2",
+            "fig_caption": "Nasal resistance in a congested nose, with and without a dilator strip, schematic.",
+            "toc_title": "The blocked nose",
+            "toc_year": "2000",
+            "pager_title": "Gehring 2000"
           }
         },
-        "pill-3": {
-          "type": "pill",
+        "study-3": {
+          "type": "study",
           "settings": {
-            "label": "Skin-safe materials"
+            "field": "Sleep medicine, RCT",
+            "headline": "A blocked nose is a half-finished night.",
+            "lead_before": "You do not have to wake up to lose sleep. In a four-week randomised trial, people using <b>a nasal dilator strip reported better sleep and less daytime impairment</b> than the control group. Clear the nose and you cut the quiet interruptions you never feel.",
+            "stat": "",
+            "lead_after": "",
+            "citation": "Krakow, B., Melendrez, D., Sisley, B., et al. (2006). Nasal dilator strip therapy for chronic sleep-maintenance insomnia and symptoms of sleep-disordered breathing: a randomized controlled trial. Sleep and Breathing, 10(1), 16-28.",
+            "citation_url": "https://doi.org/10.1007/s11325-005-0037-7",
+            "figure": "line",
+            "fig_label_a": "Week 0",
+            "fig_label_b": "Week 4",
+            "fig_axis": "Sleep quality",
+            "fig_caption_label": "Fig. 3",
+            "fig_caption": "Reported sleep quality across four weeks of nightly strip use, schematic.",
+            "toc_title": "Sleep and energy",
+            "toc_year": "2006",
+            "pager_title": "Krakow 2006"
+          }
+        },
+        "study-4": {
+          "type": "study",
+          "settings": {
+            "field": "Psychiatry, meta-analysis",
+            "headline": "Bad sleep doesn't follow a bad mood. It leads it.",
+            "lead_before": "Sleep and mood run on the same wire. Pooling years of long-term studies, people with insomnia were around ",
+            "stat": "2x",
+            "lead_after": " as likely to become depressed over time. The band won't fix your mood. Steadier sleep is just where a steadier day starts.",
+            "citation": "Baglioni, C., Battagliese, G., Feige, B., et al. (2011). Insomnia as a predictor of depression: a meta-analytic evaluation of longitudinal epidemiological studies. Journal of Affective Disorders, 135(1-3), 10-19.",
+            "citation_url": "https://doi.org/10.1016/j.jad.2011.01.011",
+            "figure": "bars-rise",
+            "fig_label_a": "Sound sleepers",
+            "fig_label_b": "Poor sleepers",
+            "fig_axis": "Depression risk",
+            "fig_note": "2x",
+            "fig_caption_label": "Fig. 4",
+            "fig_caption": "Relative risk of later depression by sleep quality, schematic.",
+            "toc_title": "Mood",
+            "toc_year": "2011",
+            "pager_title": "Baglioni 2011"
+          }
+        },
+        "study-5": {
+          "type": "study",
+          "settings": {
+            "field": "Rhinology",
+            "headline": "Your nose is built for the work. Your mouth is the backup.",
+            "lead_before": "Push hard and you bail to mouth breathing, and you skip the work your nose was doing. It warms air toward body temperature, around ",
+            "stat": "34°C",
+            "lead_after": " deeper in the nose, and nearly saturates it with moisture before it reaches your lungs. <b>The band keeps that nasal route the easy option when you train.</b>",
+            "citation": "Lindemann, J., Keck, T., Wiesmiller, K., et al. (2002). Nasal mucosal temperature during respiration. Clinical Otolaryngology and Allied Sciences, 27(3), 135-139.",
+            "citation_url": "https://doi.org/10.1046/j.1365-2273.2002.00544.x",
+            "figure": "table",
+            "fig_caption_label": "Table 1",
+            "fig_caption": "Air conditioning the nose performs on each inhaled breath, schematic.",
+            "table_head_a": "Your nose does this",
+            "table_head_b": "Every breath",
+            "table_r1a": "Warms the air",
+            "table_r1b": "close to body heat",
+            "table_r2a": "Adds moisture",
+            "table_r2b": "almost fully humidified",
+            "toc_title": "Training and breathing",
+            "toc_year": "2002",
+            "pager_title": "Lindemann 2002"
+          }
+        },
+        "study-6": {
+          "type": "study",
+          "settings": {
+            "field": "Periodontology",
+            "headline": "Morning breath is a dry-mouth problem.",
+            "lead_before": "Sleep with your mouth open and it dries out by morning, and saliva is your overnight defence. In adults, inflamed gums healed at just ",
+            "stat": "38%",
+            "lead_after": " of mouth breathers' dried-out sites, against 69% of everyone else. Breathe through your nose and your mouth stays closed and moist.",
+            "citation": "Mehta, S., et al. (2018). Influence of mouth breathing on the outcome of scaling and root planing in chronic periodontitis. BDJ Open, 4, 17039.",
+            "citation_url": "https://doi.org/10.1038/s41405-018-0007-3",
+            "figure": "proportion",
+            "fig_label_a": "Mouth breathers",
+            "fig_label_b": "Everyone else",
+            "fig_note": "38%",
+            "fig_note_b": "69%",
+            "fig_value_a": 38,
+            "fig_value_b": 69,
+            "fig_caption_label": "Fig. 5",
+            "fig_caption": "Gum healing at dried-out sites after the same treatment, schematic.",
+            "toc_title": "Dry mouth and morning breath",
+            "toc_year": "2018",
+            "pager_title": "Mehta 2018"
+          }
+        },
+        "study-7": {
+          "type": "study",
+          "settings": {
+            "field": "Respiratory physiology",
+            "headline": "Your nose makes something your mouth can't.",
+            "lead_before": "Breathe through your nose and your sinuses release nitric oxide, a gas that helps widen blood vessels and that the mouth route skips entirely. Slow, gentle nasal breathing raised it many times over, up to ",
+            "stat": "15x",
+            "lead_after": " when humming. The band doesn't make nitric oxide. Your nose does. <b>It just keeps that route open.</b>",
+            "citation": "Weitzberg, E., Lundberg, J.O.N. (2002). Humming greatly increases nasal nitric oxide. American Journal of Respiratory and Critical Care Medicine, 166(2), 144-145.",
+            "citation_url": "https://doi.org/10.1164/rccm.200202-138BC",
+            "figure": "bars-rise",
+            "fig_label_a": "Quiet breath",
+            "fig_label_b": "Humming",
+            "fig_axis": "Nasal nitric oxide",
+            "fig_note": "15x",
+            "fig_caption_label": "Fig. 6",
+            "fig_caption": "Nasal nitric oxide, quiet breathing versus humming, schematic.",
+            "toc_title": "The nose advantage",
+            "toc_year": "2002",
+            "pager_title": "Weitzberg 2002"
+          }
+        },
+        "study-8": {
+          "type": "study",
+          "settings": {
+            "field": "Behavioural medicine",
+            "headline": "Short sleep leaves the door open.",
+            "lead_before": "The nights you cut sleep short are the nights you catch what is going around. When healthy people were exposed to a live cold virus, those sleeping under five hours were about ",
+            "stat": "4.5x",
+            "lead_after": " as likely to fall ill. No strip fights a virus. But easier breathing helps you sleep, and better sleep is one thing you can do something about.",
+            "citation": "Prather, A.A., Janicki-Deverts, D., Hall, M.H., Cohen, S. (2015). Behaviorally assessed sleep and susceptibility to the common cold. Sleep, 38(9), 1353-1359.",
+            "citation_url": "https://doi.org/10.5665/sleep.4968",
+            "figure": "bars-rise",
+            "fig_label_a": "7 hours plus",
+            "fig_label_b": "Under 5 hours",
+            "fig_axis": "Cold risk",
+            "fig_note": "4.5x",
+            "fig_caption_label": "Fig. 7",
+            "fig_caption": "Odds of catching a cold after exposure, by sleep duration, schematic.",
+            "toc_title": "Run down",
+            "toc_year": "2015",
+            "pager_title": "Prather 2015"
           }
         }
       },
       "block_order": [
-        "pill-1",
-        "pill-2",
-        "pill-3"
+        "study-1",
+        "study-2",
+        "study-3",
+        "study-4",
+        "study-5",
+        "study-6",
+        "study-7",
+        "study-8"
       ],
       "settings": {
-        "eyebrow": "Our Approach",
-        "heading_line_1": "Backed by science.",
-        "heading_line_2": "Built around your body.",
-        "lede": "The aira strip isn't a clinical device pretending to be wellness, or a wellness product pretending to be science. It's a precise, research-grounded tool designed to support what your body already knows how to do: breathe better.",
-        "scroll_label": "Scroll to read"
-      }
-    },
-    "nasal_breathing": {
-      "type": "science-nasal-breathing",
-      "blocks": {
-        "stat-1": {
-          "type": "stat_card",
-          "settings": {
-            "number": "01",
-            "title": "Snoring",
-            "caption": "Reduced soft-palate vibration during sleep.",
-            "citation_ref": "6"
-          }
-        },
-        "stat-2": {
-          "type": "stat_card",
-          "settings": {
-            "number": "02",
-            "title": "Sleep quality",
-            "caption": "Deeper REM cycles, fewer night-time wakings.",
-            "citation_ref": "4"
-          }
-        },
-        "stat-3": {
-          "type": "stat_card",
-          "settings": {
-            "number": "03",
-            "title": "Athletic recovery",
-            "caption": "Faster heart-rate-variability return after exercise.",
-            "citation_ref": "5"
-          }
-        },
-        "ed-1": {
-          "type": "editorial",
-          "settings": {
-            "heading": "Why nasal breathing matters",
-            "body": "<p>When you breathe through your nose, your body does work that mouth breathing simply can't replicate. The nasal cavity warms, humidifies, and filters incoming air. It produces nitric oxide<a href=\"#cite-1\">[1]</a> — a molecule that improves oxygen uptake in the lungs by up to 18%. And it sets the nervous system on a different course: nasal breathing is associated with deeper sleep, better focus, and more efficient recovery.</p>"
-          }
-        },
-        "banner": {
-          "type": "stat_banner",
-          "settings": {
-            "figure": "+18%",
-            "caption": "Increase in oxygen uptake from nasal-produced nitric oxide vs. mouth breathing.",
-            "citation_ref": "1"
-          }
-        },
-        "ed-2": {
-          "type": "editorial",
-          "settings": {
-            "heading": "The cost of mouth breathing",
-            "body": "<p>Chronic mouth breathing has been linked to disrupted sleep, lower daytime energy, dental issues, and reduced athletic performance. In one 2018 study published in the <em>Journal of Clinical Sleep Medicine</em>, participants who switched to nasal-only breathing reported significantly improved sleep quality after 30 days.<a href=\"#cite-2\">[2]</a></p>"
-          }
-        },
-        "ed-3": {
-          "type": "editorial",
-          "settings": {
-            "heading": "What \"nasal patency\" actually means",
-            "body": "<p>Nasal patency is the medical term for how open your nasal airway is. People with low patency — narrow nasal valves, deviated septums, congestion from allergies — work harder to breathe through their nose. Many give up and switch to mouth breathing without realising it.</p><p>Improving nasal patency, even mechanically and externally, restores the body's preferred breathing pattern.<a href=\"#cite-3\">[3]</a></p>"
-          }
-        },
-        "ed-4": {
-          "type": "editorial",
-          "settings": {
-            "heading": "What better breathing actually changes",
-            "body": "<p>The downstream effects of improved nasal breathing are well-documented in sleep medicine and sports science: deeper REM cycles, reduced snoring, faster heart rate variability recovery after exercise, and improved daytime focus.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "stat-1",
-        "stat-2",
-        "stat-3",
-        "ed-1",
-        "banner",
-        "ed-2",
-        "ed-3",
-        "ed-4"
-      ],
-      "settings": {
-        "eyebrow": "The foundation",
-        "heading": "Why nasal breathing matters more than you think."
-      }
-    },
-    "mechanism": {
-      "type": "science-mechanism",
-      "blocks": {
-        "step-1": {
-          "type": "step",
-          "settings": {
-            "number": "01",
-            "title": "Soft contact",
-            "body": "Skin-safe, hypoallergenic adhesive secures the strip across the bridge of your nose."
-          }
-        },
-        "step-2": {
-          "type": "step",
-          "settings": {
-            "number": "02",
-            "title": "Sustained dilation",
-            "body": "Two precision-engineered magnets create a gentle outward pull on the nasal walls, opening the airway without pinching."
-          }
-        },
-        "step-3": {
-          "type": "step",
-          "settings": {
-            "number": "03",
-            "title": "All-night flow",
-            "body": "The strip stays in place through workouts, sleep, and side-sleeping — keeping your airway open without active effort."
-          }
-        }
-      },
-      "block_order": [
-        "step-1",
-        "step-2",
-        "step-3"
-      ],
-      "settings": {
-        "eyebrow": "The mechanism",
-        "heading": "How aira works.",
-        "lede": "The strip gently expands the external nasal valve — the narrowest point of your nasal airway — and holds it open so air can flow freely. The mechanism is mechanical, not pharmacological.",
-        "diagram_image": "shopify://shop_images/Prioritize_your_breathing.png",
-        "diagram_alt": "How aira works diagram",
-        "honest_eyebrow": "Honestly",
-        "honest_does_label": "What aira does:",
-        "honest_does": "it improves nasal patency mechanically.",
-        "honest_doesnt_label": "What it doesn't do:",
-        "honest_doesnt": "replace medical treatment for sleep apnea, chronic congestion, or structural issues. If you suspect any of these, see your doctor."
-      }
-    },
-    "why_nose_matters": {
-      "type": "nasal-breathing-science",
-      "settings": {
-        "heading": "Why the nose matters",
-        "quote": "<p>\"Breathing is not just a biochemical or physical act; it's a force that has a profound effect on the way our bodies and minds function.\"</p>",
-        "attribution_name": "James Nestor",
-        "attribution_source": "Breath: The New Science of a Lost Art (2020)",
-        "quote_cite_url": "",
-        "body": "<p>Nasal breathing increases nitric oxide production, filters and humidifies incoming air, and is consistently linked to deeper sleep, better recovery, and improved focus. The strip is engineered to keep that pathway open — mechanically, magnetically, all night.</p>",
-        "image": "shopify://shop_images/why-the-nose-matters.png",
-        "image_alt": "",
-        "background_style": "navy",
-        "show_top_divider": false
-      }
-    },
-    "citations": {
-      "type": "science-citations",
-      "blocks": {
-        "cite-1": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "1",
-            "body": "<p>Lundberg, J.O.N., et al. (1995). High nitric oxide production in human paranasal sinuses. <em>Acta Physiologica Scandinavica</em>, 154(4), 431–434.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-2": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "2",
-            "body": "<p>[Author], et al. (2018). [Study title on nasal-only breathing and sleep quality after 30 days]. <em>Journal of Clinical Sleep Medicine</em>.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-3": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "3",
-            "body": "<p>[Author], et al. ([Year]). [Study title on nasal patency and external mechanical dilation]. <em>[Journal name]</em>.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-4": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "4",
-            "body": "<p>[Author], et al. ([Year]). [Study title — REM cycles and nasal breathing]. <em>[Journal name]</em>.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-5": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "5",
-            "body": "<p>[Author], et al. ([Year]). [Study title — HRV recovery and nasal breathing in athletes]. <em>[Journal name]</em>.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-6": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "6",
-            "body": "<p>[Author], et al. ([Year]). [Study title — external nasal dilators and snoring reduction]. <em>[Journal name]</em>.</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-7": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "7",
-            "body": "<p>[Independent testing report — aira mechanical performance]. ([Year]). [Lab / institution].</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        },
-        "cite-8": {
-          "type": "citation",
-          "settings": {
-            "ref_id": "8",
-            "body": "<p>[Independent testing report — adhesion and durability]. ([Year]). [Lab / institution].</p>",
-            "url": "",
-            "url_label": "DOI / URL"
-          }
-        }
-      },
-      "block_order": [
-        "cite-1",
-        "cite-2",
-        "cite-3",
-        "cite-4",
-        "cite-5",
-        "cite-6",
-        "cite-7",
-        "cite-8"
-      ],
-      "settings": {
-        "eyebrow": "References",
-        "heading_lead": "Citations &",
-        "heading_accent": "bibliography.",
-        "lede": "All claims on this page reference peer-reviewed published research. Footnote numbers above link here.",
-        "closing_lead": "For research questions or to request the full bibliography in academic format, contact",
-        "research_email": "research@aira.com"
+        "hint_text": "Turn page",
+        "back_foot": "aira · backed by science",
+        "cover_title_line": "The science of",
+        "cover_title_accent": "nasal breathing.",
+        "cover_subtitle": "The benefits of our nasal strip",
+        "cover_meta_1": "Eight peer-reviewed studies",
+        "cover_meta_2": "One magnetic band",
+        "cover_pager_title": "Cover",
+        "toc_kicker": "Contents",
+        "toc_field": "In the order you feel it",
+        "toc_heading": "What the research says.",
+        "toc_note": "",
+        "toc_pager_title": "Contents",
+        "closing_kicker": "Closing note",
+        "closing_field": "What it adds up to",
+        "closing_headline": "The band holds your nose open. The rest follows.",
+        "closing_lead": "The research is clear, using the aira strip will provide you with many benefits, from reduced snoring to increased sporting performance. We believe it will be a benefit to everyone, in one way or another. That is why we offer a 30-night guarantee.",
+        "cta_label": "Get my kit",
+        "cta_url": "/products/aira-kit",
+        "ship_line": "Free shipping in the UAE. 30-night guarantee.",
+        "small_print": "The aira band opens your nasal airway mechanically. It is not a treatment for snoring, sleep apnoea, chronic congestion, or a structural problem, and it does not replace medical care. If you think you have any of those, see your doctor. Figures on these pages are schematic representations of reported results.",
+        "closing_pager_title": "Closing"
       }
     }
   },
   "order": [
-    "hero",
-    "nasal_breathing",
-    "mechanism",
-    "why_nose_matters",
-    "citations"
+    "book"
   ]
 }

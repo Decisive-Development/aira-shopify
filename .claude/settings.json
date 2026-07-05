@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(foreach \\($f in 'science-nasal-breathing','science-mechanism','nasal-breathing-science','science-citations'\\) { \"== $f ==\"; git -C C:\\\\code\\\\aira-shopify show \"HEAD:sections/$f.liquid\" | Select-String -Pattern \"asset_url|image_url|\\\\.js'|\\\\.svg|\\\\.png|\\\\.webp|\\\\.jpg\" | Select-Object -First 20 })",
+      "PowerShell(git -C C:\\\\code\\\\aira-shopify status --short -- sections layout templates)",
+      "PowerShell(foreach \\($f in 'science-hero','science-nasal-breathing','science-mechanism','nasal-breathing-science','science-citations'\\) { \"== $f ==\"; git -C C:\\\\code\\\\aira-shopify show \"HEAD:sections/$f.liquid\" | Select-String -Pattern \"render '|class=\" | Select-Object -First 12 })",
+      "PowerShell(git -C C:\\\\code\\\\aira-shopify status --short)",
+      "PowerShell(git -C C:\\\\code\\\\aira-shopify diff --stat assets/critical.css assets/critical.source.css)",
+      "PowerShell(git -C C:\\\\code\\\\aira-shopify diff assets/critical.source.css)",
+      "Bash(node -e ' *)",
+      "PowerShell($p = 'C:\\\\code\\\\aira-shopify\\\\design_handoff_science\\\\designs\\\\Backed by Science.html'; Select-String -Path $p -Pattern 'radial-gradient|rgba\\\\\\(|--\\(navy|cream|paper|orange|blue|ink\\)' | Select-Object -First 40 | ForEach-Object { \"{0}: {1}\" -f $_.LineNumber, $_.Line.Trim\\(\\) })",
+      "PowerShell($p = 'C:\\\\code\\\\aira-shopify\\\\design_handoff_science\\\\designs\\\\Backed by Science.html'; Select-String -Path $p -Pattern 'class=\"lead\"' | Select-Object -First 8 | ForEach-Object { \"{0}: {1}\" -f $_.LineNumber, $_.Line.Trim\\(\\) })",
+      "PowerShell(foreach \\($f in 'C:\\\\code\\\\aira-shopify\\\\sections\\\\research-book.liquid','C:\\\\code\\\\aira-shopify\\\\layout\\\\book.liquid','C:\\\\code\\\\aira-shopify\\\\templates\\\\page.backed-by-science.json'\\) { $t = Get-Content $f -Raw; $em = \\([regex]::Matches\\($t, [char]0x2014\\)\\).Count; $en = \\([regex]::Matches\\($t, [char]0x2013\\)\\).Count; $ar = \\([regex]::Matches\\($t, [char]0x2192\\)\\).Count + \\([regex]::Matches\\($t, [char]0x27A1\\)\\).Count; \"$f em:$em en:$en arrow:$ar\" })",
+      "Bash(npm run *)",
+      "Bash(grep -nE \"#[0-9a-fA-F]{3,8}\\\\b|rgba?\\\\\\(|\\\\b\\(white|black|transparent\\)\\\\b\" \"sections/research-book.liquid\")",
+      "Bash(grep -E \"#[0-9a-fA-F]{3,8}|rgba?\\\\\\(|white|black\")",
+      "WebSearch",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('templates/page.backed-by-science.json','utf8'\\)\\); console.log\\('page JSON valid'\\)\")",
+      "Bash(git --no-pager diff --stat)",
+      "Bash(git --no-pager diff sections/research-book.liquid)",
+      "Bash(node -e \"const fs=require\\('fs'\\);const s=fs.readFileSync\\('sections/research-book.liquid','utf8'\\);JSON.parse\\(s.match\\(/\\\\{%\\\\s*schema\\\\s*%\\\\}\\([\\\\s\\\\S]*?\\)\\\\{%\\\\s*endschema\\\\s*%\\\\}/\\)[1]\\);console.log\\('schema JSON valid'\\)\")"
+    ]
+  }
+}
