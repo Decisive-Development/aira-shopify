@@ -2,11 +2,31 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
+{%- comment -%}
+  Per-page SEO title + description are owned in code via the seo-meta snippet.
+  Any page it does not map falls back to the Shopify admin "Search engine
+  listing" fields (page_title / page_description). Edit copy in seo-meta.liquid.
+{%- endcomment -%}
+{%- capture seo_title -%}{%- render 'seo-meta', field: 'title' -%}{%- endcapture -%}
+{%- capture seo_description -%}{%- render 'seo-meta', field: 'description' -%}{%- endcapture -%}
 {%- liquid
-  assign og_title = page_title | default: shop.name
+  assign seo_title = seo_title | strip
+  assign seo_description = seo_description | strip
+
+  assign seo_title_is_custom = false
+  if seo_title != blank
+    assign seo_title_is_custom = true
+  else
+    assign seo_title = page_title
+  endif
+  if seo_description == blank
+    assign seo_description = page_description
+  endif
+
+  assign og_title = seo_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
-  assign og_description = page_description | default: shop.description | default: shop.name
+  assign og_description = seo_description | default: shop.description | default: shop.name
 
   if request.page_type == 'product'
     assign og_type = 'product'
@@ -14,6 +34,13 @@
     assign og_type = 'article'
   elsif request.page_type == 'password'
     assign og_url = request.origin
+  endif
+
+  assign append_brand = true
+  if seo_title_is_custom
+    assign append_brand = false
+  elsif seo_title contains shop.name
+    assign append_brand = false
   endif
 %}
 
@@ -86,10 +113,10 @@
 >
 
 <title>
-  {{ page_title }}
+  {{ seo_title }}
   {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
   {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  {%- if append_brand %} &ndash; {{ shop.name }}{% endif -%}
 </title>
 
 <link
@@ -97,9 +124,9 @@
   href="{{ canonical_url }}"
 >
 
-{% if page_description %}
+{% if seo_description != blank %}
   <meta
     name="description"
-    content="{{ page_description | escape }}"
+    content="{{ seo_description | escape }}"
   >
 {% endif %}

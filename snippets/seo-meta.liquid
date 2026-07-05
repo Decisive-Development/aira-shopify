@@ -1,0 +1,76 @@
+{%- comment -%}
+  seo-meta — code-owned per-page meta copy (title + description).
+
+  Rendered from meta-tags.liquid, which falls back to the Shopify admin
+  "Search engine listing" fields (page_title / page_description) for any page
+  not mapped here. Pass field: 'title' or field: 'description'.
+
+  Editing rules (see .claude/rules/copy.md and the SEO brief):
+    - Titles <= 60 characters, descriptions <= 160.
+    - UK English, aira lowercase, no em-dashes or arrows, brand last in titles.
+    - Product handles and template suffixes must match the live store.
+
+  Returns/refund copy lives on the refund-policy page (the policy page). The
+  separate /pages/returns "start a return" form (suffix 'returns') has no brief
+  meta and falls back to the admin fields.
+{%- endcomment -%}
+{%- liquid
+  assign seo_title = ''
+  assign seo_description = ''
+
+  case request.page_type
+    when 'index'
+      assign seo_title = "Reusable magnetic nasal strips | aira"
+      assign seo_description = "Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping in the UAE."
+
+    when 'product'
+      case product.handle
+        when 'aira-kit'
+          assign seo_title = "Reusable magnetic nasal strip kit | aira"
+          assign seo_description = "One magnetic band, skin-safe 3M adhesive tabs, all four sizes in the box. A reusable magnetic nasal strip kit with a 30-night guarantee."
+        when 'aira-refill-tabs'
+          assign seo_title = "Nasal strip refill tabs | aira"
+          assign seo_description = "Refill tabs for your aira band. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the GCC. Save 20% with monthly delivery."
+      endcase
+
+    when 'page'
+      case template.suffix
+        when 'faq'
+          assign seo_title = "Nasal strip questions, answered | aira"
+          assign seo_description = "Do nasal strips work for snoring? How do magnetic nasal strips stay on? Answers on fit, sizing, the 3M adhesive, shipping and the 30-night guarantee."
+        when 'how-it-works'
+          assign seo_title = "How magnetic nasal strips work | aira"
+          assign seo_description = "One magnetic band, a fresh pair each night, ten seconds to put on. See how the aira strip holds your nose open all night, and how to fit your size."
+        when 'backed-by-science'
+          assign seo_title = "Backed by science | aira"
+          assign seo_description = "Seven peer-reviewed studies on nasal dilation, snoring and sleep, and what they do and don't prove. The research behind the aira strip, cited in full."
+        when 'contact'
+          assign seo_title = "Contact | aira"
+          assign seo_description = "Questions about your order, fit or shipping across the GCC? Message the aira team and we'll sort it."
+        when 'our-story'
+          assign seo_title = "Our story | aira"
+          assign seo_description = "Why two founders in the UAE built a reusable magnetic nasal strip, and what we're building next. The people and the thinking behind aira."
+        when 'affiliate'
+          assign seo_title = "Affiliate programme | aira"
+          assign seo_description = "Earn on every kit you refer. The aira affiliate programme for creators, coaches and athletes across the GCC. Apply in minutes."
+        when 'privacy-policy'
+          assign seo_title = "Privacy policy | aira"
+          assign seo_description = "How aira collects, uses and protects your data when you shop with us."
+        when 'shipping-policy'
+          assign seo_title = "Shipping policy | aira"
+          assign seo_description = "Delivery times, costs and coverage for aira orders across the GCC."
+        when 'terms-of-service'
+          assign seo_title = "Terms of service | aira"
+          assign seo_description = "The terms that apply when you buy from aira."
+        when 'refund-policy'
+          assign seo_title = "Returns | aira"
+          assign seo_description = "Try aira for 30 nights. If it's not for you, send it back for a refund. How returns, refunds and the guarantee work across the GCC."
+      endcase
+  endcase
+
+  if field == 'title'
+    echo seo_title
+  else
+    echo seo_description
+  endif
+-%}
