@@ -71,7 +71,7 @@ Each `.sheet` is a full-size absolutely-positioned card with a `front` and `back
 | 6 | Study 05 · Krakow 2006 | "The gold standard: a randomised trial." **Fig. 4** rising line, week 0→4. |
 | 7 | Study 06 · Dallam 2018 | "Trained noses run more efficiently." 22% count-up in the lead. **Fig. 5** mouth vs nose ventilation bars, −22%. |
 | 8 | Study 07 · Al Shaikh 2018 | "This is not a faraway problem." **Fig. 6** horizontal proportion bars: adults who snore (1 in 3, orange), snorers at high apnoea risk (nearly half, blue). |
-| 9 | Closing | "Keep the nose open, and the night improves." through-line paragraph, `Get my kit` (orange, Press hover), "Free shipping across the GCC. 30-night guarantee.", medical-boundary small print. |
+| 9 | Closing | "Keep the nose open, and the night improves." through-line paragraph, `Get my kit` (orange, Press hover), "Free shipping across the UAE. 30-night guarantee.", medical-boundary small print. |
 
 Every study page footer = full academic citation, hairline-ruled, 10.5px.
 

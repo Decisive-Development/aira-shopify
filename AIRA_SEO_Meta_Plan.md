@@ -22,13 +22,13 @@
 
 ### Shop `/collections/...`
 - **Title tag:** Nasal strips UAE, kits and refills | aira
-- **Meta description:** Shop reusable magnetic nasal strips in the UAE and across the GCC. Kits and refill tabs, free shipping, 30-night guarantee.
+- **Meta description:** Shop reusable magnetic nasal strips in the UAE and across the UAE. Kits and refill tabs, free shipping, 30-night guarantee.
 - **H1:** Shop
 - **Primary:** nasal strips UAE · Secondary: buy nasal strips Dubai, anti snoring devices UAE, breathing strips
 
 ### Refills PDP `/products/aira-refill-tabs`
 - **Title tag:** Nasal strip refills, adhesive tabs | aira
-- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the GCC. Save 20% with monthly delivery.
+- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the UAE. Save 20% with monthly delivery.
 - **H1:** Refill tabs
 - **Primary:** nasal strip refills · Secondary: magnetic nasal strip refills, adhesive tabs
 

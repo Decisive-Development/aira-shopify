@@ -44,6 +44,7 @@
         "headline": "You shouldn't have to think about breathing. So we did.",
         "headline_accent": "So we did.",
         "hero_image": "shopify://shop_images/ourstory-hero.png",
+        "hero_image_mobile": "shopify://shop_images/4.png",
         "hero_image_alt": "",
         "photo_caption": "",
         "supporting_copy": "We make one thing properly: a magnetic nasal strip, designed to improve your days and your nights."
@@ -60,7 +61,6 @@
             "body": "<p>We started aira from a goal to improve sleep. To improve deep sleep, to prevent snoring, to wake up rested and to exercise easier.</p><p>One of the most obvious fixes, the nose. We used disposable nasal strips, however we agreed they just weren't good enough.</p>",
             "image": "shopify://shop_images/a-small-thing-missed.png",
             "image_alt": "",
-            "image_label": "Origin · workshop",
             "reverse": false,
             "cta_label": "",
             "cta_url": ""
@@ -74,7 +74,6 @@
             "body": "<p>We didn't set out to sell temporary. We set out to fix something almost everyone takes for granted and almost no one does well.</p><p>We pay attention to physiology, materials, and the small details that make a product part of your daily routine.</p>",
             "image": "shopify://shop_images/Prioritize-your-breathing.png",
             "image_alt": "",
-            "image_label": "Materials · detail",
             "reverse": true,
             "cta_label": "",
             "cta_url": ""
@@ -86,8 +85,8 @@
             "eyebrow": "Where we are going",
             "heading": "We are only starting with the nose.",
             "body": "<p>At aira we aim to be the first and last stop for any sleep, performance or wellness accessories, aimed only at improving your life.</p><p>Our mission is to provide you with anything and everything you might need to improve every aspect of your life.</p>",
+            "image": "shopify://shop_images/DSCF3283.jpg",
             "image_alt": "",
-            "image_label": "Product · still life",
             "reverse": false,
             "cta_label": "",
             "cta_url": ""

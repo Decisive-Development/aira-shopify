@@ -18,7 +18,20 @@
       "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\('templates/page.backed-by-science.json','utf8'\\)\\); console.log\\('page JSON valid'\\)\")",
       "Bash(git --no-pager diff --stat)",
       "Bash(git --no-pager diff sections/research-book.liquid)",
-      "Bash(node -e \"const fs=require\\('fs'\\);const s=fs.readFileSync\\('sections/research-book.liquid','utf8'\\);JSON.parse\\(s.match\\(/\\\\{%\\\\s*schema\\\\s*%\\\\}\\([\\\\s\\\\S]*?\\)\\\\{%\\\\s*endschema\\\\s*%\\\\}/\\)[1]\\);console.log\\('schema JSON valid'\\)\")"
+      "Bash(node -e \"const fs=require\\('fs'\\);const s=fs.readFileSync\\('sections/research-book.liquid','utf8'\\);JSON.parse\\(s.match\\(/\\\\{%\\\\s*schema\\\\s*%\\\\}\\([\\\\s\\\\S]*?\\)\\\\{%\\\\s*endschema\\\\s*%\\\\}/\\)[1]\\);console.log\\('schema JSON valid'\\)\")",
+      "Bash(git --no-pager status --porcelain -- sections/before-after-slider.liquid templates/index.json)",
+      "Bash(git --no-pager log --oneline --all -i --grep=\"revers\\\\|swap\\\\|flip\\\\|before\\\\|after\\\\|slider\")",
+      "Bash(git --no-pager diff -- templates/index.json)",
+      "Bash(git --no-pager log -p -S \"clip-path: inset\" --format=\"COMMIT %h %s\" -- sections/before-after-slider.liquid)",
+      "Bash(git reset *)",
+      "Bash(git --no-pager diff -- sections/before-after-slider.liquid)",
+      "PowerShell(shopify theme check)",
+      "PowerShell(shopify theme check | Out-File -FilePath \"$env:TEMP\\\\tc.txt\" -Encoding utf8; $c = Get-Content \"$env:TEMP\\\\tc.txt\"; $c | Select-String -Pattern \"seo-meta|meta-tags\" ; \"---SUMMARY---\"; $c | Select-String -Pattern \"offenses|offences\" | Select-Object -Last 1)",
+      "WebFetch(domain:shopify.dev)",
+      "WebFetch(domain:www.ilanadavis.com)",
+      "PowerShell(shopify theme check | Out-File -FilePath \"$env:TEMP\\\\tc2.txt\" -Encoding utf8; $c = Get-Content \"$env:TEMP\\\\tc2.txt\"; \"--- llms ---\"; $c | Select-String -Pattern \"llms\" ; \"--- summary ---\"; $c | Select-String -Pattern \"offenses|offences\" | Select-Object -Last 1)",
+      "PowerShell(shopify theme check | Out-File -FilePath \"$env:TEMP\\\\tc3.txt\" -Encoding utf8; $c = Get-Content \"$env:TEMP\\\\tc3.txt\"; $c | Select-String -Pattern \"offenses|offences\" | Select-Object -Last 1)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

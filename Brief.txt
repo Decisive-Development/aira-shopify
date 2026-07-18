@@ -1,17 +1,144 @@
-The text around figures is too small and hard to read, minimum font size anywhere is 12px
+================================================================
+AIRA — SEO META CONTENT, SITEWIDE
+Implementation Brief for VSC (enter metas + light technical SEO)
+Date: 2026-07-05 | Author: Tom | Status: Ready for implementation
+================================================================
 
-Study 1:
+CONTEXT
+-------
+Per-page meta titles and descriptions, approved 2026-07-05
+(reference: AIRA_SEO_Meta_Plan.md v2 — context only; THIS brief
+is the implementation truth). Keyword map research 2026-06-12.
+3M adhesive mentions are supplier-confirmed and cleared.
 
-Make semibold: "a nasal... by about"
+EXECUTION ORDER
+---------------
+Run AFTER any in-flight page copy briefs land. Metas go in last
+so nothing overwrites them. Where a page brief and this brief
+disagree on a meta, THIS brief wins.
 
-2: ''a dilator strip cut.. by about''
+HOLD FOR TOM'S SIGN-OFF (enter everything else first)
+-----------------------------------------------------
+Three entries are fact-dependent and marked [HOLD] below:
+Our Story (story facts), Affiliate (programme facts), Returns
+(must match final policy). Enter them only after Tom confirms.
 
-3: "nasal dialator... impariment''
+WHERE THESE GO (Shopify admin)
+------------------------------
+- Products/pages/collections: edit page → "Search engine
+  listing" → title + description fields.
+- Homepage: Online Store → Preferences → homepage title + meta
+  description.
+- /policies/ pages: metas may not be editable; report what is.
+- FIRST confirm every handle below against the live store and
+  report mismatches before entering anything.
 
-You get the idea, make semibold all parts referencing the strip/dialator
+HARD RULES (apply to every field)
+---------------------------------
+- aira lowercase, everywhere, including title tags.
+- No em-dashes, no hyphen-as-pivot, no arrows. Compound words
+  keep their hyphens (peer-reviewed, 30-night).
+- UK English.
+- Title ≤ 60 characters, description ≤ 160. If a field gets
+  truncated in the admin preview, report it, don't rewrite.
+- Enter EXACTLY as written. No improvements.
 
+----------------------------------------------------------------
+THE METAS
+----------------------------------------------------------------
 
+1. HOMEPAGE  /
+Title: Magnetic nasal strips, reusable | aira
+Desc:  Reusable magnetic nasal strips that hold your nose open
+       all night. Less snoring, deeper sleep, easier training.
+       Free shipping across the UAE.
 
-On the last page remove the massive copy block and replace with:
+2. KIT PDP  /products/aira-kit
+Title: Magnetic nasal strip kit, reusable | aira
+Desc:  One magnetic band, skin-safe 3M adhesive tabs, all four
+       sizes in the box. A reusable magnetic nasal strip kit
+       with a 30-night guarantee.
 
-"The research is clear, using the aira strip will provide you with many benefits, from reduced snoring to increase sporting performance. We belive it will be a benefit to everyone, in one way or another. That is why we offer a 30 day satisfaction garuntee."
+3. SHOP  /collections/ (confirm handle)
+Title: Nasal strips UAE, kits and refills | aira
+Desc:  Shop reusable magnetic nasal strips in the UAE and across
+       the GCC. Kits and refill tabs, free shipping, 30-night
+       guarantee.
+
+4. REFILLS PDP  /products/aira-refill-tabs
+Title: Nasal strip refills, adhesive tabs | aira
+Desc:  Refill tabs for your aira band. 30 fresh pairs a month,
+       3M medical-grade adhesive, delivered across the UAE.
+       Save 20% with monthly delivery.
+
+5. FAQ  /pages/faq
+Title: Nasal strip FAQs: fit, adhesive, snoring | aira
+Desc:  Do nasal strips work for snoring? How do magnetic nasal
+       strips stay on? Answers on fit, sizing, the 3M adhesive,
+       shipping and the 30-night guarantee.
+
+6. HOW IT WORKS  /pages/how-it-works (confirm handle post-rename)
+Title: How magnetic nasal strips work | aira
+Desc:  One magnetic band, a fresh pair each night, ten seconds
+       to put on. See how the aira strip holds your nose open
+       all night, and how to fit your size.
+
+7. BACKED BY SCIENCE  /pages/backed-by-science (confirm handle)
+Title: Nasal breathing research and studies | aira
+Desc:  Seven peer-reviewed studies on nasal dilation, snoring
+       and sleep, and what they do and don't prove. The research
+       behind the aira strip, cited in full.
+
+8. OUR STORY  /pages/our-story  [HOLD: Tom sign-off]
+Title: Our story | aira
+Desc:  Why two founders in the UAE built a reusable magnetic
+       nasal strip, and what we're building next. The people and
+       the thinking behind aira.
+
+9. CONTACT  /pages/contact
+Title: Contact us | aira
+Desc:  Questions about your order, fit or shipping across the
+       GCC? Message the aira team and we'll sort it.
+
+10. AFFILIATE  /pages/affiliate (confirm handle)  [HOLD: Tom sign-off]
+Title: Affiliate programme | aira
+Desc:  Earn on every kit you refer. The aira affiliate programme
+       for creators, coaches and athletes across the UAE. Apply
+       in minutes.
+
+11. RETURNS  /pages/returns (confirm: page vs /policies/)  [HOLD: Tom sign-off]
+Title: Returns and refunds, 30-night guarantee | aira
+Desc:  Try aira for 30 nights. If it's not for you, send it back
+       for a refund. How returns, refunds and the guarantee work
+       across the UAE.
+
+12. POLICY PAGES (whichever exist)
+Privacy policy | aira
+       How aira collects, uses and protects your data when you
+       shop with us.
+Shipping policy | aira
+       Delivery times, costs and coverage for aira orders across
+       the GCC.
+Terms of service | aira
+       The terms that apply when you buy from aira.
+
+----------------------------------------------------------------
+WHILE YOU'RE IN THERE (quick technical adds, from the plan)
+----------------------------------------------------------------
+A. OG TAGS: confirm og:title mirrors the title tag per page
+   (theme default usually handles this; verify, don't build).
+   og:image stays as-is until final photography lands.
+B. REDIRECT: confirm aira-starter-kit → aira-kit 301 is live.
+C. llms.txt at site root: brand, products, shipping, guarantee
+   in plain text. Copy tone from homepage, keep it under a page.
+D. JSON-LD Product schema on both PDPs: Product + Offer only.
+   NO AggregateRating until real reviews exist. If this exceeds
+   30 min, log it as its own task instead.
+
+----------------------------------------------------------------
+REPORT BACK
+----------------------------------------------------------------
+Table: page | handle confirmed y/n | title chars | desc chars |
+entered y/n or blocker. Plus: which policy pages exposed
+editable metas, OG verification result, redirect status, and
+anything you couldn't reach from the admin.

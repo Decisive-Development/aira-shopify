@@ -6,7 +6,8 @@
 	stay). Sheets: cover, contents (auto-built from blocks), one sheet per
 	study block, closing. Pages turn in 3D around the spine; drag bends the
 	active sheet; pager, arrow keys, and contents rows all navigate.
-	Current page persists in localStorage.
+	The book always opens on the cover (no persistence); a bfcache restore
+	is reset on pageshow.
 
 	All copy is schema-driven. Figures are deliberately schematic (the
 	studies' licensed figures are not ours to reproduce): pick a shape per
@@ -666,18 +667,12 @@
 			var stackL = root.querySelector('[data-rb-stack-l]');
 			var stackR = root.querySelector('[data-rb-stack-r]');
 			var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-			var STORE_KEY = 'aira-research-page';
 
-			function readStore() {
-				try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; }
-			}
-			function writeStore(v) {
-				try { localStorage.setItem(STORE_KEY, v); } catch (e) { /* private mode */ }
-			}
-
-			/* cur = index of the page currently face-up on the right stack */
-			var cur = parseInt(readStore() || '0', 10);
-			if (isNaN(cur) || cur < 0 || cur >= n) cur = 0;
+			/* cur = index of the page currently face-up on the right stack.
+			   The book always opens on the cover: no persistence, so a refresh
+			   or a fresh visit starts at page 0. A browser back/forward that
+			   restores from bfcache is reset on pageshow (see init below). */
+			var cur = 0;
 
 			sheets.forEach(function (s, i) {
 				var b = document.createElement('button');
@@ -711,7 +706,6 @@
 				/* stacks thin out / grow */
 				stackR.style.transform = 'scaleX(' + Math.max(0.15, (n - cur) / n) + ')';
 				stackL.style.transform = 'scaleX(' + Math.max(0.001, cur / n) + ')';
-				writeStore(String(cur));
 				countUps(sheets[cur]);
 			}
 
@@ -823,13 +817,23 @@
 			book.addEventListener('pointerup', endDrag);
 			book.addEventListener('pointercancel', endDrag);
 
-			/* init: place sheets without animating the restored position */
-			sheets.forEach(function (s) { s.classList.add('rb-no-anim'); });
-			render();
-			requestAnimationFrame(function () {
+			/* Place the book without animating it into view, then re-enable
+			   turns. Reused when a bfcache restore snaps back to the cover. */
+			function placeInstantly() {
+				sheets.forEach(function (s) { s.classList.add('rb-no-anim'); });
+				render();
 				requestAnimationFrame(function () {
-					sheets.forEach(function (s) { s.classList.remove('rb-no-anim'); });
+					requestAnimationFrame(function () {
+						sheets.forEach(function (s) { s.classList.remove('rb-no-anim'); });
+					});
 				});
+			}
+			placeInstantly();
+
+			/* Browser back/forward can restore this page from bfcache without
+			   re-running the script; snap the book back to the cover then. */
+			window.addEventListener('pageshow', function (e) {
+				if (e.persisted && cur !== 0) { cur = 0; placeInstantly(); }
 			});
 		}
 

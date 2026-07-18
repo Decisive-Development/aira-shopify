@@ -111,13 +111,13 @@
 
 			{%- comment -%} After label {%- endcomment -%}
 			{%- if section.settings.after_label != blank -%}
-				<span class="absolute bottom-4 left-4 px-3 py-1.5 rounded-lg bg-main text-secondary text-xs font-bold tracking-wide pointer-events-none">
+				<span class="absolute bottom-4 right-4 px-3 py-1.5 rounded-lg bg-main text-secondary text-xs font-bold tracking-wide pointer-events-none">
 					{{ section.settings.after_label }}
 				</span>
 			{%- endif -%}
 
 			{%- comment -%} Before pane — clip-path on the pane drives the reveal (clips image + label together) {%- endcomment -%}
-			<div class="absolute inset-0" style="clip-path: inset(0 0 0 50%)" data-before-pane>
+			<div class="absolute inset-0" style="clip-path: inset(0 50% 0 0)" data-before-pane>
 
 				{%- if has_before_img -%}
 					{{
@@ -143,7 +143,7 @@
 
 				{%- comment -%} Before label {%- endcomment -%}
 				{%- if section.settings.before_label != blank -%}
-					<span class="absolute bottom-4 right-4 px-3 py-1.5 rounded-lg bg-main text-secondary text-xs font-bold tracking-wide pointer-events-none">
+					<span class="absolute bottom-4 left-4 px-3 py-1.5 rounded-lg bg-main text-secondary text-xs font-bold tracking-wide pointer-events-none">
 						{{ section.settings.before_label }}
 					</span>
 				{%- endif -%}
@@ -219,7 +219,7 @@
 				var rect = slider.getBoundingClientRect();
 				var pct  = ((clientX - rect.left) / rect.width) * 100;
 				pct = Math.min(Math.max(pct, 2), 98);
-				beforePane.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+				beforePane.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
 				divider.style.left       = pct + '%';
 				divider.style.marginLeft = '-20px';
 			}
