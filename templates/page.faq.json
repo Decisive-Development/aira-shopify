@@ -46,7 +46,7 @@
 
 				"cat-orders": { "type": "category", "settings": { "title": "Orders & shipping" } },
 				"q-ord-1": { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Do you ship to the GCC?", "answer": "<p>Yes — we ship to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Most orders arrive in 3–5 business days.</p>" } },
-				"q-ord-2": { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Do you have a return policy?", "answer": "<p>We stand behind every product we make. Try aira for 30 days — if you're not happy with your purchase for any reason, contact us at <a href=\"mailto:contact@aira-breathing.com\">contact@aira-breathing.com</a> within 30 days of delivery and we'll guide you through the return process.</p>" } }
+				"q-ord-2": { "type": "faq_item", "settings": { "category": "Orders & shipping", "question": "Do you have a return policy?", "answer": "<p>We stand behind every product we make. Try aira for 30 days — if you're not happy with your purchase for any reason, contact us at <a href=\"mailto:contact@aira-ecom.com\">contact@aira-ecom.com</a> within 30 days of delivery and we'll guide you through the return process.</p>" } }
 			},
 			"block_order": [
 				"cat-how", "q-how-1", "q-how-2", "q-how-3",

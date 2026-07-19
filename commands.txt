@@ -1,25 +1,25 @@
 # aira Shopify — Terminal Commands Reference
 
-Store: aira-breathing
+Store: aira-ecom
 Theme: aira-theme
 
 
 ## Deploying to Shopify
 
 # Push all local changes to the live theme
-shopify theme push --theme aira-theme -s aira-breathing
+shopify theme push --theme aira-theme -s aira-ecom
 
 # Push a single file
-shopify theme push --theme aira-theme -s aira-breathing --only sections/faq.liquid
+shopify theme push --theme aira-theme -s aira-ecom --only sections/faq.liquid
 
 # Push matching files (e.g. all sections)
-shopify theme push --theme aira-theme -s aira-breathing --only "sections/*.liquid"
+shopify theme push --theme aira-theme -s aira-ecom --only "sections/*.liquid"
 
 # Pull remote theme down to local (e.g. after editing in the Shopify theme editor)
-shopify theme pull --theme aira-theme -s aira-breathing
+shopify theme pull --theme aira-theme -s aira-ecom
 
 # List all themes on the store
-shopify theme list -s aira-breathing
+shopify theme list -s aira-ecom
 
 IMPORTANT — when adding a NEW section that's referenced in a template JSON:
   1. Push the section file first:   --only sections/new-section.liquid
@@ -39,7 +39,7 @@ Note: .shopifyignore controls which files are excluded from push/pull/dev.
 4. Edit files — CSS auto-compiles, Shopify dev server auto-reloads in the browser
 
 npm run dev              Shopify dev server with live reload
-                         Runs: shopify theme dev --theme aira-theme --theme-editor-sync -s aira-breathing
+                         Runs: shopify theme dev --theme aira-theme --theme-editor-sync -s aira-ecom
                          Opens a local preview URL (usually localhost:9292)
 
 npm run watch:css        Watch & auto-compile Tailwind CSS
