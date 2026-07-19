@@ -37,29 +37,18 @@
 						form — Klaviyo Form Submission wiring is not configured anywhere
 						in the theme yet. Swap to a Klaviyo embed/form when flows are set.
 					{%- endcomment -%}
-					{%- form 'customer', id: 'footer-newsletter' -%}
-						<input type="hidden" name="contact[tags]" value="newsletter">
-						<p class="text-base font-semibold mb-2 text-main">{{ section.settings.newsletter_heading }}</p>
-						{%- if section.settings.newsletter_body != blank -%}
-							<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-bold">10% off your first kit</strong>' }}</p>
-						{%- endif -%}
-						<div class="flex flex-col sm:flex-row gap-2">
-							<input
-								type="email"
-								name="contact[email]"
-								placeholder="{{ section.settings.newsletter_placeholder }}"
-								required
-								class="w-full sm:w-70 rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-none"
-							>
-							{%- render 'cta-button',
-								label: section.settings.newsletter_button,
-								element: 'button',
-								button_type: 'submit',
-								variant: 'solid',
-								extra_classes: 'shrink-0 w-full sm:w-auto text-center'
-							-%}
-						</div>
-					{%- endform -%}
+					{%- capture footer_newsletter_body -%}
+						{{- section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-bold">10% off your first kit</strong>' -}}
+					{%- endcapture -%}
+					{%- render 'newsletter-form',
+						form_id: 'footer-newsletter',
+						tags: 'newsletter',
+						heading: section.settings.newsletter_heading,
+						body_html: footer_newsletter_body,
+						placeholder: section.settings.newsletter_placeholder,
+						button_label: section.settings.newsletter_button,
+						layout: 'inline'
+					-%}
 
 					{%- comment -%} Social icons (incl. WhatsApp from theme settings) {%- endcomment -%}
 					<div class="flex items-center gap-4">

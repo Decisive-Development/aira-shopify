@@ -367,6 +367,16 @@
         "image": "shopify://shop_images/product-with-logo-final.jpg",
         "image_alt": ""
       }
+    },
+    "newsletter_popup": {
+      "type": "newsletter-popup",
+      "settings": {
+        "heading": "Take 10% off your first kit",
+        "subheading": "Drop your email and we'll send your welcome code straight to your inbox.",
+        "placeholder": "Your email",
+        "button_label": "Get my code",
+        "success_message": "Check your inbox. Your code is on its way."
+      }
     }
   },
   "order": [
@@ -379,6 +389,7 @@
     "ugc_gallery",
     "custom_reviews",
     "faq",
-    "kit_offer"
+    "kit_offer",
+    "newsletter_popup"
   ]
 }

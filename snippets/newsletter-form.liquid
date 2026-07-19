@@ -1,0 +1,90 @@
+{%- comment -%}
+	Newsletter form — the one email-capture form in the theme.
+
+	Wraps Shopify's `customer` form (which is what creates the subscriber that
+	Klaviyo syncs server-side). Used by the footer and by the newsletter popup;
+	do not hand-roll another one.
+
+	Parameters:
+	  form_id       {String}  unique id for the form                    (required)
+	  tags          {String}  comma list for contact[tags]              (default: 'newsletter')
+	  heading       {String}  optional heading rendered above the field
+	  body_html     {String}  optional supporting copy (may contain markup)
+	  placeholder   {String}  email input placeholder                   (default: 'Your email')
+	  button_label  {String}  submit label                              (default: 'Subscribe')
+	  layout        {String}  'inline' (footer) | 'stacked' (popup)     (default: 'inline')
+	  surface       {String}  'light' | 'dark' — passed to cta-button   (default: 'light')
+	  show_states   {Boolean} render success/error blocks               (default: false)
+	  success_text  {String}  copy for the success block
+	  attributes    {String}  raw extra attributes for the <form>
+
+	NOTE on `show_states`: every `{% form 'customer' %}` on a page reports
+	`posted_successfully?` after any customer form on that page posts — Shopify
+	gives no per-form signal. So only ONE form per page should opt into states,
+	otherwise a footer signup also lights up the popup and vice versa.
+{%- endcomment -%}
+
+{%- liquid
+	assign nf_tags        = tags         | default: 'newsletter'
+	assign nf_placeholder = placeholder  | default: 'Your email'
+	assign nf_label       = button_label | default: 'Subscribe'
+	assign nf_layout      = layout       | default: 'inline'
+	assign nf_surface     = surface      | default: 'light'
+
+	if nf_layout == 'stacked'
+		assign nf_wrap_classes  = 'flex flex-col gap-3'
+		assign nf_input_classes = 'w-full'
+		assign nf_btn_classes   = 'w-full text-center'
+	else
+		assign nf_wrap_classes  = 'flex flex-col sm:flex-row gap-2'
+		assign nf_input_classes = 'w-full sm:w-70'
+		assign nf_btn_classes   = 'shrink-0 w-full sm:w-auto text-center'
+	endif
+-%}
+
+{%- form 'customer', id: form_id, class: 'newsletter-form' -%}
+	<input type="hidden" name="contact[tags]" value="{{ nf_tags }}">
+
+	{%- if show_states and form.posted_successfully? -%}
+		<div class="rounded-xl bg-bg p-5 text-sm text-copy" data-newsletter-success role="status">
+			{{ success_text | default: "Check your inbox. Your code is on its way." }}
+		</div>
+	{%- else -%}
+
+		{%- if show_states and form.errors -%}
+			<div class="rounded-xl bg-highlight/10 p-5 text-sm text-highlight mb-3" role="alert">
+				{{ form.errors | default_errors }}
+			</div>
+		{%- endif -%}
+
+		{%- if heading != blank -%}
+			<p class="text-base font-semibold mb-2 text-main">{{ heading }}</p>
+		{%- endif -%}
+
+		{%- if body_html != blank -%}
+			<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ body_html }}</p>
+		{%- endif -%}
+
+		<div class="{{ nf_wrap_classes }}">
+			<label class="sr-only" for="{{ form_id }}-email">{{ nf_placeholder }}</label>
+			<input
+				id="{{ form_id }}-email"
+				type="email"
+				name="contact[email]"
+				placeholder="{{ nf_placeholder }}"
+				autocomplete="email"
+				required
+				class="{{ nf_input_classes }} rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-2 focus:outline-offset-2 focus:outline-highlight"
+				{{ attributes }}
+			>
+			{%- render 'cta-button',
+				label: nf_label,
+				element: 'button',
+				button_type: 'submit',
+				variant: 'solid',
+				surface: nf_surface,
+				extra_classes: nf_btn_classes
+			-%}
+		</div>
+	{%- endif -%}
+{%- endform -%}

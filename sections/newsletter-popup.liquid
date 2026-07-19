@@ -1,0 +1,236 @@
+{%- comment -%}
+	Newsletter popup — email capture for the printed QR insert.
+
+	Opens ONLY on demand, never on a timer:
+	  1. landing with #newsletter in the URL (the printed insert QR resolves here)
+	  2. a click on any element carrying [data-open-newsletter]
+
+	The form is the shared `newsletter-form` snippet, tagged `newsletter, qr-insert`
+	so print-sourced signups are attributable in the Customers admin.
+{%- endcomment -%}
+
+<div
+	class="fixed inset-0 z-100 hidden items-center justify-center overflow-y-auto bg-black/70 p-4"
+	data-newsletter-modal
+	role="dialog"
+	aria-modal="true"
+	aria-hidden="true"
+	aria-labelledby="newsletter-popup-heading"
+>
+	<div
+		class="relative w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl"
+		data-newsletter-card
+		data-lenis-prevent
+	>
+		<button
+			type="button"
+			class="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full text-main transition-opacity hover:opacity-60 cursor-pointer"
+			data-newsletter-close
+			aria-label="Close"
+		>
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+				<path d="M18 6 6 18M6 6l12 12"/>
+			</svg>
+		</button>
+
+		{%- if section.settings.heading != blank -%}
+			<h2 id="newsletter-popup-heading" class="font-heading heading-weight text-main text-2xl sm:text-3xl leading-tight tracking-tight pr-10">
+				{{ section.settings.heading }}
+			</h2>
+		{%- endif -%}
+
+		{%- if section.settings.subheading != blank -%}
+			<p class="text-copy text-sm sm:text-base leading-relaxed mt-3">
+				{{ section.settings.subheading }}
+			</p>
+		{%- endif -%}
+
+		<div class="mt-6">
+			{%- render 'newsletter-form',
+				form_id: 'newsletter-popup',
+				tags: 'newsletter, qr-insert',
+				placeholder: section.settings.placeholder,
+				button_label: section.settings.button_label,
+				layout: 'stacked',
+				show_states: true,
+				success_text: section.settings.success_message
+			-%}
+		</div>
+	</div>
+</div>
+
+<script>
+(function () {
+	var section = document.querySelector('#shopify-section-{{ section.id }}');
+	if (!section) return;
+
+	var modal = section.querySelector('[data-newsletter-modal]');
+	var card  = section.querySelector('[data-newsletter-card]');
+	if (!modal || !card) return;
+
+	/* Set the instant this form is submitted, read back after Shopify's
+	   post-redirect so we know THIS form posted (and not the footer one)
+	   and can re-open the popup on its success state. */
+	var SUBMIT_FLAG = 'aira.newsletter.submitted';
+	var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+	var lastFocus = null;
+	var isOpen = false;
+
+	function trapFocus(e) {
+		if (e.key !== 'Tab') return;
+		var items = card.querySelectorAll(FOCUSABLE);
+		if (!items.length) return;
+		var first = items[0];
+		var last  = items[items.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+
+	function open() {
+		if (isOpen) return;
+		isOpen = true;
+		lastFocus = document.activeElement;
+		modal.classList.remove('hidden');
+		modal.classList.add('flex');
+		modal.setAttribute('aria-hidden', 'false');
+		document.body.style.overflow = 'hidden';
+		document.addEventListener('keydown', trapFocus);
+
+		/* Focus the email field so the mobile keyboard opens straight away.
+		   After a successful post there is no field, so fall back to close. */
+		var target = card.querySelector('input[type="email"]') || card.querySelector('[data-newsletter-close]');
+		if (target) { target.focus(); }
+	}
+
+	function close() {
+		if (!isOpen) return;
+		isOpen = false;
+		modal.classList.add('hidden');
+		modal.classList.remove('flex');
+		modal.setAttribute('aria-hidden', 'true');
+		document.body.style.overflow = '';
+		document.removeEventListener('keydown', trapFocus);
+		if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
+	}
+
+	/* Close: X button, backdrop tap, Escape */
+	section.querySelectorAll('[data-newsletter-close]').forEach(function (el) {
+		el.addEventListener('click', close);
+	});
+	modal.addEventListener('click', function (e) {
+		if (e.target === modal) { close(); }
+	});
+	document.addEventListener('keydown', function (e) {
+		if ((e.key === 'Escape' || e.key === 'Esc') && isOpen) { close(); }
+	});
+
+	/* Manual hook for any future CTA */
+	document.addEventListener('click', function (e) {
+		var trigger = e.target.closest('[data-open-newsletter]');
+		if (!trigger) return;
+		e.preventDefault();
+		open();
+	});
+
+	var form = card.querySelector('form');
+	if (form) {
+		form.addEventListener('submit', function () {
+			try { sessionStorage.setItem(SUBMIT_FLAG, '1'); } catch (err) {}
+		});
+	}
+
+	/* Re-open on the success state after Shopify's post-redirect. The redirect
+	   drops the fragment, so the flag is what carries the intent across. */
+	var justSubmitted = false;
+	try {
+		justSubmitted = sessionStorage.getItem(SUBMIT_FLAG) === '1';
+		if (justSubmitted) { sessionStorage.removeItem(SUBMIT_FLAG); }
+	} catch (err) {}
+
+	var postedSuccessfully = !!card.querySelector('[data-newsletter-success]');
+
+	/* The QR is printed as /qr/newsletter with no fragment and the inserts are
+	   already in boxes, so the URL can never change. The 301 to the homepage
+	   does carry utm_campaign, so that is the trigger that actually fires in
+	   the wild; #newsletter is kept as a shareable/manual entry point. Params
+	   are read only, never stripped or rewritten, so Shopify Analytics is
+	   untouched. (Signed off by Tom, 2026-07-19, deviation from brief §0/§3.) */
+	function fromInsertCampaign() {
+		try {
+			return new URLSearchParams(window.location.search).get('utm_campaign') === 'insert_newsletter';
+		} catch (e) { return false; }
+	}
+
+	function openFromHash() {
+		if (window.location.hash === '#newsletter') { open(); }
+	}
+
+	if (justSubmitted && postedSuccessfully) {
+		open();
+	} else {
+		/* Small delay so first paint lands before the popup covers it. */
+		window.setTimeout(function () {
+			if (window.location.hash === '#newsletter' || fromInsertCampaign()) { open(); }
+		}, 300);
+	}
+
+	/* Hash only: the campaign param stays in the URL after a dismiss, so
+	   re-checking it here would reopen the popup on unrelated anchor clicks. */
+	window.addEventListener('hashchange', openFromHash);
+})();
+</script>
+
+{% schema %}
+{
+	"name": "Newsletter popup",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "paragraph",
+			"content": "Hidden until someone lands on #newsletter (the printed insert QR) or clicks an element with data-open-newsletter. It never opens on a plain visit."
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Take 10% off your first kit"
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Supporting copy",
+			"default": "Drop your email and we'll send your welcome code straight to your inbox."
+		},
+		{
+			"type": "text",
+			"id": "placeholder",
+			"label": "Email field placeholder",
+			"default": "Your email"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Button label",
+			"default": "Get my code"
+		},
+		{
+			"type": "textarea",
+			"id": "success_message",
+			"label": "Success message",
+			"info": "Shown in place of the form after a successful signup. Never show the discount code here, it arrives by email.",
+			"default": "Check your inbox. Your code is on its way."
+		}
+	],
+	"presets": [
+		{
+			"name": "Newsletter popup"
+		}
+	]
+}
+{% endschema %}

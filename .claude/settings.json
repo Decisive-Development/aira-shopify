@@ -31,7 +31,13 @@
       "WebFetch(domain:www.ilanadavis.com)",
       "PowerShell(shopify theme check | Out-File -FilePath \"$env:TEMP\\\\tc2.txt\" -Encoding utf8; $c = Get-Content \"$env:TEMP\\\\tc2.txt\"; \"--- llms ---\"; $c | Select-String -Pattern \"llms\" ; \"--- summary ---\"; $c | Select-String -Pattern \"offenses|offences\" | Select-Object -Last 1)",
       "PowerShell(shopify theme check | Out-File -FilePath \"$env:TEMP\\\\tc3.txt\" -Encoding utf8; $c = Get-Content \"$env:TEMP\\\\tc3.txt\"; $c | Select-String -Pattern \"offenses|offences\" | Select-Object -Last 1)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(python -c \"import json;d=json.load\\(open\\('templates/index.json'\\)\\);print\\(d['order']\\);print\\(\\);print\\({k:v.get\\('type'\\) for k,v in d['sections'].items\\(\\)}\\)\")",
+      "Bash(tee /tmp/after.txt)",
+      "Bash(grep -c 'bg-main\\\\\\\\/90' assets/critical.css)",
+      "Bash(grep -c 'translate-y-1\\\\\\\\/2' assets/critical.css)",
+      "Bash(grep -oE '\\\\.bg-main[^ {,]*' assets/critical.css)",
+      "Bash(grep -oE '\\\\.-?translate-y-[^ {,]*' assets/critical.css)"
     ]
   }
 }

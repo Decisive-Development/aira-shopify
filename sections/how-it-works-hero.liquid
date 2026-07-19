@@ -173,6 +173,25 @@
 				>
 					<source src="{{ video_src }}" type="video/mp4">
 				</video>
+
+				{%- comment -%}
+					Shown only when the video was started muted (an arrival from the
+					printed insert QR), because mobile browsers block un-muted
+					programmatic playback. Tapping it restores sound. Sits top-left to
+					mirror the close button and keep the portrait frame clear.
+				{%- endcomment -%}
+				<button
+					type="button"
+					class="absolute top-5 left-5 z-10 hidden items-center gap-2 rounded-xl bg-main/90 px-4 py-2.5 text-sm font-semibold text-secondary cursor-pointer transition hover:bg-main"
+					data-video-unmute
+				>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<path d="M11 5 6 9H2v6h4l5 4V5z"/>
+						<path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+						<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+					</svg>
+					Tap for sound
+				</button>
 			</div>
 		</div>
 	{%- endif -%}
@@ -188,6 +207,7 @@
 	var video    = modal ? modal.querySelector('[data-modal-video]') : null;
 	var frameEl  = section.querySelector('[data-tutorial-video]');
 	var chapters = section.querySelectorAll('[data-chapter-btn]');
+	var unmuteBtn = modal ? modal.querySelector('[data-video-unmute]') : null;
 	var STORAGE_KEY = 'aira.howItWorks.video.t';
 	var lastFocus = null;
 
@@ -202,11 +222,22 @@
 		else { video.addEventListener('loadedmetadata', apply, { once: true }); }
 	}
 
-	function open(seekTo) {
+	function showUnmute(show) {
+		if (!unmuteBtn) return;
+		unmuteBtn.classList.toggle('hidden', !show);
+		unmuteBtn.classList.toggle('flex', show);
+	}
+
+	/* startMuted: mobile browsers block un-muted programmatic playback, so an
+	   arrival that is not a user gesture (the #video QR landing) must start
+	   silent and offer a tap to restore sound. */
+	function open(seekTo, startMuted) {
 		lastFocus = document.activeElement;
 		modal.hidden = false;
 		document.body.classList.add('video-modal-open');
 		seek(seekTo);
+		video.muted = !!startMuted;
+		showUnmute(!!startMuted);
 		var p = video.play();
 		if (p && p.catch) { p.catch(function () { /* autoplay blocked, controls are shown */ }); }
 		var closeBtn = modal.querySelector('.video-modal__close');
@@ -220,6 +251,8 @@
 			video.pause();
 		} catch (e) {}
 		modal.hidden = true;
+		video.muted = false;
+		showUnmute(false);
 		if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
 	}
 
@@ -248,6 +281,46 @@
 	document.addEventListener('keydown', function (e) {
 		if ((e.key === 'Escape' || e.key === 'Esc') && !modal.hidden) { close(); }
 	});
+
+	/* Tap-to-unmute */
+	if (unmuteBtn) {
+		unmuteBtn.addEventListener('click', function () {
+			video.muted = false;
+			showUnmute(false);
+			var p = video.play();
+			if (p && p.catch) { p.catch(function () {}); }
+		});
+	}
+
+	/* Arriving from the printed insert QR opens the tutorial from the start and
+	   plays it muted. Any other visit behaves exactly as before.
+
+	   The QR is printed as /qr/tutorial with no fragment and the inserts are
+	   already in boxes, so the URL can never change. The 301 to this page does
+	   carry utm_campaign, so that is the trigger that actually fires in the
+	   wild; #video is kept as a shareable/manual entry point. Params are read
+	   only, never stripped or rewritten, so Shopify Analytics is untouched.
+	   (Signed off by Tom, 2026-07-19, as a deviation from brief §0/§3.) */
+	function fromInsertCampaign() {
+		try {
+			return new URLSearchParams(window.location.search).get('utm_campaign') === 'insert_tutorial';
+		} catch (e) { return false; }
+	}
+
+	function openFromHash() {
+		if (window.location.hash === '#video' && modal.hidden) { open(0, true); }
+	}
+
+	window.setTimeout(function () {
+		if (modal.hidden && (window.location.hash === '#video' || fromInsertCampaign())) {
+			open(0, true);
+		}
+	}, 300);
+
+	/* Hash only: the campaign param stays in the URL after a dismiss, so
+	   re-checking it here would reopen the video on unrelated anchor clicks
+	   (the final CTA links to #tutorialVideo). */
+	window.addEventListener('hashchange', openFromHash);
 })();
 </script>
 
