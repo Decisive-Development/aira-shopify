@@ -83,8 +83,7 @@
         "lead": "Watch the 50-seconds tutorial - we walk you through each step. The whole routine takes under a minute once you've got it!",
         "video": "shopify://files/videos/Tutorial-final.mov",
         "video_url": "",
-        "video_poster": "shopify://shop_images/Tutorial-cover.png",
-        "duration_label": "1:32"
+        "video_poster": "shopify://shop_images/Tutorial-cover.png"
       }
     },
     "intro": {
@@ -221,7 +220,7 @@
         "tip_title": "",
         "tip_body": "",
         "cta_title": "Running low on tabs?",
-        "cta_body": "Buy as many as you need now, or subscribe and save monthly. Free shipping in the UAE.",
+        "cta_body": "Buy as many as you need now. Free shipping in the UAE.",
         "cta_label": "Get refills",
         "cta_url": "/products/aira-refill-tabs",
         "cta_style": "button-blue",
@@ -311,7 +310,7 @@
           "type": "question",
           "settings": {
             "question": "How many tabs do I get per kit?",
-            "answer": "<p>Your aira kit ships with the four strips plus 30 pairs of tabs, a full month of wear. Refill packs come in 30, 60, or 90 pairs, subscribe for a discount.</p>"
+            "answer": "<p>Your aira kit ships with the four strips plus 30 pairs of tabs, a full month of wear. Refill packs come in 30, 60, or 90 pairs.</p>"
           }
         },
         "q3": {

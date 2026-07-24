@@ -337,7 +337,7 @@
           "type": "question",
           "settings": {
             "question": "What's the difference between the pack sizes?",
-            "answer": "<p>30 pairs = 1 month supply, 60 pairs = 2 months, 90 pairs = 3 months, 360 pairs = best value bulk pack (12 months). Larger packs come with bigger savings.</p>"
+            "answer": "<p>30 pairs = 1 month, 60 = 2 months, 90 = 3 months. Larger packs, bigger savings.</p>"
           }
         },
         "faq_3": {
@@ -373,7 +373,6 @@
         "faq_1",
         "faq_2",
         "faq_3",
-        "faq_4",
         "faq_5",
         "faq_6"
       ],

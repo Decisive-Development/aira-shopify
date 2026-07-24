@@ -28,7 +28,7 @@
 
 ### Refills PDP `/products/aira-refill-tabs`
 - **Title tag:** Nasal strip refills, adhesive tabs | aira
-- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the UAE. Save 20% with monthly delivery.
+- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the UAE. Packs of 30, 60, or 90 pairs.
 - **H1:** Refill tabs
 - **Primary:** nasal strip refills · Secondary: magnetic nasal strip refills, adhesive tabs
 
