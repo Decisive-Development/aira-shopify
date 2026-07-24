@@ -185,6 +185,9 @@
 		})
 		.then(function (r) { return r.json(); })
 		.then(function () {
+			return addGift(form.getAttribute('data-gift-variant-id'));
+		})
+		.then(function () {
 			return fetchAndRender();
 		})
 		.then(function () {
@@ -195,6 +198,31 @@
 			if (btn) { btn.disabled = false; btn.textContent = 'Add to cart'; }
 		});
 	});
+
+	/* ── Free gift ──
+	   A Buy X Get Y automatic discount only zeroes the gift once the gift is
+	   in the cart, so a form carrying data-gift-variant-id adds it here.
+	   The cart is read first, so a repeat add-to-cart never stacks a second one. */
+	function addGift(giftId) {
+		var id = parseInt(giftId, 10);
+		if (!id) return Promise.resolve();
+
+		return fetch('/cart.js')
+			.then(function (r) { return r.json(); })
+			.then(function (cart) {
+				var alreadyThere = cart.items.some(function (item) {
+					return item.variant_id === id;
+				});
+				if (alreadyThere) return;
+
+				return fetch('/cart/add.js', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ items: [{ id: id, quantity: 1 }] })
+				});
+			})
+			.catch(function () {});
+	}
 
 	/* ── Upsell add ── */
 	if (upsellBtn) {
@@ -263,11 +291,17 @@
 			if (item.variant_title) {
 				props = '<p class="text-copy text-sm mt-0.5">' + escHtml(item.variant_title) + '</p>';
 			}
+			/* Discount titles, so a gifted line reads as the offer that zeroed it */
+			var discounts = (item.line_level_discount_allocations || []).map(function (alloc) {
+				var title = alloc.discount_application ? alloc.discount_application.title : alloc.title;
+				return title ? '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(title) + '</p>' : '';
+			}).join('');
 			return '<div class="flex gap-4 items-start" data-line-key="' + item.key + '">'
 				+ '<a href="' + item.url + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + img + '</a>'
 				+ '<div class="flex-1 min-w-0">'
 					+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + escHtml(item.product_title) + '</p>'
 					+ props
+					+ discounts
 					+ '<div class="flex items-center gap-3 mt-2">'
 						+ '<div class="flex items-center border border-bg-muted rounded-lg">'
 							+ '<button type="button" data-qty-change="-1" data-line-key="' + item.key + '" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer">\u2212</button>'
