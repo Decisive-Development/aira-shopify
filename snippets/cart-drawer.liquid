@@ -177,6 +177,13 @@
 
 		var formData = new FormData(form);
 		var btn = form.querySelector('[data-add-to-cart]');
+		/* Keep the markup: the label can be two lines, so restore rather than retype */
+		var btnMarkup = btn ? btn.innerHTML : '';
+		function resetBtn() {
+			if (!btn) return;
+			btn.disabled = false;
+			btn.innerHTML = btnMarkup;
+		}
 		if (btn) { btn.disabled = true; btn.textContent = 'Adding...'; }
 
 		fetch('/cart/add.js', {
@@ -192,11 +199,9 @@
 		})
 		.then(function () {
 			open();
-			if (btn) { btn.disabled = false; btn.textContent = 'Add to cart'; }
+			resetBtn();
 		})
-		.catch(function () {
-			if (btn) { btn.disabled = false; btn.textContent = 'Add to cart'; }
-		});
+		.catch(resetBtn);
 	});
 
 	/* ── Free gift ──

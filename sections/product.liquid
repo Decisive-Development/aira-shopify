@@ -388,22 +388,79 @@
 
 					</div>
 
-					{%- comment -%} ── Launch offer note ── {%- endcomment -%}
-					{%- if section.settings.offer_enabled and section.settings.offer_note != blank -%}
-						<p class="text-sm text-title text-center">{{ section.settings.offer_note }}</p>
+					{%- comment -%}
+						── Launch offer block ──
+						Informational only. Prices come from the variants, never typed:
+						[price] in a setting is swapped for the free gift's own price.
+					{%- endcomment -%}
+					{%- if section.settings.offer_enabled -%}
+						<div class="relative rounded-xl border-2 border-highlight bg-bg px-5 pt-[18px] pb-5">
+							{%- if section.settings.offer_tag != blank -%}
+								<span class="absolute -top-2.5 left-4 rounded-full bg-highlight px-2.5 py-1 text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-white">{{ section.settings.offer_tag }}</span>
+							{%- endif -%}
+
+							<div class="flex flex-wrap items-baseline gap-2.5">
+								<span class="font-body text-base font-extrabold text-main">{{ section.settings.offer_heading }}</span>
+								{%- if gift_variant -%}
+									<span class="font-semibold text-copy line-through">{{ gift_variant.price | money }}</span>
+								{%- endif -%}
+								{%- if section.settings.offer_free_label != blank -%}
+									<span class="rounded-full bg-highlight px-2.5 py-[3px] text-[11px] font-extrabold uppercase text-white">{{ section.settings.offer_free_label }}</span>
+								{%- endif -%}
+							</div>
+
+							{%- if section.settings.offer_subline != blank -%}
+								<p class="mt-[5px] text-[13px] text-title">{{ section.settings.offer_subline }}</p>
+							{%- endif -%}
+
+							{%- comment -%} Maths row: box + gift = total, chips sized down on small screens {%- endcomment -%}
+							<div class="mt-3.5 flex items-center gap-2.5">
+								{%- capture chip_base -%}flex-1 min-w-0 rounded-lg px-2 py-2 text-center min-[480px]:px-3 min-[480px]:py-2.5{%- endcapture -%}
+								{%- capture chip_key -%}block text-[10.5px] font-extrabold uppercase tracking-[0.1em]{%- endcapture -%}
+								{%- capture chip_value -%}mt-0.5 block text-sm font-extrabold min-[480px]:text-[15px]{%- endcapture -%}
+								{%- capture chip_join -%}text-base font-extrabold text-copy{%- endcapture -%}
+
+								<div class="{{ chip_base }} bg-cream-light">
+									<span class="{{ chip_key }} text-copy">{{ section.settings.chip_box_key }}</span>
+									<span class="{{ chip_value }} text-main">{{ section.settings.chip_box_value }}</span>
+								</div>
+								<span class="{{ chip_join }}" aria-hidden="true">+</span>
+								<div class="{{ chip_base }} bg-cream-light">
+									<span class="{{ chip_key }} text-copy">{{ section.settings.chip_gift_key }}</span>
+									<span class="{{ chip_value }} text-main">{{ section.settings.chip_gift_value }}</span>
+								</div>
+								<span class="{{ chip_join }}" aria-hidden="true">=</span>
+								<div class="{{ chip_base }} bg-main">
+									<span class="{{ chip_key }} text-teal/70">{{ section.settings.chip_total_key }}</span>
+									<span class="{{ chip_value }} text-teal">{{ section.settings.chip_total_value }}</span>
+								</div>
+							</div>
+						</div>
 					{%- endif -%}
 
-					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
+					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
 						assign atc_label = 'Sold out'
+						assign atc_sublabel = ''
 						assign atc_disabled = true
 						if current_variant.available
 							assign atc_label = 'Add to cart'
 							assign atc_disabled = false
+							if section.settings.offer_enabled
+								assign kit_price = current_variant.price | money
+								if section.settings.atc_offer_label != blank
+									assign atc_label = section.settings.atc_offer_label | replace: '[price]', kit_price
+								endif
+								if section.settings.atc_offer_sublabel != blank and gift_variant
+									assign gift_price = gift_variant.price | money
+									assign atc_sublabel = section.settings.atc_offer_sublabel | replace: '[price]', gift_price
+								endif
+							endif
 						endif
 					-%}
 					{%- render 'cta-button',
 						label: atc_label,
+						sublabel: atc_sublabel,
 						variant: 'shop',
 						size: 'lg',
 						element: 'button',
@@ -814,11 +871,78 @@
 			"info": "Hides the note and stops the free gift being added to the cart when unticked."
 		},
 		{
-			"type": "textarea",
-			"id": "offer_note",
-			"label": "Offer note above add to cart",
-			"default": "Every kit comes with a free 30-pack of refills. 30 extra nights, added at checkout. Launch offer.",
-			"info": "Leave blank to hide when the offer ends."
+			"type": "text",
+			"id": "offer_tag",
+			"label": "Offer tag",
+			"default": "Launch offer"
+		},
+		{
+			"type": "text",
+			"id": "offer_heading",
+			"label": "Offer line",
+			"default": "+ Free refill pouch"
+		},
+		{
+			"type": "text",
+			"id": "offer_free_label",
+			"label": "Free pill",
+			"default": "Free"
+		},
+		{
+			"type": "text",
+			"id": "offer_subline",
+			"label": "Offer subline",
+			"default": "30 extra adhesive pairs. 60 nights for the price of 30."
+		},
+		{
+			"type": "text",
+			"id": "chip_box_key",
+			"label": "Chip 1 label",
+			"default": "In the box"
+		},
+		{
+			"type": "text",
+			"id": "chip_box_value",
+			"label": "Chip 1 value",
+			"default": "30 nights"
+		},
+		{
+			"type": "text",
+			"id": "chip_gift_key",
+			"label": "Chip 2 label",
+			"default": "Free pouch"
+		},
+		{
+			"type": "text",
+			"id": "chip_gift_value",
+			"label": "Chip 2 value",
+			"default": "30 nights"
+		},
+		{
+			"type": "text",
+			"id": "chip_total_key",
+			"label": "Chip 3 label",
+			"default": "You get"
+		},
+		{
+			"type": "text",
+			"id": "chip_total_value",
+			"label": "Chip 3 value",
+			"default": "60 nights"
+		},
+		{
+			"type": "text",
+			"id": "atc_offer_label",
+			"label": "Add to cart label during the offer",
+			"default": "Add to cart · [price]",
+			"info": "[price] is replaced with the kit price. Blank falls back to \"Add to cart\"."
+		},
+		{
+			"type": "text",
+			"id": "atc_offer_sublabel",
+			"label": "Add to cart second line",
+			"default": "Includes your free [price] refill pouch",
+			"info": "[price] is replaced with the free gift's price."
 		},
 		{
 			"type": "product",
