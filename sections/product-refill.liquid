@@ -152,14 +152,21 @@
 					<input type="hidden" name="quantity" value="1">
 					{%- if has_selling_plans -%}
 						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
-					{%- else -%}
-						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
-					<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
+					{%- comment -%}
+						Without a selling plan the buy box is pack sizes only, so the
+						label follows the product option instead of saying "Plan".
+					{%- endcomment -%}
+					{%- if has_selling_plans -%}
+						<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
+					{%- else -%}
+						<p class="text-xs font-bold uppercase tracking-widest text-copy">{{ product.options.first | default: 'Pack size' }}</p>
+					{%- endif -%}
 
 					<div class="flex flex-col gap-3">
 
+						{%- if has_selling_plans -%}
 						{%- comment -%} ── Monthly Refill Plan card ── {%- endcomment -%}
 						<button
 							type="button"
@@ -198,6 +205,7 @@
 								</ul>
 							{%- endif -%}
 						</button>
+						{%- endif -%}
 
 						{%- comment -%} ── Variant cards (one-time) ── {%- endcomment -%}
 						{%- for variant in product.variants -%}
@@ -215,7 +223,12 @@
 										<span class="text-highlight text-sm font-bold">· {{ variant.metafields.custom.badge }}</span>
 									{%- endif -%}
 								</div>
-								<span class="font-heading font-bold text-title text-lg shrink-0">{{ variant.price | money }}</span>
+								<div class="text-right shrink-0">
+									{%- if variant.compare_at_price > variant.price -%}
+										<span class="block text-copy text-sm line-through">{{ variant.compare_at_price | money }}</span>
+									{%- endif -%}
+									<span class="font-heading font-bold text-title text-lg">{{ variant.price | money }}</span>
+								</div>
 							</button>
 						{%- endfor -%}
 

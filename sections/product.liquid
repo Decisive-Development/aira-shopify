@@ -13,6 +13,26 @@
 			endif
 		endfor
 	endif
+
+	comment
+		Launch offer: the Buy X Get Y automatic discount only zeroes the gift if
+		the gift is in the cart, so the add-to-cart carries the gift variant id
+		and cart-drawer adds it. Untick "Offer is running" to end it.
+	endcomment
+	assign gift_variant = nil
+	assign gift_product = section.settings.gift_product | default: all_products['aira-refill-tabs']
+	assign gift_variant_title = section.settings.gift_variant_title | default: '30'
+	if section.settings.offer_enabled and gift_product != blank
+		for v in gift_product.variants
+			if v.title == gift_variant_title
+				assign gift_variant = v
+				break
+			endif
+		endfor
+		if gift_variant == nil
+			assign gift_variant = gift_product.first_available_variant
+		endif
+	endif
 -%}
 
 <style>
@@ -223,17 +243,18 @@
 					{%- endif -%}
 				</div>
 
-				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5" data-product-form>
+				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5" data-product-form{% if gift_variant %} data-gift-variant-id="{{ gift_variant.id }}"{% endif %}>
 					<input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
 					<input type="hidden" name="quantity" value="1">
 
-					{%- comment -%} ── PLAN selector (real or preview) ── {%- endcomment -%}
+					{%- comment -%} ── PLAN selector — only when a selling plan exists ── {%- endcomment -%}
 					{%- if has_selling_plans -%}
 						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
 						<div class="flex flex-col gap-3" data-selling-plan-group>
 
+						{%- if has_selling_plans -%}
 						{%- comment -%} ── Subscription card ── {%- endcomment -%}
 						<button
 							type="button"
@@ -291,13 +312,14 @@
 								</ul>
 							{%- endif -%}
 						</button>
+						{%- endif -%}
 
-						{%- comment -%} ── One-time purchase card (default selected) ── {%- endcomment -%}
-						<button
-							type="button"
-							class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
-							data-plan-btn="onetime"
-						>
+						{%- comment -%}
+							── One-time purchase card (default selected) ──
+							A button while there is a plan to toggle between, a plain
+							panel when the buy box has collapsed to one-time only.
+						{%- endcomment -%}
+						{%- capture onetime_card -%}
 							<div class="flex items-center justify-between gap-4">
 								<span class="font-heading font-bold text-title text-lg leading-tight">One-time purchase</span>
 								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
@@ -349,9 +371,27 @@
 									Instruction manual
 								</li>
 							</ul>
-						</button>
+						{%- endcapture -%}
+						{%- if has_selling_plans -%}
+							<button
+								type="button"
+								class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
+								data-plan-btn="onetime"
+							>
+								{{ onetime_card }}
+							</button>
+						{%- else -%}
+							<div class="flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft">
+								{{ onetime_card }}
+							</div>
+						{%- endif -%}
 
 					</div>
+
+					{%- comment -%} ── Launch offer note ── {%- endcomment -%}
+					{%- if section.settings.offer_enabled and section.settings.offer_note != blank -%}
+						<p class="text-sm text-title text-center">{{ section.settings.offer_note }}</p>
+					{%- endif -%}
 
 					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
 					{%- liquid
@@ -761,6 +801,37 @@
 			"id": "plan_price",
 			"label": "Plan price (preview)",
 			"info": "Displayed price when no selling plans. E.g. $68.00"
+		},
+		{
+			"type": "header",
+			"content": "Launch offer"
+		},
+		{
+			"type": "checkbox",
+			"id": "offer_enabled",
+			"label": "Offer is running",
+			"default": true,
+			"info": "Hides the note and stops the free gift being added to the cart when unticked."
+		},
+		{
+			"type": "textarea",
+			"id": "offer_note",
+			"label": "Offer note above add to cart",
+			"default": "Every kit comes with a free 30-pack of refills. 30 extra nights, added at checkout. Launch offer.",
+			"info": "Leave blank to hide when the offer ends."
+		},
+		{
+			"type": "product",
+			"id": "gift_product",
+			"label": "Free gift product",
+			"info": "Added to the cart with the kit so the automatic discount can zero it. Falls back to the refill tabs product."
+		},
+		{
+			"type": "text",
+			"id": "gift_variant_title",
+			"label": "Free gift variant",
+			"default": "30",
+			"info": "Variant title to add, e.g. 30. Falls back to the first available variant."
 		},
 		{
 			"type": "header",
