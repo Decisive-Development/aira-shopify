@@ -407,8 +407,8 @@
 								<div class="flex items-center justify-between gap-3 border-t border-white/10 bg-white/5 px-4 py-3">
 									<span class="text-sm text-secondary/90">
 										{{ section.settings.chip_gift_key }}
-										{%- if section.settings.offer_free_label != blank %} · <span class="font-bold text-tertiary-light">{{ section.settings.offer_free_label }}</span>{% endif -%}
-										{%- if gift_variant %} <span class="text-white/45 line-through">{{ gift_variant.price | money }}</span>{% endif -%}
+										{%- if section.settings.offer_free_label != blank %} · <span class="font-bold uppercase text-white">{{ section.settings.offer_free_label }}</span>{% endif -%}
+										{%- if gift_variant %} <span class="text-tertiary-light line-through">{{ gift_variant.price | money }}</span>{% endif -%}
 									</span>
 									<span class="text-sm font-extrabold text-white">{{ section.settings.chip_gift_value }}</span>
 								</div>
@@ -427,26 +427,14 @@
 					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
 						assign atc_label = 'Sold out'
-						assign atc_sublabel = ''
 						assign atc_disabled = true
 						if current_variant.available
 							assign atc_label = 'Add to cart'
 							assign atc_disabled = false
-							if section.settings.offer_enabled
-								assign kit_price = current_variant.price | money
-								if section.settings.atc_offer_label != blank
-									assign atc_label = section.settings.atc_offer_label | replace: '[price]', kit_price
-								endif
-								if section.settings.atc_offer_sublabel != blank and gift_variant
-									assign gift_price = gift_variant.price | money
-									assign atc_sublabel = section.settings.atc_offer_sublabel | replace: '[price]', gift_price
-								endif
-							endif
 						endif
 					-%}
 					{%- render 'cta-button',
 						label: atc_label,
-						sublabel: atc_sublabel,
 						variant: 'shop',
 						size: 'lg',
 						element: 'button',
@@ -909,27 +897,13 @@
 			"type": "text",
 			"id": "offer_free_label",
 			"label": "Free word on row 2",
-			"default": "free"
+			"default": "Free"
 		},
 		{
 			"type": "text",
 			"id": "offer_footnote",
 			"label": "Footnote",
 			"default": "Limited edition offer, free pouch in every kit while offer lasts"
-		},
-		{
-			"type": "text",
-			"id": "atc_offer_label",
-			"label": "Add to cart label during the offer",
-			"default": "Add to cart · [price]",
-			"info": "[price] is replaced with the kit price. Blank falls back to \"Add to cart\"."
-		},
-		{
-			"type": "text",
-			"id": "atc_offer_sublabel",
-			"label": "Add to cart second line",
-			"default": "Includes your free [price] refill pouch",
-			"info": "[price] is replaced with the free gift's price."
 		},
 		{
 			"type": "product",

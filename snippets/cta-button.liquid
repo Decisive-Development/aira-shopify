@@ -9,7 +9,6 @@
 
 	Parameters:
 	  label         {String}  Button text (required)
-	  sublabel      {String}  optional second line under the label, dimmed
 	  url           {String}  href when element is 'a'                (default: '#')
 	  variant       {String}  'shop' | 'solid' | 'outline' | 'link'   (default: 'solid')
 	  surface       {String}  'light' | 'dark' — background it sits on (default: 'light')
@@ -95,14 +94,7 @@
 -%}
 
 {%- capture btn_inner -%}
-	{%- if sublabel != blank -%}
-		<span class="flex flex-col items-center leading-tight">
-			<span>{{ label }}</span>
-			<span class="mt-[3px] text-xs font-bold opacity-85">{{ sublabel }}</span>
-		</span>
-	{%- else -%}
 	{{ label }}
-	{%- endif -%}
 	{%- if btn_variant == 'link' and show_arrow -%}
 		{%- comment -%} Material Symbols "arrow_outward" — inlined SVG (no icon-font request); inherits currentColor and scales with text. {%- endcomment -%}
 		<svg class="h-[1em] w-[1em] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true" focusable="false"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/></svg>
