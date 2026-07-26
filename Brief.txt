@@ -1,189 +1,106 @@
-================================================================================
-AIRA — QR INSERT FLOWS BRIEF  (FOR VSC / DEV AGENT)
-================================================================================
-Date:     19 July 2026
-Audience: VSC / dev coding agent
-Purpose:  Make the two printed QR-code journeys work end-to-end on the THEME
-          side: (1) email-capture popup on the homepage, (2) auto-playing
-          tutorial video on How It Works. The QR codes are printed on paper
-          inserts inside every product box — the URLs are PERMANENT and the
-          flows must work flawlessly on mobile, because ~100% of scans are
-          phones.
+================================================================
+AIRA — CART DRAWER POLISH
+Implementation brief for VSC (copy + label logic + QA)
+Date: 2026-07-25 | Author: Claude (Cowork), from Tom's cart review
+Status: Ready
+================================================================
 
-The two printed QR URLs (fixed forever, hashes included):
-  1. Newsletter QR → https://shop-aira.com/qr/newsletter#newsletter
-  2. Tutorial QR   → https://shop-aira.com/qr/tutorial#video
+CONTEXT
+-------
+Cart drawer reviewed 2026-07-25 from a live screenshot (Kit +
+auto-added free refill in cart). FIRST: the free-gift auto-add
+and Buy-X-Get-Y pricing are CONFIRMED WORKING (refill 30 line
+at US$0.00 alongside the Kit) — the critical gap from
+AIRA_Pricing_And_Offer_Update_Brief_VSC.txt is closed. No action
+on the mechanism. This brief is presentation polish + edge-case
+QA on that same drawer.
 
-What is NOT in this brief (Tom does these, NOT VSC):
-  - The /qr/* URL Redirect entries in Shopify admin
-  - Klaviyo account connection, welcome flow, and the 10% discount code
-  - Popup visual polish beyond existing brand primitives (claude design
-    may refine later)
-  - Final copy — placeholders below are marked PLACEHOLDER
+RULES: UK English, sentence case, no em-dashes, no arrows,
+"aira" lowercase. Copy is final — enter exactly as written.
 
-================================================================================
-0. CRITICAL CONTEXT FOR VSC
-================================================================================
+CHANGES (5)
+-----------
 
-HOW THE ARCHITECTURE WORKS (do not redesign it):
-  - /qr/newsletter and /qr/tutorial are NOT pages. They are Shopify URL
-    Redirects (admin-configured by Tom):
-      /qr/newsletter → /?utm_source=qr&utm_medium=print&utm_campaign=insert_newsletter
-      /qr/tutorial   → /pages/how-it-works?utm_source=qr&utm_medium=print&utm_campaign=insert_tutorial
-  - The #newsletter / #video hash lives on the SOURCE URL. Browsers carry
-    the hash through the 301 because the destination has no hash of its own.
-  - Therefore VSC's ONLY trigger surface is: detect the hash on the landing
-    page. No redirect handling, no query-param logic. UTMs are analytics-only
-    — never strip, never parse them.
+1. FREE-GIFT LABEL — one instance only, on the free line
+   Currently "Free 30-pack of refills" renders on BOTH the
+   refill line and the Kit line. Keep it ONLY on the refill
+   (US$0.00) line; remove it from the Kit line.
+   IMPLEMENTATION (required, not optional): render the label
+   from the line item's discount allocation (e.g. the discount
+   title on line_item discount allocations), NOT as static
+   copy. Then it can only appear on a line that is actually
+   discounted — which also fixes edge case 5a below.
 
-STACK GUARDRAILS (per aira-shopify/CLAUDE.md — read it first):
-  - Shopify Liquid theme, OS 2.0 conventions. Store handle is `aira-ecom`.
-  - Vanilla JS or Alpine.js only. NO React, NO new libraries.
-  - NO new Tailwind utility classes — existing theme classes only.
-  - NEVER DUPLICATE: the theme already has native newsletter form
-    components. Locate and REUSE them. If an email-capture popup/drawer
-    already exists in any form, extend it — do not build a parallel one.
-  - Do NOT embed a Klaviyo JS form. Decided architecture: theme-native
-    Shopify forms; Klaviyo syncs Shopify subscribers server-side.
-  - Brand is written "aira" (lowercase) in all customer-facing text.
-  - Mobile-first. These flows will almost never be seen on desktop.
+2. TRUST ROW (mid-drawer, grey, padlock icon)
+   REPLACE: "Secure checkout · Free UAE delivery"
+   WITH:    "Secure checkout"
+   (The shipping claim moves to one place — see 4. The UAE-only
+   wording was also stale: we ship UAE + KSA.)
 
-================================================================================
-1. NEWSLETTER POPUP  (homepage, trigger: #newsletter)
-================================================================================
+3. BOILERPLATE LINE (under Subtotal)
+   REPLACE: "Shipping & taxes calculated at checkout"
+   WITH:    "Taxes calculated at checkout"
+   (Shipping is free and stated on the orange line directly
+   below; "shipping calculated at checkout" contradicts it.
+   Keep the taxes wording generic — the VAT decision is still
+   open, this line is safe either way.)
 
-1.1  Trigger logic
-────────────────────────────────────────────────
-  - On page load of the HOMEPAGE: if location.hash === '#newsletter',
-    open the email-capture popup (small delay ~300ms so first paint lands).
-  - The hash trigger fires EVERY time — it must override any "user
-    previously dismissed" suppression, because arriving with #newsletter
-    is explicit intent (they scanned the insert to get the code).
-  - Also expose a manual hook so future CTAs can open the same popup:
-    any element with [data-open-newsletter] opens it on click.
-  - No timed/auto popup on plain visits. The popup opens ONLY via hash or
-    the data-attribute. (Homepage is a tight sales page — no popup spam.)
+4. FREE-SHIPPING LINE (orange, under Subtotal)
+   REPLACE: "Free shipping in the UAE."
+   WITH:    "Free shipping across the UAE and Saudi Arabia."
+   NOTE: same bug family as the homepage meta (UAE-only copy
+   predating the Saudi market). While in there, grep the cart/
+   checkout-adjacent snippets for any other "in the UAE"
+   shipping strings and apply the same fix; list what you
+   change.
 
-1.2  Popup structure
-────────────────────────────────────────────────
-  - Modal overlay: backdrop, centered card on desktop / bottom-sheet or
-    centered on mobile — follow existing modal patterns in the theme
-    (reviews modal exists; match its mechanics, not necessarily its look).
-  - Dismiss: X button, ESC key, backdrop tap.
-  - Accessibility: role="dialog", aria-modal="true", focus moves into the
-    email input on open (keyboard opening on mobile is desired here),
-    focus trap while open, body scroll locked.
-  - Form: Shopify customer form —
-      {% form 'customer' %}
-        <input type="hidden" name="contact[tags]" value="newsletter, qr-insert">
-        <input type="email" name="contact[email]" ...>
-        submit button
-      {% endform %}
-    The `qr-insert` tag is the attribution layer — it marks every signup
-    that came from the printed insert. Keep it exactly as written.
-  - Success state (form posts back with success): swap form for a
-    confirmation message inside the same popup. Do NOT display the
-    discount code in the popup — the code arrives by email (that is the
-    point of the capture). Already-subscribed emails get the same success
-    state; do not build special handling.
+5. DRAWER TITLE
+   REPLACE: "Your Cart"
+   WITH:    "Your cart"
+   (Sentence case sitewide standard.)
 
-1.3  Copy — ALL PLACEHOLDER, Tom finalizes
-────────────────────────────────────────────────
-  Headline:  "Take 10% off your first kit"            [PLACEHOLDER]
-  Subline:   "Drop your email and we'll send your
-              welcome code straight to your inbox."   [PLACEHOLDER]
-  CTA:       "Get my code"                            [PLACEHOLDER]
-  Success:   "Check your inbox — your code is on
-              its way."                               [PLACEHOLDER]
-  Keep copy slots as section/block settings where practical so Tom can
-  edit in the theme editor without code changes.
+QA CHECKLIST (edge cases on the auto-add + BXGY — test all)
+-----------------------------------------------------------
+[ ] 5a. Remove the KIT, leave the refill: Shopify reprices the
+    refill to $19.99. The free-gift label must NOT render on a
+    $19.99 line (guaranteed by the allocation-driven label in
+    change 1).
+[ ] 5b. Bump the free refill line's quantity to 2: exactly one
+    unit stays $0.00, the second charges $19.99 (BXGY allocates
+    per the discount config). Confirm the line presentation
+    doesn't imply both are free. If the theme can, LOCK the
+    quantity stepper on the $0.00 gift line (qty fixed at 1);
+    a paying customer who wants more refills should add the
+    refill product normally.
+[ ] 5c. Delete the free refill line as a customer: the auto-add
+    must NOT re-add it in an endless loop. Rule: re-add only
+    when the Kit is (re)added or its quantity increases, never
+    on generic cart changes after a manual removal.
+[ ] 5d. Two Kits in cart: confirm expected behaviour (discount
+    is buy 1 get 1: does a second Kit earn a second free pouch?
+    Match the cart to whatever the discount actually does).
+[ ] Standard pass: drawer renders correctly with only refills
+    (no Kit), and with an empty cart.
 
-================================================================================
-2. TUTORIAL AUTO-PLAY  (/pages/how-it-works, trigger: #video)
-================================================================================
+OUT OF SCOPE (tracked elsewhere)
+--------------------------------
+- Refill product imagery (blank thumbnail): photography batch.
+- Product display titles "Aira Kit" / "Aira refill tabs" →
+  lowercase "aira kit" / "aira refill tabs": CATALOG edit
+  (admin, not theme) — Tom to approve; ripples into checkout
+  and notification emails, which is desirable but his call.
+- Variant label rendering "30" bare (could read "30 pairs"):
+  option-value naming, decide once with Tom (ripples to PDP
+  selector chips).
+- Checkout page itself (Shopify-hosted).
 
-2.1  Trigger logic
-────────────────────────────────────────────────
-  - On page load of /pages/how-it-works: if location.hash === '#video',
-    open/activate the tutorial video and start playback.
-  - First: inspect how the tutorial video is currently embedded on the
-    page (modal? inline player? YouTube/Vimeo iframe? native <video> /
-    Shopify-hosted?). ADAPT to what exists — do not re-embed the video.
-
-2.2  Autoplay reality on mobile (non-negotiable constraints)
-────────────────────────────────────────────────
-  - iOS Safari and Android Chrome block un-muted programmatic autoplay.
-    A QR scan arrival is NOT a user gesture on the video.
-  - Native <video>: start with `muted` + `playsinline` attributes set,
-    then .play(). Show a clear tap-to-unmute affordance on the player.
-  - YouTube/Vimeo iframe: append autoplay=1&mute=1&playsinline=1 (YT) /
-    equivalent Vimeo params when — and only when — the page loaded with
-    #video.
-  - If the video sits inline (not in a modal): also scroll it into view
-    (scrollIntoView, centered) before playing.
-  - Normal visits without the hash must behave exactly as today.
-
-================================================================================
-3. TRACKING — WHAT VSC BUILDS vs WHAT IS AUTOMATIC
-================================================================================
-
-  Layer 1 — Scan → visit:    UTMs on the redirect destinations land in
-                             Shopify Analytics sessions automatically.
-                             VSC builds NOTHING for this. Just never
-                             strip query params in any JS routing.
-  Layer 2 — Visit → signup:  the `qr-insert` customer tag from 1.2.
-                             That hidden input IS the build.
-  Layer 3 — Signup → order:  discount-code redemptions (Klaviyo email,
-                             Tom's side). Nothing for VSC.
-  GA4/pixel events: NOT in scope — pixels phase comes later. Do not add
-  dead analytics code.
-
-================================================================================
-4. ACCEPTANCE TESTS  (run on REAL phones — iOS Safari + Android Chrome)
-================================================================================
-
-  VSC can verify all theme work WITHOUT the /qr/* redirects, using
-  direct-hash URLs on the preview/dev theme:
-
-  A. Homepage + #newsletter
-     [ ] /#newsletter → popup opens within ~1s of paint
-     [ ] Submit a test email → success state shows in-popup
-     [ ] Shopify admin → Customers: customer exists, Email marketing =
-         Subscribed, tags = newsletter, qr-insert
-     [ ] Dismiss popup, reload /#newsletter → popup opens again (hash
-         overrides dismissal)
-     [ ] Plain / (no hash) → NO popup, ever
-     [ ] ESC / X / backdrop all close it; background doesn't scroll
-
-  B. How It Works + #video
-     [ ] /pages/how-it-works#video → video visible and PLAYING (muted)
-         without any tap, on both test devices
-     [ ] Tap-to-unmute works
-     [ ] Plain /pages/how-it-works → page behaves exactly as before
-     [ ] No console errors, no layout shift on either page
-
-  C. Regression
-     [ ] No changes to any other template/section
-     [ ] Lighthouse mobile score on / and /pages/how-it-works within 2
-         points of pre-change baseline
-
-  NOTE: store is behind the storefront password until launch. On the test
-  phone, enter the password once first (session persists), then run the
-  URLs above. The full end-to-end /qr/* → UTM → hash chain is tested by
-  Tom after he enters the redirects — VSC's responsibility ends at the
-  direct-hash tests passing.
-
-================================================================================
-5. TOM'S SIDE (for reference — VSC verifies nothing here)
-================================================================================
-  - Enter both URL Redirects in admin (Online Store → Navigation →
-    URL Redirects) exactly as in section 0.
-  - Connect Klaviyo; welcome flow triggered on newsletter subscribe;
-    email contains the 10% code (working name WELCOME10 — one use per
-    customer; created in Shopify → Discounts).
-  - Confirm with Marie that the printed QR artwork encodes the FULL
-    URLs INCLUDING the #newsletter / #video hashes — without the hash,
-    nothing triggers.
-  - Full mobile end-to-end test on both /qr/* URLs before green-lighting
-    print.
-================================================================================
+ACCEPTANCE
+----------
+[ ] One free-gift label total, on the $0.00 line only, driven
+    by discount allocations.
+[ ] Drawer shows exactly one shipping message: the orange
+    UAE + Saudi line.
+[ ] All five copy strings exactly as written above.
+[ ] All QA boxes ticked, with a one-line note per edge case on
+    observed behaviour.
+================================================================
