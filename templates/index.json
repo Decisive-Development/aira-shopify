@@ -300,7 +300,7 @@
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping in the UAE, arriving within 3 to 5 business days.</p>"
+            "answer": "<p>Yes. Free shipping in the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
           }
         }
       },
@@ -363,7 +363,7 @@
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
-        "guarantee_line": "Free shipping in the UAE.",
+        "guarantee_line": "Free shipping in the UAE and Saudi Arabia.",
         "image": "shopify://shop_images/product-with-logo-final.jpg",
         "image_alt": ""
       }

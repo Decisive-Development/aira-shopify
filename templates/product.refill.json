@@ -75,7 +75,7 @@
           "type": "product_faq",
           "settings": {
             "question": "Shipping & returns",
-            "answer": "<p>Free shipping in the UAE. Delivery in 3 to 5 business days (UAE) or 5 to 7 days (rest of GCC). 30-night guarantee.</p>"
+            "answer": "<p>Free shipping in the UAE and Saudi Arabia. Delivery in 3 to 5 business days (UAE) or 5 to 7 days (rest of GCC). 30-night guarantee.</p>"
           }
         }
       },
@@ -365,7 +365,7 @@
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping in the UAE.</p>"
+            "answer": "<p>Yes. Free shipping in the UAE and Saudi Arabia.</p>"
           }
         }
       },

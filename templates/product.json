@@ -78,7 +78,7 @@
           "type": "product_faq",
           "settings": {
             "question": "SHIPPING & RETURNS",
-            "answer": "<p>Free shipping in the UAE. We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Orders arrive in <strong>3 to 5 working days</strong> within the UAE, <strong>5 to 7</strong> everywhere else. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
+            "answer": "<p>Free shipping in the UAE and Saudi Arabia. We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Orders arrive in <strong>3 to 5 working days</strong> within the UAE, <strong>5 to 7</strong> everywhere else. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
           }
         }
       },
@@ -431,7 +431,7 @@
           "type": "question",
           "settings": {
             "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping in the UAE, arriving within 3 to 5 business days.</p>"
+            "answer": "<p>Yes. Free shipping in the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
           }
         }
       },
