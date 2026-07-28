@@ -1,5 +1,6 @@
 {%- liquid
 	assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
+	assign main_image = current_variant.featured_image | default: product.featured_image
 	assign has_selling_plans = false
 	if product.selling_plan_groups.size > 0
 		assign has_selling_plans = true
@@ -80,9 +81,9 @@
 
 				{%- comment -%} Main image {%- endcomment -%}
 				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted">
-					{%- if product.featured_image -%}
+					{%- if main_image -%}
 						{{
-							product.featured_image
+							main_image
 							| image_url: width: 1200
 							| image_tag:
 								loading: 'eager',
@@ -93,27 +94,46 @@
 					{%- endif -%}
 				</div>
 
-				{%- comment -%} Thumbnail row {%- endcomment -%}
+				{%- comment -%}
+					Thumbnail row. Images assigned to another variant stay out of the
+					gallery; the buy box swaps them into the main frame instead.
+				{%- endcomment -%}
+				{%- assign thumb_count = 0 -%}
 				<div class="grid grid-cols-6 gap-2">
-					{%- for image in product.images limit: 6 -%}
-						<button
-							type="button"
-							class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if forloop.first %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
-							data-thumb-btn
-							data-thumb-src="{{ image | image_url: width: 1200 }}"
-						>
-							{{
-								image
-								| image_url: width: 200
-								| image_tag:
-									loading: 'lazy',
-									class: 'w-full h-full object-cover',
-									widths: '100, 200'
-							}}
-						</button>
+					{%- for image in product.images -%}
+						{%- liquid
+							assign keep = true
+							if image.variants.size > 0
+								assign keep = false
+								for image_variant in image.variants
+									if image_variant.id == current_variant.id
+										assign keep = true
+										break
+									endif
+								endfor
+							endif
+						-%}
+						{%- if keep and thumb_count < 6 -%}
+							{%- assign thumb_count = thumb_count | plus: 1 -%}
+							<button
+								type="button"
+								class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if image.id == main_image.id %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
+								data-thumb-btn
+								data-thumb-src="{{ image | image_url: width: 1200 }}"
+							>
+								{{
+									image
+									| image_url: width: 200
+									| image_tag:
+										loading: 'lazy',
+										class: 'w-full h-full object-cover',
+										widths: '100, 200'
+								}}
+							</button>
+						{%- endif -%}
 					{%- endfor -%}
-					{%- if product.images.size < 6 -%}
-						{%- assign placeholders_needed = 6 | minus: product.images.size -%}
+					{%- if thumb_count < 6 -%}
+						{%- assign placeholders_needed = 6 | minus: thumb_count -%}
 						{%- for i in (1..placeholders_needed) -%}
 							<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
 						{%- endfor -%}
