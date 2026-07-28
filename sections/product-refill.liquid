@@ -363,6 +363,37 @@
 	-%}
 </div>
 
+{%- comment -%}
+	Variant data for JS. Must stay above the script below: the script runs
+	inline as the page parses and can only see elements already in the DOM.
+{%- endcomment -%}
+<script type="application/json" data-product-variants>
+	[
+		{%- for variant in product.variants -%}
+			{
+				"id": {{ variant.id }},
+				"options": {{ variant.options | json }},
+				"price": {{ variant.price }},
+				"price_formatted": {{ variant.price | money | json }},
+				"compare_at_price": {{ variant.compare_at_price | default: 0 }},
+				"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+				"available": {{ variant.available | json }},
+				"featured_image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 1200 | json }}{% else %}null{% endif %},
+				"selling_plan_allocations": [
+					{%- for alloc in variant.selling_plan_allocations -%}
+						{
+							"selling_plan_id": {{ alloc.selling_plan.id }},
+							"per_delivery_price": {{ alloc.per_delivery_price }},
+							"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
+							"name": {{ alloc.selling_plan.name | json }}
+						}{%- unless forloop.last -%},{%- endunless -%}
+					{%- endfor -%}
+				]
+			}{%- unless forloop.last -%},{%- endunless -%}
+		{%- endfor -%}
+	]
+</script>
+
 <script>
 (function () {
 	var section = document.querySelector('[data-refill-section]');
@@ -414,6 +445,7 @@
 					sellingPlanInput.value = v.selling_plan_allocations[0].selling_plan_id;
 					if (stickyPriceEl) stickyPriceEl.textContent = v.selling_plan_allocations[0].per_delivery_price_formatted;
 				}
+				setMainImage(v.featured_image);
 			}
 		} else {
 			/* One-time: set variant, clear selling plan */
@@ -421,7 +453,10 @@
 			if (variantId) {
 				variantInput.value = variantId;
 				var v = findVariant(parseInt(variantId, 10));
-				if (v && stickyPriceEl) stickyPriceEl.textContent = v.price_formatted;
+				if (v) {
+					if (stickyPriceEl) stickyPriceEl.textContent = v.price_formatted;
+					setMainImage(v.featured_image);
+				}
 			}
 		}
 	}
@@ -432,20 +467,22 @@
 		});
 	});
 
-	/* ── Thumbnail gallery ── */
+	/* ── Main image swap (thumbnails + variant selection) ── */
+	function setMainImage(src) {
+		if (!mainImage || !src) return;
+		mainImage.removeAttribute('srcset');
+		mainImage.removeAttribute('sizes');
+		mainImage.src = src;
+		thumbBtns.forEach(function (b) {
+			var active = b.getAttribute('data-thumb-src') === src;
+			b.classList.toggle('border-main', active);
+			b.classList.toggle('border-transparent', !active);
+		});
+	}
+
 	thumbBtns.forEach(function (btn) {
 		btn.addEventListener('click', function () {
-			if (!mainImage) return;
-			mainImage.removeAttribute('srcset');
-			mainImage.removeAttribute('sizes');
-			mainImage.src = btn.getAttribute('data-thumb-src');
-
-			thumbBtns.forEach(function (b) {
-				b.classList.remove('border-main');
-				b.classList.add('border-transparent');
-			});
-			btn.classList.remove('border-transparent');
-			btn.classList.add('border-main');
+			setMainImage(btn.getAttribute('data-thumb-src'));
 		});
 	});
 
@@ -518,57 +555,10 @@
 })();
 </script>
 
-{%- comment -%} ── Variant data for JS ── {%- endcomment -%}
-<script type="application/json" data-product-variants>
-	[
-		{%- for variant in product.variants -%}
-			{
-				"id": {{ variant.id }},
-				"options": {{ variant.options | json }},
-				"price": {{ variant.price }},
-				"price_formatted": {{ variant.price | money | json }},
-				"compare_at_price": {{ variant.compare_at_price | default: 0 }},
-				"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
-				"available": {{ variant.available | json }},
-				"selling_plan_allocations": [
-					{%- for alloc in variant.selling_plan_allocations -%}
-						{
-							"selling_plan_id": {{ alloc.selling_plan.id }},
-							"per_delivery_price": {{ alloc.per_delivery_price }},
-							"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
-							"name": {{ alloc.selling_plan.name | json }}
-						}{%- unless forloop.last -%},{%- endunless -%}
-					{%- endfor -%}
-				]
-			}{%- unless forloop.last -%},{%- endunless -%}
-		{%- endfor -%}
-	]
-</script>
-
 {% schema %}
 {
 	"name": "Product – Refill",
 	"settings": [
-		{
-			"type": "header",
-			"content": "Hero"
-		},
-		{
-			"type": "image_picker",
-			"id": "hero_image",
-			"label": "Hero background image"
-		},
-		{
-			"type": "text",
-			"id": "hero_heading",
-			"label": "Heading override",
-			"info": "Leave blank to use the product title"
-		},
-		{
-			"type": "text",
-			"id": "hero_eyebrow",
-			"label": "Eyebrow"
-		},
 		{
 			"type": "header",
 			"content": "Rating"
