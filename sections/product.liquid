@@ -243,8 +243,8 @@
 					{%- endif -%}
 				</div>
 
-				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5" data-product-form{% if gift_variant %} data-gift-variant-id="{{ gift_variant.id }}"{% endif %}>
-					<input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5"{% if gift_variant %} data-gift-variant-id="{{ gift_variant.id }}"{% endif %}>
+					<input type="hidden" name="id" value="{{ current_variant.id }}">
 					<input type="hidden" name="quantity" value="1">
 
 					{%- comment -%} ── PLAN selector — only when a selling plan exists ── {%- endcomment -%}
@@ -252,7 +252,7 @@
 						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
-						<div class="flex flex-col gap-3" data-selling-plan-group>
+						<div class="flex flex-col gap-3">
 
 						{%- if has_selling_plans -%}
 						{%- comment -%} ── Subscription card ── {%- endcomment -%}
@@ -260,6 +260,7 @@
 							type="button"
 							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border-2 border-border bg-bg text-left"
 							data-plan-btn="subscribe"
+							data-selling-plan-id="{{ sp_first.id }}"
 						>
 							{%- if section.settings.plan_badge != blank -%}
 								<span class="absolute -top-3 left-4 px-3 py-1 rounded-full bg-main text-white text-xs font-bold">
@@ -273,7 +274,7 @@
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
-											<p class="text-highlight text-sm font-bold mt-0.5" data-plan-save>Save {{ save_amount | money }} on refills</p>
+											<p class="text-highlight text-sm font-bold mt-0.5">Save {{ save_amount | money }} on refills</p>
 										{%- endif -%}
 									{%- elsif section.settings.plan_save_text != blank -%}
 										<p class="text-highlight text-sm font-bold mt-0.5">{{ section.settings.plan_save_text }}</p>
@@ -281,13 +282,13 @@
 								</div>
 								<div class="text-right shrink-0">
 									{%- if has_selling_plans and sp_allocation -%}
-										<span class="text-copy text-sm line-through" data-plan-compare>{{ current_variant.price | money }}</span>
-										<span class="font-heading font-bold text-title text-xl md:text-2xl block" data-subscribe-price>{{ sp_allocation.per_delivery_price | money }}</span>
+										<span class="text-copy text-sm line-through">{{ current_variant.price | money }}</span>
+										<span class="font-heading font-bold text-title text-xl md:text-2xl block">{{ sp_allocation.per_delivery_price | money }}</span>
 									{%- else -%}
 										{%- if section.settings.plan_compare_price != blank -%}
 											<span class="text-copy text-sm line-through">{{ section.settings.plan_compare_price }}</span>
 										{%- endif -%}
-										<span class="font-heading font-bold text-title text-xl md:text-2xl block" data-subscribe-price>{{ section.settings.plan_price | default: current_variant.price | money }}</span>
+										<span class="font-heading font-bold text-title text-xl md:text-2xl block">{{ section.settings.plan_price | default: current_variant.price | money }}</span>
 									{%- endif -%}
 								</div>
 							</div>
@@ -315,7 +316,7 @@
 						{%- capture onetime_card -%}
 							<div class="flex items-center justify-between gap-4">
 								<span class="font-heading font-bold text-title text-lg leading-tight">Kit + Free refill pouch</span>
-								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0" data-onetime-price>{{ current_variant.price | money }}</span>
+								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0">{{ current_variant.price | money }}</span>
 							</div>
 							<div class="h-px bg-border"></div>
 							<ul class="flex flex-col gap-2">
@@ -489,7 +490,7 @@
 >
 	<div class="flex flex-col min-w-0">
 		<p class="font-heading font-semibold text-main text-sm truncate">{{ section.settings.hero_heading | default: product.title }}</p>
-		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ current_variant.price | money }}</span>
+		<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
 	</div>
 	{%- liquid
 		assign sticky_disabled = true
@@ -512,17 +513,6 @@
 	var section = document.querySelector('[data-product-section]');
 	if (!section) return;
 
-	/* ── Smooth scroll for review link ── */
-	section.querySelectorAll('.scroll-link').forEach(function (link) {
-		link.addEventListener('click', function (e) {
-			var target = document.querySelector(link.getAttribute('href'));
-			if (target) {
-				e.preventDefault();
-				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-			}
-		});
-	});
-
 	var sellingPlanInput = section.querySelector('[data-selling-plan-input]');
 	var addBtn = section.querySelector('[data-add-to-cart]');
 	var galleryItems = section.querySelectorAll('[data-gallery-item]');
@@ -530,12 +520,9 @@
 	var stickyBar = document.querySelector('[data-sticky-bar]');
 	var stickyAtc = stickyBar ? stickyBar.querySelector('[data-sticky-atc]') : null;
 
-	/* ── Variant data ── */
-	var variantsJson = document.querySelector('[data-product-variants]');
-	var variants = variantsJson ? JSON.parse(variantsJson.textContent) : [];
-
 	/* ── Selling plan toggle ── */
 	var planBtns = section.querySelectorAll('[data-plan-btn]');
+	var subscribeBtn = section.querySelector('[data-plan-btn="subscribe"]');
 
 	function setPlan(type) {
 		planBtns.forEach(function (b) {
@@ -548,11 +535,8 @@
 		});
 
 		if (sellingPlanInput) {
-			if (type === 'subscribe' && variants.length > 0) {
-				var v = variants[0];
-				if (v.selling_plan_allocations.length > 0) {
-					sellingPlanInput.value = v.selling_plan_allocations[0].selling_plan_id;
-				}
+			if (type === 'subscribe' && subscribeBtn) {
+				sellingPlanInput.value = subscribeBtn.getAttribute('data-selling-plan-id') || '';
 			} else {
 				sellingPlanInput.value = '';
 			}
@@ -654,34 +638,6 @@
 		});
 	}
 })();
-</script>
-
-{%- comment -%} ── Variant data for JS ── {%- endcomment -%}
-<script type="application/json" data-product-variants>
-	[
-		{%- for variant in product.variants -%}
-			{
-				"id": {{ variant.id }},
-				"options": {{ variant.options | json }},
-				"price": {{ variant.price }},
-				"price_formatted": {{ variant.price | money | json }},
-				"compare_at_price": {{ variant.compare_at_price | default: 0 }},
-				"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
-				"available": {{ variant.available | json }},
-				"image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 1200 | json }}{% else %}null{% endif %},
-				"selling_plan_allocations": [
-					{%- for alloc in variant.selling_plan_allocations -%}
-						{
-							"selling_plan_id": {{ alloc.selling_plan.id }},
-							"per_delivery_price": {{ alloc.per_delivery_price }},
-							"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
-							"name": {{ alloc.selling_plan.name | json }}
-						}{%- unless forloop.last -%},{%- endunless -%}
-					{%- endfor -%}
-				]
-			}{%- unless forloop.last -%},{%- endunless -%}
-		{%- endfor -%}
-	]
 </script>
 
 {% schema %}
