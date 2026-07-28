@@ -404,34 +404,7 @@
 
 				{%- comment -%} ── Trust badges ── {%- endcomment -%}
 				{%- assign trust_blocks = section.blocks | where: "type", "trust_badge" -%}
-				{%- if trust_blocks.size > 0 -%}
-					<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-						{%- for block in trust_blocks -%}
-							{%- capture badge_classes -%}flex flex-col items-center justify-center text-center gap-2 bg-main rounded-xl py-3 px-3 {% if trust_blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}{%- endcapture -%}
-							{%- capture badge_inner -%}
-								{%- comment -%} Material Icons (filled) — inlined SVGs, no icon-font request {%- endcomment -%}
-								{%- case block.settings.icon_type -%}
-									{%- when 'research' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M19.8 18.4 14 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81H9.04c-.42 0-.65.48-.39.81L10 6.5v4.17L4.2 18.4c-.49.66-.02 1.6.8 1.6h14c.82 0 1.29-.94.8-1.6z"/></svg>
-									{%- when 'patented' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
-									{%- when 'doctor' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M17.73 12.02l3.98-3.98c.39-.39.39-1.02 0-1.41l-4.34-4.34c-.39-.39-1.02-.39-1.41 0l-3.98 3.98L8 2.29C7.8 2.1 7.55 2 7.29 2c-.25 0-.51.1-.7.29L2.25 6.63c-.39.39-.39 1.02 0 1.41l3.98 3.98-3.98 3.98c-.39.39-.39 1.02 0 1.41l4.34 4.34c.39.39 1.02.39 1.41 0l3.98-3.98 3.98 3.98c.2.2.45.29.71.29.26 0 .51-.1.71-.29l4.34-4.34c.39-.39.39-1.02 0-1.41l-3.99-3.98zM12 9c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-4.71 1.96L3.66 7.34l3.63-3.63 3.62 3.62-3.62 3.63zM10 13c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2 2c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2-4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2.66 9.34l-3.63-3.62 3.63-3.63 3.62 3.62-3.62 3.63z"/></svg>
-									{%- when 'shield' -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-									{%- else -%}
-										<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-								{%- endcase -%}
-								<span class="font-heading font-semibold text-secondary text-xs leading-tight">{{ block.settings.text }}</span>
-							{%- endcapture -%}
-							{%- if block.settings.link != blank -%}
-								<a href="{{ block.settings.link }}" class="{{ badge_classes }} hover:opacity-80 transition-opacity" {{ block.shopify_attributes }}>{{ badge_inner }}</a>
-							{%- else -%}
-								<div class="{{ badge_classes }}" {{ block.shopify_attributes }}>{{ badge_inner }}</div>
-							{%- endif -%}
-						{%- endfor -%}
-					</div>
-				{%- endif -%}
+				{%- render 'trust-badges', blocks: trust_blocks -%}
 
 				{%- comment -%} ── Inline info accordions ── {%- endcomment -%}
 				{%- assign faq_blocks = section.blocks | where: "type", "product_faq" -%}
@@ -485,7 +458,12 @@
 >
 	<div class="flex flex-col min-w-0">
 		<p class="font-heading font-semibold text-main text-sm truncate">{{ section.settings.hero_heading | default: product.title }}</p>
-		<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
+		<div class="flex items-baseline gap-1.5 min-w-0">
+			<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
+			{%- if section.settings.offer_enabled and section.settings.sticky_offer_text != blank -%}
+				<span class="text-xs font-bold text-highlight truncate">{{ section.settings.sticky_offer_text }}</span>
+			{%- endif -%}
+		</div>
 	</div>
 	{%- liquid
 		assign sticky_disabled = true
@@ -745,6 +723,13 @@
 			"id": "offer_footnote",
 			"label": "Footnote",
 			"default": "Limited edition offer, free pouch in every kit while offer lasts"
+		},
+		{
+			"type": "text",
+			"id": "sticky_offer_text",
+			"label": "Mobile bar offer text",
+			"default": "+ Free $20 refill pouch",
+			"info": "Shown beside the price in the sticky mobile bar while the offer runs."
 		},
 		{
 			"type": "product",

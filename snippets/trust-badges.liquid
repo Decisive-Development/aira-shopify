@@ -1,0 +1,33 @@
+{%- comment -%}
+	trust-badges — the trust badge grid under a product buy box. Light tiles,
+	outline icons, label from the block, optional per-badge link.
+	Params:
+		blocks — the section's trust_badge blocks.
+{%- endcomment -%}
+{%- if blocks.size > 0 -%}
+	<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+		{%- for block in blocks -%}
+			{%- capture badge_classes -%}flex flex-col items-center justify-center text-center gap-2 bg-bg-soft rounded-xl py-3 px-3 {% if blocks.size == 3 and forloop.last %}col-span-2 md:col-span-1{% endif %}{%- endcapture -%}
+			{%- capture badge_inner -%}
+				{%- case block.settings.icon_type -%}
+					{%- when 'research' -%}
+						<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main" aria-hidden="true"><path d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M12 7v10m-3-7h6m-6 4h6"/></svg>
+					{%- when 'patented' -%}
+						<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+					{%- when 'doctor' -%}
+						<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main" aria-hidden="true"><path d="M4.8 2.3A.3.3 0 105 2H4a2 2 0 00-2 2v5a6 6 0 006 6 6 6 0 006-6V4a2 2 0 00-2-2h-1a.2.2 0 10.3.3"/><path d="M8 15v1a6 6 0 006 6 6 6 0 006-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+					{%- when 'shield' -%}
+						<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+					{%- else -%}
+						<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="text-main" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+				{%- endcase -%}
+				<span class="font-heading font-semibold text-title text-xs leading-tight">{{ block.settings.text }}</span>
+			{%- endcapture -%}
+			{%- if block.settings.link != blank -%}
+				<a href="{{ block.settings.link }}" class="{{ badge_classes }} hover:opacity-80 transition-opacity" {{ block.shopify_attributes }}>{{ badge_inner }}</a>
+			{%- else -%}
+				<div class="{{ badge_classes }}" {{ block.shopify_attributes }}>{{ badge_inner }}</div>
+			{%- endif -%}
+		{%- endfor -%}
+	</div>
+{%- endif -%}
