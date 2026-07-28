@@ -1331,8 +1331,11 @@
   .bg-teal {
     background-color: var(--color-teal);
   }
-  .bg-tertiary-light {
-    background-color: var(--color-tertiary-light);
+  .bg-tertiary-light\/20 {
+    background-color: color-mix(in srgb, #9BB7D4 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-tertiary-light) 20%, transparent);
+    }
   }
   .bg-tertiary-light\/70 {
     background-color: color-mix(in srgb, #9BB7D4 70%, transparent);

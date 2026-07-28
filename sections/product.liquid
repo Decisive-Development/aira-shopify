@@ -354,9 +354,9 @@
 						Informational only. Prices come from the variants, never typed.
 					{%- endcomment -%}
 					{%- if section.settings.offer_enabled -%}
-						<div class="rounded-xl bg-tertiary-light px-5 py-5">
+						<div class="rounded-xl bg-tertiary-light/20 px-5 py-5">
 							{%- if section.settings.offer_headline_accent != blank -%}
-								<p class="font-body text-xl font-extrabold leading-snug text-main text-center">{{ section.settings.offer_headline_accent }}</p>
+								<p class="font-body text-xl font-extrabold leading-snug text-highlight text-center">{{ section.settings.offer_headline_accent }}</p>
 							{%- endif -%}
 							<p class="font-body text-[17px] font-extrabold leading-snug text-main text-center{% if section.settings.offer_headline_accent != blank %} mt-1{% endif %}">{{ section.settings.offer_headline }}</p>
 
