@@ -57,7 +57,7 @@
 		align-items: flex-start;
 		gap: 0.625rem;
 	}
-	.product-info-content li > img.bullet-icon {
+	.product-info-content li > .bullet-icon {
 		width: 16px;
 		height: 16px;
 		flex-shrink: 0;
@@ -145,19 +145,8 @@
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
 
-				{%- comment -%} Rating {%- endcomment -%}
-				{%- if section.settings.show_rating -%}
-					<a href="#reviews-section" class="flex items-center gap-2 hover:opacity-80 transition-opacity scroll-link">
-						<div class="flex items-center gap-0.5 text-highlight">
-							{%- for i in (1..5) -%}
-								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-							{%- endfor -%}
-						</div>
-						{%- if section.settings.rating_text != blank -%}
-							<span class="text-copy text-sm">{{ section.settings.rating_text }}</span>
-						{%- endif -%}
-					</a>
-				{%- endif -%}
+				{%- comment -%} Guarantee badge — stars reclaim this slot once a review system goes live {%- endcomment -%}
+				{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
 				<div>
@@ -218,7 +207,7 @@
 								<ul class="plan-perks flex flex-col gap-2">
 									{%- for block in perk_blocks -%}
 										<li class="flex items-start gap-2.5 text-sm text-copy" {{ block.shopify_attributes }}>
-											<img src="{{ 'aira-logo-only-dark.svg' | asset_url }}" alt="" class="w-4 h-4 shrink-0 mt-0.5" width="16" height="16" loading="lazy">
+											{%- render 'icon-tick' -%}
 											{{ block.settings.text }}
 										</li>
 									{%- endfor -%}
@@ -276,7 +265,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title text-center">✓ Free shipping in the UAE and Saudi Arabia.</p>
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}Free shipping in the UAE and Saudi Arabia.</p>
 
 				</form>
 
@@ -337,6 +326,7 @@
 							</div>
 						{%- endfor -%}
 					</div>
+					<template data-tick-template>{%- render 'icon-tick', classes: 'bullet-icon' -%}</template>
 				{%- endif -%}
 
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
@@ -418,17 +408,6 @@
 (function () {
 	var section = document.querySelector('[data-refill-section]');
 	if (!section) return;
-
-	/* ── Smooth scroll for review link ── */
-	section.querySelectorAll('.scroll-link').forEach(function (link) {
-		link.addEventListener('click', function (e) {
-			var target = document.querySelector(link.getAttribute('href'));
-			if (target) {
-				e.preventDefault();
-				target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-			}
-		});
-	});
 
 	var form = section.querySelector('[data-refill-form]');
 	var variantInput = form.querySelector('[data-variant-id]');
@@ -528,19 +507,14 @@
 		});
 	});
 
-	/* ── Inject logo icons into accordion list items ── */
-	var logoSrc = '{{ "aira-logo-only-dark.svg" | asset_url }}';
-	section.querySelectorAll('.product-info-content li').forEach(function (li) {
-		if (li.querySelector('strong')) return;
-		var img = document.createElement('img');
-		img.src = logoSrc;
-		img.alt = '';
-		img.className = 'bullet-icon';
-		img.width = 16;
-		img.height = 16;
-		img.loading = 'lazy';
-		li.insertBefore(img, li.firstChild);
-	});
+	/* ── Inject tick icons into accordion list items ── */
+	var tickTemplate = section.querySelector('[data-tick-template]');
+	if (tickTemplate) {
+		section.querySelectorAll('.product-info-content li').forEach(function (li) {
+			if (li.querySelector('strong')) return;
+			li.insertBefore(tickTemplate.content.firstElementChild.cloneNode(true), li.firstChild);
+		});
+	}
 
 	/* ── Auto-open first accordion (Benefits) ── */
 	if (faqToggles.length > 0) {
@@ -581,19 +555,14 @@
 	"settings": [
 		{
 			"type": "header",
-			"content": "Rating"
-		},
-		{
-			"type": "checkbox",
-			"id": "show_rating",
-			"label": "Show star rating",
-			"default": true
+			"content": "Badge above title"
 		},
 		{
 			"type": "text",
-			"id": "rating_text",
-			"label": "Rating text",
-			"default": "4.5 · 100+ Customers"
+			"id": "pretitle_badge",
+			"label": "Badge text",
+			"default": "30-night guarantee",
+			"info": "Small pill above the product title. Leave blank to hide."
 		},
 		{
 			"type": "header",
