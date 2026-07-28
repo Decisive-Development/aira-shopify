@@ -226,12 +226,7 @@
 			<div class="flex flex-col gap-5">
 
 				{%- comment -%} Guarantee badge — stars reclaim this slot once a review system goes live {%- endcomment -%}
-				{%- if section.settings.pretitle_badge != blank -%}
-					<span class="self-start inline-flex items-center gap-1.5 bg-main rounded-full px-3 py-1.5">
-						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-tertiary-light shrink-0" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-						<span class="font-heading font-semibold text-secondary text-xs leading-tight">{{ section.settings.pretitle_badge }}</span>
-					</span>
-				{%- endif -%}
+				{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
 				<div>
