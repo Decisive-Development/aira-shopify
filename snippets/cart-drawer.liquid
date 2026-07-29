@@ -7,6 +7,14 @@
 {%- assign refill_product = all_products['aira-refill-tabs'] -%}
 {%- assign refill_variant = refill_product.selected_or_first_available_variant | default: refill_product.variants.first -%}
 
+{%- comment -%}
+	Launch offer: one free pouch per kit. The drawer keeps the gift line's
+	quantity in step with the kit's, so the handle below names which lines count
+	as kits. If that product is ever renamed the handle comes back blank and the
+	sync stays out of the way, leaving quantities to Shopify.
+{%- endcomment -%}
+{%- assign kit_product = all_products['aira-kit'] -%}
+
 <style>
 	.cart-drawer-closed { transform: translateX(calc(100% + 0.75rem)); }
 	.cart-drawer-open   { transform: translateX(0); }
@@ -23,6 +31,7 @@
 <aside
 	data-cart-drawer
 	data-currency="{{ cart.currency.iso_code | default: shop.currency }}"
+	data-kit-handle="{{ kit_product.handle }}"
 	style="max-width: min(32rem, calc(100vw - 1.5rem));"
 	class="fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
 	aria-label="Shopping cart"
@@ -133,7 +142,12 @@
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
+	var KIT_HANDLE = drawer.getAttribute('data-kit-handle');
 	var isOpen = false;
+	/* Last rendered cart, so a click resolves its line against real state
+	   rather than the markup, and clicks queue instead of racing each other. */
+	var currentCart = null;
+	var queue = Promise.resolve();
 
 	/* ── Open / close ── */
 	function open() {
@@ -207,13 +221,13 @@
 	/* ── Free gift ──
 	   A Buy X Get Y automatic discount only zeroes the gift once the gift is
 	   in the cart, so a form carrying data-gift-variant-id adds it here.
-	   The cart is read first, so a repeat add-to-cart never stacks a second one. */
+	   The cart is read first, so a repeat add-to-cart never stacks a second one:
+	   a second kit raises the quantity of the line already there instead. */
 	function addGift(giftId) {
 		var id = parseInt(giftId, 10);
 		if (!id) return Promise.resolve();
 
-		return fetch('/cart.js')
-			.then(function (r) { return r.json(); })
+		return fetchCart()
 			.then(function (cart) {
 				var alreadyThere = cart.items.some(function (item) {
 					return item.variant_id === id;
@@ -253,15 +267,99 @@
 		});
 	}
 
+	/* ── Cart requests ── */
+	function fetchCart() {
+		return fetch('/cart.js').then(function (r) { return r.json(); });
+	}
+
+	function changeLine(key, qty) {
+		return fetch('/cart/change.js', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: key, quantity: qty })
+		})
+		.then(function (r) { return r.json(); })
+		.then(function (cart) {
+			/* A refused change (stock, stale key) answers with an error body, so
+			   fall back to the real cart rather than rendering nothing. */
+			return cart && cart.items ? cart : fetchCart();
+		});
+	}
+
+	/* ── Free gift quantity ──
+	   The offer gives a free pouch per kit, and Shopify only zeroes the pouches
+	   it can already see in the cart. While the two counts disagree it splits the
+	   kit across a discounted line and an undiscounted one, which is what showed
+	   up as a duplicate kit row. Keeping the gift line level with the kit both
+	   scales the offer and keeps the kit on one line. */
+	function isFreeGift(item) {
+		return item.final_line_price === 0 && item.line_level_total_discount > 0;
+	}
+
+	function giftLine(cart) {
+		return cart.items.filter(isFreeGift)[0];
+	}
+
+	function kitQty(cart) {
+		if (!KIT_HANDLE) return 0;
+		return cart.items.reduce(function (total, item) {
+			return item.handle === KIT_HANDLE ? total + item.quantity : total;
+		}, 0);
+	}
+
+	function variantQty(cart, variantId) {
+		return cart.items.reduce(function (total, item) {
+			return item.variant_id === variantId ? total + item.quantity : total;
+		}, 0);
+	}
+
+	/* Moves the gift variant to `want`, re-reading the cart between steps because
+	   Shopify rewrites line keys as the discount moves between lines. */
+	function syncGift(cart, want, guard) {
+		var gift = giftLine(cart);
+		/* No zeroed line means no live offer, so pouches here were paid for. */
+		if (!gift || want < 1 || guard > 3) return Promise.resolve(cart);
+
+		var lines = cart.items.filter(function (item) {
+			return item.variant_id === gift.variant_id;
+		});
+		var total = lines.reduce(function (n, item) { return n + item.quantity; }, 0);
+		if (want === total) return Promise.resolve(cart);
+
+		var target, qty;
+		if (want > total) {
+			target = gift;
+			qty = gift.quantity + (want - total);
+		} else {
+			/* Any surplus sits on the undiscounted portion, so take it from there. */
+			var paid = lines.filter(function (item) { return !isFreeGift(item); })[0];
+			target = paid || gift;
+			qty = Math.max(0, target.quantity - (total - want));
+		}
+
+		return changeLine(target.key, qty).then(function (next) {
+			return syncGift(next, want, guard + 1);
+		});
+	}
+
 	/* ── Fetch cart & render ── */
 	function fetchAndRender() {
-		return fetch('/cart.js')
-			.then(function (r) { return r.json(); })
-			.then(function (cart) { render(cart); });
+		return fetchCart()
+			.then(function (cart) {
+				/* Top up only. A cart left from before the counts were kept in step
+				   still shows the kit split in two until the pouches catch up, and
+				   only ever raising the count keeps paid pouches untouched. */
+				var gift = giftLine(cart);
+				if (!gift) return cart;
+				var want = Math.max(variantQty(cart, gift.variant_id), kitQty(cart));
+				return syncGift(cart, want, 0);
+			})
+			.then(render);
 	}
 
 	function render(cart) {
 		var hasItems = cart.item_count > 0;
+		currentCart = cart;
 
 		/* Toggle empty / filled states */
 		emptyEl.classList.toggle('hidden', hasItems);
@@ -305,11 +403,10 @@
 				var title = alloc.discount_application ? alloc.discount_application.title : alloc.title;
 				return title ? '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(title) + '</p>' : '';
 			}).join('');
-			/* A fully free gift line keeps its quantity fixed at 1: no stepper,
-			   remove stays. Paying for more refills happens on the product page,
-			   and a merged paid line reprices above zero, so the stepper returns. */
-			var isFreeGift = item.final_line_price === 0 && item.line_level_total_discount > 0;
-			var qtyControls = isFreeGift
+			/* A fully free gift line has no stepper: its quantity follows the kit,
+			   and remove stays. Paying for more refills happens on the product page,
+			   and a paid line reprices above zero, so the stepper returns there. */
+			var qtyControls = isFreeGift(item)
 				? '<div class="flex items-center border border-bg-muted rounded-lg">'
 					+ '<span class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
 				+ '</div>'
@@ -340,28 +437,57 @@
 		var removeBtn = e.target.closest('[data-line-remove]');
 
 		if (qtyBtn) {
-			var key = qtyBtn.getAttribute('data-line-key');
 			var delta = parseInt(qtyBtn.getAttribute('data-qty-change'), 10);
-			var qtySpan = qtyBtn.parentElement.querySelector('span');
-			var currentQty = parseInt(qtySpan.textContent, 10);
-			var newQty = Math.max(0, currentQty + delta);
-			updateLine(key, newQty);
+			enqueue(qtyBtn.getAttribute('data-line-key'), function (line) {
+				return updateLine(line.key, Math.max(0, line.quantity + delta));
+			});
 		}
 
 		if (removeBtn) {
-			key = removeBtn.getAttribute('data-line-key');
-			updateLine(key, 0);
+			enqueue(removeBtn.getAttribute('data-line-key'), function (line) {
+				return updateLine(line.key, 0);
+			});
 		}
 	});
 
+	/* Clicks run one at a time and resolve their line when their turn comes:
+	   a cart change can rewrite line keys, and the quantity has to come from the
+	   cart rather than markup a queued click has already outdated. */
+	function enqueue(key, run) {
+		queue = queue
+			.then(function () {
+				var line = lineFor(key);
+				if (line) return run(line);
+			})
+			.catch(function () { return fetchAndRender(); });
+		return queue;
+	}
+
+	function lineFor(key) {
+		if (!currentCart || !key) return null;
+		var exact = currentCart.items.filter(function (item) { return item.key === key; })[0];
+		if (exact) return exact;
+		/* Key churn: the line merged, so fall back to the variant it merged into. */
+		var variantId = parseInt(key.split(':')[0], 10);
+		return currentCart.items.filter(function (item) {
+			return item.variant_id === variantId;
+		})[0] || null;
+	}
+
 	function updateLine(key, qty) {
-		fetch('/cart/change.js', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: key, quantity: qty })
-		})
-		.then(function (r) { return r.json(); })
-		.then(function (cart) { render(cart); });
+		var before = currentCart;
+		return changeLine(key, qty)
+			.then(function (cart) {
+				var delta = before ? kitQty(cart) - kitQty(before) : 0;
+				var gift = before ? giftLine(before) : null;
+				if (!delta || !gift) return cart;
+				/* Pouches follow the kit one for one. The floor of one keeps the
+				   long-standing behaviour where removing the kit leaves a single
+				   pouch behind to reprice rather than emptying the cart. */
+				var want = Math.max(1, variantQty(before, gift.variant_id) + delta);
+				return syncGift(cart, want, 0);
+			})
+			.then(render);
 	}
 
 	/* ── Helpers ── */
