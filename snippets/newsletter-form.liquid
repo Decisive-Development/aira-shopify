@@ -18,10 +18,15 @@
 	  success_text  {String}  copy for the success block
 	  attributes    {String}  raw extra attributes for the <form>
 
-	NOTE on `show_states`: every `{% form 'customer' %}` on a page reports
-	`posted_successfully?` after any customer form on that page posts — Shopify
-	gives no per-form signal. So only ONE form per page should opt into states,
-	otherwise a footer signup also lights up the popup and vice versa.
+	NOTE on `show_states`: `posted_successfully?` and `form.errors` are
+	page-global — every `{% form 'customer' %}` on the page reports them after
+	any customer form posts. The per-form signal is the redirect anchor
+	(`#<form_id>`), which the popup and footer section scripts read to decide
+	which form owns the state. Success blocks therefore render in BOTH opted-in
+	forms by design (both messages are true; the non-target one is hidden or
+	below the fold) — never remove one in JS, there is no form behind it to
+	restore. A stray error block in the non-posting form IS removed by the
+	section scripts, via [data-newsletter-error].
 {%- endcomment -%}
 
 {%- liquid
@@ -45,24 +50,24 @@
 {%- form 'customer', id: form_id, class: 'newsletter-form' -%}
 	<input type="hidden" name="contact[tags]" value="{{ nf_tags }}">
 
+	{%- if heading != blank -%}
+		<p class="text-base font-semibold mb-2 text-main">{{ heading }}</p>
+	{%- endif -%}
+
+	{%- if body_html != blank -%}
+		<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ body_html }}</p>
+	{%- endif -%}
+
 	{%- if show_states and form.posted_successfully? -%}
-		<div class="rounded-xl bg-bg p-5 text-sm text-copy" data-newsletter-success role="status">
+		<div class="rounded-xl bg-bg p-5 text-sm text-copy" data-newsletter-success role="status" tabindex="-1">
 			{{ success_text | default: "Check your inbox. Your code is on its way." }}
 		</div>
 	{%- else -%}
 
 		{%- if show_states and form.errors -%}
-			<div class="rounded-xl bg-highlight/10 p-5 text-sm text-highlight mb-3" role="alert">
+			<div class="rounded-xl bg-highlight/10 p-5 text-sm text-highlight mb-3" data-newsletter-error role="alert">
 				{{ form.errors | default_errors }}
 			</div>
-		{%- endif -%}
-
-		{%- if heading != blank -%}
-			<p class="text-base font-semibold mb-2 text-main">{{ heading }}</p>
-		{%- endif -%}
-
-		{%- if body_html != blank -%}
-			<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ body_html }}</p>
 		{%- endif -%}
 
 		<div class="{{ nf_wrap_classes }}">

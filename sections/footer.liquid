@@ -47,7 +47,9 @@
 						body_html: footer_newsletter_body,
 						placeholder: section.settings.newsletter_placeholder,
 						button_label: section.settings.newsletter_button,
-						layout: 'inline'
+						layout: 'inline',
+						show_states: true,
+						success_text: section.settings.newsletter_success
 					-%}
 
 					{%- comment -%} Social icons (incl. WhatsApp from theme settings) {%- endcomment -%}
@@ -149,6 +151,31 @@
 	</div>
 </footer>
 
+<script>
+(function () {
+	var section = document.querySelector('#shopify-section-{{ section.id }}');
+	if (!section) return;
+
+	var form = section.querySelector('#footer-newsletter');
+	if (!form) return;
+
+	/* The customer-form redirect carries the posting form's anchor — the only
+	   per-form signal, since posted_successfully? and form.errors are
+	   page-global (see snippets/newsletter-form.liquid). */
+	if (window.location.hash === '#footer-newsletter') {
+		/* Guard on top of native anchor scroll: late-loading media can push the
+		   footer after first paint. Instant, so reduced-motion is respected.
+		   Covers both the success and the error re-render. */
+		form.scrollIntoView();
+	} else if (window.location.hash === '#newsletter-popup') {
+		/* A popup post's error re-render paints the page-global error into this
+		   form too; drop it so the footer stays a clean, pristine form. */
+		var stray = form.querySelector('[data-newsletter-error]');
+		if (stray) { stray.remove(); }
+	}
+})();
+</script>
+
 {% schema %}
 {
 	"name": "Footer",
@@ -180,6 +207,13 @@
 			"id": "newsletter_button",
 			"label": "Button label",
 			"default": "Get 10% off"
+		},
+		{
+			"type": "textarea",
+			"id": "newsletter_success",
+			"label": "Success message",
+			"info": "Shown in place of the email field after a successful signup. Never show the discount code here, it arrives by email.",
+			"default": "Check your inbox. Your code is on its way."
 		},
 		{
 			"type": "header",
