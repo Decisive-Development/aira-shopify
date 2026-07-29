@@ -2,8 +2,13 @@
 	Newsletter popup — email capture for the printed QR insert.
 
 	Opens ONLY on demand, never on a timer:
-	  1. landing with #newsletter in the URL (the printed insert QR resolves here)
+	  1. landing with ?signup=1 or #newsletter in the URL (the insert QR's
+	     admin redirect appends signup=1)
 	  2. a click on any element carrying [data-open-newsletter]
+	  3. reopening itself after a signup post to show the result (success or
+	     error), signalled by the redirect anchor #newsletter-popup
+
+	UTM params are analytics-only: never read for logic, never stripped.
 
 	The form is the shared `newsletter-form` snippet, tagged `newsletter, qr-insert`
 	so print-sourced signups are attributable in the Customers admin.
@@ -68,10 +73,6 @@
 	var card  = section.querySelector('[data-newsletter-card]');
 	if (!modal || !card) return;
 
-	/* Set the instant this form is submitted, read back after Shopify's
-	   post-redirect so we know THIS form posted (and not the footer one)
-	   and can re-open the popup on its success state. */
-	var SUBMIT_FLAG = 'aira.newsletter.submitted';
 	var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 	var lastFocus = null;
 	var isOpen = false;
@@ -91,6 +92,14 @@
 		}
 	}
 
+	function focusCard() {
+		/* On the success state there is no field, so focus the result
+		   (role="status" alone will not announce server-rendered content);
+		   otherwise the email field, so the mobile keyboard opens straight away. */
+		var target = card.querySelector('[data-newsletter-success]') || card.querySelector('input[type="email"]') || card.querySelector('[data-newsletter-close]');
+		if (target) { target.focus(); }
+	}
+
 	function open() {
 		if (isOpen) return;
 		isOpen = true;
@@ -100,11 +109,7 @@
 		modal.setAttribute('aria-hidden', 'false');
 		document.body.style.overflow = 'hidden';
 		document.addEventListener('keydown', trapFocus);
-
-		/* Focus the email field so the mobile keyboard opens straight away.
-		   After a successful post there is no field, so fall back to close. */
-		var target = card.querySelector('input[type="email"]') || card.querySelector('[data-newsletter-close]');
-		if (target) { target.focus(); }
+		focusCard();
 	}
 
 	function close() {
@@ -137,51 +142,50 @@
 		open();
 	});
 
-	var form = card.querySelector('form');
-	if (form) {
-		form.addEventListener('submit', function () {
-			try { sessionStorage.setItem(SUBMIT_FLAG, '1'); } catch (err) {}
-		});
+	/* Shopify redirects a signup post back with ?customer_posted=true plus the
+	   posting form's anchor — the only per-form signal, since form state is
+	   page-global (see snippets/newsletter-form.liquid). #newsletter-popup is
+	   that internal anchor; ?signup=1 and #newsletter are the public triggers.
+	   UTM params are analytics-only and never read here. */
+	var params = new URLSearchParams(window.location.search);
+	var hash = window.location.hash;
+
+	if (hash === '#footer-newsletter') {
+		/* A footer post's error re-render paints the page-global error into
+		   this hidden card too; drop it so a manual open shows a clean form. */
+		var stray = card.querySelector('[data-newsletter-error]');
+		if (stray) { stray.remove(); }
 	}
 
-	/* Re-open on the success state after Shopify's post-redirect. The redirect
-	   drops the fragment, so the flag is what carries the intent across. */
-	var justSubmitted = false;
-	try {
-		justSubmitted = sessionStorage.getItem(SUBMIT_FLAG) === '1';
-		if (justSubmitted) { sessionStorage.removeItem(SUBMIT_FLAG); }
-	} catch (err) {}
-
-	var postedSuccessfully = !!card.querySelector('[data-newsletter-success]');
-
-	/* The QR is printed as /qr/newsletter with no fragment and the inserts are
-	   already in boxes, so the URL can never change. The 301 to the homepage
-	   does carry utm_campaign, so that is the trigger that actually fires in
-	   the wild; #newsletter is kept as a shareable/manual entry point. Params
-	   are read only, never stripped or rewritten, so Shopify Analytics is
-	   untouched. (Signed off by Tom, 2026-07-19, deviation from brief §0/§3.) */
-	function fromInsertCampaign() {
-		try {
-			return new URLSearchParams(window.location.search).get('utm_campaign') === 'insert_newsletter';
-		} catch (e) { return false; }
+	var shouldOpen = false;
+	if (params.get('customer_posted') === 'true' && hash === '#newsletter-popup') {
+		/* Post succeeded: the card holds the server-rendered success state.
+		   Wins over any trigger params on the same URL. */
+		shouldOpen = true;
+	} else if (hash === '#newsletter-popup' && card.querySelector('[data-newsletter-error]')) {
+		/* This form's post errored and it lives in a hidden modal, so reopen
+		   it to show the inline error. Never fail silently. */
+		shouldOpen = true;
+	} else if (params.get('signup') === '1' || hash === '#newsletter') {
+		shouldOpen = true;
 	}
 
-	function openFromHash() {
-		if (window.location.hash === '#newsletter') { open(); }
-	}
-
-	if (justSubmitted && postedSuccessfully) {
-		open();
-	} else {
+	if (shouldOpen) {
 		/* Small delay so first paint lands before the popup covers it. */
-		window.setTimeout(function () {
-			if (window.location.hash === '#newsletter' || fromInsertCampaign()) { open(); }
-		}, 300);
+		window.setTimeout(open, 300);
 	}
 
-	/* Hash only: the campaign param stays in the URL after a dismiss, so
-	   re-checking it here would reopen the popup on unrelated anchor clicks. */
-	window.addEventListener('hashchange', openFromHash);
+	/* The browser's deferred scroll-to-fragment can land after open() and drop
+	   focus back on the page behind the dialog; pull it back once loaded. */
+	window.addEventListener('load', function () {
+		if (isOpen && !card.contains(document.activeElement)) { focusCard(); }
+	});
+
+	/* #newsletter only: the internal #newsletter-popup anchor must not reopen
+	   the popup on unrelated in-page hash changes. */
+	window.addEventListener('hashchange', function () {
+		if (window.location.hash === '#newsletter') { open(); }
+	});
 })();
 </script>
 
@@ -193,7 +197,7 @@
 	"settings": [
 		{
 			"type": "paragraph",
-			"content": "Hidden until someone lands on #newsletter (the printed insert QR) or clicks an element with data-open-newsletter. It never opens on a plain visit."
+			"content": "Hidden until someone lands with ?signup=1 or #newsletter in the URL, or clicks an element with data-open-newsletter. It reopens by itself only to show the signup result. It never opens on a plain visit or a timer."
 		},
 		{
 			"type": "text",
