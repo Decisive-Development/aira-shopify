@@ -4,16 +4,36 @@
 	<details> TOC on mobile. The TOC is built client-side by
 	assets/policy-page.js from the H2 headings inside .policy-prose.
 
-	Content source:
-	  - If the page body (page.content) has text, render that — lets an
-	    editor override from the Shopify page editor.
-	  - Otherwise render the verbatim legally-reviewed HTML in the
-	    snippet selected by the "Default content snippet" section setting
-	    (privacy or terms). Update those snippets when the policy text
-	    changes.
+	Content source, in order:
+	  1. The native Shopify policy (Settings → Policies) named by the
+	     "Policy" section setting. This is the source of truth: it is what
+	     checkout links to, so the designed page renders the same words
+	     rather than keeping a second copy that can drift.
+	  2. The page body (page.content), so an editor can still override from
+	     the Shopify page editor.
+	  3. The verbatim HTML in the matching policy-*-default snippet, so the
+	     page never goes blank while a native field is still empty.
+
+	Tiers 2 and 3 come out in a follow-up once every native field is
+	populated and verified live.
 {%- endcomment -%}
 
 {{ 'policy-page.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+	One setting names both the native policy and its fallback snippet, so no
+	page template has to change to gain the native source.
+{%- endcomment -%}
+{%- case section.settings.default_content -%}
+	{%- when 'terms' -%}
+		{%- assign policy_body = shop.terms_of_service.body -%}
+	{%- when 'returns' -%}
+		{%- assign policy_body = shop.refund_policy.body -%}
+	{%- when 'shipping' -%}
+		{%- assign policy_body = shop.shipping_policy.body -%}
+	{%- else -%}
+		{%- assign policy_body = shop.privacy_policy.body -%}
+{%- endcase -%}
 
 <section class="relative bg-secondary text-main py-12 md:py-20">
 
@@ -41,7 +61,9 @@
 
 			{%- comment -%} Prose body — see content-source note above {%- endcomment -%}
 			<article class="policy-prose flex-1 max-w-[720px] font-body text-base md:text-[17px] leading-[1.7] text-copy">
-				{%- if page.content != blank -%}
+				{%- if policy_body != blank -%}
+					{{ policy_body }}
+				{%- elsif page.content != blank -%}
 					{{ page.content }}
 				{%- else -%}
 					{%- case section.settings.default_content -%}
@@ -74,8 +96,8 @@
 		{
 			"type": "select",
 			"id": "default_content",
-			"label": "Default content snippet",
-			"info": "Used when the page body is empty.",
+			"label": "Policy",
+			"info": "Which policy this page shows. The words come from Settings → Policies; the built-in copy is a fallback for while that field is empty.",
 			"options": [
 				{ "value": "privacy",  "label": "Privacy policy" },
 				{ "value": "terms",    "label": "Terms of service" },
