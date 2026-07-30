@@ -76,7 +76,8 @@
 				{%- comment -%} Eligible — change of mind {%- endcomment -%}
 				<div data-outcome="satisfaction" class="rounded-xl border border-highlight-green/30 bg-highlight-green/10 p-6" hidden>
 					<p class="text-xl font-bold text-highlight-green m-0 mb-2">You're eligible for a return.</p>
-					<p class="text-base text-copy m-0">Complete the form below to start it. Used is fine for a change of mind, we just need the original packaging and your receipt. Return shipping is yours.</p>
+					<p class="text-base text-copy m-0 mb-2">Complete the form below to start it. Used is fine for a change of mind, we just need the original packaging and your order number. Return shipping is yours.</p>
+					<p class="text-base text-copy m-0">One thing on the refills: an unopened pouch can come back, but once a pouch is opened we can't take it back.</p>
 				</div>
 
 				{%- comment -%} Damaged or faulty — free, by email. In-form photo upload is still TBD (Shopify's contact form can't attach files without an app). {%- endcomment -%}
@@ -103,7 +104,7 @@
 				{%- comment -%} Not eligible — not in original packaging {%- endcomment -%}
 				<div data-outcome="condition" class="rounded-xl border border-highlight/30 bg-highlight/10 p-6" hidden>
 					<p class="text-xl font-bold text-highlight m-0 mb-2">This order isn't eligible for a return.</p>
-					<p class="text-base text-copy m-0">Change-of-mind returns need to come back in their original packaging with your receipt. If something's damaged or faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> with a photo and we'll make it right.</p>
+					<p class="text-base text-copy m-0">Change-of-mind returns need to come back in their original packaging with your order number. If something's damaged or faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> with a photo and we'll make it right.</p>
 				</div>
 
 				{%- comment -%} Needs the order number first {%- endcomment -%}
