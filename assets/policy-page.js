@@ -2,8 +2,24 @@
   'use strict';
 
   var article = document.querySelector('.policy-prose');
+  if (!article) return;
+
+  // Tables written in Settings → Policies come through bare, so give each one
+  // the scroll wrapper the hardcoded copy has. Keeps the policy editor holding
+  // plain prose, and a wide table still scrolls instead of overflowing.
+  // See the table rules in assets/policy-page.css.
+  var tables = article.querySelectorAll('table');
+  for (var t = 0; t < tables.length; t++) {
+    var table = tables[t];
+    if (table.closest('.policy-table-wrap')) continue;
+    var wrap = document.createElement('div');
+    wrap.className = 'policy-table-wrap';
+    table.parentNode.insertBefore(wrap, table);
+    wrap.appendChild(table);
+  }
+
   var tocNodes = document.querySelectorAll('[data-policy-toc]');
-  if (!article || !tocNodes.length) return;
+  if (!tocNodes.length) return;
 
   var headings = article.querySelectorAll('h2');
   if (!headings.length) return;

@@ -1,6 +1,6 @@
 /*
   Policy page — prose, tables, mobile scroll, and print styles.
-  Loaded only by templates/policies.liquid.
+  Loaded by sections/policy-content.liquid.
 
   Color tokens come from snippets/css-variables.liquid:
     --color-main, --color-secondary, --color-title, --color-copy,
@@ -118,11 +118,27 @@
   }
 }
 
+/*
+  A table arrives either bare from the policy editor or still wrapped in the
+  div the hardcoded copy uses. policy-page.js wraps the bare ones, so the
+  wrapper is always the single thing that scrolls and no table ever carries a
+  second scrollbar of its own. Until that runs, and with JS off, the table
+  just fits its column and wraps.
+
+  The margins here match .policy-table-wrap above, so being wrapped costs no
+  vertical shift.
+*/
 .policy-prose table {
   width: 100%;
+  max-width: 100%;
+  margin: 1.5rem 0 1.75rem;
   border-collapse: collapse;
   font-size: 0.9rem;
   line-height: 1.55;
+}
+
+.policy-table-wrap > table {
+  margin: 0;
   min-width: 32rem;
 }
 
@@ -277,7 +293,8 @@ details > summary.list-none {
     padding: 0 !important;
   }
 
-  .policy-prose table {
+  .policy-prose table,
+  .policy-table-wrap > table {
     min-width: 0;
     font-size: 10pt;
   }
