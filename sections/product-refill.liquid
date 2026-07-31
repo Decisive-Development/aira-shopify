@@ -148,9 +148,13 @@
 				{%- comment -%} Guarantee badge — stars reclaim this slot once a review system goes live {%- endcomment -%}
 				{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
 
-				{%- comment -%} Title + description {%- endcomment -%}
+				{%- comment -%}
+					Title + description. The product name is the page's only h1,
+					matching the kit PDP; every other heading on the template is an
+					h2 or lower, so the order still descends.
+				{%- endcomment -%}
 				<div>
-					<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ product.title }}</h2>
+					<h1 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ product.title }}</h1>
 					{%- if section.settings.product_subtitle != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
 					{%- endif -%}
