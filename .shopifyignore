@@ -23,3 +23,11 @@ commands.txt
 assets/critical.source.css
 package.json
 package-lock.json
+
+# Two files Shopify refuses, which fails the initial `theme dev` sync outright:
+# theme assets may not sit in a subfolder under assets/, and page.affiliate
+# calls for a section type (affiliate-final-cta) that has no section file.
+# Skipping them keeps them in the repo and leaves the live theme's own copies
+# alone. Remove these two lines once the images move and the section exists.
+assets/images/*
+templates/page.affiliate.json
