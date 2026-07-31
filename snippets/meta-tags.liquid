@@ -23,8 +23,23 @@
     assign seo_description = page_description
   endif
 
+  comment
+    Every policy now lives twice: Shopify's own /policies/<handle> URL and the
+    /pages/<handle> version the sitemap and the footer point at, both rendered
+    from the same native policy fields. The /pages/* copy is the canonical one,
+    so point /policies/* at it whenever a page with the matching handle exists.
+  endcomment
+  assign canonical_href = canonical_url
+  if request.page_type == 'policy'
+    assign policy_handle = request.path | split: '/' | last
+    assign policy_mirror_page = pages[policy_handle]
+    if policy_mirror_page.handle != blank
+      assign canonical_href = policy_mirror_page.url | prepend: shop.url
+    endif
+  endif
+
   assign og_title = seo_title | default: shop.name
-  assign og_url = canonical_url | default: request.origin
+  assign og_url = canonical_href | default: request.origin
   assign og_type = 'website'
   assign og_description = seo_description | default: shop.description | default: shop.name
 
@@ -182,7 +197,7 @@
 
 <link
   rel="canonical"
-  href="{{ canonical_url }}"
+  href="{{ canonical_href }}"
 >
 
 {% if seo_description != blank %}
