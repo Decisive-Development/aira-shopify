@@ -274,24 +274,28 @@
 		Without JS the book cannot turn, so ship the whole thing as a plain
 		readable list instead. The noscript style hides the scene and pager
 		and lets the section scroll normally.
+
+		The fallback repeats the cover copy, so its headings sit one level
+		below the cover: the page keeps a single h1 (the cover title) and the
+		outline still descends whether or not the noscript block renders.
 	{%- endcomment -%}
 	<noscript>
 		<style>
 			.research-book .rb-scene, .research-book .rb-pager { display: none; }
 		</style>
 		<div class="rb-fallback">
-			<h1>{{ section.settings.cover_title_line }} {{ section.settings.cover_title_accent }}</h1>
+			<h2>{{ section.settings.cover_title_line }} {{ section.settings.cover_title_accent }}</h2>
 			<p>{{ section.settings.cover_meta_1 }} {{ section.settings.cover_meta_2 }}</p>
 			<ol>
 				{%- for block in studies -%}
 					<li>
-						<h2>{{ block.settings.headline }}</h2>
+						<h3>{{ block.settings.headline }}</h3>
 						<p>{{ block.settings.lead_before }}{{ block.settings.stat }}{{ block.settings.lead_after }}</p>
 						<p class="rb-fallback-cite">{{ block.settings.citation }}</p>
 					</li>
 				{%- endfor -%}
 			</ol>
-			<h2>{{ section.settings.closing_headline }}</h2>
+			<h3>{{ section.settings.closing_headline }}</h3>
 			<p>{{ section.settings.closing_lead }}</p>
 			<p>
 				{%- render 'cta-button',
@@ -635,7 +639,7 @@
 		max-width: 640px; margin: 0 auto; padding: 96px 24px;
 		color: var(--rb-cream);
 	}
-	.research-book .rb-fallback h1, .research-book .rb-fallback h2 { font-family: var(--font-heading); font-weight: 500; margin: 1.5em 0 0.4em; }
+	.research-book .rb-fallback h2, .research-book .rb-fallback h3 { font-family: var(--font-heading); font-weight: 500; margin: 1.5em 0 0.4em; }
 	.research-book .rb-fallback ol { list-style: none; padding: 0; }
 	.research-book .rb-fallback p { margin: 0.4em 0; line-height: 1.6; }
 	.research-book .rb-fallback-cite { font-size: 12px; opacity: 0.65; }
