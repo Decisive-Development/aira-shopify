@@ -65,6 +65,16 @@
         "id": "favicon",
         "label": "Favicon image",
         "info": "Square image, ideally 32 x 32px or larger. Leave blank to use the aira logo mark."
+      },
+      {
+        "type": "header",
+        "content": "Search engine logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "brand_logo",
+        "label": "Organization logo",
+        "info": "Feeds the Organization structured data Google reads for the brand knowledge panel. PNG or JPG, at least 112px on the shortest side. Leave blank to fall back to the SVG logo, which Google does not accept for this."
       }
     ]
   },

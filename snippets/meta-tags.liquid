@@ -84,6 +84,67 @@
   >
 {%- endif -%}
 
+{%- comment -%}
+  Brand-level structured data. Organization and WebSite describe the site as a
+  whole, so they render once, on the homepage, alongside the page-level Product
+  and FAQPage blocks that belong to their own templates.
+
+  sameAs is deliberately absent. It needs the live social profile URLs, which
+  are not confirmed yet; add the array here once they land and never guess one.
+{%- endcomment -%}
+{%- if request.page_type == 'index' -%}
+  {%- liquid
+    assign brand_logo_url = 'aira-logo-text-blue.svg' | asset_url
+    if settings.brand_logo != blank
+      assign brand_logo_url = settings.brand_logo | image_url: width: 512
+    endif
+    unless brand_logo_url contains 'https:'
+      assign brand_logo_url = brand_logo_url | prepend: 'https:'
+    endunless
+
+    assign brand_url = shop.url | append: '/'
+    assign organization_id = shop.url | append: '/#organization'
+    assign website_id = shop.url | append: '/#website'
+    assign search_url_template = shop.url | append: '/search?q={search_term_string}'
+  -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": {{ organization_id | json }},
+          "name": "aira",
+          "legalName": "AIRA WELLNESS ECOM FZCO",
+          "url": {{ brand_url | json }},
+          "logo": {{ brand_logo_url | json }}
+          {%- if settings.support_email != blank -%}
+            , "email": {{ settings.support_email | json }}
+          {%- endif -%}
+          {%- if settings.support_whatsapp_number != blank -%}
+            , "telephone": {{ settings.support_whatsapp_number | prepend: '+' | json }}
+          {%- endif -%}
+        },
+        {
+          "@type": "WebSite",
+          "@id": {{ website_id | json }},
+          "name": "aira",
+          "url": {{ brand_url | json }},
+          "publisher": { "@id": {{ organization_id | json }} },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": {{ search_url_template | json }}
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+  </script>
+{%- endif -%}
+
 {%- if request.page_type == 'product' -%}
   <script type="application/ld+json">
     {{ product | structured_data }}
