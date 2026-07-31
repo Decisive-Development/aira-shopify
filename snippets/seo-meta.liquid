@@ -8,11 +8,14 @@
   Editing rules (see .claude/rules/copy.md and the SEO brief):
     - Titles <= 60 characters, descriptions <= 155.
     - UK English, aira lowercase, no em-dashes or arrows, brand last in titles.
-    - Product handles and template suffixes must match the live store.
+    - Product handles, page handles and template suffixes must match the live
+      store.
 
   Coverage notes: /pages/returns (suffix 'returns') and /collections/all
   (collection handle 'all') are mapped below. Any other collection falls back
-  to the admin "Search engine listing" fields on purpose.
+  to the admin "Search engine listing" fields on purpose. Pages on the default
+  page template carry no suffix, so they are mapped by page handle after the
+  suffix lookup.
 {%- endcomment -%}
 {%- liquid
   assign seo_title = ''
@@ -60,9 +63,6 @@
         when 'our-story'
           assign seo_title = "Our story | aira"
           assign seo_description = "Why two founders in the UAE built a reusable magnetic nasal strip, and what we're building next. The people and the thinking behind aira."
-        when 'affiliate'
-          assign seo_title = "Affiliate programme | aira"
-          assign seo_description = "Earn on every kit you refer. The aira affiliate programme for creators, coaches and athletes across the GCC. Apply in minutes."
         when 'privacy-policy'
           assign seo_title = "Privacy policy | aira"
           assign seo_description = "How aira collects, uses and protects your data when you shop with us."
@@ -79,6 +79,19 @@
           assign seo_title = "Returns and the 30-night guarantee | aira"
           assign seo_description = "Not sleeping better after 30 nights? Start a return in a few clicks. Eligibility, steps and refund timelines for UAE and Saudi orders."
       endcase
+
+      comment
+        Pages that run on the default page template have no suffix to match
+        on, so they are mapped by handle instead. Both affiliate spellings are
+        listed until the admin-side rename and its 301 land.
+      endcomment
+      if seo_title == blank
+        case page.handle
+          when 'affiliate-program' or 'affilliate-program'
+            assign seo_title = "Affiliate program | aira"
+            assign seo_description = "Earn commission promoting aira magnetic nasal strips. Simple terms, honest products, and a team that answers. Apply to join the aira affiliate programme."
+        endcase
+      endif
   endcase
 
   if field == 'title'
