@@ -65,6 +65,13 @@
 						</div>
 					{%- endif -%}
 
+					{%- comment -%}
+						The sizing visual is the substance of this variant, so it gets a
+						description: the section setting first, then the image's own alt
+						field in Shopify Files, then the step heading. visual_label is
+						deliberately not used, it is the no-image placeholder caption.
+					{%- endcomment -%}
+					{%- assign visual_image_alt = section.settings.visual_alt | default: section.settings.visual_image.alt | default: section.settings.heading -%}
 					<div class="grid lg:grid-cols-2 gap-6 lg:gap-8 mt-10 lg:items-stretch">
 						<div class="reveal">
 							<div class="rounded-2xl overflow-hidden{% if section.settings.visual_image == blank %} ph ph-light{% endif %}" style="aspect-ratio: 4 / 5;">
@@ -76,7 +83,7 @@
 											loading: 'lazy',
 											class: 'w-full h-full object-cover',
 											widths: '400, 600, 800, 1000',
-											alt: section.settings.visual_alt
+											alt: visual_image_alt
 									}}
 								{%- else -%}
 									{{ section.settings.visual_label | default: 'Sizing photo' }}

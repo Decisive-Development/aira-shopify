@@ -16,6 +16,13 @@
 	endif
 -%}
 
+{%- comment -%}
+	Alt text for the product shot: the section setting first, then the image's
+	own alt field in Shopify Files, then a plain description of what the shot
+	is. It is the only photo in the section, so it is never decorative.
+{%- endcomment -%}
+{%- assign kit_image_alt = section.settings.image_alt | default: section.settings.image.alt | default: 'The aira kit and its contents' -%}
+
 {%- comment -%} Product image captured once, rendered mobile (in copy) + desktop (right column) {%- endcomment -%}
 {%- capture kit_image_html -%}
 	<div
@@ -34,7 +41,7 @@
 					loading: 'lazy',
 					class: 'absolute inset-0 w-full h-full object-cover',
 					widths: '600, 900, 1280, 1600',
-					alt: section.settings.image_alt
+					alt: kit_image_alt
 			}}
 		{%- else -%}
 			<div

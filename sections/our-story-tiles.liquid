@@ -16,7 +16,13 @@
 					{{ block.shopify_attributes }}
 				>
 
-					{%- comment -%} Image (4:5) {%- endcomment -%}
+					{%- comment -%}
+						Image (4:5). Each tile photo carries content, so it gets a
+						description: the block setting first, then the image's own alt
+						field in Shopify Files, then the tile heading so nothing ships
+						as an unlabelled photo.
+					{%- endcomment -%}
+					{%- assign tile_image_alt = block.settings.image_alt | default: block.settings.image.alt | default: block.settings.heading -%}
 					<div
 						class="relative w-full aspect-4/5 rounded-sm overflow-hidden border border-[#E6DFD2] bg-cream-light {% if block.settings.reverse %}lg:order-2{% else %}lg:order-1{% endif %}"
 						{% if block.settings.image == blank %}
@@ -33,7 +39,7 @@
 									loading: 'lazy',
 									class: 'absolute inset-0 w-full h-full object-cover',
 									widths: '400, 600, 900, 1200',
-									alt: block.settings.image_alt
+									alt: tile_image_alt
 							}}
 						{%- endif -%}
 					</div>

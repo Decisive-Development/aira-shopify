@@ -15,7 +15,11 @@
 	style="{% unless has_bg_image %}background-color: {{ section.settings.background_color }};{% endunless %}"
 >
 
-	{%- comment -%} Background image — mobile variant via <picture> {%- endcomment -%}
+	{%- comment -%}
+		Background image, mobile variant via <picture>. It is a backdrop, so the
+		alt stays empty unless someone writes one on the image in Shopify Files,
+		which is the opt-in for treating it as content.
+	{%- endcomment -%}
 	{%- if has_bg_image -%}
 		<div class="absolute inset-0 w-full h-full -z-10">
 			<picture>

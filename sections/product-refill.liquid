@@ -115,11 +115,18 @@
 						-%}
 						{%- if keep and thumb_count < 6 -%}
 							{%- assign thumb_count = thumb_count | plus: 1 -%}
+							{%- comment -%}
+								The button carries the label, so the thumbnail inside it is
+								decorative. Repeating the product name on every thumbnail
+								would announce it once per image for no gain. Same pattern
+								as the kit PDP gallery.
+							{%- endcomment -%}
 							<button
 								type="button"
 								class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if image.id == main_image.id %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
 								data-thumb-btn
 								data-thumb-src="{{ image | image_url: width: 1200 }}"
+								aria-label="Show image {{ thumb_count }}"
 							>
 								{{
 									image
@@ -127,7 +134,8 @@
 									| image_tag:
 										loading: 'lazy',
 										class: 'w-full h-full object-cover',
-										widths: '100, 200'
+										widths: '100, 200',
+										alt: ''
 								}}
 							</button>
 						{%- endif -%}

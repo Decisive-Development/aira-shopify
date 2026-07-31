@@ -14,6 +14,11 @@
 {%- endif -%}
 
 <div data-hero class="relative overflow-hidden flex items-end min-h-[20vh] md:min-h-[30vh] {% unless has_image %}bg-main{% endunless %}">
+	{%- comment -%}
+		The cover photo sits behind two dark scrims with the heading on top, so
+		it is decoration rather than content. The empty alt is deliberate: it
+		keeps screen readers on the heading instead of describing wallpaper.
+	{%- endcomment -%}
 	{%- if has_image -%}
 		<div class="absolute inset-0 w-full h-full">
 			{{
@@ -22,7 +27,8 @@
 				| image_tag:
 					loading: 'eager',
 					class: 'w-full h-full object-cover',
-					widths: '375, 768, 1280, 1920, 2400'
+					widths: '375, 768, 1280, 1920, 2400',
+					alt: ''
 			}}
 		</div>
 		<div class="absolute inset-0 bg-black/35"></div>

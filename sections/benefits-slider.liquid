@@ -172,6 +172,7 @@
 	data-bs-section="{{ section.id }}"
 >
 
+	{%- comment -%} Section backdrop, decorative by definition, so the alt stays empty {%- endcomment -%}
 	{%- if has_bg_image -%}
 		<div class="absolute inset-0 w-full h-full -z-10">
 			{{
@@ -180,7 +181,8 @@
 				| image_tag:
 					loading: 'lazy',
 					class: 'w-full h-full object-cover',
-					widths: '375, 768, 1280, 1920, 2400'
+					widths: '375, 768, 1280, 1920, 2400',
+					alt: ''
 			}}
 			{%- if section.settings.overlay_opacity > 0 -%}
 				<div
@@ -225,19 +227,34 @@
 					{{ block.shopify_attributes }}
 				>
 
+					{%- comment -%}
+						Slide media. The image's own alt field in Shopify Files wins; the
+						slide heading is the fallback so a benefit photo is never
+						announced as an unlabelled image.
+
+						The video is built by hand rather than with video_tag, because
+						video_tag emits an <img> fallback with no alt attribute that
+						nothing in the theme can reach. aria-label carries the same
+						description the sibling image would.
+					{%- endcomment -%}
+					{%- assign slide_media_alt = block.settings.heading -%}
+					{%- assign slide_image_alt = block.settings.image.alt | default: slide_media_alt -%}
 					<div class="bs-media">
 						{%- if block.settings.video != blank -%}
 							{%- assign video_poster = block.settings.video.preview_image | image_url: width: 800 -%}
-							{{
-								block.settings.video
-								| video_tag:
-									autoplay: true,
-									loop: true,
-									muted: true,
-									playsinline: true,
-									preload: 'none',
-									poster: video_poster
-							}}
+							<video
+								autoplay
+								loop
+								muted
+								playsinline
+								preload="none"
+								poster="{{ video_poster }}"
+								aria-label="{{ slide_media_alt | escape }}"
+							>
+								{%- for source in block.settings.video.sources -%}
+									<source src="{{ source.url }}" type="{{ source.mime_type }}">
+								{%- endfor -%}
+							</video>
 						{%- elsif block.settings.image != blank -%}
 							{{
 								block.settings.image
@@ -245,7 +262,8 @@
 								| image_tag:
 									loading: 'lazy',
 									widths: '400, 600, 800',
-									draggable: 'false'
+									draggable: 'false',
+									alt: slide_image_alt
 							}}
 						{%- else -%}
 							<div class="bs-placeholder">

@@ -39,6 +39,13 @@
 	if section.settings.background_image != blank
 		assign has_bg_image = true
 	endif
+
+	# Alt text for the two comparison shots. The image's own alt field in
+	# Shopify Files wins; the pane labels are the fallback so the pair is never
+	# announced as two unlabelled photos. The section background stays
+	# decorative and keeps its empty alt.
+	assign ba_before_alt = ba_before_image.alt | default: section.settings.before_label | default: 'Without aira'
+	assign ba_after_alt = ba_after_image.alt | default: section.settings.after_label | default: 'With aira'
 -%}
 
 <section
@@ -53,7 +60,8 @@
 				| image_tag:
 					loading: 'lazy',
 					class: 'w-full h-full object-cover',
-					widths: '375, 768, 1280, 1920, 2400'
+					widths: '375, 768, 1280, 1920, 2400',
+					alt: ''
 			}}
 			{%- if section.settings.overlay_opacity > 0 -%}
 				<div
@@ -94,7 +102,8 @@
 							loading: 'lazy',
 							class: 'w-full h-auto block',
 							widths: '400, 600, 800, 1200',
-							draggable: 'false'
+							draggable: 'false',
+							alt: ba_after_alt
 					}}
 				{%- else -%}
 					<img
@@ -127,7 +136,8 @@
 							loading: 'lazy',
 							class: 'w-full h-auto block',
 							widths: '400, 600, 800, 1200',
-							draggable: 'false'
+							draggable: 'false',
+							alt: ba_before_alt
 					}}
 				{%- else -%}
 					<img

@@ -38,6 +38,12 @@
 		{%- liquid
 			assign hero_desktop = section.settings.hero_image | default: section.settings.hero_image_mobile
 			assign hero_mobile  = section.settings.hero_image_mobile | default: section.settings.hero_image
+
+			# The hero photo is the page's only image, so it is never decorative.
+			# The section setting wins, then the image's own alt field in Shopify
+			# Files; the last fallback describes the photo currently in the slot
+			# and should be replaced in Files whenever the photo changes.
+			assign hero_image_alt = section.settings.hero_image_alt | default: hero_desktop.alt | default: 'Two people relaxing on a sofa, both wearing an aira nasal strip'
 		-%}
 		<div
 			class="relative w-full aspect-4/5 md:aspect-21/9 rounded-sm overflow-hidden border border-secondary/8"
@@ -63,7 +69,7 @@
 							class: 'absolute inset-0 w-full h-full object-cover',
 							widths: '600, 900, 1280, 1600, 2000, 2400',
 							sizes: '100vw',
-							alt: section.settings.hero_image_alt
+							alt: hero_image_alt
 					}}
 				</picture>
 			{%- else -%}

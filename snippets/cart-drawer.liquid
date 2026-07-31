@@ -387,8 +387,11 @@
 
 		/* Build line items */
 		itemsEl.innerHTML = cart.items.map(function (item) {
+			/* The product title sits beside the thumbnail, so the image only
+			   speaks when the merchant has written an alt on it. Otherwise it
+			   stays empty and screen readers skip past it to the title. */
 			var img = item.featured_image && item.featured_image.url
-				? '<img src="' + sizedImg(item.featured_image.url, '160x') + '" alt="" class="w-full h-full object-cover" loading="lazy">'
+				? '<img src="' + sizedImg(item.featured_image.url, '160x') + '" alt="' + escAttr(item.featured_image.alt || '') + '" class="w-full h-full object-cover" loading="lazy">'
 				: '';
 			var props = '';
 			if (item.variant_title) {
@@ -504,6 +507,12 @@
 		var d = document.createElement('div');
 		d.textContent = str;
 		return d.innerHTML;
+	}
+
+	/* escHtml leaves quotes alone, which is fine inside an element but not
+	   inside a double-quoted attribute value. */
+	function escAttr(str) {
+		return escHtml(str).replace(/"/g, '&quot;');
 	}
 
 	/* ── Init: pre-load cart state ── */

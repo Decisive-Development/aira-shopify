@@ -48,6 +48,14 @@
 	if poster_image == blank and section.settings.video != blank
 		assign poster_image = section.settings.video.preview_image
 	endif
+
+	comment
+		The poster is the cover frame of the tutorial, not decoration, so it
+		carries a description. The image's own alt field in Shopify Files wins;
+		the fallback describes the frame currently in the slot and should be
+		replaced in Files whenever the tutorial is refilmed.
+	endcomment
+	assign poster_image_alt = poster_image.alt | default: 'Side profile of a woman pressing an aira tab into place just above her nostril'
 -%}
 
 <section class="relative overflow-hidden bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-25">
@@ -109,7 +117,7 @@
 							<img
 								class="video-cover"
 								src="{{ poster_image | image_url: width: 800 }}"
-								alt=""
+								alt="{{ poster_image_alt | escape }}"
 								width="320"
 								height="569"
 								loading="lazy"
