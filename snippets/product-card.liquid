@@ -44,7 +44,7 @@
 		{%- comment -%} Title + custom description {%- endcomment -%}
 		<div>
 			<h3 class="font-heading text-title font-semibold text-xl leading-snug">
-				{{ product.title }}
+				{%- render 'product-title', title: product.title -%}
 			</h3>
 			{%- if description != blank -%}
 				<p class="text-copy text-sm leading-relaxed mt-2">{{ description }}</p>
@@ -106,7 +106,12 @@
 
 				</div>
 
-				{%- comment -%} Variant options (quantity tabs etc) {%- endcomment -%}
+				{%- comment -%}
+					Variant options (quantity tabs etc). A single-variant product has
+					one phantom option, "Title / Default Title", which Shopify invents
+					and no shopper should ever see, so the selectors sit out entirely.
+				{%- endcomment -%}
+				{%- unless product.has_only_default_variant -%}
 				{%- for option in product.options_with_values -%}
 					{%- assign opt_index = forloop.index0 -%}
 					<div>
@@ -130,10 +135,12 @@
 						</div>
 					</div>
 				{%- endfor -%}
+				{%- endunless -%}
 
 			{%- else -%}
 
 				{%- comment -%} No selling plans — standard option selectors {%- endcomment -%}
+				{%- unless product.has_only_default_variant -%}
 				{%- for option in product.options_with_values -%}
 					{%- liquid
 						assign opt_index = forloop.index0
@@ -191,6 +198,7 @@
 						</div>
 					{%- endif -%}
 				{%- endfor -%}
+				{%- endunless -%}
 
 			{%- endif -%}
 

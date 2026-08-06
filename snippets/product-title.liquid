@@ -1,0 +1,18 @@
+{%- comment -%}
+  Renders a product title with the brand lowercased.
+
+  Admin product titles are stored as "Aira Kit" / "Aira refill tabs", but the
+  standard is "aira" lowercase everywhere, including mid-heading. Rather than
+  depend on the admin titles staying correct, normalise at render so every
+  surface (PDP h1, cards, cart drawer, search, sticky bars) agrees.
+
+  Replaces the word only, so the rest of the title keeps its casing and this
+  stays safe for future products whose names are not just the brand.
+
+  Accepts:
+    title  - string, required. Usually product.title or item.product.title.
+
+  Usage:
+    {%- render 'product-title', title: product.title -%}
+{%- endcomment -%}
+{{- title | replace: 'AIRA', 'aira' | replace: 'Aira', 'aira' -}}

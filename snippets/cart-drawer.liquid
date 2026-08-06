@@ -76,7 +76,7 @@
 						</a>
 					{%- endif -%}
 					<div class="flex-1 min-w-0">
-						<p class="font-heading font-semibold text-title text-base leading-snug truncate">{{ refill_product.title }}</p>
+						<p class="font-heading font-semibold text-title text-base leading-snug truncate">{%- render 'product-title', title: refill_product.title -%}</p>
 						<p class="text-copy text-base mt-0.5">{{ refill_variant.price | money }}</p>
 					</div>
 					{%- capture upsell_attrs -%}data-upsell-add data-upsell-variant-id="{{ refill_variant.id }}"{%- endcapture -%}
@@ -111,8 +111,7 @@
 			<span class="font-heading font-semibold text-title text-lg">Subtotal</span>
 			<span class="font-heading font-bold text-title text-xl" data-cart-subtotal></span>
 		</div>
-		<p class="text-copy text-sm">Taxes calculated at checkout</p>
-		<p class="text-center text-highlight text-sm font-semibold">Free shipping across the UAE and Saudi Arabia.</p>
+		<p class="text-center text-highlight text-sm font-semibold">Free shipping to the UAE and Saudi Arabia.</p>
 		{%- render 'cta-button',
 			label: 'Checkout',
 			url: '/checkout',
@@ -421,7 +420,7 @@
 			return '<div class="flex gap-4 items-start" data-line-key="' + item.key + '">'
 				+ '<a href="' + item.url + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + img + '</a>'
 				+ '<div class="flex-1 min-w-0">'
-					+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + escHtml(item.product_title) + '</p>'
+					+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + brandTitle(item.product_title) + '</p>'
 					+ props
 					+ discounts
 					+ '<div class="flex items-center gap-3 mt-2">'
@@ -513,6 +512,13 @@
 	   inside a double-quoted attribute value. */
 	function escAttr(str) {
 		return escHtml(str).replace(/"/g, '&quot;');
+	}
+
+	/* The Ajax cart returns raw admin product titles ("Aira Kit"), so the
+	   brand is lowercased here to match the product-title snippet used
+	   everywhere the titles are rendered in Liquid. */
+	function brandTitle(str) {
+		return escHtml(str).replace(/\bAIRA\b/g, 'aira').replace(/\bAira\b/g, 'aira');
 	}
 
 	/* ── Init: pre-load cart state ── */

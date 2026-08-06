@@ -57,8 +57,8 @@
         "card_snoring": {
           "type": "benefit",
           "settings": {
-            "heading": "Snore no more",
-            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "heading": "Less snoring, from night one",
+            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the vibration quiets down. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
             "image": "shopify://shop_images/snore-no-more-arabic.jpg",
             "image_mobile": "shopify://shop_images/snore-no-more-arabic.jpg",
             "stat_number": "1 in 3",
@@ -108,7 +108,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can stop snoring, deepen your sleep and streamline your breath when exercising, helping you into a flow state.",
+        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can mean less snoring, deeper sleep and a smoother breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "Get my kit",
         "cta_primary_url": "/products/aira-kit",
@@ -299,8 +299,8 @@
         "faq_6": {
           "type": "question",
           "settings": {
-            "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping in the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
+            "question": "Where do you ship?",
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
           }
         }
       },
@@ -363,7 +363,7 @@
         "cta_label": "Get my kit",
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
-        "guarantee_line": "Free shipping in the UAE and Saudi Arabia.",
+        "guarantee_line": "Free shipping to the UAE and Saudi Arabia.",
         "image": "shopify://shop_images/product-with-logo-final.jpg",
         "image_alt": ""
       }

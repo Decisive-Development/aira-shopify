@@ -78,7 +78,7 @@
           "type": "product_faq",
           "settings": {
             "question": "SHIPPING & RETURNS",
-            "answer": "<p>Free shipping in the UAE and Saudi Arabia. We deliver to the UAE, Saudi Arabia, Kuwait, Bahrain, Qatar, and Oman. Orders arrive in <strong>3 to 5 working days</strong> within the UAE, <strong>5 to 7</strong> everywhere else. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, the only countries we deliver to for now. Orders arrive in <strong>3 to 5 business days</strong>. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
           }
         }
       },
@@ -136,8 +136,8 @@
         "benefit_1": {
           "type": "benefit",
           "settings": {
-            "heading": "Snore no more",
-            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the problem goes away. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
+            "heading": "Less snoring, from night one",
+            "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the vibration quiets down. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
             "image": "shopify://shop_images/snore-no-more.png",
             "image_mobile": "shopify://shop_images/snore-no-more-MOBILE_0a942a62-c274-4d75-8dd4-c43fc8a2de12.png",
             "stat_number": "1 in 3",
@@ -187,7 +187,7 @@
       "settings": {
         "eyebrow": "WHY AIRA",
         "heading": "Better nights. Stronger days.",
-        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can stop snoring, deepen your sleep and streamline your breath when exercising, helping you into a flow state.",
+        "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can mean less snoring, deeper sleep and a smoother breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "",
         "cta_primary_url": "",
@@ -430,8 +430,8 @@
         "faq_6": {
           "type": "question",
           "settings": {
-            "question": "Do you ship to the GCC?",
-            "answer": "<p>Yes. Free shipping in the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
+            "question": "Where do you ship?",
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
           }
         }
       },

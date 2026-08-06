@@ -162,7 +162,7 @@
 					h2 or lower, so the order still descends.
 				{%- endcomment -%}
 				<div>
-					<h1 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{{ product.title }}</h1>
+					<h1 class="font-heading heading-weight text-3xl md:text-4xl text-title leading-tight">{%- render 'product-title', title: product.title -%}</h1>
 					{%- if section.settings.product_subtitle != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
 					{%- endif -%}
@@ -237,7 +237,13 @@
 								data-variant-btn="{{ variant.id }}"
 							>
 								<div class="flex items-baseline gap-2 flex-wrap">
-									<span class="font-heading font-bold text-title text-base">{{ variant.title }} Adhesive Tab Pairs</span>
+									{%- comment -%}
+										A single-variant product's title is Shopify's phantom
+										"Default Title", so the pack size drops out and the label
+										stands on its own rather than reading "Default Title Adhesive
+										Tab Pairs".
+									{%- endcomment -%}
+									<span class="font-heading font-bold text-title text-base">{% unless product.has_only_default_variant %}{{ variant.title }} {% endunless %}Adhesive Tab Pairs</span>
 									{%- if forloop.last -%}
 										<span class="text-highlight text-sm font-bold">· Biggest saving</span>
 									{%- elsif variant.metafields.custom.badge != blank -%}
@@ -277,7 +283,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}Free shipping in the UAE and Saudi Arabia.</p>
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}Free shipping to the UAE and Saudi Arabia.</p>
 
 				</form>
 
@@ -346,7 +352,7 @@
 	style="box-shadow: 0 -4px 24px rgba(10,26,52,0.1);"
 >
 	<div class="flex flex-col min-w-0">
-		<p class="font-heading font-semibold text-main text-sm truncate">{{ product.title }}</p>
+		<p class="font-heading font-semibold text-main text-sm truncate">{%- render 'product-title', title: product.title -%}</p>
 		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ current_variant.price | money }}</span>
 	</div>
 	{%- liquid
@@ -564,7 +570,7 @@
 			"type": "textarea",
 			"id": "product_subtitle",
 			"label": "Short description",
-			"default": "Replacement adhesive tabs for your aira magnetic nasal strip. Choose a plan or buy one-time.",
+			"default": "Replacement adhesive tabs for your aira magnetic nasal strip.",
 			"info": "Shown below the product title."
 		},
 		{
