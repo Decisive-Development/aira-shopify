@@ -10,7 +10,7 @@
 
 ### Homepage `/`
 - **Title tag:** Magnetic nasal strips, reusable | aira
-- **Meta description:** Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping in the UAE and Saudi Arabia.
+- **Meta description:** Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping to the UAE and Saudi Arabia.
 - **H1:** existing hero headline (voice wins over keyword here; keyword lives in title tag and body)
 - **Primary keyword:** magnetic nasal strips · Secondary: reusable nasal strips, nasal strips for snoring, nasal breathing
 
@@ -22,13 +22,13 @@
 
 ### Shop `/collections/...`
 - **Title tag:** Nasal strips UAE, kits and refills | aira
-- **Meta description:** Shop reusable magnetic nasal strips in the UAE and across the UAE. Kits and refill tabs, free shipping, 30-night guarantee.
+- **Meta description:** Shop reusable magnetic nasal strips. Kits and refill tabs, 30-night guarantee. Free shipping to the UAE and Saudi Arabia.
 - **H1:** Shop
 - **Primary:** nasal strips UAE · Secondary: buy nasal strips Dubai, anti snoring devices UAE, breathing strips
 
 ### Refills PDP `/products/aira-refill-tabs`
 - **Title tag:** Nasal strip refills, adhesive tabs | aira
-- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the UAE. Packs of 30, 60, or 90 pairs.
+- **Meta description:** Refill tabs for your aira strip. 30 fresh pairs a month, 3M medical-grade adhesive. Packs of 30, 60, or 90 pairs. Free shipping to the UAE and Saudi Arabia.
 - **H1:** Refill tabs
 - **Primary:** nasal strip refills · Secondary: magnetic nasal strip refills, adhesive tabs
 

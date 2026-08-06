@@ -1,113 +1,212 @@
-AIRA — POLICY PAGES: RENDER FROM SHOPIFY CMS, KEEP THE DESIGN — BRIEF FOR VSC
-Date: 2026-07-29
-Priority: HIGH (unblocks Google & YouTube app / GA4 / Merchant Center; fixes empty checkout policy links)
-Scope: theme repo only. The policy CONTENT is being populated in Shopify admin separately by Tom/Cowork. Do not write policy copy.
+================================================================================
+AIRA — SITE FIX SWEEP BRIEF  (FOR VSC / DEV AGENT)
+================================================================================
+Date:     5 August 2026
+Audience: VSC / dev coding agent
+Source:   AIRA_Site_Audit_2026-08-05.md (Aira folder) — full findings + quotes.
+          This brief is the actionable subset. Claims verdicts below are
+          checked against AIRA_Nasal_Breathing_Research_ClaimsBank.xlsx —
+          they are decisions, not suggestions.
+Siblings: AIRA_FAQ_Email_Fix_Brief_VSC.txt (in flight — §2 below extends it),
+          AIRA_Policy_Pages_CMS_Migration_Brief_VSC.txt (in flight — ship it,
+          §7 adds two meta fixes to the same files).
+Scope:    Everything here is theme-side. Work through in section order
+          (severity order). Do NOT touch checkout config, Shopify admin
+          settings, or policy content in Settings > Policies — those are
+          handled admin-side. FAQ: ONLY the answers named in §2; the full
+          FAQ rewrite stays deferred.
 
-== WHY ==
+================================================================================
+1. SHIPPING-LINE SWEEP (the most-repeated violation on the site)
+================================================================================
+Canonical line, exact: "Free shipping to the UAE and Saudi Arabia."
+It currently appears NOWHERE — every instance is a variant. Replace ALL:
 
-Shopify's native policy fields (Settings > Policies) were empty except Privacy. Shopify links
-these in the CHECKOUT footer, so the live checkout showed only a Privacy policy link. Verified
-29 Jul: /policies/refund-policy and /policies/terms-of-service both returned HTTP 404, while
-/policies/privacy-policy served fine.
+  a. Cart drawer (global, every page): "Free shipping across the UAE and
+     Saudi Arabia." → canonical. One theme string.
+  b. "Free shipping in the UAE and Saudi Arabia" — homepage (incl. meta
+     description), kit PDP, refills PDP, how-it-works, backed-by-science
+     (x2), FAQ. → canonical.
+  c. Collections meta "Free delivery across the UAE and Saudi Arabia"
+     → canonical wording.
+  d. Refills PDP meta description "...delivered across the GCC." → "...
+     Free shipping to the UAE and Saudi Arabia."
 
-Meanwhile the real content lives in theme pages at /pages/refund-policy, /pages/terms-of-service,
-/pages/shipping-policy, /pages/privacy-policy. Two homes for the same document, and the one
-checkout and Google read was the empty one. Privacy has already drifted: native 28,041 chars vs
-page 24,595 chars.
+Acceptance grep (repo, rendered strings + locales + section schemas):
+  grep -ri "across the GCC\|across the UAE\|shipping in the UAE" → 0 hits
+  grep -ri "shipping to the UAE and Saudi Arabia" → every shipping mention
 
-Fix: native policy fields become the SINGLE SOURCE OF TRUTH. The designed pages keep their design
-and render the native content. This is the "never duplicate" rule applied to policy copy.
+================================================================================
+2. FAQ FACTUAL ANSWERS (un-deferred — extends the FAQ email brief)
+================================================================================
+Only these two answers; leave every other FAQ answer untouched.
 
-== THE CHANGE ==
+  a. "Do you ship to the GCC?" — currently promises UAE, Saudi, Kuwait,
+     Bahrain, Qatar, Oman. Replace Q+A with:
+       Q: "Where do you ship?"
+       A: "Free shipping to the UAE and Saudi Arabia, the only countries
+          we deliver to for now. We'll expand as demand grows. Most
+          orders arrive in 3 to 5 business days."
+  b. Returns answer (same one getting the email fix). Replace in full with:
+       "We stand behind every product we make. Try aira for 30 nights.
+        If you're not happy with your purchase for any reason, contact
+        us at contact@shop-aira.com within 30 nights of delivery and
+        we'll guide you through the return process."
+     (Matches the corrected live /policies/refund-policy, fixed today.)
 
-Current rendered structure (measured live 29 Jul, identical across all four policy pages):
+================================================================================
+3. CLAIMS FIXES (bank-checked verdicts — apply exactly)
+================================================================================
+3.1 The stat block (shared section on homepage + kit PDP + refills PDP):
 
-  <section class="relative bg-secondary text-main py-12 md:py-20">
-    <div class="container mx-auto px-4 max-w-[1080px]">
-      <div class="md:flex md:gap-12 lg:gap-16 md:items-start">
-        <article class="policy-prose flex-1 max-w-[720px] font-body text-base md:text-...">
-          ...page content...
-        </article>
-        <aside class="hidden md:block md:w-1/3 md:max-w-60 md:sticky md:top-24 md:self-start md:shrink">
-          ...empty in server HTML, populated client-side (sticky TOC)...
-        </aside>
+  a. "1 in 3 adults in the UAE snore nightly." — INVENTED (not in bank;
+     "UAE" qualifier fabricated). REPLACE with bank line:
+       "An estimated 1 in 4 adults snores most nights." + attribution
+       "Johns Hopkins Medicine" (bank #6, YES-caveat).
+  b. "2.4x more likely to be tired all day when your nose is blocked at
+     night." — MUTATED (the bank's 2.4x is a heart-failure association,
+     CONTEXT-only, must never touch product copy). REPLACE with bank #18:
+       "A blocked nose is linked to fragmented sleep and daytime
+        tiredness." + attribution "Young et al., 1997" — keep "linked to",
+     no multiplier.
+  c. "22% less air needed for the same pace when runners switched to nose
+     breathing." — MATCHES bank #19 (Dallam 2018, YES-caveat) but needs
+     softening + attribution. REPLACE with:
+       "Trained nasal breathers moved up to a fifth less air for the same
+        effort." + attribution "Dallam et al., 2018".
+  Add a small source line/footnote style to the section (match how
+  backed-by-science attributes; that page is the model — it passed audit).
 
-KEEP the section, container, flex row, <article> and its classes, and the <aside> exactly as they
-are. Replace ONLY the inner content of <article class="policy-prose"> with the matching Liquid
-object:
+3.2 Snoring-elimination claims — all banned (two independent meta-analyses
+    are NEGATIVE on general snoring reduction; congestion subgroup only):
+  a. Refills PDP: "That one change can stop snoring, deepen your sleep..."
+     → "That one change can mean less snoring, deeper sleep..."
+  b. Refills PDP: "...so your mouth stays shut and the problem goes away."
+     → "...so your mouth stays shut and the vibration quiets down."
+  c. Homepage heading "Snore no more" → "Less snoring, from night one"
+     (or any reduction-framed line ≤4 words — no elimination verbs).
+  d. Our-story: "to prevent snoring" → "to reduce snoring".
+  e. FAQ "Will it help with my snoring? For most people, yes." → soften
+     opener to: "If your snoring starts with a blocked nose, it can."
+     (keep the rest of that answer as-is for now).
+  f. Backed-by-science: "The research is clear, using the aira strip will
+     provide you with many benefits, from reduced snoring to increased
+     sporting performance." → "The research below explains why nasal
+     breathing matters, from snoring to sporting performance." (fixes the
+     overpromise AND the comma splice; page's own disclaimer stays).
 
-  /pages/refund-policy      ->  {{ shop.refund_policy.body }}
-  /pages/terms-of-service   ->  {{ shop.terms_of_service.body }}
-  /pages/shipping-policy    ->  {{ shop.shipping_policy.body }}
-  /pages/privacy-policy     ->  {{ shop.privacy_policy.body }}
+3.3 Founder testimonials (homepage + kit PDP + refills PDP shared section):
+  REMOVE the "Marie P." and "Momen. O" testimonial cards entirely. Do not
+  substitute anything — an honest empty/smaller section beats fake proof.
+  If the section collapses ugly with fewer cards, adjust the layout, not
+  the truth.
 
-Because .policy-prose styles its descendants (h2, h3, p, ul, li, table, a, strong, em), injected
-CMS HTML inherits the design automatically. Expected result: pixel-identical rendering.
+================================================================================
+4. REFILLS PDP
+================================================================================
+  a. "Replacement adhesive tabs for your aira magnetic nasal strip.
+     Choose a plan or buy one-time." → delete "Choose a plan or buy
+     one-time." (subscriptions removed from the line 24 Jul).
+  b. "30-Day Guarantee" badge → "30-night guarantee" (sentence case).
+  c. H1 / display title "Aira refill tabs" → "aira refill tabs" (and see
+     §6 for the global title-casing rule).
 
-This is safe to do generically because the content carries almost no styling of its own. Tag
-census inside .policy-prose, measured 29 Jul:
+================================================================================
+5. KIT PDP
+================================================================================
+  a. "60 uses for the price of 30." → "60 pairs for the price of 30."
+     (Confirm the arithmetic against the actual offer before shipping the
+     string: offer = kit's 30-pair pouch + free 30-pair pouch.)
+  b. "Limited edition offer, free pouch in every kit while offer lasts"
+     → "Launch offer: free refill pouch in every kit while stocks last".
+     ("every kit" wording is under Tom review vs per-order discount — ship
+     this string now, it may be revised again.)
+  c. "Free $20 refill pouch" → "Free $19.99 refill pouch" (or "Free refill
+     pouch worth $19.99").
+  d. Shipping accordion: "3 to 5 working days within the UAE, 5 to 7
+     everywhere else" + any Kuwait/Bahrain/Qatar/Oman list → UAE and
+     Saudi Arabia only, "3 to 5 business days", nothing else. Align with
+     the live /policies/shipping-policy (it is correct).
+  e. Page <title> "...30 nights of tabs | aira" → "...30 nights of pairs"
+     reads oddly — use "Reusable magnetic nasal strip kit, 30 pairs of
+     tabs | aira" (pairs is the unit; tabs may appear as the noun).
 
-  refund policy      h2, p, a, em                                     0 elements with class/style
-  terms of service   h2, h3, p, a, em, strong, br                     0 elements with class/style
-  shipping policy    h2, h3, p, table/thead/tbody/tr/th/td            1 (div.policy-table-wrap)
-  privacy policy     h2, h3, p, ul, li, strong, em, a, code, table    3 (div.policy-table-wrap)
+================================================================================
+6. GLOBAL DISPLAY/CASING
+================================================================================
+  a. Product display titles render "Aira Kit" / "Aira refill tabs"
+     (cards, cart drawer, collections). Standard: "aira" lowercase always.
+     If titles come from admin product titles, lowercase them at render
+     (CSS/filter) or flag for an admin title change — don't leave mixed.
+  b. Collections page: "Default Title" variant label renders on the kit
+     card — suppress Default Title everywhere (standard Shopify check:
+     variant.title == 'Default Title').
+  c. How-it-works typos: "L4 Exra-large" → "L4 Extra-large";
+     "50-seconds tutorial" → "50-second tutorial".
+  d. How-it-works: "The Strip — Reusable. Comfortable. Lasts forever."
+     → "Reusable. Comfortable. Built to last." (kills the em-dash AND the
+     forever claim contradicting FAQ's "lasts months").
+  e. Our-story stat strip "Made for The GCC" → "Made for better sleep"
+     (or another product-true line — NOT a geography we don't serve).
+  f. Em-dash pass on how-it-works ("30 pairs of tabs — everything you
+     need") → comma or period. (FAQ's 11 em-dashes ride the deferred
+     rewrite, not this brief.)
 
-== TWO IMPLEMENTATION NOTES ==
+================================================================================
+7. INFRASTRUCTURE
+================================================================================
+  a. llms.txt template (templates/llms.txt.liquid):
+     - "Ships across the GCC with a 30-night guarantee." → "Ships to the
+       UAE and Saudi Arabia with a 30-night guarantee."
+     - "Where does aira ship?" answer "Across the GCC, from the UAE and
+       Saudi Arabia..." → "To the UAE and Saudi Arabia, the only countries
+       we deliver to for now."
+     - Three Liquid values rendering BLANK on the live file: "an online
+       store at .", "Prices are shown in .", "Email:". Find the variables
+       ({{ shop.email }} etc.), make them robust: hardcode
+       https://shop-aira.com, USD, contact@shop-aira.com if the shop
+       objects are unreliable. (Store contact email is also being set
+       admin-side — belt and braces.)
+  b. robots.txt.liquid: the live robots.txt has NO "Sitemap:" line —
+     restore Shopify's default sitemap directive:
+       Sitemap: https://shop-aira.com/sitemap.xml
+  c. Favicon: currently assets/aira-logo-only-white.svg — white mark is
+     invisible on light tab bars and SVG favicons are patchy in Safari.
+     Export a navy (or orange-on-navy) PNG 32/180/512 set, wire as
+     favicon + apple-touch-icon.
+  d. 404 page <title> "404 Not Found – Aira" → "Page not found | aira".
+  e. Meta descriptions on the policy page templates (fold into the
+     CMS-migration brief files you already have open):
+     - /pages/shipping-policy meta: "...across the GCC." → "Delivery
+       times, costs and coverage for aira orders to the UAE and Saudi
+       Arabia."
+     - /pages/refund-policy meta: "...across the GCC." → "How returns,
+       refunds and the 30-night guarantee work."
 
-1. div.policy-table-wrap is the ONLY design-bearing element inside the content (horizontal scroll
-   wrapper for tables on mobile). PREFERRED: make `.policy-prose table` responsive on its own
-   (wrap via CSS, e.g. a scroll container on the table itself or display:block; overflow-x:auto)
-   so the CMS only ever holds plain prose and a non-technical editor cannot break the layout.
-   The pasted CMS HTML currently still contains the wrapper div, so the CSS must tolerate BOTH
-   (wrapped and unwrapped tables) without double scrollbars.
+================================================================================
+8. OPEN — Tom's call, do NOT resolve unilaterally
+================================================================================
+  - Contact page shows no email address (form only) and three different
+    reply-time promises exist ("within an hour" FAQ / "same day" +
+    "one business day" contact). Tom picks one promise + whether to
+    display contact@shop-aira.com. Flag in your report, leave as-is.
+  - "free pouch in every kit" vs discount uses-per-order=1 — Tom decision
+    pending; §5b string ships regardless.
 
-2. The <aside> TOC is empty in server HTML, so it is built client-side from the headings inside
-   .policy-prose. That keeps working unchanged. BUT verify nothing in Liquid reads `page.content`
-   to build it. If anything does, repoint it at the policy object.
-
-== SAFEGUARD (important) ==
-
-UPDATE 31 Jul: ALL FOUR native fields are now populated and live. Refund, shipping, privacy and
-terms of service all return 200 at /policies/*. The trade licence hold is resolved (terms shipped
-without the licence number; Tom adds it later). Keep the fallbacks anyway for this release, per
-below, but expect every branch to take the CMS path.
-
-If a policy field is empty in admin, `{{ shop.x_policy.body }}` renders nothing and the page goes
-blank. Wrap each one:
-
-  {% if shop.terms_of_service.body != blank %}
-    {{ shop.terms_of_service.body }}
-  {% else %}
-    ...existing hardcoded content stays as fallback...
-  {% endif %}
-
-Keep the existing hardcoded content in the fallback branch for this release. Once every native
-field is populated and verified live, a follow-up commit strips the fallbacks. Do NOT delete the
-hardcoded copy in this commit.
-
-== ALSO IN SCOPE (small, same area) ==
-
-Footer policy link labels are Title Case, against the sentence-case standard (Copy Standards
-sec. 5, "No Title Case anywhere"):
-  "Refund Policy"    -> "Refund policy"
-  "Shipping Policy"  -> "Shipping policy"
-  "Privacy Policy"   -> "Privacy policy"
-  "Terms of Service" -> "Terms of service"
-Leave the hrefs pointing at /pages/* as they are. URLs do not change in this brief.
-
-== QA ==
-
-- All four pages render identically to before (screenshot diff, desktop + mobile).
-- Sticky TOC still builds and still scroll-spies.
-- Shipping policy table still scrolls horizontally on a 375px viewport, no double scrollbar.
-- Terms of service still shows the hardcoded fallback while its native field is empty.
-- Edit a policy in Settings > Policies, save, hard-refresh the page: change appears with no
-  theme deploy. That is the whole point of the change, so prove it.
-- /policies/refund-policy and /policies/terms-of-service resolve (no longer 404) once populated.
-- Checkout footer shows refund policy, terms of service, shipping and privacy links.
-- Confirm CI gate green and no duplicated policy markup left behind in other templates.
-
-== OUT OF SCOPE ==
-Policy wording (Tom/Cowork own it, in admin). URL changes / redirects. /pages/returns, which uses
-a different template and has NO .policy-prose wrapper. Flag what you find there, do not migrate it
-in this commit.
+================================================================================
+9. ACCEPTANCE
+================================================================================
+  [ ] §1 greps clean (0 variant shipping lines repo-wide)
+  [ ] grep -ri "stop snoring\|prevent snoring\|snore no more\|the problem
+      goes away" rendered strings → 0
+  [ ] grep -ri "1 in 3\|2\.4x\|Marie P\|Momen" sections/templates/locales
+      → 0 rendered hits
+  [ ] grep -ri "choose a plan\|30-day\|30 day" rendered strings → 0
+      (30-night only)
+  [ ] grep -ri "Default Title" rendered output → suppressed
+  [ ] Live checks after deploy: cart drawer line, FAQ shipping + returns
+      answers, refills badge, kit PDP shipping accordion, /llms.txt (no
+      GCC, no blanks), /robots.txt has Sitemap line, favicon visible on a
+      light tab.
+  [ ] Completion report lists §8 items as flagged-not-changed.
+================================================================================
