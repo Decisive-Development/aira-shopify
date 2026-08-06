@@ -22,28 +22,32 @@
   assign seo_description = ''
 
   case request.page_type
+    when '404'
+      assign seo_title = "Page not found | aira"
+      assign seo_description = "That page has moved or never existed. Head back to the aira kit, refill tabs, or the how it works guide."
+
     when 'index'
       assign seo_title = "Reusable magnetic nasal strips | aira"
-      assign seo_description = "Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping in the UAE and Saudi Arabia."
+      assign seo_description = "Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping to the UAE and Saudi Arabia."
 
     when 'product'
       case product.handle
         when 'aira-kit'
-          assign seo_title = "Reusable magnetic nasal strip kit, 30 nights of tabs | aira"
+          assign seo_title = "Reusable magnetic nasal strip kit, 30 pairs of tabs | aira"
           # The sentence "$49.99 with a free refill pack at launch." is tied to
           # the launch offer. When the offer ends, drop that sentence and keep
           # the description under 155 characters.
-          assign seo_description = "One reusable band, four sizes in the box, 30 nights of 3M tabs. $49.99 with a free refill pack at launch. 30-night guarantee, free UAE and Saudi delivery."
+          assign seo_description = "One reusable band, four sizes in the box, 30 nights of 3M tabs. $49.99 with a free refill pack at launch. Free shipping to the UAE and Saudi Arabia."
         when 'aira-refill-tabs'
           assign seo_title = "Nasal strip refill tabs, 30 to 90 pairs | aira"
-          assign seo_description = "Refill tabs for your aira band. 30 fresh pairs a month, 3M medical-grade adhesive, delivered across the GCC. Packs of 30, 60 or 90 pairs, from $19.99."
+          assign seo_description = "Refill tabs for your aira band. 30 fresh pairs a month, 3M medical-grade adhesive. Packs of 30, 60 or 90 pairs, from $19.99. Free shipping to the UAE and Saudi Arabia."
       endcase
 
     when 'collection'
       case collection.handle
         when 'all'
           assign seo_title = "Shop nasal strips and refills | aira"
-          assign seo_description = "Two products, one job: keeping your airway open. Start with the aira kit or top up refill tabs. Free delivery across the UAE and Saudi Arabia."
+          assign seo_description = "Two products, one job: keeping your airway open. Start with the aira kit or top up refill tabs. Free shipping to the UAE and Saudi Arabia."
       endcase
 
     when 'page'
@@ -59,7 +63,7 @@
           assign seo_description = "Seven peer-reviewed studies on nasal dilation, snoring and sleep, and what they do and don't prove. The research behind the aira strip, cited in full."
         when 'contact'
           assign seo_title = "Contact | aira"
-          assign seo_description = "Questions about your order, fit or shipping across the GCC? Message the aira team and we'll sort it."
+          assign seo_description = "Questions about your order, fit or delivery to the UAE and Saudi Arabia? Message the aira team and we'll sort it."
         when 'our-story'
           assign seo_title = "Our story | aira"
           assign seo_description = "Why two founders in the UAE built a reusable magnetic nasal strip, and what we're building next. The people and the thinking behind aira."
@@ -68,13 +72,13 @@
           assign seo_description = "How aira collects, uses and protects your data when you shop with us."
         when 'shipping-policy'
           assign seo_title = "Shipping policy | aira"
-          assign seo_description = "Delivery times, costs and coverage for aira orders across the GCC."
+          assign seo_description = "Delivery times, costs and coverage for aira orders to the UAE and Saudi Arabia."
         when 'terms-of-service'
           assign seo_title = "Terms of service | aira"
           assign seo_description = "The terms that apply when you buy from aira."
         when 'refund-policy'
           assign seo_title = "Refund policy | aira"
-          assign seo_description = "Try aira for 30 nights. If it's not for you, send it back for a refund. How returns, refunds and the guarantee work across the GCC."
+          assign seo_description = "How returns, refunds and the 30-night guarantee work."
         when 'returns'
           assign seo_title = "Returns and the 30-night guarantee | aira"
           assign seo_description = "Not sleeping better after 30 nights? Start a return in a few clicks. Eligibility, steps and refund timelines for UAE and Saudi orders."

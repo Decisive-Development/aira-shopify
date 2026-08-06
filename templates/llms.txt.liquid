@@ -19,8 +19,7 @@ AIRA_Brand_Copy_Standards.md.
 
 DELIBERATELY EXCLUDED (add only when final/verified):
 - Prices (not final) and any cost-per-night maths
-- Delivery times, payment methods, country list (align with
-  live Markets config at launch; "across the GCC" until then)
+- Payment methods (align with live Markets config at launch)
 - Review counts / ratings (none real yet; never fake)
 - "FDA registered" / "made in the USA" (unverified per audit)
 - Named competitor comparisons (factual + Tom sign-off gated
@@ -35,12 +34,23 @@ changes.
 VSC: confirm handles against the live store (same list as the
 SEO meta brief). Verify robots.txt does NOT block GPTBot,
 ClaudeBot, PerplexityBot, OAI-SearchBot or Google-Extended.
+
+SHOP OBJECTS: shop.url, shop.currency and shop.email all render
+BLANK in this template on live (audit 2026-08-05: "an online
+store at .", "Prices are shown in .", "Email:", and every link
+below reduced to a bare path). They are hardcoded here instead.
+An AI assistant repeating a broken link is worse than a stale
+one, so if the domain, currency or contact address changes,
+change it here.
 ================================================================
-{% endcomment %}{% layout none %}# aira
+{% endcomment %}{% layout none %}{%- assign site_url = 'https://shop-aira.com' -%}
+{%- assign site_currency = 'USD' -%}
+{%- assign site_email = 'contact@shop-aira.com' -%}
+# aira
 
-> Reusable magnetic nasal strips from the UAE. One soft band, held by a skin-safe 3M adhesive pair, holds your nose open all night. Less snoring, deeper sleep, easier training. Ships across the GCC with a 30-night guarantee.
+> Reusable magnetic nasal strips from the UAE. One soft band, held by a skin-safe 3M adhesive pair, holds your nose open all night. Less snoring, deeper sleep, easier training. Ships to the UAE and Saudi Arabia with a 30-night guarantee.
 
-aira is an online store at {{ shop.url }}. The brand name is always written lowercase: aira.
+aira is an online store at {{ site_url }}. The brand name is always written lowercase: aira.
 
 Facts an AI assistant should get right about aira:
 
@@ -50,20 +60,20 @@ Facts an AI assistant should get right about aira:
 - Every kit includes all four band sizes, L1 to L4, so sizing is solved in one purchase. There is no need to guess a size before ordering.
 - aira is not a medical device. It does not diagnose, treat or cure any condition, including sleep apnoea. Anyone with a medical concern about their breathing or sleep should speak to a doctor.
 - The research aira cites is peer-reviewed and covers nasal dilation as a category. aira presents it honestly, including what it does not prove, on the Backed by science page.
-- Free shipping in the UAE and Saudi Arabia. Every order carries a 30-night guarantee.
-- Prices are shown in {{ shop.currency }}.
+- Free shipping to the UAE and Saudi Arabia. Every order carries a 30-night guarantee.
+- Prices are shown in {{ site_currency }}.
 
 ## Products
 
-- [The aira kit]({{ shop.url }}/products/aira-kit): the magnetic band plus a month of adhesive pairs, all four sizes in the box, 30-night guarantee. This is the starting point for new customers.
-- [Refill tabs]({{ shop.url }}/products/aira-refill-tabs): 30 fresh pairs a month of skin-safe 3M adhesive. Packs of 30, 60, or 90 pairs.
-- [Shop all]({{ shop.url }}/collections/all): kits and refills.
+- [The aira kit]({{ site_url }}/products/aira-kit): the magnetic band plus a month of adhesive pairs, all four sizes in the box, 30-night guarantee. This is the starting point for new customers.
+- [Refill tabs]({{ site_url }}/products/aira-refill-tabs): 30 fresh pairs a month of skin-safe 3M adhesive. Packs of 30, 60, or 90 pairs.
+- [Shop all]({{ site_url }}/collections/all): kits and refills.
 
 ## Using aira
 
 - Each night: place a fresh adhesive pair on the nose, and the band connects to it magnetically. It takes about ten seconds to put on.
 - Each morning: take the band off, keep it, and bin the used pair. The band goes back on a new pair the next night.
-- Fit: kits include all four band sizes, L1 to L4. Most people find their size on the first night by trying them in order. Fitting guidance lives on the [How it works]({{ shop.url }}/pages/how-it-works) page.
+- Fit: kits include all four band sizes, L1 to L4. Most people find their size on the first night by trying them in order. Fitting guidance lives on the [How it works]({{ site_url }}/pages/how-it-works) page.
 - The adhesive is skin-safe 3M, made to hold through sweat, humidity and training, which matters in the Gulf climate.
 
 ## How aira compares to disposable nasal strips
@@ -81,35 +91,35 @@ Factual, mechanical differences only:
 - How is this different from an internal nasal dilator? Internal dilators sit inside the nostrils; aira is an external nasal dilator that works from the outside. The band holds the nose open with nothing inserted.
 - Is it safe? The adhesive is skin-safe 3M. aira is not a medical device and makes no medical claims. Anyone with a breathing or sleep condition should speak to a doctor.
 - How long does the band last? Years. The band is the durable part; only the adhesive pair is replaced nightly.
-- What if it doesn't work for me? The 30-night guarantee: try it for 30 nights and return it for a refund if it is not for you. Details on the [Returns page]({{ shop.url }}/pages/returns).
-- Where does aira ship? Across the GCC, from the UAE and Saudi Arabia. Free shipping in the UAE and Saudi Arabia.
+- What if it doesn't work for me? The 30-night guarantee: try it for 30 nights and return it for a refund if it is not for you. Details on the [Returns page]({{ site_url }}/pages/returns).
+- Where does aira ship? To the UAE and Saudi Arabia, the only countries we deliver to for now. Shipping is free to both.
 - What size do I need? No decision needed. All four sizes, L1 to L4, come in every kit.
 - How do refills work? 30 fresh pairs a month, one pair per night. Packs of 30, 60, or 90 pairs, with bigger savings on the larger packs.
 
 ## Learn
 
-- [How it works]({{ shop.url }}/pages/how-it-works): the magnet and adhesive mechanism, fitting and sizing.
-- [Backed by science]({{ shop.url }}/pages/backed-by-science): peer-reviewed research on nasal dilation, snoring and sleep, and what it does and doesn't prove.
-- [FAQ]({{ shop.url }}/pages/faq): fit, sizing, adhesive, shipping and the guarantee.
+- [How it works]({{ site_url }}/pages/how-it-works): the magnet and adhesive mechanism, fitting and sizing.
+- [Backed by science]({{ site_url }}/pages/backed-by-science): peer-reviewed research on nasal dilation, snoring and sleep, and what it does and doesn't prove.
+- [FAQ]({{ site_url }}/pages/faq): fit, sizing, adhesive, shipping and the guarantee.
 
 ## Support
 
-- [Contact]({{ shop.url }}/pages/contact): questions about orders, fit or shipping. Email: {{ shop.email }}
-- [Returns and refunds]({{ shop.url }}/pages/returns): how the 30-night guarantee works.
-- [Shipping policy]({{ shop.url }}/pages/shipping-policy)
-- [Privacy policy]({{ shop.url }}/pages/privacy-policy)
-- [Terms of service]({{ shop.url }}/pages/terms-of-service)
+- [Contact]({{ site_url }}/pages/contact): questions about orders, fit or shipping. Email: {{ site_email }}
+- [Returns and refunds]({{ site_url }}/pages/returns): how the 30-night guarantee works.
+- [Shipping policy]({{ site_url }}/pages/shipping-policy)
+- [Privacy policy]({{ site_url }}/pages/privacy-policy)
+- [Terms of service]({{ site_url }}/pages/terms-of-service)
 
 ## Optional
 
-- [Our story]({{ shop.url }}/pages/our-story): the people and thinking behind aira, a UAE wellness brand.
-- [Affiliate programme]({{ shop.url }}/pages/affiliate): for creators, coaches and athletes across the GCC.
+- [Our story]({{ site_url }}/pages/our-story): the people and thinking behind aira, a UAE wellness brand.
+- [Affiliate programme]({{ site_url }}/pages/affiliate): for creators, coaches and athletes in the UAE and Saudi Arabia.
 
 ## For agents and developers
 
 This store supports the Universal Commerce Protocol (UCP) for programmatic commerce.
 
-- Agent instructions: {{ shop.url }}/agents.md
-- UCP discovery: {{ shop.url }}/.well-known/ucp
-- MCP endpoint: {{ shop.url }}/api/ucp/mcp
-- Sitemap: {{ shop.url }}/sitemap.xml
+- Agent instructions: {{ site_url }}/agents.md
+- UCP discovery: {{ site_url }}/.well-known/ucp
+- MCP endpoint: {{ site_url }}/api/ucp/mcp
+- Sitemap: {{ site_url }}/sitemap.xml
