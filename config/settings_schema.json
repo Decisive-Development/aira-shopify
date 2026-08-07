@@ -243,5 +243,19 @@
         "label": "After image (shared)"
       }
     ]
+  },
+  {
+    "name": "Reviews",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Pick the product whose reviews show across the site. Every Reviews section reads this, so the homepage, the product page and the refill page all show the same reviews. A section can still override it with its own product in the section settings."
+      },
+      {
+        "type": "product",
+        "id": "reviews_product",
+        "label": "Product to show reviews for (shared)"
+      }
+    ]
   }
 ]

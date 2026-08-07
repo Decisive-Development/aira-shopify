@@ -1,5 +1,15 @@
 {%- liquid
-  assign review_product = section.settings.product
+  comment
+    Which product's reviews this section shows.
+
+    Reviews used to depend on the picker in this one section, so a page whose
+    picker was left empty rendered an empty carousel while another page showed
+    the reviews. The site-wide setting is what makes them match: set the product
+    once in Theme settings and every page reads the same reviews. The per-section
+    picker stays as an override, and the page's own product is the last resort so
+    a product page is never blank.
+  endcomment
+  assign review_product = section.settings.product | default: settings.reviews_product | default: product
 -%}
 
 <style>
@@ -848,32 +858,48 @@
       </button>
     </div>
 
-    <!-- ── Write a review CTA ── -->
-    <div class="text-center mt-8">
-      {%- liquid
-        assign cr_surface = 'light'
-        if cr_theme == 'dark'
-          assign cr_surface = 'dark'
-        endif
-        assign cr_cta_label = section.settings.cta_text | default: 'Write a review'
-      -%}
-      {%- capture review_cta_attrs -%}onclick="document.querySelector('.jdgm-widget-hidden .jm-button--primary').click()"{%- endcapture -%}
-      {%- render 'cta-button',
-        label: cr_cta_label,
-        variant: 'solid',
-        surface: cr_surface,
-        size: 'lg',
-        element: 'button',
-        attributes: review_cta_attrs,
-        extra_classes: 'reviews-write-cta'
-      -%}
-    </div>
+    {%- comment -%}
+      Write a review CTA. Needs a product to attach the review to, so it is
+      only rendered when one resolves; a button with nothing behind it is worse
+      than no button.
+    {%- endcomment -%}
+    {%- if review_product != blank -%}
+      <div class="text-center mt-8">
+        {%- liquid
+          assign cr_surface = 'light'
+          if cr_theme == 'dark'
+            assign cr_surface = 'dark'
+          endif
+          assign cr_cta_label = section.settings.cta_text | default: 'Write a review'
+        -%}
+        {%- capture review_cta_attrs -%}onclick="var b=this.closest('[data-custom-reviews]').querySelector('[data-jdgm-product-widget] .jm-button--primary');if(b){b.click();}"{%- endcapture -%}
+        {%- render 'cta-button',
+          label: cr_cta_label,
+          variant: 'solid',
+          surface: cr_surface,
+          size: 'lg',
+          element: 'button',
+          attributes: review_cta_attrs,
+          extra_classes: 'reviews-write-cta'
+        -%}
+      </div>
+    {%- endif -%}
 
-    <!-- ── Hidden Judge.me widget (data source) ── -->
+    {%- comment -%}
+      Hidden Judge.me widget. This is both the data source for the carousel and
+      the form the write CTA opens.
+
+      Judge.me's shop-wide all-reviews widget would be the natural source here,
+      but this shop has all_reviews_widget_v2025_enabled set to false, so it
+      renders a spinner that never resolves. Until that is switched on in the
+      Judge.me app, reviews come from one product and every page resolves to the
+      same one (see the top of this file).
+    {%- endcomment -%}
     {%- if review_product != blank -%}
       <div class="jdgm-widget-hidden" style="display:none !important; position:absolute; pointer-events:none;">
-        <div id="judgeme_product_reviews"
+        <div id="judgeme_product_reviews_{{ section.id }}"
              class="jdgm-widget jdgm-review-widget"
+             data-jdgm-product-widget
              data-product-title="{{ review_product.title | escape }}"
              data-id="{{ review_product.id }}"
              data-product-id="{{ review_product.id }}"
@@ -887,9 +913,10 @@
           {%- endif -%}
         </div>
       </div>
-      {%- if review_product.metafields.judgeme.review_widget_data -%}
-        <script>jdgm.data ||= {}; jdgm.data.reviewWidget ||= {}; jdgm.data.reviewWidget[{{ review_product.id }}] = {{ review_product.metafields.judgeme.review_widget_data }}</script>
-      {%- endif -%}
+    {%- endif -%}
+
+    {%- if review_product != blank and review_product.metafields.judgeme.review_widget_data -%}
+      <script>jdgm.data ||= {}; jdgm.data.reviewWidget ||= {}; jdgm.data.reviewWidget[{{ review_product.id }}] = {{ review_product.metafields.judgeme.review_widget_data }}</script>
     {%- endif -%}
 
   </div>
@@ -921,7 +948,9 @@
                 document.querySelector('[data-custom-reviews]');
   if (!section) return;
 
-  var hiddenWidget = section.querySelector('.jdgm-widget-hidden');
+  // Every page resolves to the same product (see the Liquid at the top), so
+  // this one widget is the same review set everywhere.
+  var dataWidget = section.querySelector('[data-jdgm-product-widget]');
   var skeleton = section.querySelector('.reviews-skeleton');
   var carousel = section.querySelector('.reviews-carousel');
   var nav = section.querySelector('.reviews-nav');
@@ -931,7 +960,12 @@
   var prevBtn = section.querySelector('.reviews-arrow--prev');
   var nextBtn = section.querySelector('.reviews-arrow--next');
 
-  if (!hiddenWidget || !track) return;
+  // No widget means no product resolved. Clear the skeleton rather than leaving
+  // it shimmering at an empty section forever.
+  if (!dataWidget || !track) {
+    if (skeleton) skeleton.style.display = 'none';
+    return;
+  }
 
   var storedReviews = [];
 
@@ -951,7 +985,7 @@
 
   function tryExtract() {
     if (hasRun) return;
-    var items = hiddenWidget.querySelectorAll('.jm-review-item');
+    var items = dataWidget.querySelectorAll('.jm-review-item');
     if (items.length > 0) {
       hasRun = true;
       // CRITICAL: Wait 2 seconds for Judge.me to finish populating media
@@ -965,7 +999,7 @@
   var observer = new MutationObserver(function() {
     tryExtract();
   });
-  observer.observe(hiddenWidget, { childList: true, subtree: true });
+  observer.observe(dataWidget, { childList: true, subtree: true });
 
   // Fallback poll every 500ms for up to 15 seconds
   var pollCount = 0;
@@ -987,7 +1021,7 @@
 
     var reviews = extractReviewsFromDOM();
 
-    var nextPageBtn = hiddenWidget.querySelector(
+    var nextPageBtn = dataWidget.querySelector(
       '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
     );
 
@@ -1002,7 +1036,7 @@
 
   // ── Extract reviews from whatever is currently in the DOM ──
   function extractReviewsFromDOM() {
-    var items = hiddenWidget.querySelectorAll('.jm-review-item');
+    var items = dataWidget.querySelectorAll('.jm-review-item');
     var reviews = [];
 
     items.forEach(function(item) {
@@ -1080,7 +1114,7 @@
         return;
       }
 
-      var nextBtn = hiddenWidget.querySelector(
+      var nextBtn = dataWidget.querySelector(
         '.jm-pagination-controls__button[aria-label="Go to next page"]:not(.jm-button--disabled)'
       );
 
@@ -1094,7 +1128,7 @@
       var pageLoaded = false;
       var pageObserver = new MutationObserver(function() {
         if (pageLoaded) return;
-        var items = hiddenWidget.querySelectorAll('.jm-review-item');
+        var items = dataWidget.querySelectorAll('.jm-review-item');
         if (items.length > 0) {
           pageLoaded = true;
           pageObserver.disconnect();
@@ -1117,7 +1151,7 @@
         }
       });
 
-      pageObserver.observe(hiddenWidget, { childList: true, subtree: true });
+      pageObserver.observe(dataWidget, { childList: true, subtree: true });
 
       setTimeout(function() {
         if (!pageLoaded) {
@@ -1148,7 +1182,7 @@
     }
 
     if (!avgRating || totalCount <= allReviews.length) {
-      var summaryHeader = hiddenWidget.querySelector('.jm-review-widget-minimal-header');
+      var summaryHeader = dataWidget.querySelector('.jm-review-widget-minimal-header');
       if (summaryHeader) {
         if (!avgRating) {
           var headerStars = summaryHeader.querySelector('.jm-star-rating');
@@ -1249,7 +1283,7 @@
       var summaryTextClass = section.getAttribute('data-theme') === 'dark' ? 'text-secondary' : 'text-copy';
       summaryEl.innerHTML =
         '<span class="flex gap-0.5">' + starsHTML(Math.round(avgRating)) + '</span>' +
-        '<span class="text-[15px] ' + summaryTextClass + '">' + avgRating.toFixed(1) + ' from ' + totalCount + ' reviews</span>';
+        '<span class="text-[15px] ' + summaryTextClass + '">' + avgRating.toFixed(1) + ' from ' + totalCount + (totalCount === 1 ? ' review' : ' reviews') + '</span>';
     }
 
     // Setup carousel navigation
@@ -1604,7 +1638,8 @@
     {
       "type": "product",
       "id": "product",
-      "label": "Product to show reviews for"
+      "label": "Product to show reviews for",
+      "info": "Leave empty to use the shared product in Theme settings, under Reviews, which keeps every page showing the same reviews. Only set this to make one page differ."
     }
   ],
   "presets": [
