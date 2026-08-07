@@ -1276,6 +1276,12 @@
       background-color: color-mix(in oklab, var(--color-highlight) 10%, transparent);
     }
   }
+  .bg-highlight\/70 {
+    background-color: color-mix(in srgb, #FF4000 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-highlight) 70%, transparent);
+    }
+  }
   .bg-main {
     background-color: var(--color-main);
   }
@@ -1331,12 +1337,6 @@
     background-color: color-mix(in srgb, #9BB7D4 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-tertiary-light) 20%, transparent);
-    }
-  }
-  .bg-tertiary-light\/70 {
-    background-color: color-mix(in srgb, #9BB7D4 70%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-tertiary-light) 70%, transparent);
     }
   }
   .bg-transparent {
@@ -1894,6 +1894,12 @@
   .text-highlight-green {
     color: var(--color-highlight-green);
   }
+  .text-highlight\/85 {
+    color: color-mix(in srgb, #FF4000 85%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-highlight) 85%, transparent);
+    }
+  }
   .text-main {
     color: var(--color-main);
   }
@@ -1986,18 +1992,6 @@
   }
   .text-tertiary-light {
     color: var(--color-tertiary-light);
-  }
-  .text-tertiary-light\/75 {
-    color: color-mix(in srgb, #9BB7D4 75%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-tertiary-light) 75%, transparent);
-    }
-  }
-  .text-tertiary-light\/85 {
-    color: color-mix(in srgb, #9BB7D4 85%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-tertiary-light) 85%, transparent);
-    }
   }
   .text-title {
     color: var(--color-title);

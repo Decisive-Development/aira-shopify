@@ -14,7 +14,7 @@
 	assign hl_text = section.settings.headline
 	assign hl_accent = section.settings.headline_accent
 	if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
-		assign hl_accent_wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>'
+		assign hl_accent_wrapped = '<span class="text-highlight/85">' | append: hl_accent | append: '</span>'
 		assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
 	else
 		assign hl_html = hl_text
@@ -348,7 +348,7 @@
 			"type": "text",
 			"id": "headline_accent",
 			"label": "Headline accent phrase",
-			"info": "Phrase from the headline to highlight in soft light blue (must match exactly).",
+			"info": "Phrase from the headline to highlight in soft orange (must match exactly).",
 			"default": "life-changing breathing"
 		},
 		{

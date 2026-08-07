@@ -16,12 +16,12 @@
 
 	<div class="relative z-10 container-contained">
 
-		{%- comment -%} Headline — wrap accent phrase in editorial blue if set {%- endcomment -%}
+		{%- comment -%} Headline — wrap accent phrase in editorial orange if set {%- endcomment -%}
 		{%- liquid
 			assign hl_text = section.settings.headline
 			assign hl_accent = section.settings.headline_accent
 			if hl_text != blank and hl_accent != blank and hl_text contains hl_accent
-				assign hl_accent_wrapped = '<span class="text-tertiary-light/85">' | append: hl_accent | append: '</span>'
+				assign hl_accent_wrapped = '<span class="text-highlight/85">' | append: hl_accent | append: '</span>'
 				assign hl_html = hl_text | replace: hl_accent, hl_accent_wrapped
 			else
 				assign hl_html = hl_text
@@ -85,7 +85,7 @@
 
 			{%- comment -%} Caption (bottom-right) {%- endcomment -%}
 			{%- if section.settings.photo_caption != blank -%}
-				<div class="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-body text-[9.5px] md:text-[10.5px] uppercase tracking-[0.14em] text-tertiary-light/85">
+				<div class="absolute bottom-4 right-4 md:bottom-6 md:right-6 font-body text-[9.5px] md:text-[10.5px] uppercase tracking-[0.14em] text-highlight">
 					{{ section.settings.photo_caption }}
 				</div>
 			{%- endif -%}
@@ -107,7 +107,7 @@
 				{%- for block in section.blocks -%}
 					{%- if block.type == 'meta' -%}
 						<div {{ block.shopify_attributes }}>
-							<span class="block font-body text-[10.5px] uppercase tracking-[0.16em] text-tertiary-light/75 mb-2">
+							<span class="block font-body text-[10.5px] uppercase tracking-[0.16em] text-highlight mb-2">
 								{{ block.settings.label }}
 							</span>
 							<span class="font-heading text-[16px] font-medium text-secondary tracking-[-0.005em]">
@@ -126,7 +126,7 @@
 							class="flex justify-between items-baseline py-4 border-b border-secondary/12"
 							{{ block.shopify_attributes }}
 						>
-							<span class="font-body text-[10.5px] uppercase tracking-[0.16em] text-tertiary-light/75">
+							<span class="font-body text-[10.5px] uppercase tracking-[0.16em] text-highlight">
 								{{ block.settings.label }}
 							</span>
 							<span class="font-heading text-[15px] font-medium text-secondary tracking-[-0.005em]">
