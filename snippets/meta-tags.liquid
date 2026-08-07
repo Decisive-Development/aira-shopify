@@ -80,10 +80,16 @@
   content="{{ og_description | escape }}"
 >
 
+{%- comment -%}
+  og:image is the absolute https URL, not the http: form Shopify's themes
+  default to. WhatsApp's scraper will not fetch over http, so the http form
+  made it fall back to the small square preview instead of the large card.
+  og:image:secure_url stays for scrapers that look for it specifically.
+{%- endcomment -%}
 {%- if page_image -%}
   <meta
     property="og:image"
-    content="http:{{ page_image | image_url }}"
+    content="https:{{ page_image | image_url }}"
   >
   <meta
     property="og:image:secure_url"
