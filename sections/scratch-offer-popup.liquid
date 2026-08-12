@@ -75,7 +75,25 @@
 	{%- endcomment -%}
 	<hr class="mt-6 border-0 border-t border-main/10">
 
-	<div class="scratch-stage mt-6 rounded-xl border border-border bg-bg" data-scratch-stage>
+	{%- comment -%}
+		Second eyebrow, naming what the sign-up is for. The one at the top labels
+		the pouch; this one labels the coupon, so the reader can tell which offer
+		each half of the card is talking about.
+	{%- endcomment -%}
+	{%- liquid
+		if section.settings.coupon_eyebrow != blank
+			assign stage_gap = 'mt-4'
+		else
+			assign stage_gap = 'mt-6'
+		endif
+	-%}
+	{%- if section.settings.coupon_eyebrow != blank -%}
+		<p class="mt-6 text-center text-xs font-extrabold uppercase tracking-[0.16em] text-highlight">
+			{{ section.settings.coupon_eyebrow }}
+		</p>
+	{%- endif -%}
+
+	<div class="scratch-stage {{ stage_gap }} rounded-xl border border-border bg-bg" data-scratch-stage>
 		<div class="scratch-base p-5" data-scratch-base>
 			{%- comment -%}
 				The form line goes through the snippet's `heading`, not straight into
@@ -482,9 +500,16 @@
 		{
 			"type": "text",
 			"id": "eyebrow",
-			"label": "Eyebrow",
-			"info": "Capitals are only allowed here. Keep it to three words.",
+			"label": "Eyebrow, above the offer",
+			"info": "Capitals are only allowed on the two eyebrows. Keep it to three words.",
 			"default": "LIMITED TIME OFFER"
+		},
+		{
+			"type": "text",
+			"id": "coupon_eyebrow",
+			"label": "Eyebrow, above the sign-up",
+			"info": "Labels the second half of the card. Leave blank to drop it and close the gap.",
+			"default": "YOUR WELCOME COUPON"
 		},
 		{
 			"type": "text",
