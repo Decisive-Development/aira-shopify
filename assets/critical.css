@@ -582,6 +582,9 @@
   .h-11 {
     height: calc(var(--spacing) * 11);
   }
+  .h-12 {
+    height: calc(var(--spacing) * 12);
+  }
   .h-14 {
     height: calc(var(--spacing) * 14);
   }
@@ -737,6 +740,12 @@
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
+  }
+  .max-w-80 {
+    max-width: calc(var(--spacing) * 80);
+  }
+  .max-w-120 {
+    max-width: calc(var(--spacing) * 120);
   }
   .max-w-\[92vw\] {
     max-width: 92vw;
@@ -1237,12 +1246,6 @@
       background-color: color-mix(in oklab, var(--color-black) 45%, transparent);
     }
   }
-  .bg-black\/70 {
-    background-color: color-mix(in srgb, #000 70%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-black) 70%, transparent);
-    }
-  }
   .bg-black\/80 {
     background-color: color-mix(in srgb, #000 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1285,6 +1288,12 @@
   .bg-main {
     background-color: var(--color-main);
   }
+  .bg-main\/6 {
+    background-color: color-mix(in srgb, #0A1A34 6%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-main) 6%, transparent);
+    }
+  }
   .bg-main\/10 {
     background-color: color-mix(in srgb, #0A1A34 10%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1295,6 +1304,12 @@
     background-color: color-mix(in srgb, #0A1A34 15%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-main) 15%, transparent);
+    }
+  }
+  .bg-main\/55 {
+    background-color: color-mix(in srgb, #0A1A34 55%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-main) 55%, transparent);
     }
   }
   .bg-main\/60 {
@@ -1332,6 +1347,12 @@
   }
   .bg-teal {
     background-color: var(--color-teal);
+  }
+  .bg-teal\/12 {
+    background-color: color-mix(in srgb, #50A2A7 12%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-teal) 12%, transparent);
+    }
   }
   .bg-tertiary-light\/20 {
     background-color: color-mix(in srgb, #9BB7D4 20%, transparent);
@@ -1989,6 +2010,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-secondary) 80%, transparent);
     }
+  }
+  .text-teal {
+    color: var(--color-teal);
   }
   .text-tertiary-light {
     color: var(--color-tertiary-light);
@@ -4119,6 +4143,57 @@
     opacity: 1;
     transform: translateY(0);
   }
+  .scratch-stage {
+    position: relative;
+    overflow: hidden;
+  }
+  .scratch-layer {
+    position: absolute;
+    inset: 0;
+  }
+  .scratch-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem;
+    background: var(--color-bg);
+    transition: opacity 0.5s ease;
+  }
+  .scratch-canvas {
+    touch-action: none;
+    cursor: grab;
+    transition: opacity 0.6s ease;
+  }
+  .scratch-canvas:active {
+    cursor: grabbing;
+  }
+  .scratch-panel.is-gone, .scratch-canvas.is-gone {
+    opacity: 0;
+  }
+  .scratch-skip {
+    position: absolute;
+    left: 50%;
+    bottom: 0.75rem;
+    transform: translateX(-50%);
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    background: var(--color-main);
+    transition: opacity 0.2s ease;
+  }
+  .scratch-skip:hover {
+    opacity: 0.85;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scratch-panel, .scratch-canvas, .scratch-skip {
+      transition: none;
+    }
+  }
 }
 @layer base {
   body {
@@ -4180,6 +4255,14 @@
 }
 :root {
   --color-star: #D4A853;
+}
+:root {
+  --foil-edge: var(--color-main);
+  --foil-mid: color-mix(in srgb, #0A1A34 78%, #ffffff);
+  @supports (color: color-mix(in lab, red, red)) {
+    --foil-mid: color-mix(in srgb, var(--color-main) 78%, #ffffff);
+  }
+  --foil-ink: var(--color-secondary);
 }
 @property --tw-translate-x {
   syntax: "*";

@@ -493,6 +493,71 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Scratch offer popup — see sections/scratch-offer-popup.liquid.
+     Three layers in one box: the email form sets the height, the reveal panel
+     and the JS-injected foil canvas stack on top of it. */
+  .scratch-stage {
+    position: relative;
+    overflow: hidden;
+  }
+  .scratch-layer {
+    position: absolute;
+    inset: 0;
+  }
+  .scratch-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.25rem;
+    background: var(--color-bg);
+    transition: opacity 0.5s ease;
+  }
+  .scratch-canvas {
+    /* Without this a finger scratch scrolls the page instead of erasing. */
+    touch-action: none;
+    cursor: grab;
+    transition: opacity 0.6s ease;
+  }
+  .scratch-canvas:active {
+    cursor: grabbing;
+  }
+  .scratch-panel.is-gone,
+  .scratch-canvas.is-gone {
+    opacity: 0;
+  }
+
+  /* The keyboard path onto the same reveal. Sits above the foil, and is the
+     only thing in the stage that must stay reachable while the foil is up.
+     Solid rather than a translucent tint, because it also has to read against
+     the white reveal panel when the foil is switched off or canvas fails. */
+  .scratch-skip {
+    position: absolute;
+    left: 50%;
+    bottom: 0.75rem;
+    transform: translateX(-50%);
+    z-index: 1;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    background: var(--color-main);
+    transition: opacity 0.2s ease;
+  }
+  .scratch-skip:hover {
+    opacity: 0.85;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scratch-panel,
+    .scratch-canvas,
+    .scratch-skip {
+      transition: none;
+    }
+  }
 }
 
 @layer base {
@@ -563,3 +628,13 @@
 
 /* Judge.me star gold — in :root so it always emits (Tailwind @theme tree-shakes unused vars) */
 :root { --color-star: #D4A853; }
+
+/* Scratch foil palette. Same reason as above, plus these are only ever read
+   from JS (canvas fillStyle in sections/scratch-offer-popup.liquid), so no
+   utility class exists to keep them alive. Derived from the navy token so the
+   foil follows a Brand colours change instead of pinning its own hex. */
+:root {
+  --foil-edge: var(--color-main);
+  --foil-mid: color-mix(in srgb, var(--color-main) 78%, #ffffff);
+  --foil-ink: var(--color-secondary);
+}

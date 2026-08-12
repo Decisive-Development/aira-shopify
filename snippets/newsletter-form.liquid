@@ -6,17 +6,24 @@
 	do not hand-roll another one.
 
 	Parameters:
-	  form_id       {String}  unique id for the form                    (required)
-	  tags          {String}  comma list for contact[tags]              (default: 'newsletter')
-	  heading       {String}  optional heading rendered above the field
-	  body_html     {String}  optional supporting copy (may contain markup)
-	  placeholder   {String}  email input placeholder                   (default: 'Your email')
-	  button_label  {String}  submit label                              (default: 'Subscribe')
-	  layout        {String}  'inline' (footer) | 'stacked' (popup)     (default: 'inline')
-	  surface       {String}  'light' | 'dark' — passed to cta-button   (default: 'light')
-	  show_states   {Boolean} render success/error blocks               (default: false)
-	  success_text  {String}  copy for the success block
-	  attributes    {String}  raw extra attributes for the <form>
+	  form_id        {String}  unique id for the form                    (required)
+	  tags           {String}  comma list for contact[tags]              (default: 'newsletter')
+	  heading        {String}  optional heading rendered above the field
+	  heading_classes {String} classes on that heading  (default: the footer's)
+	  body_html      {String}  optional supporting copy (may contain markup)
+	  intro_on_success {Boolean} keep heading/body_html above the success block
+	                             (default: true; false drops them once posted)
+	  placeholder    {String}  email input placeholder                   (default: 'Your email')
+	  button_label   {String}  submit label                              (default: 'Subscribe')
+	  button_variant {String}  cta-button variant for the submit         (default: 'solid')
+	  layout         {String}  'inline' (footer) | 'stacked' (popup)     (default: 'inline')
+	  surface        {String}  'light' | 'dark' — passed to cta-button   (default: 'light')
+	  show_states    {Boolean} render success/error blocks               (default: false)
+	  success_text   {String}  copy for the success block
+	  success_heading {String} optional Satoshi line above success_text
+	  success_icon   {Boolean} teal check circle above the success block (default: false)
+	  success_classes {String} extra classes on the success block (e.g. 'text-center')
+	  attributes     {String}  raw extra attributes for the <form>
 
 	NOTE on `show_states`: `posted_successfully?` and `form.errors` are
 	page-global — every `{% form 'customer' %}` on the page reports them after
@@ -35,6 +42,8 @@
 	assign nf_label       = button_label | default: 'Subscribe'
 	assign nf_layout      = layout       | default: 'inline'
 	assign nf_surface     = surface      | default: 'light'
+	assign nf_variant     = button_variant | default: 'solid'
+	assign nf_heading_classes = heading_classes | default: 'text-base font-semibold mb-2 text-main'
 
 	if nf_layout == 'stacked'
 		assign nf_wrap_classes  = 'flex flex-col gap-3'
@@ -48,18 +57,51 @@
 -%}
 
 {%- form 'customer', id: form_id, class: 'newsletter-form' -%}
+	{%- liquid
+		# `form` only exists inside this tag, so the success test has to live here.
+		# The intro sits above the success block by default, which is what the
+		# footer wants. Pass intro_on_success: false where the intro is a question
+		# the success state has already answered.
+		assign nf_show_intro = true
+		if show_states and form.posted_successfully? and intro_on_success == false
+			assign nf_show_intro = false
+		endif
+	-%}
+
 	<input type="hidden" name="contact[tags]" value="{{ nf_tags }}">
 
-	{%- if heading != blank -%}
-		<p class="text-base font-semibold mb-2 text-main">{{ heading }}</p>
-	{%- endif -%}
+	{%- if nf_show_intro -%}
+		{%- if heading != blank -%}
+			<p class="{{ nf_heading_classes }}">{{ heading }}</p>
+		{%- endif -%}
 
-	{%- if body_html != blank -%}
-		<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ body_html }}</p>
+		{%- if body_html != blank -%}
+			<p class="text-base text-main mb-3" style="max-width: 40ch;">{{ body_html }}</p>
+		{%- endif -%}
 	{%- endif -%}
 
 	{%- if show_states and form.posted_successfully? -%}
-		<div class="rounded-xl bg-bg p-5 text-sm text-copy" data-newsletter-success role="status" tabindex="-1">
+		{%- comment -%}
+			data-modal-autofocus: inside a dialog this is what assets/aira-modal.js
+			focuses on open. role="status" alone will not announce content that was
+			already in the DOM at load, and there is no field left to focus instead.
+		{%- endcomment -%}
+		{%- comment -%}
+			focus:outline-none is safe here and only here: tabindex="-1" keeps this
+			out of the tab order, so no keyboard user can land on it and need a
+			focus ring. Without it the programmatic focus paints a heavy box.
+		{%- endcomment -%}
+		<div class="rounded-xl bg-bg p-5 text-sm text-copy focus:outline-none {{ success_classes }}" data-newsletter-success data-modal-autofocus role="status" tabindex="-1">
+			{%- if success_icon -%}
+				<span class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal/12 text-teal" aria-hidden="true">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="m5 13 4 4L19 7"/>
+					</svg>
+				</span>
+			{%- endif -%}
+			{%- if success_heading != blank -%}
+				<p class="font-heading text-2xl leading-tight text-main mb-2">{{ success_heading }}</p>
+			{%- endif -%}
 			{{ success_text | default: "Check your inbox. Your code is on its way." }}
 		</div>
 	{%- else -%}
@@ -86,7 +128,7 @@
 				label: nf_label,
 				element: 'button',
 				button_type: 'submit',
-				variant: 'solid',
+				variant: nf_variant,
 				surface: nf_surface,
 				extra_classes: nf_btn_classes
 			-%}

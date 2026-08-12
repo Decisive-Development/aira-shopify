@@ -126,5 +126,12 @@
     {% sections 'footer-group' %}
 
     {% render 'cart-drawer' %}
+
+    {% comment %}
+      Site-wide launch offer popup. A static section rather than a snippet so
+      its copy and timing stay editable in the theme editor. The QR insert's
+      10% off popup is a separate section, on the homepage template only.
+    {% endcomment %}
+    {% section 'scratch-offer-popup' %}
   </body>
 </html>

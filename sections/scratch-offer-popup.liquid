@@ -1,0 +1,550 @@
+{%- comment -%}
+	Scratch offer popup — site-wide email capture for the launch offer.
+
+	Rendered from layout/theme.liquid as a static section, so it exists on every
+	page while staying editable in the theme editor. Separate from
+	sections/newsletter-popup.liquid on purpose: that one is the printed QR
+	insert's 10% off resell lever and only opens on demand, this one chases
+	first orders and opens on a timer or exit intent, once per visitor.
+
+	COPY NOTE. The free pouch is a Buy X Get Y automatic discount (see the
+	launch offer block in sections/product.liquid) that applies to any kit
+	order, email or not. Nothing is emailed to claim it. So the copy says the
+	pouch is already in every kit and the email only buys a heads-up. Do not
+	reword this into "we'll send you your gift" — that promises a delivery
+	that does not happen (copy rule 8).
+
+	Three stacked layers inside the card:
+	  base    the shared newsletter-form, present in the served HTML
+	  middle  the reveal panel, hidden until the foil is scratched off
+	  top     the foil canvas, injected by JS only
+
+	So with JS off there is no foil and no panel, just a working form. That is
+	the progressive enhancement requirement met by construction.
+
+	Submission is a native full-page POST, never fetch: newsletter-form wraps
+	{% form 'customer' %}, which is what creates the subscriber Klaviyo syncs,
+	and Shopify injects an invisible captcha into it. The success state comes
+	back on the redirect (?customer_posted=true#offer-popup) and the popup
+	reopens itself showing it, with the scratch layers skipped.
+{%- endcomment -%}
+
+{%- liquid
+	assign delay_ms = section.settings.trigger_delay | times: 1000
+-%}
+
+{%- capture scratch_offer_body -%}
+	<div class="text-center">
+		<img
+			src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
+			alt="aira"
+			class="mx-auto h-4 w-auto"
+			width="77"
+			height="18"
+		>
+
+		{%- if section.settings.eyebrow != blank -%}
+			<p class="mt-5 text-xs font-extrabold uppercase tracking-[0.16em] text-highlight">
+				{{ section.settings.eyebrow }}
+			</p>
+		{%- endif -%}
+
+		{%- if section.settings.heading != blank -%}
+			<h2 id="scratch-offer-heading" class="font-heading font-normal text-3xl leading-tight text-main mt-2">
+				{{ section.settings.heading }}
+			</h2>
+		{%- endif -%}
+
+		{%- if section.settings.subheading != blank -%}
+			<p class="mx-auto mt-3 max-w-80 text-sm leading-relaxed text-copy">
+				{{ section.settings.subheading }}
+			</p>
+		{%- endif -%}
+	</div>
+
+	<div class="scratch-stage mt-6 rounded-xl border border-border bg-bg" data-scratch-stage>
+		<div class="scratch-base p-5" data-scratch-base>
+			{%- comment -%}
+				The form line goes through the snippet's `heading`, not straight into
+				this section, so it clears with the fields on submit. It asks a
+				question the success state has already answered.
+			{%- endcomment -%}
+			{%- render 'newsletter-form',
+				form_id: 'offer-popup',
+				tags: 'newsletter, offer-popup',
+				heading: section.settings.form_line,
+				heading_classes: 'mb-3 text-center text-sm font-bold text-main',
+				intro_on_success: false,
+				placeholder: section.settings.placeholder,
+				button_label: section.settings.button_label,
+				button_variant: 'shop',
+				layout: 'stacked',
+				show_states: true,
+				success_icon: true,
+				success_heading: section.settings.success_heading,
+				success_text: section.settings.success_message,
+				success_classes: 'text-center'
+			-%}
+		</div>
+
+		{%- comment -%}
+			Sits over the form once JS takes over. The `hidden` ATTRIBUTE, not the
+			Tailwind class: a no-JS visitor must never see a panel they cannot
+			dismiss, and aira-modal.js reads [hidden] to keep unreachable nodes
+			out of the focus trap.
+		{%- endcomment -%}
+		<div class="scratch-layer scratch-panel" data-scratch-panel hidden>
+			<p class="font-heading text-2xl leading-tight text-main">{{ section.settings.reveal_text }}</p>
+		</div>
+
+		{%- comment -%}
+			The keyboard and screen-reader path, and the fallback if canvas fails.
+			Renders after the canvas, so it sits above the foil, and goes with it
+			on reveal. data-modal-autofocus makes it the landing point while the
+			foil is up; the success block claims that role when it is present,
+			since it comes first in the DOM.
+		{%- endcomment -%}
+		<button type="button" class="scratch-skip" data-scratch-skip data-modal-autofocus hidden>
+			{{ section.settings.skip_label }}
+		</button>
+	</div>
+{%- endcapture -%}
+
+{%- render 'modal-dialog',
+	id: 'scratch-offer-modal',
+	labelledby: 'scratch-offer-heading',
+	body: scratch_offer_body,
+	card_classes: 'w-full max-w-120 rounded-2xl bg-cream-light p-6 sm:p-8 shadow-2xl'
+-%}
+
+<script>
+(function () {
+	var section = document.querySelector('#shopify-section-{{ section.id }}');
+	if (!section) return;
+
+	var card = section.querySelector('[data-modal-card]');
+	var stage = section.querySelector('[data-scratch-stage]');
+	if (!card || !stage) return;
+
+	var MODAL_ID = 'scratch-offer-modal';
+	var STORAGE_KEY = 'aira.offerPopup.seen';
+
+	var SETTINGS = {
+		delay: {{ delay_ms | default: 5000 }},
+		exitIntent: {% if section.settings.enable_exit_intent %}true{% else %}false{% endif %},
+		scratch: {% if section.settings.enable_scratch %}true{% else %}false{% endif %},
+		perSession: {% if section.settings.frequency == 'session' %}true{% else %}false{% endif %},
+		caption: {{ section.settings.foil_caption | default: '' | json }}
+	};
+
+	/* Brief spec, kept here so the numbers are readable in one place. */
+	var BRUSH_RADIUS = 26;
+	var SAMPLE_EVERY = 6;      /* check clearance every Nth stroke */
+	var SAMPLE_STRIDE = 64;    /* alpha samples: every 64th byte-quad */
+	var CLEARED_AT = 0.45;     /* reveal past 45% erased */
+	var FOIL_FADE = 600;
+	var PANEL_HOLD = 1400;
+	var PANEL_FADE = 500;
+
+	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	var designMode = !!(window.Shopify && window.Shopify.designMode);
+
+	/* assets/aira-modal.js is deferred, so it has not run yet while this inline
+	   script is parsed. Deferred scripts do finish before DOMContentLoaded. */
+	if (window.airaModal) { boot(); }
+	else { document.addEventListener('DOMContentLoaded', boot); }
+
+	function seen() {
+		if (designMode) return false;
+		try {
+			return (SETTINGS.perSession ? sessionStorage : localStorage).getItem(STORAGE_KEY) === '1';
+		} catch (e) { return false; }
+	}
+
+	function markSeen() {
+		if (designMode) return;
+		try {
+			(SETTINGS.perSession ? sessionStorage : localStorage).setItem(STORAGE_KEY, '1');
+		} catch (e) {}
+	}
+
+	function open() {
+		/* Never surface over the cart drawer, the QR popup or a lightbox. */
+		if (window.airaModal.isAnyOpen()) return;
+		markSeen();
+		window.airaModal.open(MODAL_ID);
+	}
+
+	function boot() {
+		if (!window.airaModal) return;
+
+		var params = new URLSearchParams(window.location.search);
+		var hash = window.location.hash;
+		var errorBlock = card.querySelector('[data-newsletter-error]');
+		var successBlock = card.querySelector('[data-newsletter-success]');
+		var ownsPost = hash === '#offer-popup';
+
+		/* Another customer form's error re-render paints the page-global error
+		   into this hidden card too. Stated as "not my anchor" so a further form
+		   on the page cannot reintroduce the bug. */
+		if (!ownsPost && errorBlock) {
+			errorBlock.remove();
+			errorBlock = null;
+		}
+
+		if (ownsPost) {
+			/* Came back from our own post. Show the result, never the foil: the
+			   visitor already scratched it on the previous page load. */
+			markSeen();
+			if (params.get('customer_posted') === 'true' || errorBlock) {
+				window.setTimeout(function () { window.airaModal.open(MODAL_ID); }, 300);
+			}
+			return;
+		}
+
+		/* A footer or QR post leaves this hidden card showing its own success
+		   block (form state is page-global, see snippets/newsletter-form.liquid).
+		   That is a true message but this popup did not earn it, so do not open
+		   on a timer and re-pitch someone who has just subscribed. */
+		if (successBlock) { markSeen(); return; }
+
+		if (seen()) return;
+
+		initScratch();
+
+		if (SETTINGS.delay > 0) { window.setTimeout(open, SETTINGS.delay); }
+
+		if (SETTINGS.exitIntent && window.matchMedia('(pointer: fine)').matches) {
+			document.addEventListener('mouseout', function onExit(e) {
+				if (e.relatedTarget || e.clientY > 0) return;
+				document.removeEventListener('mouseout', onExit);
+				open();
+			});
+		}
+	}
+
+	/* ── Scratch foil ─────────────────────────────────────────────────────
+	   A canvas laid over the form, erased with destination-out arcs. Pointer
+	   Events cover mouse and touch in one path (the theme's older drag, in
+	   sections/before-after-slider.liquid, predates that and binds both
+	   separately). touch-action: none in the CSS stops a finger scratch from
+	   scrolling the page. */
+	/* A custom property's computed value is the token stream as written, so
+	   --foil-mid comes back as a literal color-mix() expression. Canvas throws
+	   on a colour it cannot parse, so let the browser resolve it: an
+	   unsupported value is dropped on assignment and the fallback survives. */
+	function resolveColor(value, fallback) {
+		var probe = document.createElement('span');
+		probe.style.color = fallback;
+		probe.style.color = (value || '').trim();
+		probe.style.display = 'none';
+		document.body.appendChild(probe);
+		var resolved = getComputedStyle(probe).color;
+		probe.remove();
+		return resolved || fallback;
+	}
+
+	function initScratch() {
+		var panel = stage.querySelector('[data-scratch-panel]');
+		var skip = stage.querySelector('[data-scratch-skip]');
+		var base = stage.querySelector('[data-scratch-base]');
+		if (!panel || !skip || !base) return;
+
+		panel.hidden = false;
+		skip.hidden = false;
+		/* inert, not aria-hidden alone: the form is still on screen underneath
+		   the foil, so it must leave both the tab order and the a11y tree until
+		   the reveal finishes. */
+		base.inert = true;
+
+		if (!SETTINGS.scratch) {
+			skip.addEventListener('click', reveal);
+			return;
+		}
+
+		var canvas = document.createElement('canvas');
+		canvas.className = 'scratch-layer scratch-canvas';
+		canvas.setAttribute('aria-hidden', 'true');
+		var ctx = canvas.getContext('2d');
+		if (!ctx) {
+			/* No canvas: the skip button is the whole interaction. */
+			skip.addEventListener('click', reveal);
+			return;
+		}
+		stage.insertBefore(canvas, skip);
+
+		var dpr = Math.min(window.devicePixelRatio || 1, 2);
+		var strokes = 0;
+		var revealed = false;
+		var drawing = false;
+		var last = null;
+
+		function paintFoil() {
+			var rect = stage.getBoundingClientRect();
+			if (!rect.width || !rect.height) return;
+
+			canvas.width = Math.round(rect.width * dpr);
+			canvas.height = Math.round(rect.height * dpr);
+			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+			ctx.globalCompositeOperation = 'source-over';
+			ctx.clearRect(0, 0, rect.width, rect.height);
+
+			/* Gradient stops come from CSS so the foil tracks the navy token
+			   rather than hardcoding it (see :root in critical.source.css). */
+			var styles = getComputedStyle(canvas);
+			var edge = resolveColor(styles.getPropertyValue('--foil-edge'), '#0A1A34');
+			var mid = resolveColor(styles.getPropertyValue('--foil-mid'), '#13294F');
+
+			var grad = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+			grad.addColorStop(0, edge);
+			grad.addColorStop(0.5, mid);
+			grad.addColorStop(1, edge);
+			ctx.fillStyle = grad;
+			ctx.fillRect(0, 0, rect.width, rect.height);
+
+			if (SETTINGS.caption) {
+				ctx.fillStyle = resolveColor(styles.getPropertyValue('--foil-ink'), '#F1EBE1');
+				ctx.font = '800 13px ' + (styles.getPropertyValue('--font-body').trim() || 'sans-serif');
+				ctx.textAlign = 'center';
+				ctx.textBaseline = 'middle';
+				if ('letterSpacing' in ctx) { ctx.letterSpacing = '0.16em'; }
+				ctx.fillText(SETTINGS.caption, rect.width / 2, rect.height / 2);
+			}
+
+			ctx.globalCompositeOperation = 'destination-out';
+		}
+
+		function point(e) {
+			var rect = canvas.getBoundingClientRect();
+			return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+		}
+
+		function erase(from, to) {
+			/* Interpolate, or a fast drag leaves gaps between sampled points. */
+			var dx = to.x - from.x;
+			var dy = to.y - from.y;
+			var steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (BRUSH_RADIUS / 2)));
+			for (var i = 0; i <= steps; i++) {
+				ctx.beginPath();
+				ctx.arc(from.x + (dx * i / steps), from.y + (dy * i / steps), BRUSH_RADIUS, 0, Math.PI * 2);
+				ctx.fill();
+			}
+		}
+
+		function clearedEnough() {
+			var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+			var clear = 0;
+			var total = 0;
+			for (var i = 3; i < data.length; i += 4 * SAMPLE_STRIDE) {
+				total++;
+				if (data[i] < 128) { clear++; }
+			}
+			return total > 0 && (clear / total) > CLEARED_AT;
+		}
+
+		canvas.addEventListener('pointerdown', function (e) {
+			drawing = true;
+			last = point(e);
+			erase(last, last);
+			if (canvas.setPointerCapture) { canvas.setPointerCapture(e.pointerId); }
+			e.preventDefault();
+		});
+
+		canvas.addEventListener('pointermove', function (e) {
+			if (!drawing || revealed) return;
+			var next = point(e);
+			erase(last, next);
+			last = next;
+			strokes++;
+			if (strokes % SAMPLE_EVERY === 0 && clearedEnough()) { reveal(); }
+		});
+
+		function stop(e) {
+			if (!drawing) return;
+			drawing = false;
+			if (canvas.releasePointerCapture && e.pointerId != null) {
+				try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+			}
+			if (!revealed && clearedEnough()) { reveal(); }
+		}
+
+		canvas.addEventListener('pointerup', stop);
+		canvas.addEventListener('pointercancel', stop);
+		canvas.addEventListener('pointerleave', stop);
+
+		skip.addEventListener('click', reveal);
+
+		/* The foil can only be painted once the stage has a size, and the stage
+		   sits in a display:none dialog until it opens — measuring before that
+		   returns 0x0 and leaves a blank 300x150 default canvas. So paint on
+		   open, then again when the webfont lands so the caption is not stuck
+		   in the fallback face the way DOM text would self-correct. Never
+		   repaint over work in progress: it would wipe the visitor's scratch. */
+		function repaint() {
+			if (revealed || strokes) return;
+			paintFoil();
+		}
+
+		var modalEl = stage.closest('[data-modal]');
+		if (modalEl) { modalEl.addEventListener('aira:modal:open', repaint); }
+		if (document.fonts && document.fonts.ready) { document.fonts.ready.then(repaint); }
+		window.addEventListener('resize', repaint);
+		repaint();
+
+		function reveal() {
+			if (revealed) return;
+			revealed = true;
+			canvas.style.pointerEvents = 'none';
+			skip.remove();
+
+			var foilOut = reduceMotion ? 0 : FOIL_FADE;
+			var hold = reduceMotion ? 0 : PANEL_HOLD;
+			var panelOut = reduceMotion ? 0 : PANEL_FADE;
+
+			canvas.classList.add('is-gone');
+			window.setTimeout(function () {
+				canvas.remove();
+				window.setTimeout(function () {
+					panel.classList.add('is-gone');
+					window.setTimeout(function () {
+						panel.remove();
+						base.inert = false;
+						var input = base.querySelector('input[type="email"]');
+						if (input) { input.focus(); }
+					}, panelOut);
+				}, hold);
+			}, foilOut);
+		}
+	}
+})();
+</script>
+
+{% schema %}
+{
+	"name": "Scratch offer popup",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "paragraph",
+			"content": "Site-wide launch offer popup. Opens once per visitor, on a timer or when the pointer leaves the window. The printed QR insert's 10% off popup is the separate Newsletter popup section."
+		},
+		{
+			"type": "text",
+			"id": "eyebrow",
+			"label": "Eyebrow",
+			"info": "Capitals are only allowed here. Keep it to three words.",
+			"default": "LIMITED TIME OFFER"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Free with every kit"
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Supporting copy",
+			"default": "Every kit comes with a free 30-pair refill pouch, worth $19.99."
+		},
+		{
+			"type": "header",
+			"content": "Scratch card"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_scratch",
+			"label": "Show the scratch foil",
+			"info": "Off shows the reveal panel with a button instead. The email form works either way.",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "foil_caption",
+			"label": "Foil caption",
+			"info": "Drawn on the foil itself. Keep it to three words.",
+			"default": "SCRATCH TO REVEAL"
+		},
+		{
+			"type": "text",
+			"id": "reveal_text",
+			"label": "Reveal line",
+			"default": "You've got a mystery gift."
+		},
+		{
+			"type": "text",
+			"id": "skip_label",
+			"label": "Reveal button label",
+			"info": "The keyboard and screen reader path to the same reveal.",
+			"default": "Tap to reveal"
+		},
+		{
+			"type": "header",
+			"content": "Email form"
+		},
+		{
+			"type": "textarea",
+			"id": "form_line",
+			"label": "Form line",
+			"info": "The pouch is automatic on every kit order. Never say it arrives by email.",
+			"default": "Your pouch is already in every kit. Want a nudge before it ends?"
+		},
+		{
+			"type": "text",
+			"id": "placeholder",
+			"label": "Email field placeholder",
+			"default": "Your email"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Button label",
+			"default": "Claim my gift"
+		},
+		{
+			"type": "text",
+			"id": "success_heading",
+			"label": "Success heading",
+			"default": "You're in."
+		},
+		{
+			"type": "textarea",
+			"id": "success_message",
+			"label": "Success message",
+			"default": "Your free 30-pair pouch lands in the box with every kit order. We'll email you before stocks run out."
+		},
+		{
+			"type": "header",
+			"content": "When it opens"
+		},
+		{
+			"type": "range",
+			"id": "trigger_delay",
+			"label": "Delay before opening",
+			"unit": "s",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"default": 5
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_exit_intent",
+			"label": "Also open when the pointer leaves the window",
+			"info": "Desktop only. Phones have no exit intent, so the delay covers them.",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "frequency",
+			"label": "How often a visitor sees it",
+			"options": [
+				{ "value": "once", "label": "Once, ever" },
+				{ "value": "session", "label": "Once per session" }
+			],
+			"default": "once"
+		}
+	]
+}
+{% endschema %}
