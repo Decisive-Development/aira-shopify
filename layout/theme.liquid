@@ -35,6 +35,13 @@
     <script src="{{ 'lenis.min.js' | asset_url }}" defer></script>
     <script src="{{ 'smooth-scroll.js' | asset_url }}" defer></script>
 
+    {% comment %}
+      The one dialog behaviour, shared by the newsletter and scratch offer
+      popups (snippets/modal-dialog.liquid). Deferred, so it runs after parsing
+      but before DOMContentLoaded — which is what the section scripts wait on.
+    {% endcomment %}
+    <script src="{{ 'aira-modal.js' | asset_url }}" defer></script>
+
     {% # Favicon — theme setting if set, otherwise the aira logo mark %}
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">

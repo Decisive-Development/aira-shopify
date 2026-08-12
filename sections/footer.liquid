@@ -167,9 +167,11 @@
 		   footer after first paint. Instant, so reduced-motion is respected.
 		   Covers both the success and the error re-render. */
 		form.scrollIntoView();
-	} else if (window.location.hash === '#newsletter-popup') {
-		/* A popup post's error re-render paints the page-global error into this
-		   form too; drop it so the footer stays a clean, pristine form. */
+	} else {
+		/* Any other customer form's error re-render paints the page-global error
+		   into this form too; drop it so the footer stays a clean, pristine form.
+		   Stated as "not my anchor" rather than naming the popups, so a further
+		   form on the page cannot reintroduce the bug. */
 		var stray = form.querySelector('[data-newsletter-error]');
 		if (stray) { stray.remove(); }
 	}

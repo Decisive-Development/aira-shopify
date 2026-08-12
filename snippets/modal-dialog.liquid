@@ -1,0 +1,56 @@
+{%- comment -%}
+	Modal dialog — the one dialog shell in the theme.
+
+	Markup only. Behaviour (open/close, focus trap, Escape, backdrop dismissal,
+	scroll lock) is `assets/aira-modal.js`, which wires every [data-modal] on
+	the page. A section decides *when* its dialog opens and nothing else:
+
+	  window.airaModal.open('{{ id }}')  /  .close(id)  /  .isAnyOpen()
+
+	and listens for `aira:modal:open` / `aira:modal:close` on the element.
+
+	Parameters:
+	  id                {String}  element id, also the airaModal key       (required)
+	  body              {String}  card contents, pre-captured               (required)
+	  labelledby        {String}  id of the heading that names the dialog
+	  card_classes      {String}  replaces the default card box classes
+	  backdrop_classes  {String}  replaces the default backdrop classes
+	  close_label       {String}  aria-label on the dismiss button   (default: 'Close')
+
+	Liquid snippets cannot take block content, so `body` arrives as a captured
+	string — same approach as `footer_newsletter_body` in sections/footer.liquid.
+
+	`data-lenis-prevent` on the card is required: Lenis otherwise scrolls the
+	page behind an open dialog instead of the dialog's own overflow.
+{%- endcomment -%}
+
+{%- liquid
+	assign md_backdrop = backdrop_classes | default: 'bg-main/55'
+	assign md_card = card_classes | default: 'w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl'
+	assign md_close_label = close_label | default: 'Close'
+-%}
+
+<div
+	id="{{ id }}"
+	class="fixed inset-0 z-100 hidden items-center justify-center overflow-y-auto p-6 {{ md_backdrop }}"
+	data-modal
+	role="dialog"
+	aria-modal="true"
+	aria-hidden="true"
+	{% if labelledby != blank %}aria-labelledby="{{ labelledby }}"{% endif %}
+>
+	<div class="relative {{ md_card }}" data-modal-card data-lenis-prevent>
+		<button
+			type="button"
+			class="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-main/6 text-main transition-opacity hover:opacity-60 cursor-pointer"
+			data-modal-close
+			aria-label="{{ md_close_label }}"
+		>
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+				<path d="M18 6 6 18M6 6l12 12"/>
+			</svg>
+		</button>
+
+		{{ body }}
+	</div>
+</div>

@@ -1,6 +1,11 @@
 {%- comment -%}
 	Newsletter popup — email capture for the printed QR insert.
 
+	Sells the 10% off welcome code and stays deliberately separate from the
+	site-wide scratch offer popup (sections/scratch-offer-popup.liquid): this
+	one is a resell lever aimed at people holding a printed insert, that one
+	chases first orders. Different offer, different trigger, same modal shell.
+
 	Opens ONLY on demand, never on a timer:
 	  1. landing with ?signup=1 or #newsletter in the URL (the insert QR's
 	     admin redirect appends signup=1)
@@ -11,181 +16,122 @@
 	UTM params are analytics-only: never read for logic, never stripped.
 
 	The form is the shared `newsletter-form` snippet, tagged `newsletter, qr-insert`
-	so print-sourced signups are attributable in the Customers admin.
+	so print-sourced signups are attributable in the Customers admin. The shell
+	and all its behaviour come from `modal-dialog` + assets/aira-modal.js.
 {%- endcomment -%}
 
-<div
-	class="fixed inset-0 z-100 hidden items-center justify-center overflow-y-auto bg-black/70 p-4"
-	data-newsletter-modal
-	role="dialog"
-	aria-modal="true"
-	aria-hidden="true"
-	aria-labelledby="newsletter-popup-heading"
->
-	<div
-		class="relative w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl"
-		data-newsletter-card
-		data-lenis-prevent
-	>
-		<button
-			type="button"
-			class="absolute top-3 right-3 flex h-10 w-10 items-center justify-center rounded-full text-main transition-opacity hover:opacity-60 cursor-pointer"
-			data-newsletter-close
-			aria-label="Close"
-		>
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-				<path d="M18 6 6 18M6 6l12 12"/>
-			</svg>
-		</button>
+{%- capture newsletter_popup_body -%}
+	{%- if section.settings.heading != blank -%}
+		<h2 id="newsletter-popup-heading" class="font-heading heading-weight text-main text-2xl sm:text-3xl leading-tight tracking-tight pr-10">
+			{{ section.settings.heading }}
+		</h2>
+	{%- endif -%}
 
-		{%- if section.settings.heading != blank -%}
-			<h2 id="newsletter-popup-heading" class="font-heading heading-weight text-main text-2xl sm:text-3xl leading-tight tracking-tight pr-10">
-				{{ section.settings.heading }}
-			</h2>
-		{%- endif -%}
+	{%- if section.settings.subheading != blank -%}
+		<p class="text-copy text-sm sm:text-base leading-relaxed mt-3">
+			{{ section.settings.subheading }}
+		</p>
+	{%- endif -%}
 
-		{%- if section.settings.subheading != blank -%}
-			<p class="text-copy text-sm sm:text-base leading-relaxed mt-3">
-				{{ section.settings.subheading }}
-			</p>
-		{%- endif -%}
-
-		<div class="mt-6">
-			{%- render 'newsletter-form',
-				form_id: 'newsletter-popup',
-				tags: 'newsletter, qr-insert',
-				placeholder: section.settings.placeholder,
-				button_label: section.settings.button_label,
-				layout: 'stacked',
-				show_states: true,
-				success_text: section.settings.success_message
-			-%}
-		</div>
+	<div class="mt-6">
+		{%- render 'newsletter-form',
+			form_id: 'newsletter-popup',
+			tags: 'newsletter, qr-insert',
+			placeholder: section.settings.placeholder,
+			button_label: section.settings.button_label,
+			layout: 'stacked',
+			show_states: true,
+			success_text: section.settings.success_message
+		-%}
 	</div>
-</div>
+{%- endcapture -%}
+
+{%- render 'modal-dialog',
+	id: 'newsletter-popup-modal',
+	labelledby: 'newsletter-popup-heading',
+	body: newsletter_popup_body
+-%}
 
 <script>
 (function () {
 	var section = document.querySelector('#shopify-section-{{ section.id }}');
 	if (!section) return;
 
-	var modal = section.querySelector('[data-newsletter-modal]');
-	var card  = section.querySelector('[data-newsletter-card]');
-	if (!modal || !card) return;
+	var card = section.querySelector('[data-modal-card]');
+	if (!card) return;
 
-	var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
-	var lastFocus = null;
-	var isOpen = false;
+	var MODAL_ID = 'newsletter-popup-modal';
+	function open() { window.airaModal.open(MODAL_ID); }
 
-	function trapFocus(e) {
-		if (e.key !== 'Tab') return;
-		var items = card.querySelectorAll(FOCUSABLE);
-		if (!items.length) return;
-		var first = items[0];
-		var last  = items[items.length - 1];
-		if (e.shiftKey && document.activeElement === first) {
+	/* assets/aira-modal.js is deferred, so it has not run yet while this inline
+	   script is parsed. Deferred scripts do finish before DOMContentLoaded, so
+	   wait for that when the API is not up yet. */
+	if (window.airaModal) { boot(); }
+	else { document.addEventListener('DOMContentLoaded', boot); }
+
+	function boot() {
+
+		if (!window.airaModal) return;
+
+		/* Manual hook for any future CTA. Kept as its own attribute rather than
+		   the generic [data-modal-open] so existing markup keeps working. */
+		document.addEventListener('click', function (e) {
+			var trigger = e.target.closest('[data-open-newsletter]');
+			if (!trigger) return;
 			e.preventDefault();
-			last.focus();
-		} else if (!e.shiftKey && document.activeElement === last) {
-			e.preventDefault();
-			first.focus();
+			open();
+		});
+
+		/* Shopify redirects a signup post back with ?customer_posted=true plus the
+		   posting form's anchor — the only per-form signal, since form state is
+		   page-global (see snippets/newsletter-form.liquid). #newsletter-popup is
+		   that internal anchor; ?signup=1 and #newsletter are the public triggers.
+		   UTM params are analytics-only and never read here. */
+		var params = new URLSearchParams(window.location.search);
+		var hash = window.location.hash;
+
+		/* Any other customer form's error re-render paints the page-global error
+		   into this hidden card too; drop it so a manual open shows a clean form.
+		   Stated as "not my anchor" rather than naming the other forms, so a
+		   fourth form on the page cannot reintroduce the bug. */
+		if (hash !== '#newsletter-popup') {
+			var stray = card.querySelector('[data-newsletter-error]');
+			if (stray) { stray.remove(); }
 		}
+
+		var shouldOpen = false;
+		if (params.get('customer_posted') === 'true' && hash === '#newsletter-popup') {
+			/* Post succeeded: the card holds the server-rendered success state.
+			   Wins over any trigger params on the same URL. */
+			shouldOpen = true;
+		} else if (hash === '#newsletter-popup' && card.querySelector('[data-newsletter-error]')) {
+			/* This form's post errored and it lives in a hidden modal, so reopen
+			   it to show the inline error. Never fail silently. */
+			shouldOpen = true;
+		} else if (params.get('signup') === '1' || hash === '#newsletter') {
+			shouldOpen = true;
+		}
+
+		if (shouldOpen) {
+			/* Small delay so first paint lands before the popup covers it. */
+			window.setTimeout(open, 300);
+		}
+
+		/* The browser's deferred scroll-to-fragment can land after open() and drop
+		   focus back on the page behind the dialog; pull it back once loaded. */
+		window.addEventListener('load', function () {
+			if (window.airaModal.isOpen(MODAL_ID) && !card.contains(document.activeElement)) {
+				var target = card.querySelector('[data-newsletter-success]') || card.querySelector('input[type="email"]');
+				if (target) { target.focus(); }
+			}
+		});
+
+		/* #newsletter only: the internal #newsletter-popup anchor must not reopen
+		   the popup on unrelated in-page hash changes. */
+		window.addEventListener('hashchange', function () {
+			if (window.location.hash === '#newsletter') { open(); }
+		});
 	}
-
-	function focusCard() {
-		/* On the success state there is no field, so focus the result
-		   (role="status" alone will not announce server-rendered content);
-		   otherwise the email field, so the mobile keyboard opens straight away. */
-		var target = card.querySelector('[data-newsletter-success]') || card.querySelector('input[type="email"]') || card.querySelector('[data-newsletter-close]');
-		if (target) { target.focus(); }
-	}
-
-	function open() {
-		if (isOpen) return;
-		isOpen = true;
-		lastFocus = document.activeElement;
-		modal.classList.remove('hidden');
-		modal.classList.add('flex');
-		modal.setAttribute('aria-hidden', 'false');
-		document.body.style.overflow = 'hidden';
-		document.addEventListener('keydown', trapFocus);
-		focusCard();
-	}
-
-	function close() {
-		if (!isOpen) return;
-		isOpen = false;
-		modal.classList.add('hidden');
-		modal.classList.remove('flex');
-		modal.setAttribute('aria-hidden', 'true');
-		document.body.style.overflow = '';
-		document.removeEventListener('keydown', trapFocus);
-		if (lastFocus && lastFocus.focus) { lastFocus.focus(); }
-	}
-
-	/* Close: X button, backdrop tap, Escape */
-	section.querySelectorAll('[data-newsletter-close]').forEach(function (el) {
-		el.addEventListener('click', close);
-	});
-	modal.addEventListener('click', function (e) {
-		if (e.target === modal) { close(); }
-	});
-	document.addEventListener('keydown', function (e) {
-		if ((e.key === 'Escape' || e.key === 'Esc') && isOpen) { close(); }
-	});
-
-	/* Manual hook for any future CTA */
-	document.addEventListener('click', function (e) {
-		var trigger = e.target.closest('[data-open-newsletter]');
-		if (!trigger) return;
-		e.preventDefault();
-		open();
-	});
-
-	/* Shopify redirects a signup post back with ?customer_posted=true plus the
-	   posting form's anchor — the only per-form signal, since form state is
-	   page-global (see snippets/newsletter-form.liquid). #newsletter-popup is
-	   that internal anchor; ?signup=1 and #newsletter are the public triggers.
-	   UTM params are analytics-only and never read here. */
-	var params = new URLSearchParams(window.location.search);
-	var hash = window.location.hash;
-
-	if (hash === '#footer-newsletter') {
-		/* A footer post's error re-render paints the page-global error into
-		   this hidden card too; drop it so a manual open shows a clean form. */
-		var stray = card.querySelector('[data-newsletter-error]');
-		if (stray) { stray.remove(); }
-	}
-
-	var shouldOpen = false;
-	if (params.get('customer_posted') === 'true' && hash === '#newsletter-popup') {
-		/* Post succeeded: the card holds the server-rendered success state.
-		   Wins over any trigger params on the same URL. */
-		shouldOpen = true;
-	} else if (hash === '#newsletter-popup' && card.querySelector('[data-newsletter-error]')) {
-		/* This form's post errored and it lives in a hidden modal, so reopen
-		   it to show the inline error. Never fail silently. */
-		shouldOpen = true;
-	} else if (params.get('signup') === '1' || hash === '#newsletter') {
-		shouldOpen = true;
-	}
-
-	if (shouldOpen) {
-		/* Small delay so first paint lands before the popup covers it. */
-		window.setTimeout(open, 300);
-	}
-
-	/* The browser's deferred scroll-to-fragment can land after open() and drop
-	   focus back on the page behind the dialog; pull it back once loaded. */
-	window.addEventListener('load', function () {
-		if (isOpen && !card.contains(document.activeElement)) { focusCard(); }
-	});
-
-	/* #newsletter only: the internal #newsletter-popup anchor must not reopen
-	   the popup on unrelated in-page hash changes. */
-	window.addEventListener('hashchange', function () {
-		if (window.location.hash === '#newsletter') { open(); }
-	});
 })();
 </script>
 
@@ -197,7 +143,7 @@
 	"settings": [
 		{
 			"type": "paragraph",
-			"content": "Hidden until someone lands with ?signup=1 or #newsletter in the URL, or clicks an element with data-open-newsletter. It reopens by itself only to show the signup result. It never opens on a plain visit or a timer."
+			"content": "The printed QR insert's 10% off popup. Hidden until someone lands with ?signup=1 or #newsletter in the URL, or clicks an element with data-open-newsletter. It reopens by itself only to show the signup result. It never opens on a plain visit or a timer. The site-wide free pouch popup is a separate section."
 		},
 		{
 			"type": "text",
