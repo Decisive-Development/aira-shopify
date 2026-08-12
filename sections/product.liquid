@@ -354,14 +354,31 @@
 						Informational only. Prices come from the variants, never typed.
 					{%- endcomment -%}
 					{%- if section.settings.offer_enabled -%}
+						{%- comment -%}
+							The accent is highlighted inside the headline rather than sitting on
+							its own line above it, the same `replace` the footer uses on "10% off
+							your first kit". One plain-text setting, so the editor cannot leave
+							two fields disagreeing with each other.
+						{%- endcomment -%}
+						{%- liquid
+							assign offer_headline_html = section.settings.offer_headline
+							assign offer_accent = section.settings.offer_headline_accent
+							if offer_accent != blank
+								assign offer_accent_html = offer_accent | prepend: '<span class="text-highlight">' | append: '</span>'
+								assign offer_headline_html = offer_headline_html | replace: offer_accent, offer_accent_html
+							endif
+						-%}
 						<div class="rounded-xl bg-tertiary-light/20 px-5 py-5 shadow-sm">
-							{%- if section.settings.offer_headline_accent != blank -%}
-								<p class="font-body text-xl font-extrabold leading-snug text-highlight text-center">{{ section.settings.offer_headline_accent }}</p>
+							{%- if section.settings.offer_eyebrow != blank -%}
+								<p class="font-body text-xs font-extrabold uppercase tracking-[0.14em] text-highlight">{{ section.settings.offer_eyebrow }}</p>
 							{%- endif -%}
-							<p class="font-body text-[17px] font-extrabold leading-snug text-main text-center{% if section.settings.offer_headline_accent != blank %} mt-1{% endif %}">{{ section.settings.offer_headline }}</p>
+
+							{%- if section.settings.offer_headline != blank -%}
+								<p class="font-body text-xl font-extrabold leading-snug text-main{% if section.settings.offer_eyebrow != blank %} mt-2{% endif %}">{{ offer_headline_html }}</p>
+							{%- endif -%}
 
 							{%- if section.settings.offer_footnote != blank -%}
-								<p class="mt-3 text-center text-xs text-main/80">{{ section.settings.offer_footnote }}</p>
+								<p class="mt-2 text-sm text-copy">{{ section.settings.offer_footnote }}</p>
 							{%- endif -%}
 						</div>
 					{%- endif -%}
@@ -707,22 +724,30 @@
 		},
 		{
 			"type": "text",
+			"id": "offer_eyebrow",
+			"label": "Offer eyebrow",
+			"info": "Capitals are allowed here and nowhere else on the page. Keep it to three words.",
+			"default": "LIMITED EDITION OFFER"
+		},
+		{
+			"type": "text",
 			"id": "offer_headline",
 			"label": "Offer headline",
-			"default": "60 pairs for the price of 30."
+			"default": "Free refill pouch in every kit. 60 uses for the price of 30."
 		},
 		{
 			"type": "text",
 			"id": "offer_headline_accent",
-			"label": "Offer headline accent",
-			"default": "Free refill pouch included.",
-			"info": "Rendered in the accent colour above the headline."
+			"label": "Highlight this phrase",
+			"default": "Free refill pouch",
+			"info": "Must appear in the headline word for word, or nothing is highlighted. Rendered in the accent colour in place.",
+			"placeholder": "Free refill pouch"
 		},
 		{
 			"type": "text",
 			"id": "offer_footnote",
 			"label": "Footnote",
-			"default": "Launch offer: free refill pouch in every kit while stocks last"
+			"default": "While the offer lasts."
 		},
 		{
 			"type": "text",
