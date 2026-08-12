@@ -48,13 +48,19 @@
       <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
     {%- else -%}
       {% comment %}
-        The navy mark, not the white one: browser tab bars are light by default,
-        so a white mark disappeared into them. Upload a PNG set to the Favicon
-        theme setting to replace this fallback, which also covers Safari's
-        patchy SVG favicon support and gives iOS a real touch icon.
+        The mark on its own navy tile, so it stays visible on a light tab bar
+        and on a dark one. Earlier versions were a bare mark with no ground:
+        the white one vanished into light tabs, the navy one into dark tabs.
+
+        SVG first for anything that takes it, since it stays crisp at any size.
+        The PNGs are not belt and braces: apple-touch-icon ignores SVG outright,
+        so without favicon-180 an iOS home screen bookmark falls back to a
+        screenshot of the page. 512 is there for the Android install prompt.
+        All three are rendered from favicon.svg, so re-export together.
       {% endcomment %}
-      <link rel="icon" type="image/svg+xml" href="{{ 'aira-logo-only-dark.svg' | asset_url }}">
-      <link rel="apple-touch-icon" href="{{ 'aira-logo-only-dark.svg' | asset_url }}">
+      <link rel="icon" type="image/svg+xml" href="{{ 'favicon.svg' | asset_url }}">
+      <link rel="icon" type="image/png" sizes="512x512" href="{{ 'favicon-512.png' | asset_url }}">
+      <link rel="apple-touch-icon" sizes="180x180" href="{{ 'favicon-180.png' | asset_url }}">
     {%- endif -%}
 
     {% # Social, title, etc. %}
