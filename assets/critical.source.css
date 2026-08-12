@@ -528,33 +528,46 @@
     opacity: 0;
   }
 
-  /* The keyboard path onto the same reveal. Sits above the foil, and is the
-     only thing in the stage that must stay reachable while the foil is up.
-     Solid rather than a translucent tint, because it also has to read against
-     the white reveal panel when the foil is switched off or canvas fails. */
+  /* The keyboard path onto the same reveal, hidden the way a skip link is:
+     out of sight for a pointer user, but in the tab order and painted the
+     moment it takes focus. The scratch card is a pointer gesture, so without
+     this the reveal would be mouse-only. */
   .scratch-skip {
     position: absolute;
     left: 50%;
     bottom: 0.75rem;
-    transform: translateX(-50%);
     z-index: 1;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
     cursor: pointer;
     border-radius: 0.5rem;
-    padding: 0.375rem 0.875rem;
     font-size: 0.75rem;
     font-weight: 600;
+    /* Solid, not a translucent tint: it also has to read against the white
+       reveal panel when the foil is off or canvas fails. */
     color: var(--color-secondary);
     background: var(--color-main);
-    transition: opacity 0.2s ease;
   }
-  .scratch-skip:hover {
-    opacity: 0.85;
+  /* Nothing focuses this programmatically, so :focus only ever means keyboard. */
+  .scratch-skip:focus,
+  .scratch-skip:focus-visible {
+    width: auto;
+    height: auto;
+    padding: 0.375rem 0.875rem;
+    overflow: visible;
+    clip-path: none;
+    transform: translateX(-50%);
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .scratch-panel,
-    .scratch-canvas,
-    .scratch-skip {
+    .scratch-canvas {
       transition: none;
     }
   }

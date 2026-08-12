@@ -4175,22 +4175,32 @@
     position: absolute;
     left: 50%;
     bottom: 0.75rem;
-    transform: translateX(-50%);
     z-index: 1;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
     cursor: pointer;
     border-radius: 0.5rem;
-    padding: 0.375rem 0.875rem;
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-secondary);
     background: var(--color-main);
-    transition: opacity 0.2s ease;
   }
-  .scratch-skip:hover {
-    opacity: 0.85;
+  .scratch-skip:focus, .scratch-skip:focus-visible {
+    width: auto;
+    height: auto;
+    padding: 0.375rem 0.875rem;
+    overflow: visible;
+    clip-path: none;
+    transform: translateX(-50%);
+    outline: 2px solid var(--color-highlight);
+    outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .scratch-panel, .scratch-canvas, .scratch-skip {
+    .scratch-panel, .scratch-canvas {
       transition: none;
     }
   }

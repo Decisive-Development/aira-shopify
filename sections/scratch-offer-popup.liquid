@@ -7,12 +7,14 @@
 	insert's 10% off resell lever and only opens on demand, this one chases
 	first orders and opens on a timer or exit intent, once per visitor.
 
-	COPY NOTE. The free pouch is a Buy X Get Y automatic discount (see the
-	launch offer block in sections/product.liquid) that applies to any kit
-	order, email or not. Nothing is emailed to claim it. So the copy says the
-	pouch is already in every kit and the email only buys a heads-up. Do not
-	reword this into "we'll send you your gift" — that promises a delivery
-	that does not happen (copy rule 8).
+	COPY FLAG (2026-08-12, Tom's call). The form line promises the gift arrives
+	by email. The free pouch is actually a Buy X Get Y automatic discount (see
+	the launch offer block in sections/product.liquid) applied at checkout on
+	any kit order, email or not, and the theme sends nothing itself. So the
+	line is only true once a Klaviyo flow exists that emails something. Until
+	then it is an open claims risk against copy rule 8. Raised and shipped on
+	Tom's instruction; resolve before launch, either by wiring the flow or by
+	going back to stating the pouch is automatic.
 
 	Three stacked layers inside the card:
 	  base    the shared newsletter-form, present in the served HTML
@@ -56,8 +58,12 @@
 		{%- endif -%}
 
 		{%- if section.settings.subheading != blank -%}
+			{%- comment -%}
+				Bold the offer itself, the same `replace` trick the footer uses on
+				"10% off your first kit". Keeps the setting plain text for the editor.
+			{%- endcomment -%}
 			<p class="mx-auto mt-3 max-w-80 text-sm leading-relaxed text-copy">
-				{{ section.settings.subheading }}
+				{{- section.settings.subheading | replace: 'free 30-pair refill pouch', '<strong class="font-bold text-main">free 30-pair refill pouch</strong>' -}}
 			</p>
 		{%- endif -%}
 	</div>
@@ -98,13 +104,18 @@
 		</div>
 
 		{%- comment -%}
-			The keyboard and screen-reader path, and the fallback if canvas fails.
-			Renders after the canvas, so it sits above the foil, and goes with it
-			on reveal. data-modal-autofocus makes it the landing point while the
-			foil is up; the success block claims that role when it is present,
-			since it comes first in the DOM.
+			The keyboard and screen-reader path onto the same reveal, and the
+			fallback if canvas fails. Visually hidden until it is focused (see
+			.scratch-skip), so a pointer user only ever sees a clean foil while a
+			keyboard user can still get past it. Removing it outright would leave
+			the reveal mouse-only, which §6 does not allow.
+
+			Renders after the canvas so it sits above the foil, and goes with it
+			on reveal. Deliberately NOT data-modal-autofocus: that would surface
+			it on every open. Focus falls to the close button instead, and Tab
+			reaches this next.
 		{%- endcomment -%}
-		<button type="button" class="scratch-skip" data-scratch-skip data-modal-autofocus hidden>
+		<button type="button" class="scratch-skip" data-scratch-skip hidden>
 			{{ section.settings.skip_label }}
 		</button>
 	</div>
@@ -178,6 +189,15 @@
 	function boot() {
 		if (!window.airaModal) return;
 
+		/* Registered before any early return below, so #offer still works for a
+		   visitor who has already seen the popup. #offer only: the form's own
+		   redirect anchor is #offer-popup and must never be read as a reopen. */
+		window.addEventListener('hashchange', function () {
+			if (window.location.hash !== '#offer') return;
+			if (!card.querySelector('[data-newsletter-success]')) { initScratch(); }
+			window.airaModal.open(MODAL_ID);
+		});
+
 		var params = new URLSearchParams(window.location.search);
 		var hash = window.location.hash;
 		var errorBlock = card.querySelector('[data-newsletter-error]');
@@ -202,15 +222,30 @@
 			return;
 		}
 
-		/* A footer or QR post leaves this hidden card showing its own success
-		   block (form state is page-global, see snippets/newsletter-form.liquid).
-		   That is a true message but this popup did not earn it, so do not open
-		   on a timer and re-pitch someone who has just subscribed. */
-		if (successBlock) { markSeen(); return; }
+		/* Deliberate open: ?offer=1 or #offer, the same shape as the QR popup's
+		   ?signup=1. It skips the frequency gate WITHOUT spending it, so
+		   re-testing needs no private window, and an ad or an email can link
+		   straight to the offer for someone who has already dismissed it. */
+		var forced = params.get('offer') === '1' || hash === '#offer';
 
-		if (seen()) return;
+		if (!forced) {
+			/* A footer or QR post leaves this hidden card showing its own success
+			   block (form state is page-global, see snippets/newsletter-form.liquid).
+			   That is a true message but this popup did not earn it, so do not open
+			   on a timer and re-pitch someone who has just subscribed. */
+			if (successBlock) { markSeen(); return; }
 
-		initScratch();
+			if (seen()) return;
+		}
+
+		/* Nothing to cover when the card is already showing a success block. */
+		if (!successBlock) { initScratch(); }
+
+		if (forced) {
+			/* Small delay so first paint lands before the popup covers it. */
+			window.setTimeout(function () { window.airaModal.open(MODAL_ID); }, 300);
+			return;
+		}
 
 		if (SETTINGS.delay > 0) { window.setTimeout(open, SETTINGS.delay); }
 
@@ -244,11 +279,19 @@
 		return resolved || fallback;
 	}
 
+	var scratchReady = false;
+
 	function initScratch() {
+		/* Reachable twice: once at boot and again from the #offer hashchange.
+		   A second pass would stack another canvas on the stage. */
+		if (scratchReady) return;
+
 		var panel = stage.querySelector('[data-scratch-panel]');
 		var skip = stage.querySelector('[data-scratch-skip]');
 		var base = stage.querySelector('[data-scratch-base]');
 		if (!panel || !skip || !base) return;
+
+		scratchReady = true;
 
 		panel.hidden = false;
 		skip.hidden = false;
@@ -476,8 +519,8 @@
 			"type": "text",
 			"id": "skip_label",
 			"label": "Reveal button label",
-			"info": "The keyboard and screen reader path to the same reveal.",
-			"default": "Tap to reveal"
+			"info": "Not shown on screen. Only keyboard and screen reader users reach this, since they cannot scratch the foil.",
+			"default": "Reveal your gift"
 		},
 		{
 			"type": "header",
@@ -487,8 +530,8 @@
 			"type": "textarea",
 			"id": "form_line",
 			"label": "Form line",
-			"info": "The pouch is automatic on every kit order. Never say it arrives by email.",
-			"default": "Your pouch is already in every kit. Want a nudge before it ends?"
+			"info": "FLAG (2026-08-12): this says the gift arrives by email. The pouch is actually a Buy X Get Y discount added at checkout, so the line is only true once a Klaviyo flow is live that sends something. Confirm with Tom before launch.",
+			"default": "Add your email below, and you'll receive your gift via your inbox!"
 		},
 		{
 			"type": "text",
