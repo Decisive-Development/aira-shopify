@@ -367,8 +367,12 @@
 								assign offer_accent_html = offer_accent | prepend: '<span class="text-highlight">' | append: '</span>'
 								assign offer_headline_html = offer_headline_html | replace: offer_accent, offer_accent_html
 							endif
+							# Line breaks last, so the accent match is never split across one.
+							# The headline is a textarea: where it wraps is a copy decision, so
+							# it belongs to whoever writes it, not to the viewport.
+							assign offer_headline_html = offer_headline_html | newline_to_br
 						-%}
-						<div class="rounded-xl bg-tertiary-light/20 px-5 py-5 shadow-sm">
+						<div class="rounded-xl bg-tertiary-light/20 px-5 py-5 shadow-sm text-center">
 							{%- if section.settings.offer_eyebrow != blank -%}
 								<p class="font-body text-xs font-extrabold uppercase tracking-[0.14em] text-highlight">{{ section.settings.offer_eyebrow }}</p>
 							{%- endif -%}
@@ -730,10 +734,11 @@
 			"default": "LIMITED EDITION OFFER"
 		},
 		{
-			"type": "text",
+			"type": "textarea",
 			"id": "offer_headline",
 			"label": "Offer headline",
-			"default": "Free refill pouch in every kit. 60 uses for the price of 30."
+			"info": "Each new line breaks the headline. Two short lines read better here than one that wraps on its own.",
+			"default": "Free refill pouch in every kit.\n60 uses for the price of 30."
 		},
 		{
 			"type": "text",
