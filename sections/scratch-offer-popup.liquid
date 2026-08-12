@@ -68,6 +68,13 @@
 		{%- endif -%}
 	</div>
 
+	{%- comment -%}
+		Splits the card in two: what the order gets automatically above, what the
+		email is for below. An <hr> rather than a spacer div, because it is a
+		thematic break and reads as one to a screen reader too.
+	{%- endcomment -%}
+	<hr class="mt-6 border-0 border-t border-main/10">
+
 	<div class="scratch-stage mt-6 rounded-xl border border-border bg-bg" data-scratch-stage>
 		<div class="scratch-base p-5" data-scratch-base>
 			{%- comment -%}
@@ -531,7 +538,7 @@
 			"id": "form_line",
 			"label": "Form line",
 			"info": "FLAG (2026-08-12): this says the gift arrives by email. The pouch is actually a Buy X Get Y discount added at checkout, so the line is only true once a Klaviyo flow is live that sends something. Confirm with Tom before launch.",
-			"default": "Add your email below, and you'll receive your gift via your inbox!"
+			"default": "We'll send you your gift in your inbox"
 		},
 		{
 			"type": "text",
