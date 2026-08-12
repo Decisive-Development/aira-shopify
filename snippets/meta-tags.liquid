@@ -95,15 +95,34 @@
      is not an option: the CDN will not upscale a 1080 square into a 1.91:1
      frame, it just returns a smaller square.
 
-  So anything not comfortably landscape falls back to the 1200x630 brand card
-  bundled in assets. Swap that file to change what product links preview as.
+  3. page_image only means "this page's own picture" on a product, article or
+     collection. Everywhere else Shopify hands back the shop's Social sharing
+     image from admin Preferences, which is a global default dressed up as
+     page content. Taking it meant the homepage previewed from an admin upload
+     while every product previewed from the bundled card, so fixing the card
+     silently did nothing to the link people actually share. Page types are
+     checked explicitly so the brand card stays the site-wide default and
+     lives in the repo, like the rest of the SEO meta.
+
+  So anything not comfortably landscape, and anything that is not a page with
+  its own picture, falls back to the 1200x630 brand card bundled in assets.
+  Swap that file to change what links preview as.
+
+  Keep the lockup inside the middle 630x630 of that card with real margin.
+  Clients that draw the small preview crop it to a square, so anything near
+  the left or right edge is cut. Roughly 15% clear on each side works.
 {%- endcomment -%}
 {%- liquid
   assign og_image_url = ''
   assign og_image_width = 0
   assign og_image_height = 0
 
-  if page_image and page_image.width > 0 and page_image.height > 0
+  assign page_owns_image = false
+  if request.page_type == 'product' or request.page_type == 'article' or request.page_type == 'collection'
+    assign page_owns_image = true
+  endif
+
+  if page_owns_image and page_image and page_image.width > 0 and page_image.height > 0
     assign image_ratio = page_image.width | times: 100 | divided_by: page_image.height
     if image_ratio >= 150
       assign og_image_url = page_image | image_url | prepend: 'https:'
