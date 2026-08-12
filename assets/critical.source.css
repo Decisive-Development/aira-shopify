@@ -483,6 +483,60 @@
     background-image: repeating-linear-gradient(135deg, rgba(10, 26, 52, 0.05) 0 12px, rgba(10, 26, 52, 0) 12px 24px);
   }
 
+  /* Pack and plan option cards on the two PDPs.
+     One definition, because product.liquid and product-refill.liquid each
+     carried their own and they had drifted: different tokens for the same
+     colour (--color-primary against --color-main) and a different selected
+     fill, so the refills page read heavier than the kit page for no reason.
+
+     A 1px border, matching the kit page's own card language ("rounded-2xl
+     border border-border"). The selected state used to stack a 1px ring on
+     top of a 2px border, which drew as a 3px slab. The fill carries the
+     selection now and the border only outlines it. */
+  .plan-card {
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .plan-card:not(.is-selected) {
+    border-color: var(--color-border);
+    background-color: var(--color-bg);
+    box-shadow: none;
+  }
+  .plan-card:hover:not(.is-selected) {
+    border-color: var(--color-main);
+    background-color: var(--color-cream-light);
+  }
+  .plan-card.is-selected {
+    border-color: var(--color-main);
+    background-color: var(--color-secondary);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-main) 8%, transparent);
+  }
+
+  /* Perks revealed inside a selected plan card. Nothing renders these today,
+     since selling plans came off the line in July, but the markup is still
+     behind {% if has_selling_plans %} on both PDPs. */
+  .plan-perks {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-top: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.3s ease;
+  }
+  .plan-card.is-selected .plan-perks {
+    max-height: 300px;
+    opacity: 1;
+    margin-top: 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.75rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plan-card,
+    .plan-perks {
+      transition: none;
+    }
+  }
+
   /* Reveal-on-scroll */
   .reveal {
     opacity: 0;

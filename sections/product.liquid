@@ -36,38 +36,9 @@
 -%}
 
 <style>
-	.plan-card {
-		cursor: pointer;
-		transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-	}
-	.plan-card:hover:not(.is-selected) {
-		border-color: var(--color-main);
-		background-color: var(--color-cream-light);
-	}
-	.plan-card.is-selected {
-		border-color: var(--color-main);
-		background-color: var(--color-cream-light);
-		box-shadow: 0 0 0 1px var(--color-main), 0 4px 20px rgba(10,26,52,0.08);
-	}
-	.plan-card:not(.is-selected) {
-		border-color: var(--color-border);
-		background-color: #FFFFFF;
-		box-shadow: none;
-	}
-	.plan-perks {
-		max-height: 0;
-		overflow: hidden;
-		opacity: 0;
-		transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.3s ease;
-		margin-top: 0;
-	}
-	.plan-card.is-selected .plan-perks {
-		max-height: 300px;
-		opacity: 1;
-		margin-top: 0;
-		border-top: 1px solid var(--color-border);
-		padding-top: 0.75rem;
-	}
+	/* .plan-card and .plan-perks live in assets/critical.source.css, shared with
+	   sections/product-refill.liquid. They used to be defined here too and the
+	   two copies drifted. */
 
 	/* Accordion content — bullet lists */
 	.product-info-content ul {
@@ -253,7 +224,7 @@
 						{%- comment -%} ── Subscription card ── {%- endcomment -%}
 						<button
 							type="button"
-							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border-2 border-border bg-bg text-left"
+							class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg text-left"
 							data-plan-btn="subscribe"
 							data-selling-plan-id="{{ sp_first.id }}"
 						>
@@ -336,7 +307,7 @@
 						{%- if has_selling_plans -%}
 							<button
 								type="button"
-								class="plan-card flex flex-col gap-3 p-5 rounded-2xl border-2 border-main bg-bg-soft text-left is-selected"
+								class="plan-card flex flex-col gap-3 p-5 rounded-2xl border border-main bg-bg-soft text-left is-selected"
 								data-plan-btn="onetime"
 							>
 								{{ onetime_card }}
