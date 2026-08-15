@@ -92,11 +92,6 @@
         "faq_3"
       ],
       "settings": {
-        "hero_image": "shopify://shop_images/IMG_4890.jpg",
-        "hero_heading": "",
-        "hero_eyebrow": "",
-        "show_rating": true,
-        "rating_text": "",
         "product_subtitle": "Replacement adhesive tabs for your aira magnetic nasal strip.",
         "plan_badge": "Best value",
         "plan_title": "Monthly refill plan | 30 pairs",
@@ -145,8 +140,8 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes to keep your airway fully open, and non-collapsing. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
-            "image": "shopify://shop_images/aira-cyclist.png",
-            "image_mobile": "shopify://shop_images/stronger-under-load-MOBILE.png",
+            "image": "",
+            "image_mobile": "",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",
@@ -274,7 +269,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
-            "video": "shopify://files/videos/0612(1).mp4",
+            "video": "",
             "heading": "Opens on contact",
             "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }

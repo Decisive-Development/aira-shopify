@@ -89,8 +89,8 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes to keep your airway fully open, and non-collapsing. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
-            "image": "shopify://shop_images/aira-cyclist.png",
-            "image_mobile": "shopify://shop_images/stronger-under-load-MOBILE_0965adae-dc56-4548-b4d6-6643459456da.png",
+            "image": "",
+            "image_mobile": "",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",
@@ -154,7 +154,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
-            "video": "shopify://files/videos/0612(1).mp4",
+            "video": "",
             "heading": "Opens on contact",
             "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
           }
@@ -364,7 +364,7 @@
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
         "guarantee_line": "Free shipping to the UAE and Saudi Arabia.",
-        "image": "shopify://shop_images/product-with-logo-final.jpg",
+        "image": "",
         "image_alt": ""
       }
     },
