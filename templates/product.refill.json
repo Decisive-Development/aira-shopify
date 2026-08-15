@@ -250,14 +250,6 @@
             "description": "Disposable strips lack the strength to hold your nostrils open. The aira strip opens your nose more and holds its shape through the hardest breathing."
           }
         },
-        "slide_4": {
-          "type": "slide",
-          "settings": {
-            "image": "shopify://shop_images/Adhesive-tabs-info-english.png",
-            "heading": "Kind to skin",
-            "description": "Medical-grade, hypoallergenic, latex-free adhesive. A fresh pair of tabs every night, off in the morning without leaving a trace."
-          }
-        },
         "slide_5": {
           "type": "slide",
           "settings": {
@@ -265,21 +257,12 @@
             "heading": "Reusable strip",
             "description": "One strip lasts forever. You replace only the tabs, which will last for up to 16 or more hours if applied correctly."
           }
-        },
-        "slide_1": {
-          "type": "slide",
-          "settings": {
-            "heading": "Opens on contact",
-            "description": "Pick your size, click the strip on, and your nasal passages lift open. Full airflow from the first breath, no adjustment period."
-          }
         }
       },
       "block_order": [
         "slide_2",
         "slide_3",
-        "slide_4",
-        "slide_5",
-        "slide_1"
+        "slide_5"
       ],
       "settings": {
         "eyebrow": "PRODUCT",
