@@ -735,17 +735,17 @@
     background: none !important;
   }
 
-  /* ── Field ordering — Title before Body ── */
-  .jdgm-write-review-modal__form,
-  .jdgm-write-review-modal__form-step {
+  /* ── Field ordering — title before body ──
+     Judge.me's title field group carries no modifier class, so the body group
+     is ordered after it instead. The section JS also moves the title group
+     first in the DOM when the modal opens, so keyboard tab order matches the
+     visual order. */
+  .jdgm-write-review-modal__form-group--review-content {
     display: flex !important;
     flex-direction: column !important;
   }
-  .jdgm-write-review-modal__field-group--title {
-    order: -2 !important;
-  }
-  .jdgm-write-review-modal__field-group--body {
-    order: -1 !important;
+  .jdgm-write-review-modal__form-group--review-content > .jdgm-write-review-modal__field-group--review-body {
+    order: 2 !important;
   }
 
   /* ── Contact Us / Leave Review Links ── */
@@ -1642,6 +1642,82 @@
       endcap.hidden = true;
       vimeoCommand(iframe.contentWindow, 'setCurrentTime', 0);
       vimeoCommand(iframe.contentWindow, 'play');
+    });
+  }
+
+  // ── Write-a-review modal fixes ──
+  // Judge.me's modal script copies the first words of the review body into
+  // the title while the customer types. Keep the title as whatever the
+  // customer typed themselves; an untouched title stays empty. Their sync can
+  // run after this handler in the same event dispatch, so the value is
+  // restored again on the next tick.
+  var userReviewTitle = '';
+
+  function restoreReviewTitle() {
+    var titleInput = document.getElementById('jdgm-review-title-input');
+    if (titleInput && titleInput.value !== userReviewTitle) {
+      titleInput.value = userReviewTitle;
+      // Judge.me keeps its own copy of the title and writes it back into the
+      // field on focus, so correcting the field alone is not enough: a
+      // synthetic input event makes their listeners adopt the restored value.
+      // The tracking listener below ignores it because it is not trusted.
+      var evt;
+      try {
+        evt = new Event('input', { bubbles: true });
+      } catch (err) {
+        evt = document.createEvent('Event');
+        evt.initEvent('input', true, false);
+      }
+      titleInput.dispatchEvent(evt);
+    }
+  }
+
+  document.addEventListener('input', function (e) {
+    var t = e.target;
+    if (!t || !t.id) return;
+    if (t.id === 'jdgm-review-title-input' && e.isTrusted) {
+      userReviewTitle = t.value;
+    } else if (t.id === 'jdgm-review-body-input') {
+      restoreReviewTitle();
+      setTimeout(restoreReviewTitle, 0);
+    }
+  }, true);
+
+  document.addEventListener('keyup', function (e) {
+    if (e.target && e.target.id === 'jdgm-review-body-input') {
+      setTimeout(restoreReviewTitle, 0);
+    }
+  }, true);
+
+  document.addEventListener('focusin', function (e) {
+    if (e.target && e.target.id === 'jdgm-review-title-input') {
+      setTimeout(restoreReviewTitle, 0);
+      setTimeout(restoreReviewTitle, 150);
+    }
+  }, true);
+
+  // Put the title field above the body when the modal opens. Moving the DOM
+  // node (rather than CSS order alone) keeps keyboard tab order in step with
+  // what is on screen; the CSS order rule covers the moment before this runs.
+  var writeCta = section.querySelector('.reviews-write-cta');
+  if (writeCta) {
+    writeCta.addEventListener('click', function () {
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries++;
+        var titleInput = document.getElementById('jdgm-review-title-input');
+        var bodyGroup = document.querySelector('.jdgm-write-review-modal__field-group--review-body');
+        if (titleInput && bodyGroup) {
+          clearInterval(timer);
+          userReviewTitle = titleInput.value;
+          var titleGroup = titleInput.closest('.jdgm-write-review-modal__field-group');
+          if (titleGroup && titleGroup.parentElement === bodyGroup.parentElement) {
+            bodyGroup.parentElement.insertBefore(titleGroup, bodyGroup);
+          }
+        } else if (tries > 20) {
+          clearInterval(timer);
+        }
+      }, 150);
     });
   }
 
