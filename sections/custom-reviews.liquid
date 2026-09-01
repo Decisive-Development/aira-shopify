@@ -969,6 +969,94 @@
 
   var storedReviews = [];
 
+  // Judge.me hosts review videos on Vimeo, but its widget DOM only exposes a
+  // 200x150 centre-cropped vimeocdn thumbnail with no video id anywhere in the
+  // markup. The ids and the full-size photo URLs live in the
+  // review_widget_data metafield JSON this section prints above
+  // (jdgm.data.reviewWidget), so the final review list is matched back to that
+  // JSON. Enrichment runs on the deduplicated list in finishBuild, not during
+  // scraping, so a re-scraped page can never claim an entry a later review
+  // needs.
+  var jmWidgetData = null;
+  try {
+    var jdgmPid = section.getAttribute('data-product-id');
+    if (jdgmPid && window.jdgm && jdgm.data && jdgm.data.reviewWidget && jdgm.data.reviewWidget[jdgmPid]) {
+      jmWidgetData = jdgm.data.reviewWidget[jdgmPid];
+    }
+  } catch (e) {}
+
+  function normText(s) {
+    return (s || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function jmBodyText(jm) {
+    if (typeof jm.body === 'string') return jm.body;
+    if (jm.body_html) {
+      var d = document.createElement('div');
+      d.innerHTML = jm.body_html;
+      return d.textContent || d.innerText || '';
+    }
+    return '';
+  }
+
+  // Titles are optional in Judge.me, so reviewer name plus title alone is
+  // ambiguous for a reviewer with several untitled reviews. Untitled matches
+  // must corroborate on body text; prefix compare, because the widget can
+  // truncate long bodies.
+  function jmMatches(jm, review) {
+    if (normText(jm.reviewer_name) !== normText(review.name)) return false;
+    var jmTitle = normText(jm.title);
+    if (jmTitle !== normText(review.title)) return false;
+    if (jmTitle) return true;
+    var jmBody = normText(jmBodyText(jm));
+    var domBody = normText(review.body);
+    if (!jmBody || !domBody) return false;
+    var n = Math.min(jmBody.length, domBody.length, 80);
+    return n > 0 && jmBody.slice(0, n) === domBody.slice(0, n);
+  }
+
+  function enrichReviews(reviews) {
+    var claimed = {};
+    var jmSources = jmWidgetData ? (jmWidgetData.photo_gallery || []).concat(jmWidgetData.reviews || []) : [];
+
+    reviews.forEach(function(review) {
+      // A vimeocdn thumbnail means a video hosted on Vimeo. Swapping the size
+      // token returns the full frame at native aspect ratio instead of the
+      // default 200x150 centre crop. It only becomes a video below, once a
+      // playable id is found: a play badge over a still image is worse than
+      // showing the frame as a photo.
+      if (review.image && review.image.indexOf('i.vimeocdn.com') > -1) {
+        review.image = review.image.replace(/-d_\d+x\d+/, '-d_720');
+        review.imageSmall = review.image.replace('-d_720', '-d_360');
+      }
+      // Cloudflare Stream thumbnails default to a 640x640 crop; height-only
+      // returns the full frame.
+      if (review.isVideo && review.image && review.image.indexOf('/thumbnails/thumbnail.') > -1) {
+        review.imageSmall = review.image.split('?')[0] + '?time=1s&height=360';
+        review.image = review.image.split('?')[0] + '?time=1s&height=720';
+      }
+
+      var match = null;
+      for (var i = 0; i < jmSources.length; i++) {
+        if (!claimed[jmSources[i].uuid] && jmMatches(jmSources[i], review)) {
+          match = jmSources[i];
+          break;
+        }
+      }
+      if (!match) return;
+      claimed[match.uuid] = true;
+
+      if (match.video_external_ids && match.video_external_ids.length) {
+        review.isVideo = true;
+        review.vimeoId = match.video_external_ids[0];
+      } else if (match.pictures_urls && match.pictures_urls.length) {
+        var pic = match.pictures_urls[0];
+        review.image = pic.huge || pic.original || review.image;
+        review.imageSmall = pic.small || pic.compact || review.imageSmall;
+      }
+    });
+  }
+
   // ── Star SVGs ──
   var filledStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="var(--color-star)" stroke="var(--color-star)" stroke-width="0.5"/></svg>';
   var emptyStar = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="none" stroke="var(--color-star)" stroke-width="0.5"/></svg>';
@@ -1167,6 +1255,8 @@
 
   // ── Final build with all reviews ──
   function finishBuild(allReviews) {
+    enrichReviews(allReviews);
+
     var totalCount = allReviews.length;
     var avgRating = 0;
     var productId = section.getAttribute('data-product-id');
@@ -1309,7 +1399,7 @@
         (review.isVideo ? ' reviews-photo-strip__thumb--video' : '');
       thumb.setAttribute('data-review-index', reviews.indexOf(review));
 
-      thumb.innerHTML = '<img src="' + review.image + '" alt="Review by ' + review.name + '" loading="lazy" />';
+      thumb.innerHTML = '<img src="' + (review.imageSmall || review.image) + '" alt="Review by ' + review.name + '" loading="lazy" />';
 
       stripTrack.appendChild(thumb);
     });
@@ -1486,21 +1576,30 @@
     }
 
     // ── Populate media ──
+    // Neither player autoplays: browsers only permit muted autoplay, so the
+    // video would start silent. Tapping the player's own play button is a
+    // gesture inside the iframe, which is what guarantees sound.
     if (review.isVideo) {
-      var videoId = '';
-      var src = review.image || '';
-      var vMatch = src.match(/videodelivery\.net\/([a-zA-Z0-9_-]+)/);
-      if (vMatch) videoId = vMatch[1];
+      var iframeStyle = 'width:100%; height:100%; border:0; background:transparent;';
 
-      if (!videoId) {
-        var cfMatch = src.match(/cloudflarestream\.com\/([a-zA-Z0-9_-]+)/);
-        if (cfMatch) videoId = cfMatch[1];
-      }
-
-      if (videoId) {
-        mediaEl.innerHTML = '<iframe src="https://iframe.videodelivery.net/' + videoId + '?autoplay=true&muted=false&poster=' + encodeURIComponent(review.image) + '" allow="autoplay; fullscreen" allowfullscreen style="aspect-ratio:9/16; width:100%; height:100%; background:transparent;"></iframe>';
+      if (review.vimeoId) {
+        mediaEl.innerHTML = '<iframe src="https://player.vimeo.com/video/' + encodeURIComponent(review.vimeoId) + '?title=0&byline=0&portrait=0&playsinline=1&dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
       } else {
-        mediaEl.innerHTML = '<img src="' + review.image + '" alt="Video by ' + review.name + '" />';
+        var videoId = '';
+        var src = review.image || '';
+        var vMatch = src.match(/videodelivery\.net\/([a-zA-Z0-9_-]+)/);
+        if (vMatch) videoId = vMatch[1];
+
+        if (!videoId) {
+          var cfMatch = src.match(/cloudflarestream\.com\/([a-zA-Z0-9_-]+)/);
+          if (cfMatch) videoId = cfMatch[1];
+        }
+
+        if (videoId) {
+          mediaEl.innerHTML = '<iframe src="https://iframe.videodelivery.net/' + videoId + '?poster=' + encodeURIComponent(review.image) + '" allow="autoplay; fullscreen" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
+        } else {
+          mediaEl.innerHTML = '<img src="' + review.image + '" alt="Video by ' + review.name + '" />';
+        }
       }
     } else {
       mediaEl.innerHTML = '<img src="' + review.image + '" alt="Photo by ' + review.name + '" />';
