@@ -569,6 +569,13 @@
     transition: opacity 0.5s ease;
   }
   .scratch-canvas {
+    /* A canvas is a replaced element, so inset: 0 alone leaves it at its
+       bitmap size, which the script scales by devicePixelRatio. On a Retina
+       screen that is twice the stage: the foil overflowed and the caption
+       sat clipped in the corner. Size it to the stage explicitly. */
+    display: block;
+    width: 100%;
+    height: 100%;
     /* Without this a finger scratch scrolls the page instead of erasing. */
     touch-action: none;
     cursor: grab;
