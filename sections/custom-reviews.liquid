@@ -261,6 +261,55 @@
     display: block;
   }
 
+  /* ── Video end cap ──
+     Covers the Vimeo player the moment playback finishes, so its share end
+     screen (vimeo.com link, social buttons) is never seen. Shown and hidden
+     by the player's finish/play events. */
+  .review-video-frame {
+    position: relative;
+    width: 100%;
+    align-self: stretch;
+  }
+  .review-video-endcap {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-main);
+  }
+  .review-video-endcap[hidden] {
+    display: none;
+  }
+  .review-video-endcap img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.35;
+  }
+  .review-video-replay {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    background: var(--color-secondary);
+    color: var(--color-main);
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .review-video-replay:hover {
+    background: var(--color-bg);
+  }
+  .review-video-replay svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .review-lightbox__details {
     width: 55%;
     padding: 36px 32px;
@@ -1544,6 +1593,58 @@
   var lightbox = section.querySelector('#review-lightbox') ||
                  document.getElementById('review-lightbox');
 
+  // ── Vimeo end cap wiring ──
+  // The player's share end screen (vimeo.com link, social buttons) cannot be
+  // disabled by the embedding site; only the video owner, Judge.me, controls
+  // it. Instead the player's raw postMessage API reports when playback
+  // finishes, and the end cap covers the player before the share screen can
+  // be seen. No SDK needed: the player answers plain JSON messages.
+  var activeVideoEndcap = null;
+
+  function vimeoCommand(frameWin, method, value) {
+    var msg = { method: method };
+    if (value !== undefined) msg.value = value;
+    frameWin.postMessage(JSON.stringify(msg), 'https://player.vimeo.com');
+  }
+
+  window.addEventListener('message', function (e) {
+    if (e.origin !== 'https://player.vimeo.com' || !activeVideoEndcap) return;
+    if (e.source !== activeVideoEndcap.frameWin) return;
+    var data = e.data;
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data); } catch (err) { return; }
+    }
+    if (!data || !data.event) return;
+    if (data.event === 'ready') {
+      vimeoCommand(activeVideoEndcap.frameWin, 'addEventListener', 'finish');
+      vimeoCommand(activeVideoEndcap.frameWin, 'addEventListener', 'play');
+    } else if (data.event === 'finish') {
+      activeVideoEndcap.endcap.hidden = false;
+    } else if (data.event === 'play') {
+      activeVideoEndcap.endcap.hidden = true;
+    }
+  });
+
+  function bindVideoEndcap(frameEl) {
+    var iframe = frameEl.querySelector('iframe');
+    var endcap = frameEl.querySelector('.review-video-endcap');
+    if (!iframe || !endcap) return;
+    activeVideoEndcap = { frameWin: iframe.contentWindow, endcap: endcap };
+
+    // Subscribe on load as well as on the ready event; whichever happens
+    // second is the one the player honours.
+    iframe.addEventListener('load', function () {
+      vimeoCommand(iframe.contentWindow, 'addEventListener', 'finish');
+      vimeoCommand(iframe.contentWindow, 'addEventListener', 'play');
+    });
+
+    endcap.querySelector('.review-video-replay').addEventListener('click', function () {
+      endcap.hidden = true;
+      vimeoCommand(iframe.contentWindow, 'setCurrentTime', 0);
+      vimeoCommand(iframe.contentWindow, 'play');
+    });
+  }
+
   function openLightbox(review) {
     if (!lightbox) return;
 
@@ -1583,7 +1684,16 @@
       var iframeStyle = 'width:100%; height:100%; border:0; background:transparent;';
 
       if (review.vimeoId) {
-        mediaEl.innerHTML = '<iframe src="https://player.vimeo.com/video/' + encodeURIComponent(review.vimeoId) + '?title=0&byline=0&portrait=0&playsinline=1&dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
+        var replayIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
+        mediaEl.innerHTML =
+          '<div class="review-video-frame">' +
+            '<iframe src="https://player.vimeo.com/video/' + encodeURIComponent(review.vimeoId) + '?title=0&byline=0&portrait=0&playsinline=1&dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>' +
+            '<div class="review-video-endcap" hidden>' +
+              (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
+              '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
+            '</div>' +
+          '</div>';
+        bindVideoEndcap(mediaEl.querySelector('.review-video-frame'));
       } else {
         var videoId = '';
         var src = review.image || '';
