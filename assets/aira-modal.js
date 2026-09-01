@@ -119,7 +119,16 @@
   }
 
   function register(modal) {
-    if (!modal || !modal.id || registry[modal.id]) return registry[modal.id] || null;
+    if (!modal || !modal.id) return null;
+    var held = registry[modal.id];
+    if (held && (held.modal === modal || document.contains(held.modal))) return held;
+    // Same id on a new element: the theme editor re-rendered a section and
+    // dropped the dialog this entry points at. Let go of it properly — left
+    // open, it keeps the body scroll-locked and isAnyOpen() answering true.
+    if (held) {
+      held.close();
+      delete registry[modal.id];
+    }
     var made = instance(modal);
     if (made) { registry[modal.id] = made; }
     return made;

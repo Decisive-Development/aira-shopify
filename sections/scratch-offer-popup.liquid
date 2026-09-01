@@ -5,7 +5,9 @@
 	page while staying editable in the theme editor. Separate from
 	sections/newsletter-popup.liquid on purpose: that one is the printed QR
 	insert's 10% off resell lever and only opens on demand, this one chases
-	first orders and opens on a timer or exit intent, once per visitor.
+	first orders and opens on a timer or exit intent, once per visitor. In
+	the theme editor it opens when the section is selected and closes when it
+	is deselected; the timer and exit intent are storefront only.
 
 	COPY FLAG (2026-08-12, Tom's call). The form line promises the gift arrives
 	by email. The free pouch is actually a Buy X Get Y automatic discount (see
@@ -207,12 +209,23 @@
 	function open() {
 		/* Never surface over the cart drawer, the QR popup or a lightbox. */
 		if (window.airaModal.isAnyOpen()) return;
+		/* Checked again at fire time, not only at boot. A page restored from
+		   the back-forward cache resumes its pending timer, and a second tab
+		   runs its own; either would re-show a popup another page has already
+		   spent. Safari restores far more pages than Chrome, so this showed up
+		   on a Mac first. */
+		if (seen()) return;
 		markSeen();
 		window.airaModal.open(MODAL_ID);
 	}
 
 	function boot() {
 		if (!window.airaModal) return;
+
+		/* A no-op on first load. In the theme editor a settings change
+		   re-renders this section and runs this script again, and the dialog
+		   the registry holds is by then a detached node: hand it the new one. */
+		window.airaModal.register(section.querySelector('[data-modal]'));
 
 		/* Registered before any early return below, so #offer still works for a
 		   visitor who has already seen the popup. #offer only: the form's own
@@ -269,6 +282,20 @@
 		if (forced) {
 			/* Small delay so first paint lands before the popup covers it. */
 			window.setTimeout(function () { window.airaModal.open(MODAL_ID); }, 300);
+			return;
+		}
+
+		if (designMode) {
+			/* Theme editor: the frequency gate is off here (see seen), so the
+			   timer would bring the popup back on every page the merchant
+			   previews. Open it when they select this section instead, and
+			   close it when they move on. */
+			document.addEventListener('shopify:section:select', function (e) {
+				if (e.detail && e.detail.sectionId === '{{ section.id }}') { window.airaModal.open(MODAL_ID); }
+			});
+			document.addEventListener('shopify:section:deselect', function (e) {
+				if (e.detail && e.detail.sectionId === '{{ section.id }}') { window.airaModal.close(MODAL_ID); }
+			});
 			return;
 		}
 
