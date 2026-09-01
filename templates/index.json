@@ -59,8 +59,8 @@
           "settings": {
             "heading": "Less snoring, from night one",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the vibration quiets down. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
-            "image": "shopify://shop_images/snore-no-more-arabic.jpg",
-            "image_mobile": "shopify://shop_images/snore-no-more-arabic.jpg",
+            "image": "shopify://shop_images/2_44b4a8cb-255e-4659-8bd4-7d125e9f9b1f.png",
+            "image_mobile": "shopify://shop_images/2_44b4a8cb-255e-4659-8bd4-7d125e9f9b1f.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -89,8 +89,8 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes to keep your airway fully open, from warm-up to final rep. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
-            "image": "",
-            "image_mobile": "",
+            "image": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
+            "image_mobile": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",
@@ -119,6 +119,14 @@
     "benefits_slider": {
       "type": "benefits-slider",
       "blocks": {
+        "slide_hU8BnN": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/all_night_hold.png",
+            "heading": "Benefit title",
+            "description": "A short description of this benefit."
+          }
+        },
         "slide_2": {
           "type": "slide",
           "settings": {
@@ -145,6 +153,7 @@
         }
       },
       "block_order": [
+        "slide_hU8BnN",
         "slide_2",
         "slide_3",
         "slide_5"
@@ -346,7 +355,6 @@
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
         "guarantee_line": "Free shipping to the UAE and Saudi Arabia.",
-        "image": "",
         "image_alt": ""
       }
     },

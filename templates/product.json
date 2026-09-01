@@ -104,6 +104,14 @@
         "plan_save_text": "Save 20% on refills",
         "plan_compare_price": "",
         "plan_price": "",
+        "offer_enabled": true,
+        "offer_eyebrow": "LIMITED EDITION OFFER",
+        "offer_headline": "Free refill pouch in every kit.\n60 uses for the price of 30.",
+        "offer_headline_accent": "Free refill pouch",
+        "offer_footnote": "While the offer lasts.",
+        "sticky_offer_text": "+ Free $19.99 refill pouch",
+        "gift_product": "",
+        "gift_variant_title": "30",
         "refill_link_label": "Already have a strip? Get refills",
         "refill_link_url": "/products/aira-refill-tabs"
       }
@@ -167,8 +175,8 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes to keep your airway fully open, from warm-up to final rep. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
-            "image": "",
-            "image_mobile": "",
+            "image": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
+            "image_mobile": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",

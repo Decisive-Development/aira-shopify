@@ -92,6 +92,7 @@
         "faq_3"
       ],
       "settings": {
+        "pretitle_badge": "30-night guarantee",
         "product_subtitle": "Replacement adhesive tabs for your aira magnetic nasal strip.",
         "plan_badge": "Best value",
         "plan_title": "Monthly refill plan | 30 pairs",
@@ -140,8 +141,8 @@
           "settings": {
             "heading": "Stronger under load",
             "body": "<p>Built for athletes to keep your airway fully open, from warm-up to final rep. Now you hold a deep, steady breath while you work: smoother rhythm, more oxygen from every breath, no gasping at the peak.</p>",
-            "image": "",
-            "image_mobile": "",
+            "image": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
+            "image_mobile": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
             "stat_number": "22%",
             "stat_finding": "less air needed for the same pace when runners switched to nose breathing.",
             "stat_source": "DALLAM ET AL., 2018",
@@ -322,13 +323,6 @@
           "settings": {
             "question": "Do I need to replace the magnetic strip too?",
             "answer": "<p>No. The magnetic strip is reusable and lasts for months. You only need to replace the adhesive tabs.</p>"
-          }
-        },
-        "faq_4": {
-          "type": "question",
-          "settings": {
-            "question": "Can I change or cancel my refill subscription?",
-            "answer": "<p>Yes. You can pause, skip, or cancel your subscription at any time from your account dashboard. No commitments.</p>"
           }
         },
         "faq_5": {
