@@ -19,6 +19,26 @@
           {{ 'cart.remove' | t | link_to: item.url_to_remove }}
         </td>
         <td>
+          <p>{{ item.final_line_price | money }}</p>
+          {%- comment -%}
+            Discount labels come off the line's allocations, mirroring the cart
+            drawer: a zeroed gift line shows only the title of the offer that
+            freed it; a paid line shows each discount with its amount.
+          {%- endcomment -%}
+          {%- if item.final_line_price == 0 and item.line_level_total_discount > 0 -%}
+            {%- assign gift_alloc = item.line_level_discount_allocations | sort: 'amount' | last -%}
+            {%- if gift_alloc.amount > 0 -%}
+              <p>{{ gift_alloc.discount_application.title }}</p>
+            {%- endif -%}
+          {%- else -%}
+            {%- for alloc in item.line_level_discount_allocations -%}
+              {%- if alloc.amount > 0 -%}
+                <p>{{ alloc.discount_application.title }} −{{ alloc.amount | money }}</p>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </td>
+        <td>
           <input type="text" name="updates[]" value="{{ item.quantity }}">
           <input type="submit" value="{{ 'cart.update' | t }}">
         </td>

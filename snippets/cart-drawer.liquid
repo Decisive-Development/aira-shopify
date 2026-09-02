@@ -396,15 +396,33 @@
 			if (item.variant_title) {
 				props = '<p class="text-copy text-sm mt-0.5">' + escHtml(item.variant_title) + '</p>';
 			}
-			/* Discount titles, so a gifted line reads as the offer that zeroed it.
-			   Only allocations that actually discount this line: the Buy X Get Y
-			   discount also attaches a zero-amount allocation to the kit line. */
-			var discounts = (item.line_level_discount_allocations || []).filter(function (alloc) {
+			/* Discount labels, always read off the line's allocations, never static
+			   copy. Only allocations that actually discount this line: the Buy X
+			   Get Y discount also attaches a zero-amount allocation to the kit line.
+			   A zeroed gift line reads as the one offer that freed it (title only,
+			   largest allocation, so a stray allocation can never relabel the gift).
+			   A paid line shows each discount with the amount it took off, e.g.
+			   "Refill pack saving −$3.99", summed per title in case Shopify ever
+			   spreads one discount over several allocations of the line. */
+			var allocs = (item.line_level_discount_allocations || []).filter(function (alloc) {
 				return alloc.amount > 0;
-			}).map(function (alloc) {
-				var title = alloc.discount_application ? alloc.discount_application.title : alloc.title;
-				return title ? '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(title) + '</p>' : '';
-			}).join('');
+			});
+			var discounts = '';
+			if (isFreeGift(item)) {
+				var top = allocs.sort(function (a, b) { return b.amount - a.amount; })[0];
+				var giftTitle = top && (top.discount_application ? top.discount_application.title : top.title);
+				discounts = giftTitle ? '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(giftTitle) + '</p>' : '';
+			} else {
+				var byTitle = {};
+				allocs.forEach(function (alloc) {
+					var title = alloc.discount_application ? alloc.discount_application.title : alloc.title;
+					if (!title) return;
+					byTitle[title] = (byTitle[title] || 0) + alloc.amount;
+				});
+				discounts = Object.keys(byTitle).map(function (title) {
+					return '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(title) + ' −' + formatMoney(byTitle[title]) + '</p>';
+				}).join('');
+			}
 			/* A fully free gift line has no stepper: its quantity follows the kit,
 			   and remove stays. Paying for more refills happens on the product page,
 			   and a paid line reprices above zero, so the stepper returns there. */
