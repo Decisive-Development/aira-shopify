@@ -1,12 +1,18 @@
 {%- liquid
-	assign current_variant = product.selected_or_first_available_variant | default: product.variants.first
-	assign main_image = current_variant.featured_image | default: product.featured_image
+	# One physical SKU: pack choice is quantity of the 30-pair pouch, never a
+	# variant. Resolved by SKU so legacy variants can linger in the admin
+	# without ever being sellable here.
+	assign pouch_variant = product.variants | where: 'sku', 'AIRA-REF30' | first
+	if pouch_variant == blank
+		assign pouch_variant = product.selected_or_first_available_variant | default: product.variants.first
+	endif
+	assign main_image = pouch_variant.featured_image | default: product.featured_image
 	assign has_selling_plans = false
 	if product.selling_plan_groups.size > 0
 		assign has_selling_plans = true
 		assign sp_group = product.selling_plan_groups.first
 		assign sp_first = sp_group.selling_plans.first
-		assign sp_allocation = current_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first
+		assign sp_allocation = pouch_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first
 	endif
 -%}
 
@@ -78,7 +84,7 @@
 							if image.variants.size > 0
 								assign keep = false
 								for image_variant in image.variants
-									if image_variant.id == current_variant.id
+									if image_variant.id == pouch_variant.id
 										assign keep = true
 										break
 									endif
@@ -141,20 +147,20 @@
 				</div>
 
 				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5" data-refill-form>
-					<input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
-					<input type="hidden" name="quantity" value="1">
+					<input type="hidden" name="id" value="{{ pouch_variant.id }}" data-variant-id>
+					<input type="hidden" name="quantity" value="1" data-quantity-input>
 					{%- if has_selling_plans -%}
 						<input type="hidden" name="selling_plan" value="" data-selling-plan-input>
 					{%- endif -%}
 
 					{%- comment -%}
-						Without a selling plan the buy box is pack sizes only, so the
-						label follows the product option instead of saying "Plan".
+						The single-variant product's option name is Shopify's phantom
+						"Title", so the label is fixed rather than read off the product.
 					{%- endcomment -%}
 					{%- if has_selling_plans -%}
 						<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
 					{%- else -%}
-						<p class="text-xs font-bold uppercase tracking-widest text-copy">{{ product.options.first | default: 'Pack size' }}</p>
+						<p class="text-xs font-bold uppercase tracking-widest text-copy">Pack size</p>
 					{%- endif -%}
 
 					<div class="flex flex-col gap-3">
@@ -165,6 +171,8 @@
 							type="button"
 							class="plan-card relative flex flex-col gap-3 p-4 rounded-2xl border text-left"
 							data-plan-btn="subscribe"
+							data-selling-plan="{% if sp_allocation %}{{ sp_first.id }}{% endif %}"
+							data-pack-price="{%- if sp_allocation -%}{{ sp_allocation.per_delivery_price | money }}{%- else -%}{{ section.settings.plan_price | default: pouch_variant.price | money }}{%- endif -%}"
 						>
 							{%- if section.settings.plan_badge != blank -%}
 								<span class="absolute -top-3 left-4 px-3 py-1 rounded-full bg-main text-white text-xs font-bold">
@@ -182,7 +190,7 @@
 									{%- if has_selling_plans and sp_allocation -%}
 										{{ sp_allocation.per_delivery_price | money }}
 									{%- else -%}
-										{{ section.settings.plan_price | default: current_variant.price | money }}
+										{{ section.settings.plan_price | default: pouch_variant.price | money }}
 									{%- endif -%}
 								</span>
 							</div>
@@ -200,44 +208,51 @@
 						</button>
 						{%- endif -%}
 
-						{%- comment -%} ── Variant cards (one-time) ── {%- endcomment -%}
-						{%- for variant in product.variants -%}
+						{%- comment -%}
+							── Pack size chips (one-time) ──
+							Every chip is a QUANTITY of the one 30-pair pouch variant, never
+							a variant switch. Tier prices are hardcoded from the launch tier
+							table (Brief 2026-09-02): the matching cart totals come from the
+							"Refill pack saving" automatic discount, so the two must change
+							together. Fields per tier: qty | pairs | price¢ | strike¢ | save¢.
+						{%- endcomment -%}
+						{%- assign pack_tiers = '1|30|1999|0|0,2|60|3599|3998|399,3|90|5099|5997|898' | split: ',' -%}
+						{%- for tier in pack_tiers -%}
+							{%- assign t = tier | split: '|' -%}
 							<button
 								type="button"
 								class="plan-card flex items-center justify-between gap-4 p-4 rounded-2xl border text-left {% if forloop.first %}is-selected{% endif %}"
 								data-plan-btn="onetime"
-								data-variant-btn="{{ variant.id }}"
+								data-pack-qty="{{ t[0] }}"
+								data-pack-price="{{ t[2] | plus: 0 | money }}"
 							>
 								<div class="flex items-baseline gap-2 flex-wrap">
-									{%- comment -%}
-										A single-variant product's title is Shopify's phantom
-										"Default Title", so the pack size drops out and the label
-										stands on its own rather than reading "Default Title Adhesive
-										Tab Pairs".
-									{%- endcomment -%}
-									<span class="font-heading font-bold text-title text-base">{% unless product.has_only_default_variant %}{{ variant.title }} {% endunless %}Adhesive Tab Pairs</span>
+									<span class="font-heading font-bold text-title text-base">{{ t[1] }} pairs</span>
 									{%- if forloop.last -%}
 										<span class="text-highlight text-sm font-bold">· Biggest saving</span>
-									{%- elsif variant.metafields.custom.badge != blank -%}
-										<span class="text-highlight text-sm font-bold">· {{ variant.metafields.custom.badge }}</span>
 									{%- endif -%}
 								</div>
 								<div class="text-right shrink-0">
-									{%- if variant.compare_at_price > variant.price -%}
-										<span class="block text-copy text-sm line-through">{{ variant.compare_at_price | money }}</span>
+									{%- if t[3] != '0' -%}
+										<span class="block text-copy text-sm line-through">{{ t[3] | plus: 0 | money }}</span>
 									{%- endif -%}
-									<span class="font-heading font-bold text-title text-lg">{{ variant.price | money }}</span>
+									<span class="font-heading font-bold text-title text-lg">{{ t[2] | plus: 0 | money }}</span>
+									{%- if t[4] != '0' -%}
+										<span class="block text-highlight text-xs font-bold">Save {{ t[4] | plus: 0 | money }}</span>
+									{%- endif -%}
 								</div>
 							</button>
 						{%- endfor -%}
 
 					</div>
 
+					<p class="text-copy text-sm">Each pouch is 30 pairs. Choose 2 or 3 and the pack price applies automatically.</p>
+
 					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
 					{%- liquid
 						assign atc_label = 'Sold out'
 						assign atc_disabled = true
-						if current_variant.available
+						if pouch_variant.available
 							assign atc_label = 'Add to cart'
 							assign atc_disabled = false
 						endif
@@ -265,7 +280,7 @@
 						href="{{ section.settings.starter_link_url }}"
 						class="text-sm text-copy hover:text-highlight transition-colors"
 					>
-						{{ section.settings.starter_link_label | default: 'Need an aira kit? Start here →' }}
+						{{ section.settings.starter_link_label | default: 'Need an aira kit? Start here' }}
 					</a>
 				{%- endif -%}
 
@@ -302,12 +317,8 @@
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
 				<div class="flex flex-col gap-4 border-t border-border pt-5 mt-4">
 					<div>
-						<p class="font-heading font-semibold text-title text-sm">Will it help with my snoring?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">When your airway is open, your body naturally breathes through the nose instead of the mouth — the primary cause of snoring is reduced.</p>
-					</div>
-					<div>
 						<p class="font-heading font-semibold text-title text-sm">Does it fall off during sleep?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">The medical-grade adhesive holds all night, even for restless sleepers. The magnetic strip weighs less than 2 grams — most people forget it's there within minutes.</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">The medical-grade adhesive holds all night, even for restless sleepers. The magnetic strip weighs less than 2 grams: most people forget it's there within minutes.</p>
 					</div>
 				</div>
 
@@ -325,11 +336,11 @@
 >
 	<div class="flex flex-col min-w-0">
 		<p class="font-heading font-semibold text-main text-sm truncate">{%- render 'product-title', title: product.title -%}</p>
-		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ current_variant.price | money }}</span>
+		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ pouch_variant.price | money }}</span>
 	</div>
 	{%- liquid
 		assign sticky_disabled = true
-		if current_variant.available
+		if pouch_variant.available
 			assign sticky_disabled = false
 		endif
 	-%}
@@ -343,59 +354,23 @@
 	-%}
 </div>
 
-{%- comment -%}
-	Variant data for JS. Must stay above the script below: the script runs
-	inline as the page parses and can only see elements already in the DOM.
-{%- endcomment -%}
-<script type="application/json" data-product-variants>
-	[
-		{%- for variant in product.variants -%}
-			{
-				"id": {{ variant.id }},
-				"options": {{ variant.options | json }},
-				"price": {{ variant.price }},
-				"price_formatted": {{ variant.price | money | json }},
-				"compare_at_price": {{ variant.compare_at_price | default: 0 }},
-				"compare_at_price_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
-				"available": {{ variant.available | json }},
-				"featured_image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 1200 | json }}{% else %}null{% endif %},
-				"selling_plan_allocations": [
-					{%- for alloc in variant.selling_plan_allocations -%}
-						{
-							"selling_plan_id": {{ alloc.selling_plan.id }},
-							"per_delivery_price": {{ alloc.per_delivery_price }},
-							"per_delivery_price_formatted": {{ alloc.per_delivery_price | money | json }},
-							"name": {{ alloc.selling_plan.name | json }}
-						}{%- unless forloop.last -%},{%- endunless -%}
-					{%- endfor -%}
-				]
-			}{%- unless forloop.last -%},{%- endunless -%}
-		{%- endfor -%}
-	]
-</script>
-
 <script>
 (function () {
 	var section = document.querySelector('[data-refill-section]');
 	if (!section) return;
 
 	var form = section.querySelector('[data-refill-form]');
-	var variantInput = form.querySelector('[data-variant-id]');
+	var qtyInput = form.querySelector('[data-quantity-input]');
 	var sellingPlanInput = form.querySelector('[data-selling-plan-input]');
 	var addBtn = form.querySelector('[data-add-to-cart]');
 	var mainImage = document.getElementById('refill-main-image');
 	var thumbBtns = section.querySelectorAll('[data-thumb-btn]');
 	var planBtns = section.querySelectorAll('[data-plan-btn]');
 
-	/* ── Variant data ── */
-	var variantsJson = document.querySelector('[data-product-variants]');
-	var variants = variantsJson ? JSON.parse(variantsJson.textContent) : [];
-
-	function findVariant(id) {
-		return variants.find(function (v) { return v.id === id; }) || null;
-	}
-
-	/* ── Card selection — only one active at a time ── */
+	/* ── Card selection — only one active at a time ──
+	   A chip is a quantity of the single pouch variant (data-pack-qty), so
+	   selecting one moves the hidden quantity input and the sticky-bar price.
+	   The variant id input never changes. */
 	var stickyPriceEl = document.querySelector('[data-sticky-price]');
 
 	function selectCard(activeBtn) {
@@ -403,31 +378,17 @@
 		activeBtn.classList.add('is-selected');
 
 		var type = activeBtn.getAttribute('data-plan-btn');
-		var variantId = activeBtn.getAttribute('data-variant-btn');
 
 		if (type === 'subscribe') {
-			/* Set selling plan for first variant */
-			if (sellingPlanInput && variants.length > 0) {
-				var v = variants[0];
-				variantInput.value = v.id;
-				if (v.selling_plan_allocations.length > 0) {
-					sellingPlanInput.value = v.selling_plan_allocations[0].selling_plan_id;
-					if (stickyPriceEl) stickyPriceEl.textContent = v.selling_plan_allocations[0].per_delivery_price_formatted;
-				}
-				setMainImage(v.featured_image);
-			}
+			if (sellingPlanInput) sellingPlanInput.value = activeBtn.getAttribute('data-selling-plan') || '';
+			if (qtyInput) qtyInput.value = 1;
 		} else {
-			/* One-time: set variant, clear selling plan */
 			if (sellingPlanInput) sellingPlanInput.value = '';
-			if (variantId) {
-				variantInput.value = variantId;
-				var v = findVariant(parseInt(variantId, 10));
-				if (v) {
-					if (stickyPriceEl) stickyPriceEl.textContent = v.price_formatted;
-					setMainImage(v.featured_image);
-				}
-			}
+			if (qtyInput) qtyInput.value = activeBtn.getAttribute('data-pack-qty') || 1;
 		}
+
+		var price = activeBtn.getAttribute('data-pack-price');
+		if (stickyPriceEl && price) stickyPriceEl.textContent = price;
 	}
 
 	planBtns.forEach(function (btn) {
@@ -436,7 +397,7 @@
 		});
 	});
 
-	/* ── Main image swap (thumbnails + variant selection) ── */
+	/* ── Main image swap (thumbnails) ── */
 	function setMainImage(src) {
 		if (!mainImage || !src) return;
 		mainImage.removeAttribute('srcset');
@@ -588,7 +549,7 @@
 			"type": "text",
 			"id": "starter_link_label",
 			"label": "aira kit link text",
-			"default": "Need an aira kit? Start here →"
+			"default": "Need an aira kit? Start here"
 		},
 		{
 			"type": "url",

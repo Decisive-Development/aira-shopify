@@ -308,14 +308,14 @@
           "type": "question",
           "settings": {
             "question": "How often should I replace the adhesive tabs?",
-            "answer": "<p>Each adhesive tab pair is designed for single-night use. A 30-pack gives you a full month of nightly use.</p>"
+            "answer": "<p>Each adhesive tab pair is designed for single-night use. A 30-pair pouch gives you a full month of nightly use.</p>"
           }
         },
         "faq_2": {
           "type": "question",
           "settings": {
             "question": "What's the difference between the pack sizes?",
-            "answer": "<p>30 pairs = 1 month, 60 = 2 months, 90 = 3 months. Larger packs, bigger savings.</p>"
+            "answer": "<p>30 pairs = 1 month, 60 = 2 months, 90 = 3 months. Every order ships as 30-pair pouches, and the bigger pack prices apply automatically.</p>"
           }
         },
         "faq_3": {
