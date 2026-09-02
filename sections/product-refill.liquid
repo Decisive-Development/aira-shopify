@@ -214,9 +214,9 @@
 							a variant switch. Tier prices are hardcoded from the launch tier
 							table (Brief 2026-09-02): the matching cart totals come from the
 							"Refill pack saving" automatic discount, so the two must change
-							together. Fields per tier: qty | pairs | price¢ | strike¢ | save¢.
+							together. Fields per tier: qty | pairs | price¢ | strike¢.
 						{%- endcomment -%}
-						{%- assign pack_tiers = '1|30|1999|0|0,2|60|3599|3998|399,3|90|5099|5997|898' | split: ',' -%}
+						{%- assign pack_tiers = '1|30|1999|0,2|60|3599|3998,3|90|5099|5997' | split: ',' -%}
 						{%- for tier in pack_tiers -%}
 							{%- assign t = tier | split: '|' -%}
 							<button
@@ -237,9 +237,6 @@
 										<span class="block text-copy text-sm line-through">{{ t[3] | plus: 0 | money }}</span>
 									{%- endif -%}
 									<span class="font-heading font-bold text-title text-lg">{{ t[2] | plus: 0 | money }}</span>
-									{%- if t[4] != '0' -%}
-										<span class="block text-highlight text-xs font-bold">Save {{ t[4] | plus: 0 | money }}</span>
-									{%- endif -%}
 								</div>
 							</button>
 						{%- endfor -%}
