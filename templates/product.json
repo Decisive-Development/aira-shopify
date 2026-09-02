@@ -105,8 +105,8 @@
         "plan_compare_price": "",
         "plan_price": "",
         "offer_enabled": true,
-        "offer_eyebrow": "LIMITED EDITION OFFER",
-        "offer_headline": "Free refill pouch in every kit.\n60 uses for the price of 30.",
+        "offer_eyebrow": "LAUNCH OFFER",
+        "offer_headline": "Free refill pouch in every kit.\n60 pairs for the price of 30.",
         "offer_headline_accent": "Free refill pouch",
         "offer_footnote": "While the offer lasts.",
         "sticky_offer_text": "+ Free $19.99 refill pouch",
@@ -399,7 +399,7 @@
           "type": "question",
           "settings": {
             "question": "How long does the strip last?",
-            "answer": "<p>The strip is reusable and built to last. You only replace the adhesive tabs: 1 pair per night, in packs of 30, 60, or 90 pairs.</p>"
+            "answer": "<p>The strip is reusable and built to last. You only replace the adhesive tabs: 1 pair per night, ordered as 30, 60 or 90 pairs at a time.</p>"
           }
         },
         "faq_4": {
