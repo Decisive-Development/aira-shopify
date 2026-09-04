@@ -107,6 +107,8 @@
 
 	{%- comment -%} Footer — subtotal + checkout {%- endcomment -%}
 	<div data-cart-footer class="hidden border-t border-border px-6 py-5 flex-col gap-4">
+		{%- comment -%} Applied discounts, one line per title, filled by JS from the cart's discount applications {%- endcomment -%}
+		<div data-cart-discounts class="hidden flex-col gap-1"></div>
 		<div class="flex items-center justify-between">
 			<span class="font-heading font-semibold text-title text-lg">Subtotal</span>
 			<span class="font-heading font-bold text-title text-xl" data-cart-subtotal></span>
@@ -138,6 +140,7 @@
 	var upsellEl = document.querySelector('[data-cart-upsell]');
 	var footerEl = document.querySelector('[data-cart-footer]');
 	var subtotalEl = document.querySelector('[data-cart-subtotal]');
+	var discountsEl = document.querySelector('[data-cart-discounts]');
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
@@ -394,6 +397,43 @@
 			el.textContent = cart.item_count;
 			el.closest('[data-cart-count-bubble]').classList.toggle('hidden', cart.item_count === 0);
 		});
+
+		/* Applied discounts, one line per title above the subtotal, so a total
+		   that came down reads as a named saving rather than a phantom. Titles
+		   come off the cart's own discount applications, never static copy: a
+		   cart-level application (an order-level code) carries its own total and
+		   is listed once from that; a line-level one is summed across the lines
+		   it touched, keyed by the application so one offer spread over several
+		   lines still lists once. */
+		if (discountsEl) {
+			var applied = {};
+			var order = [];
+			var noteDiscount = function (app, amount, fixed) {
+				var key = app && (app.key || app.title);
+				if (!key || !app.title) return;
+				if (!applied[key]) {
+					applied[key] = { title: app.title, amount: 0, fixed: false };
+					order.push(key);
+				}
+				if (applied[key].fixed) return;
+				if (fixed) { applied[key].amount = amount; applied[key].fixed = true; }
+				else if (amount > 0) { applied[key].amount += amount; }
+			};
+			(cart.cart_level_discount_applications || []).forEach(function (app) {
+				noteDiscount(app, app.total_allocated_amount, true);
+			});
+			cart.items.forEach(function (item) {
+				(item.line_level_discount_allocations || []).forEach(function (alloc) {
+					noteDiscount(alloc.discount_application, alloc.amount, false);
+				});
+			});
+			var shown = order.filter(function (key) { return applied[key].amount > 0; });
+			discountsEl.innerHTML = shown.map(function (key) {
+				return '<p class="flex items-center justify-between gap-4 text-copy text-sm"><span>' + escHtml(applied[key].title) + '</span><span class="shrink-0">\u2212' + formatMoney(applied[key].amount) + '</span></p>';
+			}).join('');
+			discountsEl.classList.toggle('hidden', shown.length === 0);
+			discountsEl.classList.toggle('flex', shown.length > 0);
+		}
 
 		/* Subtotal */
 		if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
