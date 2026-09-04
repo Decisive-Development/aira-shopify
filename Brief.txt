@@ -1,188 +1,217 @@
 ================================================================================
-AIRA — SITE POPUP: OFFER HIERARCHY + CLAIM STEP  (FOR VSC / DEV AGENT)
+AIRA — LAUNCH TAIL BRIEF  (FOR VSC / DEV AGENT)
 ================================================================================
-Date:     12 August 2026
+Date:     4 September 2026
 Audience: VSC / dev coding agent
-Scope:    The SITE popup only — the scratch-to-reveal email-capture popup shown
-          to first-time visitors. Copy, hierarchy, a new post-scratch frame,
-          trigger/suppression rules, mobile scratch behaviour.
-Siblings: AIRA_QR_Popup_Fix_Brief_VSC.txt (29 Jul) — the NEWSLETTER/QR popup.
-          Different component, different job. DO NOT merge, DO NOT duplicate.
-          AIRA_Gift_Cap_And_Reply_Promise_Brief_VSC.txt (6 Aug) — owns the
-          sitewide free-pouch wording. This brief inherits it, never overrides.
-Stack guardrails per aira-shopify/CLAUDE.md. Rule #1 stands: never duplicate.
+Store:    aira-ecom (shop-aira.com). CARDS ARE LIVE. Pushing to GitHub `main`
+          deploys to the live theme — treat main as production for every task
+          below. Small commits, one section at a time, verify on live.
+Scope:    Six sections, in this order: A popup → gift, B refill cart tail,
+          C Meta pixel, D cookie consent, E repo hygiene + CLAUDE.md, F claims
+          stragglers. Admin/CMS work (COD, cookie banner switch, discounts,
+          Klaviyo) is Tom/Cowork's — you touch theme code only.
+Copy law: AIRA_Brand_Copy_Standards.md. UK English, sentence case everywhere
+          including buttons, no em-dashes, "aira" lowercase never
+          sentence-initial, pairs never tabs.
 
---------------------------------------------------------------------------------
-0. CONTEXT — WHY THIS BRIEF EXISTS
---------------------------------------------------------------------------------
-The site popup currently carries TWO offers with equal weight:
+================================================================================
+A. SITE POPUP: THE REVEAL IS NOW A GIFT, NOT A COUPON   (Tom decision, 4 Sep)
+================================================================================
+Supersedes the coupon half of AIRA_Popup_Message_Separation_Micro_Brief_VSC.txt
+(12 Aug). The 10% welcome code is RETIRED from the site for now. The popup's
+mystery reveal becomes the free refill pouch, and the email that follows says
+the same. The pouch itself stays unconditional (auto-add BXGY, unchanged).
 
-  "LIMITED TIME OFFER / Free with every kit / Every kit comes with a free
-   30-pair refill pouch, worth $19.99."   + a "SCRATCH TO REVEAL" card.
+New popup, top to bottom:
 
-Three problems:
-  (a) The eyebrow floats — a reader cannot tell whether "limited time" applies
-      to the pouch or to whatever is under the card.
-  (b) The headline sells the thing the visitor gets AUTOMATICALLY, with no
-      action required. The card — the only thing that needs their email — has
-      no stated value at all. The offer hierarchy is inverted.
-  (c) A bare "SCRATCH TO REVEAL" reads as though it may simply re-reveal the
-      pouch just described. Anticlimax risk on the one interaction we want.
+        aira logo
+        A gift for you                                  (H, Satoshi)
+        Scratch the card, drop your email, and we'll send your gift
+        straight to your inbox.                         (body)
+        [ SCRATCH TO REVEAL YOUR GIFT ]                 (card, unscratched)
+        --- scratched state of the card reads: ---
+        A free 30-pair refill pouch                     (card, revealed)
+        with every order, while stocks last.            (card sub-line)
+        [ email field ]  [ Claim my gift ]              (form)
+        --- success state (replaces the form) ---
+        Check your inbox. Your gift is on its way.
 
-  (d) STALE COPY: "every kit" contradicts the 6 Aug per-ORDER decision. The
-      gift-cap brief's acceptance test is `grep rendered strings: "every kit"
-      → 0`. This popup fails it today.
+Rules:
+  1. NO orange "LIMITED TIME OFFER" eyebrow anywhere in the modal. No
+     "YOUR WELCOME COUPON" eyebrow either (that brief's rename is void).
+  2. The pouch is NOT announced above the card any more. If it is, the
+     reveal reveals nothing. The only place the pouch appears in the popup
+     is under the scratch layer.
+  3. Strings that must reach ZERO in the popup + its schema defaults:
+     "10%", "code", "coupon", "WELCOME10", "welcome code", "discount",
+     "SCRATCH TO REVEAL YOUR CODE", "your code is on its way", "every kit",
+     "LIMITED TIME OFFER".
+  4. Keep every string a section/block setting where it already is. Do not
+     hardcode. Do not touch triggers, suppression, scratch JS, form handler
+     (Shopify customer form → Klaviyo), or the QR/newsletter popup.
+  5. Sitewide: the pouch offer is still stated as fact on the homepage and
+     kit PDP ("Free refill pouch with every order while stocks last.") —
+     UNCHANGED. Any OTHER site copy that references the welcome discount,
+     10% or a code (footer signup blurb, cart drawer promo text, FAQ) →
+     list each hit for Tom before changing; only the popup is in scope to
+     change here.
 
-Tom's decisions, 12 August:
-  - The free pouch stays UNCONDITIONAL. It is a launch offer to win first
-    purchases; it is never gated behind an email. (Gating was considered and
-    REJECTED — do not reintroduce it.)
-  - The popup's job is EMAIL CAPTURE. The reveal stays a MYSTERY, with the
-    existing WELCOME10 (10%) behind it.
-  - Mystery applies to the AMOUNT, never the TYPE. The card must say it is
-    revealing a code/offer. The word "gift" is banned here — it promises a
-    physical item the reveal does not deliver.
+Acceptance:
+  [ ] grep rendered popup strings for every term in rule 3 → 0
+  [ ] Unscratched card shows no hint of the pouch; scratched card shows it
+  [ ] Button reads "Claim my gift" (sentence case)
+  [ ] Success state reads exactly as above, and still triggers on the
+      existing success param/redirect (QR popup fix brief §1.2 behaviour)
+  [ ] No JS diff outside string changes; no console errors; no layout
+      break at 360px
 
---------------------------------------------------------------------------------
-1. FRAME 1 — PRE-SCRATCH (rewrite)
---------------------------------------------------------------------------------
-Structure, top to bottom:
+================================================================================
+B. REFILL CART TAIL   (left over from AIRA_Refill_Single_SKU_Tiers_Brief_VSC)
+================================================================================
+Catalog is single-variant (30 pouch, variant 57088934904190, SKU AIRA-REF30).
+Tier pricing = 5 native automatic discounts (see
+AIRA_Refill_Tier_Discounts_Native_Spec_2026-09-02.md). Do not rebuild any of
+that. Four small things:
 
-  1. aira logo (unchanged, keep small)
-  2. Eyebrow — REMOVE "LIMITED TIME OFFER".
-       Replace with "WELCOME OFFER", or omit entirely.
-       [TOM DECISION — default to omitting if unanswered at build time.]
-       Do NOT reinstate any "limited time" wording unless a real end date
-       exists and is honoured. "While stocks last" (below) is the sanctioned
-       scarcity line and it lives on the pouch, not the eyebrow.
-  3. Headline — sells the REVEAL, not the pouch:
-       "Your welcome offer is under here"
-       [ALT for Tom: "There's something for your first kit under here"]
-  4. Sub-line, one line only:
-       "Scratch the card to reveal it."
-  5. Scratch card — label names the category:
-       "SCRATCH TO REVEAL YOUR CODE"
-  6. Value line beneath the card — small, ticked, single line, inherits the
-     6 Aug per-order wording:
-       "✓ Every order also ships with a free 30-pair refill pouch, worth
-        $19.99 — while stocks last."
+  B1. GIFT AUTO-ADD FOR A FRESH VISITOR. On 9/2 a cart cleared via /cart/clear.js
+      then kit added via the PDP button did NOT get the free pouch auto-added.
+      Suspected cause: the "customer removed the gift" suppression flag
+      (localStorage/sessionStorage/cookie) persisting across the clear.
+      Required: a brand-new visitor (clean incognito, no storage) adding the
+      kit from the PDP gets the $0 pouch line every time. A visitor who
+      deliberately removes the gift stays suppressed for that session ONLY.
+      Fix the flag scope (clear it when the cart becomes empty, or key it to
+      the cart token). Report exactly where the flag lives.
 
-All strings must be section/block settings, not hardcoded, so Tom can tune
-without a deploy.
+  B2. DRAWER SHOWS APPLIED DISCOUNT CODES. When WELCOME10 (or any code) is
+      applied, the drawer shows a reduced total with no label, so the saving
+      looks like a phantom. Render each applied discount by its title from
+      cart.discount_codes / cart_level_discount_applications (automatic ones
+      by title too: "60-pack saving", "Free pouch + 60-pack saving"). One line
+      per discount, muted text, above the subtotal. No new UI patterns.
 
-Layout changes (same frame):
-  - SHRINK the card. It currently occupies roughly half the modal as a navy
-    void while the headline sells a different offer. Card height down, type
-    scale up on the headline.
-  - MOVE THE ORANGE. The brand accent is currently spent on the least
-    important text (the eyebrow). Accent belongs on the frame-2 CTA button.
-  - Keep the existing close (X), ESC, backdrop-dismiss and role="dialog"
-    behaviour. No regressions to focus handling.
+  B3. "BIGGEST SAVING" TAG. Since the variants went, the tag pins to the last
+      chip (now the 30 chip). It belongs on the 90 chip only.
 
---------------------------------------------------------------------------------
-2. FRAME 2 — POST-SCRATCH (NEW — this frame does not exist yet)
---------------------------------------------------------------------------------
-Scratching does NOT reveal the code string. It reveals the OFFER, and the
-email is the claim step. The literal code is never rendered in the DOM —
-same rule as the newsletter popup (AIRA_QR_Popup_Fix_Brief_VSC.txt §1.2:
-"Do NOT display any discount code in the popup"). The code is delivered by
-the live Klaviyo welcome flow.
+  B4. PAGE TITLE. Refill PDP <title> still says "30 to 90 pairs". It is one
+      pouch of 30 pairs, bought as 1, 2 or 3. Fix the title/meta to match the
+      new page (Tom approves the string before merge).
 
-  1. Revealed offer, large:
-       "10% off your first kit"
-       — driven by a section setting (default "10% off your first kit") so a
-       future change of discount is a setting edit, not a code edit.
-  2. Value stack, three ticks, compact:
-       ✓ 10% off your first kit
-       ✓ Free 30-pair refill pouch, worth $19.99
-       ✓ Free shipping to the UAE and Saudi Arabia
-  3. Claim line:
-       "Enter your email and we'll send your code."
-  4. Email field + submit button.
-       Button label: "Get my code".
-       (Deliberate divergence from the sitewide purchase CTA "Get my kit" —
-       this action is not a purchase. Do not "correct" it.)
-  5. Legal/reassurance micro-line beneath:
-       "One email to send it. Unsubscribe any time."
+  B5. LEFTOVER "Quantity" OPTION on the product (admin). Tom/Cowork will remove
+      it ONLY after you confirm: no hardcoded variant id 57088934904190 or
+      option name "Quantity" anywhere in the theme. Grep and report; do not
+      remove it yourself.
 
-Form: same pattern as the existing popups — {% form 'customer' %},
-POST /contact#site-popup, contact[email] required.
-Tags: "newsletter, site-popup"  ← distinct from the QR popup's
-"newsletter, qr-insert" so the two sources stay separable at person level.
+Acceptance:
+  [ ] Incognito: PDP add-to-cart → drawer has kit + $0 pouch line
+  [ ] Remove gift → no re-add that session; new session → gift returns
+  [ ] Apply WELCOME10 at cart → drawer lists "WELCOME10 −$x.xx" line
+  [ ] Cart 3 pouches → drawer lists "90-pack saving −$8.98"
+  [ ] Tag on 90 chip only; title corrected; grep report for B5 delivered
 
---------------------------------------------------------------------------------
-3. FRAME 3 — SUCCESS + ERRORS (reuse the proven pattern)
---------------------------------------------------------------------------------
-  - customer_posted=true AND hash === '#site-popup' → reopen the popup
-    showing the success state INSTEAD of the form:
-      "Check your inbox — your code is on its way."
-  - Already-subscribed emails return the same success redirect. Same success
-    state, no special handling.
-  - {{ form.errors }} (e.g. invalid email) renders inline in the form.
-    Never fail silently.
-  - A visitor who has scratched but not submitted, then reopens the popup in
-    the same session, returns to FRAME 2 (offer already revealed) — not
-    frame 1. Do not make them scratch twice.
+================================================================================
+C. META PIXEL: ONE SOURCE, STANDARD EVENTS
+================================================================================
+fbq loads on the storefront today (verified 9/2) but nobody knows from where.
+The Facebook & Instagram channel app was installed 8/6; if theme.liquid or a
+custom pixel ALSO injects fbq, every event double-counts and Meta will
+optimise on garbage.
 
---------------------------------------------------------------------------------
-4. TRIGGERS + SUPPRESSION
---------------------------------------------------------------------------------
-  - This popup MUST NOT open on `?signup=1` or `#newsletter`. Those belong to
-    the newsletter/QR popup and target existing customers arriving from a
-    paper insert. Showing them a first-order offer is a wasted impression.
-  - If it turns out both popups are the SAME component, STOP and report back
-    to Tom before changing anything. Do not fork it, do not merge them.
-  - Suppress when any of the following is true:
-      * the visitor is already a known subscriber (Klaviyo identity cookie);
-      * the popup was dismissed within the frequency window;
-      * the URL carries `?signup=1` or a `utm_campaign=insert_*` value
-        (QR-insert traffic — read for SUPPRESSION only; never parse UTMs for
-        any other logic, per the parent brief's standing rule);
-      * on checkout.
-  - Trigger defaults, all exposed as section settings:
-      delay 15s OR 40% scroll, whichever first; once per visitor per 14 days;
-      desktop exit-intent OFF by default.
+  C1. Find every fbq / connect.facebook.net reference in the theme and in
+      Settings → Customer events (custom pixels). Report each with file/line
+      or pixel name, and the Pixel ID it initialises.
+  C2. End state: exactly ONE source, the Facebook & Instagram channel (it
+      honours Shopify consent automatically and fires standard events).
+      Remove any hardcoded theme copy of the base code. If a custom pixel is
+      the only source and the channel is not yet connected to a dataset, say
+      so — Tom supplies the Dataset ID; do not create anything in Meta.
+  C3. After C2, verify in browser network tab: PageView on any page,
+      ViewContent on kit PDP, AddToCart on add, InitiateCheckout on checkout.
+      Purchase is verified by Tom's real-card proof order, not by you.
 
---------------------------------------------------------------------------------
-5. SCRATCH MECHANIC — MOBILE + ACCESSIBILITY
---------------------------------------------------------------------------------
-  - Lock page scroll while a pointer is dragging on the card
-    (touch-action: none on the canvas only). Today a scratch attempt on a
-    phone risks flinging the page instead.
-  - Auto-complete the reveal at ~50% scratched — nobody should have to clear
-    the whole card.
-  - Provide a non-scratch path: a visible "Reveal" button appears after ~3s,
-    and the card is keyboard-operable (Enter/Space reveals). Honour
-    prefers-reduced-motion by skipping the scratch animation entirely.
-  - The mechanic is progressive enhancement: if canvas fails or JS errors,
-    frame 2 must still render. Never trap the offer behind a broken canvas.
+Acceptance:
+  [ ] Report from C1; one fbq init per page load; the four events above fire
+      once each with the same Pixel ID
 
---------------------------------------------------------------------------------
-6. ACCEPTANCE TESTS  (real phones: iOS Safari + Android Chrome)
---------------------------------------------------------------------------------
-  [ ] grep rendered strings: "every kit" → 0 ; "LIMITED TIME OFFER" → 0 ;
-      "gift" in this popup → 0
-  [ ] Frame 1 renders new headline + card label naming the code
-  [ ] Scratch ~50% → frame 2 auto-reveals with the three-tick stack
-  [ ] No discount code string anywhere in the DOM on any frame (view source)
-  [ ] Submit valid email → success state; admin → Customers shows the
-      customer Subscribed with tags newsletter, site-popup
-  [ ] Submit "a@b" → inline error, form stays usable
-  [ ] Reopen after scratching without submitting → returns to frame 2
-  [ ] /?signup=1 → the NEWSLETTER popup opens, this one does NOT
-  [ ] /#newsletter → the NEWSLETTER popup opens, this one does NOT
-  [ ] Known subscriber → no popup
-  [ ] Keyboard only: Tab to card, Space reveals, Tab to email, submit, ESC
-      closes; focus returns to the page
-  [ ] prefers-reduced-motion → no scratch animation, reveal still reachable
-  [ ] Scratch drag on a phone does not scroll the page
-  [ ] No console errors; Lighthouse mobile on / within 2 points of baseline
+================================================================================
+D. COOKIE CONSENT: THEME SIDE
+================================================================================
+Tom is enabling Shopify's native cookie banner (Settings → Customer privacy →
+Cookie banner, show in ALL regions) — per AIRA_Privacy_Policy_Brief_VSC.txt
+§1.2, whose privacy-policy text already promises a banner. The theme's job is
+to make sure nothing tracks before consent.
 
---------------------------------------------------------------------------------
-OUT OF SCOPE
---------------------------------------------------------------------------------
-The newsletter/QR popup and the footer form (owned by the 29 Jul brief); the
-sitewide free-pouch wording (owned by the 6 Aug gift-cap brief); the discount
-value itself (WELCOME10 stays 10%); any change to the launch offer's
-unconditional nature.
+  D1. Inventory every tracking script the theme itself injects (not via an
+      app): gtag/GA4, fbq, Clarity, Klaviyo onsite, TikTok, anything else.
+      App-injected ones (Google & YouTube app, Facebook & Instagram channel,
+      Clarity app, Klaviyo app) honour consent by themselves — leave them.
+  D2. For any theme-hardcoded tracker left after C2: either delete it in
+      favour of the app, or gate it on Shopify's Customer Privacy API
+      (window.Shopify.customerPrivacy.shouldShowBanner /
+      analyticsProcessingAllowed / marketingAllowed, and the
+      visitorConsentCollected event). Prefer delete.
+  D3. Confirm the banner renders with the theme (no z-index/overlay clash
+      with the site popup; popup must not open on top of an unanswered
+      banner — if it does, delay the popup trigger until consent is given
+      or the banner is dismissed).
+
+Acceptance:
+  [ ] With banner shown and NOT yet accepted: zero requests to
+      google-analytics.com / connect.facebook.net / clarity.ms
+  [ ] After accept: all fire. After decline: still none.
+  [ ] Banner and popup never overlap
+
+================================================================================
+E. REPO HYGIENE + CLAUDE.md   (main is production)
+================================================================================
+  E1. Pull the live theme's JSON into the repo before ANY further push:
+        shopify theme pull --live --only "templates/*.json" \
+          --only "sections/*.json" --only "config/settings_data.json"
+      Commit as "chore: sync live theme JSON 2026-09-04". Anything Tom or
+      Marie clicked in the theme editor since the last sync lives only in
+      that JSON; a push without this pull overwrites it silently.
+  E2. CI gate green on that commit. Tag it `v1.0-launch` and push the tag.
+  E3. Add the following section to aira-shopify/CLAUDE.md verbatim (it is the
+      standard from now on):
+
+      ## Deploy rules (main = production)
+      - Pushing to `main` deploys straight to the LIVE theme. There is no
+        staging. Treat every push as a customer-facing release.
+      - Before any push: `shopify theme pull --live` for templates/*.json,
+        sections/*.json and config/settings_data.json, and commit the sync.
+        Editor changes live only in that JSON; an unsynced push deletes them.
+      - One logical change per commit; verify on shop-aira.com after every
+        push; never push with a red CI gate.
+      - Tag every release that a human signed off (`vX.Y-<name>`). Roll back
+        by pushing the tag's commit, not by editing in the theme editor.
+      - Never edit the live theme in the Shopify editor to "hotfix" — fix in
+        the repo and push. If someone did, pull first (rule 2).
+
+Acceptance:
+  [ ] `git log` shows the sync commit, then the tag; `git diff v1.0-launch`
+      against a fresh `shopify theme pull --live` is empty
+  [ ] CLAUDE.md contains the section above
+
+================================================================================
+F. CLAIMS STRAGGLERS   (already queued; closing them in this pass)
+================================================================================
+  F1. "lasts forever" ×3 in the benefits-slider → replace with the
+      bank-approved mechanism line already used on the kit PDP (reusable
+      magnetic strip wording; no "forever", no lifetime claim).
+  F2. product.liquid:439 hardcoded snoring answer → replace with the
+      claims-bank verdict wording used in the 8/5 sweep for the FAQ snoring
+      answer, or remove the Q if no approved line exists. Report which.
+  F3. Confirm product-refill.liquid:328 snoring answer is gone after the
+      9/2 build (it should be); if not, same treatment as F2.
+  F4. Kit PDP "LIMITED EDITION OFFER" label → "LAUNCH OFFER". Homepage
+      "One strip lasts forever" → same treatment as F1.
+
+Acceptance:
+  [ ] grep rendered strings: "forever", "LIMITED EDITION", "stops snoring" → 0
+
+================================================================================
+OUT OF SCOPE (do not touch): Klaviyo welcome email (Tom/Cowork), WELCOME10
+discount status (admin), COD (admin, being switched off), Clarity project
+re-point (app settings), the QR/newsletter popup, notification email
+templates, any design change beyond the strings above.
 ================================================================================
