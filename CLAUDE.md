@@ -111,6 +111,19 @@ Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) 
 
 **Safety:** never delete customer or store data, change theme or store settings, or alter access. Never invent a product claim, number, review, or design token. When unsure, stop and ask Tom.
 
+## Deploy rules (main = production)
+- Pushing to `main` deploys straight to the LIVE theme. There is no
+  staging. Treat every push as a customer-facing release.
+- Before any push: `shopify theme pull --live` for templates/*.json,
+  sections/*.json and config/settings_data.json, and commit the sync.
+  Editor changes live only in that JSON; an unsynced push deletes them.
+- One logical change per commit; verify on shop-aira.com after every
+  push; never push with a red CI gate.
+- Tag every release that a human signed off (`vX.Y-<name>`). Roll back
+  by pushing the tag's commit, not by editing in the theme editor.
+- Never edit the live theme in the Shopify editor to "hotfix" — fix in
+  the repo and push. If someone did, pull first (rule 2).
+
 ## 9. Reference
 
 **Recipes**
