@@ -30,7 +30,9 @@
 			<div class="rb-bookwrap" data-rb-book>
 				<div class="rb-stack rb-stack--right" data-rb-stack-r></div>
 				<div class="rb-stack rb-stack--left" data-rb-stack-l></div>
-				<p class="rb-hint">{{ section.settings.hint_text }}</p>
+				{%- if section.settings.hint_text != blank -%}
+					<button type="button" class="rb-hint" data-rb-hint>{{ section.settings.hint_text }}</button>
+				{%- endif -%}
 
 				{%- comment -%} Cover {%- endcomment -%}
 				<div class="rb-sheet" data-rb-title="{{ section.settings.cover_pager_title | escape }}" data-rb-label="Cover">
@@ -483,16 +485,23 @@
 	}
 
 	/* Cue sits just below the book's bottom-right, outside the sheets so it
-	   never gets clipped by a page turn. Hidden on the last page. */
+	   never gets clipped by a page turn. It is a button that turns the page,
+	   since a reader who taps the words expects exactly that; the padding
+	   and negative margin give it a finger-sized target without moving it.
+	   Hidden, and out of the tab order, on the last page. */
 	.research-book .rb-hint {
 		position: absolute; top: calc(100% + 18px); right: 0;
-		text-align: right; z-index: 5; pointer-events: none;
+		text-align: right; z-index: 5;
+		padding: 10px 0 10px 14px; margin: -10px 0 -10px -14px;
+		background: none; border: 0; cursor: pointer;
 		font-family: var(--font-heading); font-size: 12px; font-weight: 600;
 		letter-spacing: 0.18em; text-transform: uppercase;
 		color: color-mix(in srgb, var(--rb-cream) 82%, transparent);
-		opacity: 1; transition: opacity 0.5s ease;
+		opacity: 1; transition: opacity 0.5s ease, visibility 0.5s;
 	}
-	.research-book .rb-bookwrap[data-rb-last] .rb-hint { opacity: 0; }
+	.research-book .rb-hint:hover { color: var(--rb-cream); }
+	.research-book .rb-hint:focus-visible { outline: 2px solid var(--rb-orange); outline-offset: 2px; border-radius: 4px; }
+	.research-book .rb-bookwrap[data-rb-last] .rb-hint { opacity: 0; visibility: hidden; }
 
 	/* ---------- page content ---------- */
 	.research-book .rb-pg { display: flex; flex-direction: column; padding: 7.5% 9% 6.5% 12%; height: 100%; position: relative; }
@@ -751,6 +760,8 @@
 
 			prevBtn.addEventListener('click', prev);
 			nextBtn.addEventListener('click', next);
+			var hint = root.querySelector('[data-rb-hint]');
+			if (hint) hint.addEventListener('click', next);
 			root.querySelectorAll('[data-rb-goto]').forEach(function (b) {
 				b.addEventListener('click', function (e) { e.stopPropagation(); go(parseInt(b.dataset.rbGoto, 10)); });
 			});
