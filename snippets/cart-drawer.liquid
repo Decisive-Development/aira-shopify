@@ -148,6 +148,25 @@
 	var currentCart = null;
 	var queue = Promise.resolve();
 
+	/* ── Gift opt-out ──
+	   A visitor who removes the free pouch has said no to it, so it stays out
+	   for the rest of this tab's session rather than returning on the next
+	   add-to-cart. sessionStorage, not localStorage: a new tab or a new visit
+	   is a fresh start, and the flag also clears once the cart renders empty. */
+	var GIFT_REMOVED_KEY = 'aira.cart.giftRemoved';
+
+	function giftRemoved() {
+		try { return sessionStorage.getItem(GIFT_REMOVED_KEY) === '1'; } catch (e) { return false; }
+	}
+
+	function markGiftRemoved() {
+		try { sessionStorage.setItem(GIFT_REMOVED_KEY, '1'); } catch (e) {}
+	}
+
+	function clearGiftRemoved() {
+		try { sessionStorage.removeItem(GIFT_REMOVED_KEY); } catch (e) {}
+	}
+
 	/* ── Open / close ── */
 	function open() {
 		if (isOpen) return;
@@ -221,10 +240,11 @@
 	   A Buy X Get Y automatic discount only zeroes the gift once the gift is
 	   in the cart, so a form carrying data-gift-variant-id adds it here.
 	   The cart is read first, so a repeat add-to-cart never stacks a second one:
-	   a second kit raises the quantity of the line already there instead. */
+	   a second kit raises the quantity of the line already there instead.
+	   A visitor who removed the gift this session is not handed it again. */
 	function addGift(giftId) {
 		var id = parseInt(giftId, 10);
-		if (!id) return Promise.resolve();
+		if (!id || giftRemoved()) return Promise.resolve();
 
 		return fetchCart()
 			.then(function (cart) {
@@ -359,6 +379,8 @@
 	function render(cart) {
 		var hasItems = cart.item_count > 0;
 		currentCart = cart;
+		/* An empty cart ends the visitor's earlier no to the gift. */
+		if (!hasItems) clearGiftRemoved();
 
 		/* Toggle empty / filled states */
 		emptyEl.classList.toggle('hidden', hasItems);
@@ -465,6 +487,9 @@
 
 		if (removeBtn) {
 			enqueue(removeBtn.getAttribute('data-line-key'), function (line) {
+				/* Removing the free pouch is a choice, remembered for this session
+				   so the next add-to-cart does not put it straight back. */
+				if (isFreeGift(line)) markGiftRemoved();
 				return updateLine(line.key, 0);
 			});
 		}
