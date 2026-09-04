@@ -19,7 +19,7 @@
         "button_label": "Get my kit",
         "button_url": "/products/aira-kit",
         "secondary_button_label": "How it works",
-        "secondary_button_url": "",
+        "secondary_button_url": "/pages/how-it-works",
         "foreground_image": "shopify://shop_images/hero_destop.jpg",
         "foreground_image_mobile": "shopify://shop_images/hero_mobile.jpg",
         "use_gradient": true,
