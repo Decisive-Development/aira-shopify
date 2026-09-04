@@ -182,6 +182,35 @@
 		} catch (e) {}
 	}
 
+	/* ── Cookie banner ──
+	   Shopify's native consent banner is not a modal this script can see, so
+	   without this the popup would open on top of an unanswered banner. While
+	   the banner is still due, the timer and exit-intent opens wait for
+	   visitorConsentCollected, which fires on accept and on decline alike.
+	   Due means the region calls for a banner (shouldShowBanner, which stays
+	   true after an answer too) AND no answer is on record yet: an answer,
+	   yes or no, fills currentVisitorConsent. The consent API is loaded by
+	   the banner itself; without it, or without those two methods, the popup
+	   opens as before rather than waiting for an event that never comes.
+	   ?offer=1 and #offer are deliberate opens and skip the wait. */
+	function bannerPending() {
+		var privacy = window.Shopify && window.Shopify.customerPrivacy;
+		if (!privacy || typeof privacy.shouldShowBanner !== 'function' || typeof privacy.currentVisitorConsent !== 'function') return false;
+		try {
+			if (!privacy.shouldShowBanner()) return false;
+			var consent = privacy.currentVisitorConsent() || {};
+			return Object.keys(consent).every(function (key) { return !consent[key]; });
+		} catch (e) { return false; }
+	}
+
+	function afterConsent(fn) {
+		if (!bannerPending()) { fn(); return; }
+		document.addEventListener('visitorConsentCollected', function onConsent() {
+			document.removeEventListener('visitorConsentCollected', onConsent);
+			fn();
+		});
+	}
+
 	function open() {
 		/* Never surface over the cart drawer, the QR popup or a lightbox. */
 		if (window.airaModal.isAnyOpen()) return;
@@ -275,13 +304,13 @@
 			return;
 		}
 
-		if (SETTINGS.delay > 0) { window.setTimeout(open, SETTINGS.delay); }
+		if (SETTINGS.delay > 0) { window.setTimeout(function () { afterConsent(open); }, SETTINGS.delay); }
 
 		if (SETTINGS.exitIntent && window.matchMedia('(pointer: fine)').matches) {
 			document.addEventListener('mouseout', function onExit(e) {
 				if (e.relatedTarget || e.clientY > 0) return;
 				document.removeEventListener('mouseout', onExit);
-				open();
+				afterConsent(open);
 			});
 		}
 	}
