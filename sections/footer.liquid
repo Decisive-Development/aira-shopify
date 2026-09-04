@@ -38,7 +38,7 @@
 						in the theme yet. Swap to a Klaviyo embed/form when flows are set.
 					{%- endcomment -%}
 					{%- capture footer_newsletter_body -%}
-						{{- section.settings.newsletter_body | replace: '10% off your first kit', '<strong class="font-bold">10% off your first kit</strong>' -}}
+						{{- section.settings.newsletter_body | replace: 'free gift with your first kit', '<strong class="font-bold">free gift with your first kit</strong>' -}}
 					{%- endcapture -%}
 					{%- render 'newsletter-form',
 						form_id: 'footer-newsletter',
@@ -196,7 +196,7 @@
 			"type": "textarea",
 			"id": "newsletter_body",
 			"label": "Body",
-			"default": "Join the aira list for early access to new drops, giveaways, exclusive offers and 10% off your first kit."
+			"default": "Join the aira list for early access to new drops, giveaways, exclusive offers and a free gift with your first kit."
 		},
 		{
 			"type": "text",
@@ -208,7 +208,7 @@
 			"type": "text",
 			"id": "newsletter_button",
 			"label": "Button label",
-			"default": "Get 10% off"
+			"default": "Claim my gift"
 		},
 		{
 			"type": "textarea",
