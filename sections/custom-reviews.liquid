@@ -1010,7 +1010,7 @@
   var nextBtn = section.querySelector('.reviews-arrow--next');
 
   // No widget means no product resolved. Clear the skeleton rather than leaving
-  // it shimmering at an empty section forever.
+  // it shimmering at an empty section for good.
   if (!dataWidget || !track) {
     if (skeleton) skeleton.style.display = 'none';
     return;
