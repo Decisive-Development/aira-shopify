@@ -122,9 +122,9 @@
         "slide_hU8BnN": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/all_night_hold.png",
-            "heading": "Benefit title",
-            "description": "A short description of this benefit."
+            "image": "shopify://shop_images/all_night_hold_copy.png",
+            "heading": "Skin safe & medical grade adhesive",
+            "description": "Hypoallergenic, latex-free and made to last all night."
           }
         },
         "slide_2": {
@@ -355,6 +355,7 @@
         "cta_url": "/products/aira-kit",
         "price_suffix": "",
         "guarantee_line": "Free shipping to the UAE and Saudi Arabia.",
+        "image": "shopify://shop_images/product-1.png",
         "image_alt": ""
       }
     },
