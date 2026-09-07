@@ -23,7 +23,7 @@
 
 	# Content sources: the shared ugc_testimonial metaobject list (set once, shown on every page)
 	# followed by this page's testimonial blocks. Untick "Show shared testimonials" for blocks only.
-	assign ugc_entries = shop.metaobjects.ugc_testimonial.values
+	assign ugc_entries = metaobjects.ugc_testimonial.values
 	assign ugc_count = ugc_blocks.size
 	if section.settings.show_shared
 		assign ugc_count = ugc_count | plus: ugc_entries.size
@@ -324,7 +324,7 @@
 			"type": "checkbox",
 			"id": "show_shared",
 			"label": "Show shared testimonials",
-			"info": "The shared list is managed in the Shopify admin under Content, Metaobjects, UGC testimonial, and appears on every page that has this section. Testimonial blocks added to this section show after it.",
+			"info": "Shared testimonials appear on every page with this section. Add new ones in the Shopify admin under Content, Metaobjects, UGC testimonial so every page matches. Blocks added below show on this page only, after the shared ones.",
 			"default": true
 		},
 		{
@@ -346,9 +346,13 @@
 	"blocks": [
 		{
 			"type": "testimonial",
-			"name": "Testimonial",
+			"name": "Testimonial (this page)",
 			"limit": 8,
 			"settings": [
+				{
+					"type": "paragraph",
+					"content": "Shows on this page only. To show a testimonial on every page, add it in the Shopify admin under Content, Metaobjects, UGC testimonial instead."
+				},
 				{
 					"type": "video",
 					"id": "video",
