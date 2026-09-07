@@ -21,15 +21,12 @@
 	endif
 	assign ig_handle = settings.social_instagram_handle | default: section.settings.handle
 
-	# Content source: per-page blocks override the shared ugc_testimonial metaobject list
+	# Content sources: the shared ugc_testimonial metaobject list (set once, shown on every page)
+	# followed by this page's testimonial blocks. Untick "Show shared testimonials" for blocks only.
 	assign ugc_entries = shop.metaobjects.ugc_testimonial.values
-	assign ugc_use_blocks = false
-	if ugc_blocks.size > 0
-		assign ugc_use_blocks = true
-	endif
-	assign ugc_count = ugc_entries.size
-	if ugc_use_blocks
-		assign ugc_count = ugc_blocks.size
+	assign ugc_count = ugc_blocks.size
+	if section.settings.show_shared
+		assign ugc_count = ugc_count | plus: ugc_entries.size
 	endif
 -%}
 
@@ -67,15 +64,14 @@
 
 		{%- comment -%} Image row {%- endcomment -%}
 		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
-			{%- if ugc_use_blocks -%}
-				{%- for block in ugc_blocks -%}
-					{%- render 'ugc-card', source: 'block', block: block -%}
-				{%- endfor -%}
-			{%- else -%}
+			{%- if section.settings.show_shared -%}
 				{%- for entry in ugc_entries -%}
 					{%- render 'ugc-card', source: 'meta', entry: entry -%}
 				{%- endfor -%}
 			{%- endif -%}
+			{%- for block in ugc_blocks -%}
+				{%- render 'ugc-card', source: 'block', block: block -%}
+			{%- endfor -%}
 		</div>
 
 		{%- comment -%} Scroll progress bar {%- endcomment -%}
@@ -319,6 +315,17 @@
 				{ "value": "light", "label": "Light (cream)" }
 			],
 			"default": "dark"
+		},
+		{
+			"type": "header",
+			"content": "Testimonials"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_shared",
+			"label": "Show shared testimonials",
+			"info": "The shared list is managed in the Shopify admin under Content, Metaobjects, UGC testimonial, and appears on every page that has this section. Testimonial blocks added to this section show after it.",
+			"default": true
 		},
 		{
 			"type": "header",
