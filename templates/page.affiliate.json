@@ -65,7 +65,7 @@
 			"block_order": ["q-1", "q-2", "q-3", "q-4"],
 			"settings": {
 				"eyebrow": "Partner FAQ",
-				"heading": "Your questions",
+				"heading": "Common questions",
 				"heading_size": "md",
 				"background_color": "#FAFAFA",
 				"container_width": "contained",
