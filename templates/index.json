@@ -227,19 +227,6 @@
     },
     "ugc_gallery": {
       "type": "ugc-gallery",
-      "blocks": {
-        "testimonial_Ai6BM9": {
-          "type": "testimonial",
-          "settings": {
-            "video": "shopify://files/videos/tom-ugc.mp4",
-            "quote": "I had the best nights sleep",
-            "name": "David"
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_Ai6BM9"
-      ],
       "settings": {
         "eyebrow": "The aira community",
         "heading": "See it in action.",
