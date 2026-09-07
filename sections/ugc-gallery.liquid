@@ -1,5 +1,3 @@
-{%- assign ugc_blocks = section.blocks | where: "type", "testimonial" -%}
-
 {%- liquid
 	assign theme = section.settings.theme | default: 'dark'
 	if theme == 'light'
@@ -21,13 +19,9 @@
 	endif
 	assign ig_handle = settings.social_instagram_handle | default: section.settings.handle
 
-	# Content sources: the shared ugc_testimonial metaobject list (set once, shown on every page)
-	# followed by this page's testimonial blocks. Untick "Show shared testimonials" for blocks only.
+	# Content source: the shared ugc_testimonial metaobject list, edited once in the admin and shown on every page
 	assign ugc_entries = metaobjects.ugc_testimonial.values
-	assign ugc_count = ugc_blocks.size
-	if section.settings.show_shared
-		assign ugc_count = ugc_count | plus: ugc_entries.size
-	endif
+	assign ugc_count = ugc_entries.size
 -%}
 
 {%- if ugc_count > 0 -%}
@@ -64,13 +58,8 @@
 
 		{%- comment -%} Image row {%- endcomment -%}
 		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
-			{%- if section.settings.show_shared -%}
-				{%- for entry in ugc_entries -%}
-					{%- render 'ugc-card', source: 'meta', entry: entry -%}
-				{%- endfor -%}
-			{%- endif -%}
-			{%- for block in ugc_blocks -%}
-				{%- render 'ugc-card', source: 'block', block: block -%}
+			{%- for entry in ugc_entries -%}
+				{%- render 'ugc-card', entry: entry -%}
 			{%- endfor -%}
 		</div>
 
@@ -321,11 +310,8 @@
 			"content": "Testimonials"
 		},
 		{
-			"type": "checkbox",
-			"id": "show_shared",
-			"label": "Show shared testimonials",
-			"info": "Shared testimonials appear on every page with this section. Add new ones in the Shopify admin under Content, Metaobjects, UGC testimonial so every page matches. Blocks added below show on this page only, after the shared ones.",
-			"default": true
+			"type": "paragraph",
+			"content": "Testimonials are managed in the Shopify admin under Content, Metaobjects, UGC testimonial. Every page with this section shows the same list, newest first."
 		},
 		{
 			"type": "header",
@@ -341,40 +327,6 @@
 			"type": "url",
 			"id": "shop_cta_url",
 			"label": "Button link"
-		}
-	],
-	"blocks": [
-		{
-			"type": "testimonial",
-			"name": "Testimonial (this page)",
-			"limit": 8,
-			"settings": [
-				{
-					"type": "paragraph",
-					"content": "Shows on this page only. To show a testimonial on every page, add it in the Shopify admin under Content, Metaobjects, UGC testimonial instead."
-				},
-				{
-					"type": "video",
-					"id": "video",
-					"label": "Video",
-					"info": "Optional. Shopify-hosted video. Plays muted on loop. Takes priority over the image."
-				},
-				{
-					"type": "image_picker",
-					"id": "image",
-					"label": "Image"
-				},
-				{
-					"type": "text",
-					"id": "quote",
-					"label": "Quote"
-				},
-				{
-					"type": "text",
-					"id": "name",
-					"label": "Name"
-				}
-			]
 		}
 	],
 	"presets": [
