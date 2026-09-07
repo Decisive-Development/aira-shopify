@@ -21,6 +21,11 @@
 	  middle  the reveal panel, hidden until the foil is scratched off
 	  top     the foil canvas, injected by JS only
 
+	Once the foil is gone the panel stays: it settles into the flow above the
+	form so the reveal is still there to read while the visitor types. An
+	earlier version faded it out after 1.4s, which was gone before anyone had
+	read it (Tom, 2026-09-07).
+
 	So with JS off there is no foil and no panel, just a working form. That is
 	the progressive enhancement requirement met by construction.
 
@@ -72,6 +77,26 @@
 	<hr class="mt-6 border-0 border-t border-main/10">
 
 	<div class="scratch-stage mt-6 rounded-xl border border-border bg-bg" data-scratch-stage>
+		{%- comment -%}
+			Sits over the form once JS takes over, then settles into the flow above
+			it when the foil is gone, which is why it comes first in source. The
+			`hidden` ATTRIBUTE, not the Tailwind class: a no-JS visitor must never
+			see a panel they cannot dismiss, and aira-modal.js reads [hidden] to
+			keep unreachable nodes out of the focus trap.
+		{%- endcomment -%}
+		<div class="scratch-layer scratch-panel" data-scratch-panel hidden>
+			<div>
+				{%- comment -%}
+					Only the word "free" is bold, the same replace trick the footer uses
+					on its own bold span. Keeps the setting plain text for the editor.
+				{%- endcomment -%}
+				<p class="font-heading text-2xl leading-tight text-main">{{ section.settings.reveal_text | replace_first: 'free', '<strong class="font-bold">free</strong>' }}</p>
+				{%- if section.settings.reveal_subline != blank -%}
+					<p class="mt-1 text-sm text-copy">{{ section.settings.reveal_subline }}</p>
+				{%- endif -%}
+			</div>
+		</div>
+
 		<div class="scratch-base p-5" data-scratch-base>
 			{%- comment -%}
 				The form line goes through the snippet's `heading`, not straight into
@@ -94,25 +119,6 @@
 				success_text: section.settings.success_message,
 				success_classes: 'text-center'
 			-%}
-		</div>
-
-		{%- comment -%}
-			Sits over the form once JS takes over. The `hidden` ATTRIBUTE, not the
-			Tailwind class: a no-JS visitor must never see a panel they cannot
-			dismiss, and aira-modal.js reads [hidden] to keep unreachable nodes
-			out of the focus trap.
-		{%- endcomment -%}
-		<div class="scratch-layer scratch-panel" data-scratch-panel hidden>
-			<div>
-				{%- comment -%}
-					Only the word "free" is bold, the same replace trick the footer uses
-					on its own bold span. Keeps the setting plain text for the editor.
-				{%- endcomment -%}
-				<p class="font-heading text-2xl leading-tight text-main">{{ section.settings.reveal_text | replace_first: 'free', '<strong class="font-bold">free</strong>' }}</p>
-				{%- if section.settings.reveal_subline != blank -%}
-					<p class="mt-1 text-sm text-copy">{{ section.settings.reveal_subline }}</p>
-				{%- endif -%}
-			</div>
 		</div>
 
 		{%- comment -%}
@@ -166,8 +172,6 @@
 	var SAMPLE_STRIDE = 64;    /* alpha samples: every 64th byte-quad */
 	var CLEARED_AT = 0.45;     /* reveal past 45% erased */
 	var FOIL_FADE = 600;
-	var PANEL_HOLD = 1400;
-	var PANEL_FADE = 500;
 
 	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	var designMode = !!(window.Shopify && window.Shopify.designMode);
@@ -343,25 +347,59 @@
 		   the reveal finishes. */
 		base.inert = true;
 
+		var canvas = null;
+		var revealed = false;
+
+		/* The panel stays after the reveal: it drops out of the overlay into
+		   the flow above the form, so the line just revealed is still there to
+		   read while the visitor types. */
+		function settle(viaSkip) {
+			panel.classList.add('is-settled');
+			stage.classList.add('is-revealed');
+			base.inert = false;
+			/* Keyboard users land on the field, and so do desktop pointers. On
+			   a phone the on-screen keyboard would cover the reveal, so a touch
+			   visitor taps the field themselves. */
+			if (viaSkip || window.matchMedia('(pointer: fine)').matches) {
+				var input = base.querySelector('input[type="email"]');
+				if (input) { input.focus(); }
+			}
+		}
+
+		function reveal(viaSkip) {
+			if (revealed) return;
+			revealed = true;
+			skip.remove();
+			if (!canvas) { settle(viaSkip); return; }
+			canvas.style.pointerEvents = 'none';
+			canvas.classList.add('is-gone');
+			window.setTimeout(function () {
+				canvas.remove();
+				settle(viaSkip);
+			}, reduceMotion ? 0 : FOIL_FADE);
+		}
+
+		function revealBySkip() { reveal(true); }
+
 		if (!SETTINGS.scratch) {
-			skip.addEventListener('click', reveal);
+			skip.addEventListener('click', revealBySkip);
 			return;
 		}
 
-		var canvas = document.createElement('canvas');
+		canvas = document.createElement('canvas');
 		canvas.className = 'scratch-layer scratch-canvas';
 		canvas.setAttribute('aria-hidden', 'true');
 		var ctx = canvas.getContext('2d');
 		if (!ctx) {
 			/* No canvas: the skip button is the whole interaction. */
-			skip.addEventListener('click', reveal);
+			canvas = null;
+			skip.addEventListener('click', revealBySkip);
 			return;
 		}
 		stage.insertBefore(canvas, skip);
 
 		var dpr = Math.min(window.devicePixelRatio || 1, 2);
 		var strokes = 0;
-		var revealed = false;
 		var drawing = false;
 		var last = null;
 
@@ -458,7 +496,7 @@
 		canvas.addEventListener('pointercancel', stop);
 		canvas.addEventListener('pointerleave', stop);
 
-		skip.addEventListener('click', reveal);
+		skip.addEventListener('click', revealBySkip);
 
 		/* The foil can only be painted once the stage has a size, and the stage
 		   sits in a display:none dialog until it opens — measuring before that
@@ -476,31 +514,6 @@
 		if (document.fonts && document.fonts.ready) { document.fonts.ready.then(repaint); }
 		window.addEventListener('resize', repaint);
 		repaint();
-
-		function reveal() {
-			if (revealed) return;
-			revealed = true;
-			canvas.style.pointerEvents = 'none';
-			skip.remove();
-
-			var foilOut = reduceMotion ? 0 : FOIL_FADE;
-			var hold = reduceMotion ? 0 : PANEL_HOLD;
-			var panelOut = reduceMotion ? 0 : PANEL_FADE;
-
-			canvas.classList.add('is-gone');
-			window.setTimeout(function () {
-				canvas.remove();
-				window.setTimeout(function () {
-					panel.classList.add('is-gone');
-					window.setTimeout(function () {
-						panel.remove();
-						base.inert = false;
-						var input = base.querySelector('input[type="email"]');
-						if (input) { input.focus(); }
-					}, panelOut);
-				}, hold);
-			}, foilOut);
-		}
 	}
 })();
 </script>

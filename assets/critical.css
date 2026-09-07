@@ -4189,7 +4189,13 @@
     text-align: center;
     padding: 1.25rem;
     background: var(--color-bg);
-    transition: opacity 0.5s ease;
+  }
+  .scratch-panel.is-settled {
+    position: static;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .scratch-stage.is-revealed .scratch-base {
+    animation: aira-fade-in 0.3s ease-out both;
   }
   .scratch-canvas {
     display: block;
@@ -4202,7 +4208,7 @@
   .scratch-canvas:active {
     cursor: grabbing;
   }
-  .scratch-panel.is-gone, .scratch-canvas.is-gone {
+  .scratch-canvas.is-gone {
     opacity: 0;
   }
   .scratch-skip {
@@ -4234,8 +4240,11 @@
     outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {
-    .scratch-panel, .scratch-canvas {
+    .scratch-canvas {
       transition: none;
+    }
+    .scratch-stage.is-revealed .scratch-base {
+      animation: none;
     }
   }
 }

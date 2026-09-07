@@ -550,7 +550,8 @@
 
   /* Scratch offer popup — see sections/scratch-offer-popup.liquid.
      Three layers in one box: the email form sets the height, the reveal panel
-     and the JS-injected foil canvas stack on top of it. */
+     and the JS-injected foil canvas stack on top of it. Once the foil is gone
+     the panel settles into the flow above the form and stays. */
   .scratch-stage {
     position: relative;
     overflow: hidden;
@@ -566,7 +567,14 @@
     text-align: center;
     padding: 1.25rem;
     background: var(--color-bg);
-    transition: opacity 0.5s ease;
+  }
+  .scratch-panel.is-settled {
+    position: static;
+    border-bottom: 1px solid var(--color-border);
+  }
+  /* The form sat under the panel; ease it in as the box grows to hold both. */
+  .scratch-stage.is-revealed .scratch-base {
+    animation: aira-fade-in 0.3s ease-out both;
   }
   .scratch-canvas {
     /* A canvas is a replaced element, so inset: 0 alone leaves it at its
@@ -584,7 +592,6 @@
   .scratch-canvas:active {
     cursor: grabbing;
   }
-  .scratch-panel.is-gone,
   .scratch-canvas.is-gone {
     opacity: 0;
   }
@@ -627,9 +634,11 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scratch-panel,
     .scratch-canvas {
       transition: none;
+    }
+    .scratch-stage.is-revealed .scratch-base {
+      animation: none;
     }
   }
 }
