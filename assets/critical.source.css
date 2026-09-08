@@ -11,6 +11,8 @@
 @source "../sections/**/*.liquid";
 @source "../snippets/**/*.liquid";
 @source "../templates/**/*.liquid";
+/* The generated stylesheet must not feed its own next build. */
+@source not "../snippets/critical-css.liquid";
 
 /* @font-face for Satoshi and Nunito Sans lives in snippets/css-variables.liquid,
    where asset_url gives the URLs the font preloads in layout/theme.liquid use. */
