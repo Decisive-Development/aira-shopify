@@ -78,7 +78,7 @@
   }
 
   /* ── Dot active state ── */
-  .reviews-dot {
+  .reviews-dot span {
     transition: background-color 0.3s ease;
   }
 
@@ -839,11 +839,9 @@
   if cr_theme == 'dark'
     assign cr_bg_class = 'bg-main'
     assign cr_heading_class = 'text-secondary'
-    assign cr_eyebrow_class = 'text-tertiary-light'
   else
     assign cr_bg_class = 'bg-secondary'
     assign cr_heading_class = 'text-title'
-    assign cr_eyebrow_class = 'text-highlight'
   endif
 -%}
 <section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}">
@@ -889,7 +887,7 @@
       <button class="reviews-arrow reviews-arrow--prev w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Previous reviews">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <div class="reviews-dots flex gap-2">
+      <div class="reviews-dots flex gap-0">
         <!-- Dot indicators injected by JS -->
       </div>
       <button class="reviews-arrow reviews-arrow--next w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Next reviews">
@@ -1394,7 +1392,7 @@
             '<div class="w-9 h-9 rounded-full ' + avatarColor + ' text-white flex items-center justify-center text-sm font-semibold shrink-0">' + review.initial + '</div>' +
             '<div>' +
               '<span class="block text-sm font-semibold text-main">' + review.name + '</span>' +
-              '<span class="block text-xs text-copy/50">' + review.date + '</span>' +
+              '<span class="block text-xs text-main/65">' + review.date + '</span>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -1491,8 +1489,9 @@
       dotsContainer.innerHTML = '';
       for (var i = 0; i < totalSlides; i++) {
         var dot = document.createElement('button');
-        dot.className = 'reviews-dot w-2 h-2 rounded-full border-none cursor-pointer p-0 ' +
-          (i === 0 ? 'bg-main' : 'bg-border');
+        /* The button is the 24px tap target; the span inside is the 8px dot. */
+        dot.className = 'reviews-dot w-6 h-6 flex items-center justify-center p-0 bg-transparent border-none cursor-pointer';
+        dot.innerHTML = '<span class="w-2 h-2 rounded-full ' + (i === 0 ? 'bg-main' : 'bg-border') + '"></span>';
         dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
         (function(idx) {
           dot.addEventListener('click', function() { goToSlide(idx); });
@@ -1521,11 +1520,11 @@
         var dots = dotsContainer.querySelectorAll('.reviews-dot');
         dots.forEach(function(d, i) {
           if (i === index) {
-            d.classList.remove('bg-border');
-            d.classList.add('bg-main');
+            d.firstElementChild.classList.remove('bg-border');
+            d.firstElementChild.classList.add('bg-main');
           } else {
-            d.classList.remove('bg-main');
-            d.classList.add('bg-border');
+            d.firstElementChild.classList.remove('bg-main');
+            d.firstElementChild.classList.add('bg-border');
           }
         });
       }

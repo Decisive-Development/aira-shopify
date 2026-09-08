@@ -371,7 +371,7 @@
 						-%}
 						<div class="rounded-xl bg-tertiary-light/20 px-5 py-5 shadow-sm text-center">
 							{%- if section.settings.offer_eyebrow != blank -%}
-								<p class="font-body text-xs font-extrabold uppercase tracking-[0.14em] text-highlight">{{ section.settings.offer_eyebrow }}</p>
+								<p class="font-body text-xs font-extrabold uppercase tracking-[0.14em] text-main">{{ section.settings.offer_eyebrow }}</p>
 							{%- endif -%}
 
 							{%- if section.settings.offer_headline != blank -%}
@@ -479,7 +479,7 @@
 		<div class="flex items-baseline gap-1.5 min-w-0">
 			<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
 			{%- if section.settings.offer_enabled and section.settings.sticky_offer_text != blank -%}
-				<span class="text-xs font-bold text-highlight truncate">{{ section.settings.sticky_offer_text }}</span>
+				<span class="text-xs font-bold text-main truncate">{{ section.settings.sticky_offer_text }}</span>
 			{%- endif -%}
 		</div>
 	</div>

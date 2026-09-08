@@ -51,7 +51,8 @@
 		assign heading_color = 'text-secondary'
 		assign sub_color     = 'text-secondary/80'
 	else
-		assign eyebrow_color = 'text-highlight'
+		# Orange on a light surface is for large text and buttons only (brand copy standards): a 12px eyebrow in it fails AA contrast, so it takes navy.
+		assign eyebrow_color = 'text-main'
 		assign heading_color = 'text-title'
 		assign sub_color     = 'text-copy'
 	endif
