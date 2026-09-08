@@ -42,6 +42,13 @@
     {% endcomment %}
     <script src="{{ 'aira-modal.js' | asset_url }}" defer></script>
 
+    {% comment %}
+      Lazy video: promotes the data-src sources that snippets/lazy-video.liquid
+      ships and plays each video only once it is near the viewport. Deferred,
+      like the modal script, so section scripts can rely on window.airaLazyVideo.
+    {% endcomment %}
+    <script src="{{ 'lazy-video.js' | asset_url }}" defer></script>
+
     {% # Favicon — theme setting if set, otherwise the aira logo mark %}
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">

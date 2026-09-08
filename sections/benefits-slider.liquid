@@ -230,31 +230,19 @@
 					{%- comment -%}
 						Slide media. The image's own alt field in Shopify Files wins; the
 						slide heading is the fallback so a benefit photo is never
-						announced as an unlabelled image.
-
-						The video is built by hand rather than with video_tag, because
-						video_tag emits an <img> fallback with no alt attribute that
-						nothing in the theme can reach. aria-label carries the same
-						description the sibling image would.
+						announced as an unlabelled image. The video carries the same
+						description as its aria-label, and loads nothing until the slide
+						is near the viewport (snippets/lazy-video.liquid).
 					{%- endcomment -%}
 					{%- assign slide_media_alt = block.settings.heading -%}
 					{%- assign slide_image_alt = block.settings.image.alt | default: slide_media_alt -%}
 					<div class="bs-media">
 						{%- if block.settings.video != blank -%}
-							{%- assign video_poster = block.settings.video.preview_image | image_url: width: 800 -%}
-							<video
-								autoplay
-								loop
-								muted
-								playsinline
-								preload="none"
-								poster="{{ video_poster }}"
-								aria-label="{{ slide_media_alt | escape }}"
-							>
-								{%- for source in block.settings.video.sources -%}
-									<source src="{{ source.url }}" type="{{ source.mime_type }}">
-								{%- endfor -%}
-							</video>
+							{%- render 'lazy-video',
+								video: block.settings.video,
+								quality: 'full',
+								aria_label: slide_media_alt
+							-%}
 						{%- elsif block.settings.image != blank -%}
 							{{
 								block.settings.image
@@ -395,22 +383,7 @@
 			if (hasDragged) e.stopPropagation();
 		}, true);
 
-		/* ─ Videos: pause when out of view, pause on hidden tab ─ */
-		if ('IntersectionObserver' in window) {
-			var vo = new IntersectionObserver(function (entries) {
-				entries.forEach(function (entry) {
-					if (!(entry.target instanceof HTMLVideoElement)) return;
-					if (entry.isIntersecting) { entry.target.play().catch(function () {}); }
-					else { entry.target.pause(); }
-				});
-			}, { threshold: 0.5 });
-			sectionEl.querySelectorAll('video').forEach(function (v) { vo.observe(v); });
-		}
-		document.addEventListener('visibilitychange', function () {
-			if (document.hidden) {
-				sectionEl.querySelectorAll('video').forEach(function (v) { v.pause(); });
-			}
-		});
+		/* Slide videos load, play and pause via assets/lazy-video.js. */
 
 		updateArrows();
 

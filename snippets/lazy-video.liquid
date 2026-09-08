@@ -1,0 +1,99 @@
+{%- comment -%}
+	Snippet: lazy-video
+	The one <video> renderer for Shopify-hosted video. It ships a poster and
+	no autoplay, with the source URLs in data-src, so a page load requests no
+	video bytes at all. assets/lazy-video.js promotes data-src to src and
+	plays the video once its section is near the viewport. Without JS the
+	poster stands in.
+
+	Built by hand rather than with video_tag, because video_tag emits an
+	<img> fallback with no alt attribute that nothing in the theme can reach.
+
+	Renditions come from video.sources, chosen by the short side of the frame
+	(a portrait 720p file is 720 wide and 1280 tall), never by filename. The
+	HLS playlist goes first so Safari and iOS pick a bitrate for the
+	connection; the one mp4 after it is what Chrome and Android take. The
+	full-HD rendition is never offered.
+
+	Params:
+	  video        {Object}  Shopify video media: a `video` setting, a
+	                         file_reference metaobject field, or product media.
+	                         A generic file with only a url plays as mp4.
+	  quality      {String}  'full' (default): the largest mp4 with a short
+	                         side of 720 or less. 'card': the smallest mp4.
+	  mode         {String}  'lazy' (default): muted loop, data-src, no bytes
+	                         until in view. 'modal': controls and real src,
+	                         for a <template> cloned and played on click.
+	  class        {String}  classes on the <video> (optional)
+	  aria_label   {String}  spoken description (optional)
+	  poster_width {Number}  poster image width, default 800
+{%- endcomment -%}
+
+{%- liquid
+	assign quality = quality | default: 'full'
+	assign mode = mode | default: 'lazy'
+	assign poster_width = poster_width | default: 800
+
+	assign hls_source = video.sources | where: 'format', 'm3u8' | first
+	assign best_source = nil
+	assign best_short = 0
+	assign smallest_source = nil
+	assign smallest_short = 0
+
+	for source in video.sources
+		if source.format != 'mp4'
+			continue
+		endif
+		assign short = source.height | at_most: source.width
+		if smallest_source == nil or short < smallest_short
+			assign smallest_source = source
+			assign smallest_short = short
+		endif
+		if short <= 720
+			if best_source == nil or short > best_short
+				assign best_source = source
+				assign best_short = short
+			endif
+		endif
+	endfor
+
+	assign mp4_source = best_source
+	if quality == 'card' or mp4_source == nil
+		assign mp4_source = smallest_source
+	endif
+
+	assign mp4_url = ''
+	if mp4_source != nil
+		assign mp4_url = mp4_source.url
+	elsif video.url != blank
+		assign mp4_url = video.url
+	endif
+
+	assign poster_url = ''
+	if video.preview_image != blank
+		assign poster_url = video.preview_image | image_url: width: poster_width
+	endif
+
+	assign src_attr = 'data-src'
+	if mode == 'modal'
+		assign src_attr = 'src'
+	endif
+-%}
+
+{%- if mp4_url != blank or hls_source != nil -%}
+<video
+	{% if mode == 'modal' %}controls{% else %}muted loop data-lazy-video{% endif %}
+	playsinline
+	preload="none"
+	{% if poster_url != blank %}poster="{{ poster_url }}"{% endif %}
+	{% if class != blank %}class="{{ class }}"{% endif %}
+	{% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
+>
+	{%- if hls_source != nil -%}
+		<source {{ src_attr }}="{{ hls_source.url }}" type="{{ hls_source.mime_type }}">
+	{%- endif -%}
+	{%- if mp4_url != blank -%}
+		<source {{ src_attr }}="{{ mp4_url }}" type="video/mp4">
+	{%- endif -%}
+</video>
+{%- endif -%}

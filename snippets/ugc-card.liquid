@@ -21,13 +21,6 @@
 	if m_image != blank
 		assign has_image = true
 	endif
-	# Resolve a playable URL whether the file is a video media object or a generic file
-	assign m_video_url = ''
-	if m_video.sources.size > 0
-		assign m_video_url = m_video.sources.last.url
-	elsif m_video.url != blank
-		assign m_video_url = m_video.url
-	endif
 -%}
 
 <div
@@ -36,7 +29,16 @@
 	{% if has_video %}data-ugc-card role="button" tabindex="0" aria-label="Play video"{% endif %}
 >
 	{%- if has_video -%}
-		<video src="{{ m_video_url }}" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"></video>
+		{%- comment -%}
+			The tile renders at 260px wide on a phone and about a fifth of the
+			row on desktop, so the smallest mp4 is plenty. The lightbox below
+			gets the 720p rendition. Neither loads before it is needed.
+		{%- endcomment -%}
+		{%- render 'lazy-video',
+			video: m_video,
+			quality: 'card',
+			class: 'absolute inset-0 w-full h-full object-cover'
+		-%}
 	{%- elsif has_image -%}
 		{{ m_image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'absolute inset-0 w-full h-full object-cover', widths: '300, 400, 600', draggable: 'false' }}
 	{%- else -%}
@@ -51,7 +53,14 @@
 				<svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
 			</span>
 		</div>
-		<template data-ugc-modal-content><video src="{{ m_video_url }}" controls playsinline class="w-full h-full object-contain bg-black"></video></template>
+		<template data-ugc-modal-content>
+			{%- render 'lazy-video',
+				video: m_video,
+				quality: 'full',
+				mode: 'modal',
+				class: 'w-full h-full object-contain bg-black'
+			-%}
+		</template>
 	{%- endif -%}
 
 	{%- if card_quote != blank or card_name != blank -%}

@@ -107,19 +107,16 @@
 							>
 								{%- case media.media_type -%}
 									{%- when 'video' -%}
-										<video
-											class="w-full h-full object-cover"
-											playsinline
-											muted
-											loop
-											preload="metadata"
-											{% if forloop.first %}autoplay{% endif %}
-											{% if media.preview_image %}poster="{{ media.preview_image | image_url: width: 1200 }}"{% endif %}
-										>
-											{%- for source in media.sources -%}
-												<source src="{{ source.url }}" type="{{ source.mime_type }}">
-											{%- endfor -%}
-										</video>
+										{%- comment -%}
+											Hidden gallery items are display:none, so the lazy helper
+											only loads a video once its thumbnail reveals it.
+										{%- endcomment -%}
+										{%- render 'lazy-video',
+											video: media,
+											quality: 'full',
+											class: 'w-full h-full object-cover',
+											poster_width: 1080
+										-%}
 									{%- else -%}
 										{{
 											media
@@ -526,10 +523,17 @@
 
 				var video = item.querySelector('video');
 				if (!video) return;
+				var lazy = window.airaLazyVideo;
 				if (match) {
 					try { video.currentTime = 0; } catch (e) {}
-					var p = video.play();
-					if (p && typeof p.catch === 'function') p.catch(function () {});
+					if (lazy) {
+						lazy.activate(video);
+					} else {
+						var p = video.play();
+						if (p && typeof p.catch === 'function') p.catch(function () {});
+					}
+				} else if (lazy) {
+					lazy.pause(video);
 				} else {
 					video.pause();
 				}

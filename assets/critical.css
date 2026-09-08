@@ -1891,6 +1891,12 @@
       color: color-mix(in oklab, var(--color-copy) 60%, transparent);
     }
   }
+  .text-copy\/70 {
+    color: color-mix(in srgb, #5C6470 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-copy) 70%, transparent);
+    }
+  }
   .text-copy\/80 {
     color: color-mix(in srgb, #5C6470 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
