@@ -1,0 +1,39 @@
+{%- comment -%}
+	Snippet: hero-image-candidates
+	The one place that defines the product hero's responsive candidates, so
+	the preload in layout/theme.liquid and the gallery <img> in
+	sections/product.liquid can never drift apart: a preload whose srcset or
+	sizes differs from the image's is a wasted download.
+
+	Outputs one string, nothing else.
+
+	Params:
+	  image {Object}  product media or image (the kit master is 1080px square;
+	                  a candidate wider than the image is left out)
+	  field {String}  'srcset' or 'sizes'
+
+	sizes follows .container-contained (max 1280px, padding 1.5/2.5/3rem) and
+	the buy box grid (lg:grid-cols-2 lg:gap-14): one column below lg, half
+	the contained width minus half the gap above it.
+{%- endcomment -%}
+{%- liquid
+	if field == 'sizes'
+		echo '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)'
+	else
+		assign natural = image.preview_image.width | default: image.width | default: 99999
+		assign widths = '480,640,832,1080' | split: ','
+		assign first = true
+		for w in widths
+			assign width = w | plus: 0
+			if width > natural
+				continue
+			endif
+			unless first
+				echo ', '
+			endunless
+			echo image | image_url: width: width
+			echo ' ' | append: w | append: 'w'
+			assign first = false
+		endfor
+	endif
+-%}

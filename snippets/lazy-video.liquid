@@ -9,11 +9,14 @@
 	Built by hand rather than with video_tag, because video_tag emits an
 	<img> fallback with no alt attribute that nothing in the theme can reach.
 
-	Renditions come from video.sources, chosen by the short side of the frame
-	(a portrait 720p file is 720 wide and 1280 tall), never by filename. The
-	HLS playlist goes first so Safari and iOS pick a bitrate for the
-	connection; the one mp4 after it is what Chrome and Android take. The
-	full-HD rendition is never offered.
+	The HLS playlist goes first: Safari, iOS, Chrome and Android play it
+	natively and pick a bitrate for the connection (480p on a slow link).
+	One mp4 follows for browsers without native HLS, chosen from
+	video.sources by the short side of the frame (a portrait 720p file is
+	720 wide and 1280 tall), never by filename. On this store Shopify exposes
+	only the top mp4 rendition through video.sources, so that fallback is
+	the 1080p file; the smaller mp4s exist on the CDN but Liquid cannot
+	name them. Re-uploading masters at 720p or below is the fix for that.
 
 	Params:
 	  video        {Object}  Shopify video media: a `video` setting, a

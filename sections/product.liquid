@@ -98,9 +98,11 @@
 			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
 
 				{%- comment -%} Main display — all items rendered, only one visible {%- endcomment -%}
+				{%- capture gallery_sizes -%}{%- render 'hero-image-candidates', field: 'sizes' -%}{%- endcapture -%}
 				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted" data-gallery>
 					{%- if media_count > 0 -%}
 						{%- for media in media_items -%}
+							{%- capture gallery_srcset -%}{%- render 'hero-image-candidates', image: media, field: 'srcset' -%}{%- endcapture -%}
 							<div
 								class="absolute inset-0 {% unless forloop.first %}hidden{% endunless %}"
 								data-gallery-item="{{ forloop.index0 }}"
@@ -119,12 +121,12 @@
 										-%}
 									{%- else -%}
 										{%- comment -%}
-											The first item is the page's LCP element: eager, high priority
-											and preloaded through a Link header that Shopify builds from
-											this same srcset and sizes, so the two can never drift. The
-											master is 1080 px square, so the candidates stop there. sizes
-											follows .container-contained (max 1280, padding 1.5/2.5/3rem)
-											and the lg two-column grid with gap-14.
+											The first item is the page's LCP element: eager and high
+											priority. layout/theme.liquid preloads it with the same srcset
+											and sizes, both from snippets/hero-image-candidates, so the
+											preload is always the request the <img> consumes. (image_tag's
+											own preload: true sends a Link header without fetchpriority,
+											which Chrome fetches at Low priority; hence the explicit one.)
 										{%- endcomment -%}
 										{%- if forloop.first -%}
 											{{
@@ -134,10 +136,9 @@
 													loading: 'eager',
 													fetchpriority: 'high',
 													decoding: 'async',
-													preload: true,
 													class: 'w-full h-full object-cover',
-													widths: '480, 640, 832, 1080',
-													sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
+													srcset: gallery_srcset,
+													sizes: gallery_sizes,
 													alt: media.alt
 											}}
 										{%- else -%}
@@ -148,8 +149,8 @@
 													loading: 'lazy',
 													decoding: 'async',
 													class: 'w-full h-full object-cover',
-													widths: '480, 640, 832, 1080',
-													sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
+													srcset: gallery_srcset,
+													sizes: gallery_sizes,
 													alt: media.alt
 											}}
 										{%- endif -%}
@@ -159,6 +160,7 @@
 					{%- elsif product.featured_image -%}
 						{%- comment -%} Fallback for products with no media but a featured image {%- endcomment -%}
 						<div class="absolute inset-0" data-gallery-item="0">
+							{%- capture gallery_srcset -%}{%- render 'hero-image-candidates', image: product.featured_image, field: 'srcset' -%}{%- endcapture -%}
 							{{
 								product.featured_image
 								| image_url: width: 1080
@@ -166,10 +168,9 @@
 									loading: 'eager',
 									fetchpriority: 'high',
 									decoding: 'async',
-									preload: true,
 									class: 'w-full h-full object-cover',
-									widths: '480, 640, 832, 1080',
-									sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)'
+									srcset: gallery_srcset,
+									sizes: gallery_sizes
 							}}
 						</div>
 					{%- endif -%}

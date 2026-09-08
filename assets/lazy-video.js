@@ -49,7 +49,12 @@
     hydrate(video);
     var p = video.play();
     if (p && typeof p.catch === 'function') {
-      p.catch(function () { armTap(video); });
+      p.catch(function (err) {
+        /* pause() or load() interrupting a pending play() rejects with AbortError;
+           only a refused play (NotAllowedError, Low Power Mode) needs a tap. */
+        if (err && err.name === 'AbortError') return;
+        armTap(video);
+      });
     }
   }
 

@@ -5,6 +5,20 @@
     {% render 'meta-tags' %}
 
     {% comment %}
+      Product hero preload, kit template only. Shopify turns preload_tag into
+      a Link header and 103 Early Hints, so the hero starts before the HTML
+      arrives, and fetchpriority high keeps it ahead of fonts and scripts.
+      The candidates and sizes come from snippets/hero-image-candidates, the
+      same source the gallery <img> uses, so the preload is always consumed.
+      The refill template has its own main image and is left to the parser.
+    {% endcomment %}
+    {%- if request.page_type == 'product' and template.suffix == blank and product.featured_media.media_type == 'image' -%}
+      {%- capture hero_srcset -%}{%- render 'hero-image-candidates', image: product.featured_media, field: 'srcset' -%}{%- endcapture -%}
+      {%- capture hero_sizes -%}{%- render 'hero-image-candidates', field: 'sizes' -%}{%- endcapture -%}
+      {{ product.featured_media | image_url: width: 1080 | preload_tag: as: 'image', fetchpriority: 'high', imagesrcset: hero_srcset, imagesizes: hero_sizes }}
+    {%- endif -%}
+
+    {% comment %}
       Fonts. Both faces are declared in snippets/css-variables.liquid with
       asset_url, so these preloads resolve to the same versioned URLs and the
       browser makes one request per font. Satoshi carries every heading
