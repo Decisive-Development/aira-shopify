@@ -118,16 +118,41 @@
 											poster_width: 1080
 										-%}
 									{%- else -%}
-										{{
-											media
-											| image_url: width: 1200
-											| image_tag:
-												loading: forloop.first | default: false,
-												class: 'w-full h-full object-cover',
-												widths: '400, 600, 800, 1200',
-												sizes: '(min-width: 1024px) 50vw, 100vw',
-												alt: media.alt
-										}}
+										{%- comment -%}
+											The first item is the page's LCP element: eager, high priority
+											and preloaded through a Link header that Shopify builds from
+											this same srcset and sizes, so the two can never drift. The
+											master is 1080px square, so the candidates stop there. sizes
+											follows .container-contained (max 1280, padding 1.5/2.5/3rem)
+											and the lg two-column grid with gap-14.
+										{%- endcomment -%}
+										{%- if forloop.first -%}
+											{{
+												media
+												| image_url: width: 1080
+												| image_tag:
+													loading: 'eager',
+													fetchpriority: 'high',
+													decoding: 'async',
+													preload: true,
+													class: 'w-full h-full object-cover',
+													widths: '480, 640, 832, 1080',
+													sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
+													alt: media.alt
+											}}
+										{%- else -%}
+											{{
+												media
+												| image_url: width: 1080
+												| image_tag:
+													loading: 'lazy',
+													decoding: 'async',
+													class: 'w-full h-full object-cover',
+													widths: '480, 640, 832, 1080',
+													sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
+													alt: media.alt
+											}}
+										{%- endif -%}
 								{%- endcase -%}
 							</div>
 						{%- endfor -%}
@@ -136,12 +161,15 @@
 						<div class="absolute inset-0" data-gallery-item="0">
 							{{
 								product.featured_image
-								| image_url: width: 1200
+								| image_url: width: 1080
 								| image_tag:
 									loading: 'eager',
+									fetchpriority: 'high',
+									decoding: 'async',
+									preload: true,
 									class: 'w-full h-full object-cover',
-									widths: '400, 600, 800, 1200',
-									sizes: '(min-width: 1024px) 50vw, 100vw'
+									widths: '480, 640, 832, 1080',
+									sizes: '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)'
 							}}
 						</div>
 					{%- endif -%}
