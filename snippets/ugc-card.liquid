@@ -40,7 +40,7 @@
 			class: 'absolute inset-0 w-full h-full object-cover'
 		-%}
 	{%- elsif has_image -%}
-		{{ m_image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'absolute inset-0 w-full h-full object-cover', widths: '300, 400, 600', draggable: 'false' }}
+		{{ m_image | image_url: width: 600 | image_tag: loading: 'lazy', decoding: 'async', class: 'absolute inset-0 w-full h-full object-cover', widths: '300, 400, 600', draggable: 'false' }}
 	{%- else -%}
 		<div class="absolute inset-0 bg-bg-muted"></div>
 	{%- endif -%}

@@ -273,7 +273,7 @@
                   {%- if mobile_src != blank -%}
                     <source
                       media="(max-width: 768px)"
-                      srcset="{{ mobile_src | image_url: width: 400 }} 400w, {{ mobile_src | image_url: width: 600 }} 600w, {{ mobile_src | image_url: width: 900 }} 900w"
+                      srcset="{{ mobile_src | image_url: width: 400 }} 400w, {{ mobile_src | image_url: width: 480 }} 480w, {{ mobile_src | image_url: width: 640 }} 640w, {{ mobile_src | image_url: width: 800 }} 800w, {{ mobile_src | image_url: width: 900 }} 900w"
                       sizes="100vw">
                   {%- endif -%}
                   {{
@@ -281,9 +281,10 @@
                     | image_url: width: 1200
                     | image_tag:
                       loading: 'lazy',
+                      decoding: 'async',
                       class: 'sc-img',
-                      widths: '400, 600, 900, 1200',
-                      sizes: '(max-width: 768px) 100vw, 600px',
+                      widths: '400, 480, 640, 800, 900, 1200',
+                      sizes: '600px',
                       alt: card_alt
                   }}
                 </picture>

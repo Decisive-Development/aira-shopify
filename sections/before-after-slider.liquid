@@ -59,6 +59,7 @@
 				| image_url: width: 2400
 				| image_tag:
 					loading: 'lazy',
+					decoding: 'async',
 					class: 'w-full h-full object-cover',
 					widths: '375, 768, 1280, 1920, 2400',
 					alt: ''
@@ -100,8 +101,10 @@
 						| image_url: width: 1200
 						| image_tag:
 							loading: 'lazy',
+							decoding: 'async',
 							class: 'w-full h-auto block',
-							widths: '400, 600, 800, 1200',
+							widths: '400, 480, 640, 800, 1200',
+							sizes: '(min-width: 976px) 896px, (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
 							draggable: 'false',
 							alt: ba_after_alt
 					}}
@@ -134,8 +137,10 @@
 						| image_url: width: 1200
 						| image_tag:
 							loading: 'lazy',
+							decoding: 'async',
 							class: 'w-full h-auto block',
-							widths: '400, 600, 800, 1200',
+							widths: '400, 480, 640, 800, 1200',
+							sizes: '(min-width: 976px) 896px, (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)',
 							draggable: 'false',
 							alt: ba_before_alt
 					}}
