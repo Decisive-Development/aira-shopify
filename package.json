@@ -4,7 +4,7 @@
   "scripts": {
     "build:css": "npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css --minify && node scripts/build-critical-snippet.js",
     "watch:css": "concurrently \"npx @tailwindcss/cli -i ./assets/critical.source.css -o ./assets/critical.css --watch --minify\" \"node scripts/build-critical-snippet.js --watch\"",
-    "dev": "shopify theme dev --theme Aira-theme --theme-editor-sync -s aira-ecom",
+    "dev": "shopify theme dev --theme-editor-sync -s aira-ecom",
     "dev:css": "npm run watch:css"
   },
   "dependencies": {

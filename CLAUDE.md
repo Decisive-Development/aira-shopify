@@ -16,7 +16,7 @@ aira: premium magnetic nasal strips, GCC market, launching ~late July 2026. Cust
 - **Folders:** `sections/` (~72), `snippets/`, `templates/` (mostly JSON), `assets/`, `config/`, `layout/`, `locales/`.
 - **Canonical shared snippets, reuse these, never reinvent:** `cta-button` (all buttons, pass `variant:`), `cta-banner` (CTA bands), `section-heading` (eyebrow + heading), `image`, `product-card`.
 - **Naming:** lowercase-kebab, describing function not page or order (`reviews-grid`, never `homepage-thing-2` or a reversed-word twin of a file that already exists).
-- **Environment:** store `aira-ecom`, dev theme `Aira-theme`, repo `Decisive-Development/aira-shopify`, work on `main`.
+- **Environment:** store `aira-ecom`; `Aira-theme` (#187924578686) is the **live** theme, so never point `theme dev` or an unscoped `theme push` at it; `npm run dev` serves a per-user development theme; repo `Decisive-Development/aira-shopify`, work on `main`.
 
 ## 3. Commands
 
