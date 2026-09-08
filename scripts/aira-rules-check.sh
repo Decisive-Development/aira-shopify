@@ -16,11 +16,11 @@ if [ -n "$hits" ]; then echo "VIOLATION (use sentence case / approved labels):";
 
 echo "== off-palette hex in sections/snippets (drift) =="
 allow='FF4000|0A1A34|F1EBE1|9BB7D4|28965A|087CA7|2A3142|5C6470|FFFFFF|FAFAFA|F2F2F2|F8F5F0'
-hits=$(grep -rnoiE '#[0-9a-f]{6}' sections snippets 2>/dev/null | grep -viE "#($allow)" || true)
+hits=$(grep -rnoiE --exclude=critical-css.liquid '#[0-9a-f]{6}' sections snippets 2>/dev/null | grep -viE "#($allow)" || true)
 if [ -n "$hits" ]; then echo "WARN (colour not in token palette; tokenise or add to the set):"; echo "$hits" | sed 's/^/  /' | head -40; fi
 
 echo "== any hardcoded hex in sections (rule: use tokens, not raw hex) =="
-n=$(grep -rloiE '#[0-9a-f]{6}' sections snippets 2>/dev/null | wc -l | tr -d ' ')
+n=$(grep -rloiE --exclude=critical-css.liquid '#[0-9a-f]{6}' sections snippets 2>/dev/null | wc -l | tr -d ' ')
 echo "files with a hardcoded hex: $n (target 0; SVG logo fills aside)"
 
 echo "== suspicious section filenames (forks / versions) =="

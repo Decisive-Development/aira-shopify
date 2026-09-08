@@ -31,3 +31,7 @@ package-lock.json
 # alone. Remove these two lines once the images move and the section exists.
 assets/images/*
 templates/page.affiliate.json
+
+# Build intermediate: the compiled Tailwind CSS ships inlined through
+# snippets/critical-css.liquid (scripts/build-critical-snippet.js), not as an asset.
+assets/critical.css

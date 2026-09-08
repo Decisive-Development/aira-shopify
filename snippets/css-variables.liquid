@@ -1,14 +1,23 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {% # Self-hosted brand fonts. asset_url gives the versioned URL the preloads in layout/theme.liquid use, so each font is one request; a relative url() would break once the stylesheet is inlined. %}
+  @font-face {
+    font-family: "Satoshi";
+    src: url("{{ 'satoshi-variable.woff2' | asset_url }}") format("woff2 supports variations"),
+         url("{{ 'satoshi-variable.woff2' | asset_url }}") format("woff2");
+    font-weight: 300 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Nunito Sans";
+    src: url("{{ 'nunito-sans-variable.woff2' | asset_url }}") format("woff2 supports variations"),
+         url("{{ 'nunito-sans-variable.woff2' | asset_url }}") format("woff2");
+    font-weight: 200 1000;
+    font-style: normal;
+    font-display: swap;
+  }
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
 

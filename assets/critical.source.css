@@ -12,23 +12,8 @@
 @source "../snippets/**/*.liquid";
 @source "../templates/**/*.liquid";
 
-@font-face {
-  font-family: "Satoshi";
-  src: url("satoshi-variable.woff2") format("woff2 supports variations"),
-       url("satoshi-variable.woff2") format("woff2");
-  font-weight: 300 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito Sans";
-  src: url("nunito-sans-variable.ttf") format("truetype supports variations"),
-       url("nunito-sans-variable.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* @font-face for Satoshi and Nunito Sans lives in snippets/css-variables.liquid,
+   where asset_url gives the URLs the font preloads in layout/theme.liquid use. */
 
 @theme {
   /* Colors */

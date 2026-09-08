@@ -1,30 +1,31 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
-    {% # Inlined CSS Variables %}
+    {% # Charset and viewport first, then title, SEO and social tags %}
+    {% render 'meta-tags' %}
+
+    {% comment %}
+      Fonts. Both faces are declared in snippets/css-variables.liquid with
+      asset_url, so these preloads resolve to the same versioned URLs and the
+      browser makes one request per font. Satoshi carries every heading
+      weight; Nunito Sans is the body face, cut down to Latin and its weight
+      axis (38 KB). Both preload so the bold headings and body copy above the
+      fold do not swap in late and shift the buy box; font-display: swap in
+      the @font-face keeps text visible while they load.
+    {% endcomment %}
+    {{ 'satoshi-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {{ 'nunito-sans-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+
+    {% # Inlined CSS variables and @font-face %}
     {% render 'css-variables' %}
 
     {% comment %}
-      Font preloading:
-      1. Preconnect to font CDN for faster connection
-      2. Preload only the critical font variant (base weight)
-      3. Additional variants load on-demand via @font-face
+      The compiled Tailwind stylesheet, inlined so first paint does not wait
+      on a stylesheet request. Shopify's inline_asset_content filter stops at
+      15 KB, so the build writes the CSS into snippets/critical-css.liquid
+      instead (scripts/build-critical-snippet.js, run by npm run build:css).
     {% endcomment %}
-    {% unless settings.type_primary_font.system? %}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-
-      {% comment %}
-        Preload both the base AND bold variants. Body copy uses base; headings
-        and CTA buttons use bold. Preloading only the base variant caused the
-        bold variant to swap in mid-render and shift content above the fold —
-        which compounded with scroll-anchor corrections into a visible jump.
-      {% endcomment %}
-      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-      {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {% endunless %}
-
-    {% # Load and preload the critical CSS %}
-    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    <style>{% render 'critical-css' %}</style>
 
     {% comment %}
       Lenis smooth-scroll. Loaded on every page; smooth-scroll.js gates
@@ -69,9 +70,6 @@
       <link rel="icon" type="image/png" sizes="512x512" href="{{ 'favicon-512.png' | asset_url }}">
       <link rel="apple-touch-icon" sizes="180x180" href="{{ 'favicon-180.png' | asset_url }}">
     {%- endif -%}
-
-    {% # Social, title, etc. %}
-    {% render 'meta-tags' %}
 
     {%- comment -%}
       Judge.me scroll-hijack guard.

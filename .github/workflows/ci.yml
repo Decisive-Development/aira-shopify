@@ -8,7 +8,7 @@ on:
 
 # Rollout note: the whole gate runs in REPORT-ONLY mode so it can't turn main red
 # while the audit cleanup is still pending. Once the theme is clean, switch to
-# enforcing by (1) removing `continue-on-error` below, (2) making the critical.css
+# enforcing by (1) removing `continue-on-error` below, (2) making the critical-css.liquid
 # diff exit 1, and (3) running the rule check with STRICT=1.
 
 jobs:
@@ -31,10 +31,10 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build:css
-      - name: critical.css must match its source
+      - name: critical-css.liquid must match its source
         run: |
-          git diff --quiet -- assets/critical.css \
-            || echo "::warning::critical.css is out of sync with critical.source.css. Run npm run build:css and commit. (Will fail the build once enforcing.)"
+          git diff --quiet -- snippets/critical-css.liquid \
+            || echo "::warning::snippets/critical-css.liquid is out of sync with critical.source.css. Run npm run build:css and commit. (Will fail the build once enforcing.)"
 
   aira-rules:
     runs-on: ubuntu-latest
