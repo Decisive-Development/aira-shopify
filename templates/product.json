@@ -78,7 +78,7 @@
           "type": "product_faq",
           "settings": {
             "question": "SHIPPING & RETURNS",
-            "answer": "<p>Free shipping to the UAE and Saudi Arabia, the only countries we deliver to for now. Orders arrive in <strong>3 to 5 business days</strong>. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, the only countries we deliver to for now. Orders arrive in <strong>1 to 3 days</strong>. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
           }
         }
       },
@@ -420,7 +420,7 @@
           "type": "question",
           "settings": {
             "question": "Where do you ship?",
-            "answer": "<p>Free shipping to the UAE and Saudi Arabia, arriving within 3 to 5 business days.</p>"
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, arriving within 1 to 3 days.</p>"
           }
         }
       },
