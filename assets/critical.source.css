@@ -101,7 +101,7 @@
     bottom: calc(var(--spacing) * 4 + env(safe-area-inset-bottom));
     background-color: #25D366;
     color: var(--color-bg);
-    transition: bottom 200ms ease, transform 150ms ease, filter 150ms ease;
+    transition: bottom 200ms ease, transform 150ms ease, filter 150ms ease, opacity 150ms ease;
     @variant lg {
       right: calc(var(--spacing) * 6);
       bottom: calc(var(--spacing) * 6);

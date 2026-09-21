@@ -46,11 +46,13 @@
 	{%- endcapture -%}
 	{%- if wa_variant == 'bubble' -%}
 		{%- comment -%}
-			Floating bubble: a 56px circle with the glyph at every size (Tom,
-			2026-09-21: icon only). The label stays in the DOM as sr-only so the
-			link keeps an accessible name without an aria-label.
+			Floating bubble, icon only (Tom, 2026-09-21): a 48px circle with a
+			24px glyph below lg, 56px with a 28px glyph from lg. The label stays
+			in the DOM as sr-only so the link keeps an accessible name without an
+			aria-label. Rests at 70% opacity (Tom, 2026-09-21), full on hover and
+			keyboard focus.
 		{%- endcomment -%}
-		<a href="{{ wa_href }}" class="wa-bubble fixed z-40 inline-flex items-center justify-center h-14 w-14 rounded-full shadow-lg" {{ wa_attrs }}>{%- render 'icon-whatsapp', size: wa_icon -%}<span class="sr-only">{{ label }}</span></a>
+		<a href="{{ wa_href }}" class="wa-bubble fixed z-40 inline-flex items-center justify-center h-12 w-12 lg:h-14 lg:w-14 rounded-full shadow-lg opacity-70 hover:opacity-100 focus-visible:opacity-100" {{ wa_attrs }}>{%- render 'icon-whatsapp', size: wa_icon, classes: 'shrink-0 lg:h-7 lg:w-7' -%}<span class="sr-only">{{ label }}</span></a>
 	{%- else -%}
 		{%- comment -%}
 			Inline text link: inherits the surrounding font size, underlines on
