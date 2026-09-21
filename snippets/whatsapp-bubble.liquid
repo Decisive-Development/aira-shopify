@@ -4,14 +4,13 @@
 	Gated on Theme settings → Support & contact: number set AND "Show floating
 	WhatsApp bubble". The href, tracking attribute and icon come from
 	snippets/whatsapp-link (variant 'bubble'); the footer's delegated listener
-	publishes the click with source "bubble". Box and type are Tailwind
+	publishes the click with source "bubble". Icon only, at every size (Tom,
+	2026-09-21); the label is screen-reader text. Box and shadow are Tailwind
 	utilities on the anchor; .wa-bubble in assets/critical.source.css holds
 	the one permitted WhatsApp green, the safe-area bottom and the lift above
 	a visible sticky bar (CLAUDE.md §5 names the exception).
 
-	Product templates prefill the product line like the buy-box link, from
-	product.title (the layout cannot see the section's heading override), so
-	the kit reads "about aira kit" here and "about the aira kit" in the buy box.
+	Product templates prefill the product name from product.title, downcased.
 {%- endcomment -%}
 
 {%- if settings.support_whatsapp_number != blank and settings.whatsapp_bubble -%}

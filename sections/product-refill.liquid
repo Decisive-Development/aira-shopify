@@ -319,16 +319,6 @@
 					</div>
 				</div>
 
-				{%- comment -%} ── WhatsApp line: last element of the buy box, never in the sticky bar. Gated on both Support & contact switches. ── {%- endcomment -%}
-				{%- if settings.support_whatsapp_number != blank and settings.whatsapp_on_product_pages -%}
-					{%- liquid
-						assign wa_product = product.title | downcase
-						assign wa_label = 'contact.whatsapp_cta' | t
-						assign wa_msg = 'contact.whatsapp_prefill_product' | t: product: wa_product
-					-%}
-					<p class="text-sm text-copy mt-2">{{ 'contact.whatsapp_lead_product' | t }} {% render 'whatsapp-link', source: 'pdp', label: wa_label, message: wa_msg %}</p>
-				{%- endif -%}
-
 			</div>
 		</div>
 

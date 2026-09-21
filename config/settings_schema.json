@@ -139,19 +139,7 @@
         "type": "text",
         "id": "support_whatsapp_number",
         "label": "WhatsApp Business number (digits only, no +, no spaces)",
-        "info": "Powers every WhatsApp link on the site: product pages, footer, contact page and FAQ. Leave blank to remove them all. e.g. 971501234567 for +971 50 123 4567"
-      },
-      {
-        "type": "text",
-        "id": "support_whatsapp_display",
-        "label": "Number as printed on the contact page",
-        "info": "e.g. +971 50 123 4567"
-      },
-      {
-        "type": "checkbox",
-        "id": "whatsapp_on_product_pages",
-        "label": "Show the WhatsApp line on product pages",
-        "default": true
+        "info": "Powers the floating WhatsApp bubble and the WhatsApp link in the FAQ closing text. Leave blank to remove both. e.g. 971501234567 for +971 50 123 4567"
       },
       {
         "type": "checkbox",

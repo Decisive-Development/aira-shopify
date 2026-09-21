@@ -1,18 +1,18 @@
 {%- comment -%}
-	whatsapp-link — the one click-to-WhatsApp anchor. Every placement (product
-	buy box, footer, contact page, FAQ) renders this. The number comes from
-	Theme settings → Support & contact and appears nowhere in code. A blank
-	number renders nothing, so callers wrap any lead-in text in the same check
-	to avoid an orphaned "Questions?".
+	whatsapp-link — the one click-to-WhatsApp anchor. The floating bubble
+	(snippets/whatsapp-bubble) and the FAQ closing text render this. The
+	number comes from Theme settings → Support & contact and appears nowhere
+	in code. A blank number renders nothing.
 
 	Params:
-	  source    {String}  'pdp' | 'footer' | 'contact' | 'faq' (required). Lands
+	  source    {String}  'bubble' | 'faq' (required). Lands
 	                      in data-wa-source for the aira_whatsapp_click event
 	                      the footer's delegated listener publishes.
-	  label     {String}  visible link text, already translated (required)
+	  label     {String}  link text, already translated (required). The bubble
+	                      keeps it screen-reader only.
 	  message   {String}  pre-filled first message, already translated
-	  variant   {String}  'inline' (text link, default) | 'button' (cta-button)
-	                      | 'bubble' (floating door, see snippets/whatsapp-bubble)
+	  variant   {String}  'inline' (text link, default) | 'bubble' (floating
+	                      door, see snippets/whatsapp-bubble)
 	  surface   {String}  'light' (navy text, default) | 'dark' (cream text)
 	  icon_size {Number}  glyph size in px. Default 18. Pass 0 for no icon
 	                      (running text).
@@ -20,7 +20,7 @@
 	Liquid gotcha: render arguments take no filters, so translate first:
 	  {%- assign wa_label = 'contact.whatsapp_cta' | t -%}
 	  {%- assign wa_msg   = 'contact.whatsapp_prefill' | t -%}
-	  {%- render 'whatsapp-link', source: 'footer', label: wa_label, message: wa_msg -%}
+	  {%- render 'whatsapp-link', source: 'faq', label: wa_label, message: wa_msg -%}
 {%- endcomment -%}
 {%- if settings.support_whatsapp_number != blank -%}
 	{%- liquid
@@ -44,15 +44,13 @@
 		{%- if wa_icon != 0 -%}{%- render 'icon-whatsapp', size: wa_icon -%}{%- endif -%}
 		<span>{{ label }}</span>
 	{%- endcapture -%}
-	{%- if wa_variant == 'button' -%}
-		{%- render 'cta-button', label: wa_inner, url: wa_href, variant: 'solid', surface: wa_surface, attributes: wa_attrs -%}
-	{%- elsif wa_variant == 'bubble' -%}
+	{%- if wa_variant == 'bubble' -%}
 		{%- comment -%}
-			Floating bubble: 56px circle below lg, pill with the label from lg.
-			The label stays in the DOM as sr-only below lg, so the accessible
-			name is always the visible text and no aria-label is needed.
+			Floating bubble: a 56px circle with the glyph at every size (Tom,
+			2026-09-21: icon only). The label stays in the DOM as sr-only so the
+			link keeps an accessible name without an aria-label.
 		{%- endcomment -%}
-		<a href="{{ wa_href }}" class="wa-bubble fixed z-40 inline-flex items-center justify-center gap-2 h-14 w-14 rounded-full shadow-lg font-body text-sm font-semibold tracking-wide lg:h-13 lg:w-auto lg:px-5" {{ wa_attrs }}>{%- render 'icon-whatsapp', size: wa_icon -%}<span class="sr-only lg:not-sr-only">{{ label }}</span></a>
+		<a href="{{ wa_href }}" class="wa-bubble fixed z-40 inline-flex items-center justify-center h-14 w-14 rounded-full shadow-lg" {{ wa_attrs }}>{%- render 'icon-whatsapp', size: wa_icon -%}<span class="sr-only">{{ label }}</span></a>
 	{%- else -%}
 		{%- comment -%}
 			Inline text link: inherits the surrounding font size, underlines on

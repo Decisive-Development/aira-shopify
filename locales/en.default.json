@@ -41,10 +41,6 @@
   },
   "contact": {
     "whatsapp_cta": "WhatsApp us",
-    "whatsapp_open": "Open WhatsApp",
-    "whatsapp_heading": "Message us on WhatsApp",
-    "whatsapp_lead_product": "Questions?",
-    "whatsapp_lead_faq": "Didn't find your answer?",
     "whatsapp_prefill": "Hi aira, I have a question.",
     "whatsapp_prefill_product": "Hi aira, I have a question about {{ product }}."
   },

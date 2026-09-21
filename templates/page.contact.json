@@ -17,10 +17,6 @@
 				"subheading": "Message us on WhatsApp for the fastest reply, or use the form below and we'll get back to you within 1 to 2 business days."
 			}
 		},
-		"whatsapp": {
-			"type": "contact-whatsapp",
-			"settings": {}
-		},
 		"form": {
 			"type": "contact-form",
 			"settings": {}
@@ -38,5 +34,5 @@
 			}
 		}
 	},
-	"order": ["hero", "whatsapp", "form", "quick_links"]
+	"order": ["hero", "form", "quick_links"]
 }

@@ -92,7 +92,7 @@
 
   /* Floating WhatsApp bubble (snippets/whatsapp-bubble, rendered from
      layout/theme.liquid). Named exception, Tom 2026-09-21: the WhatsApp
-     green may exist in this rule and nowhere else (CLAUDE.md §5). Box, type,
+     green may exist in this rule and nowhere else (CLAUDE.md §5). Box,
      shadow and z-index are Tailwind utilities on the anchor; this rule holds
      what utilities cannot: the brand green, the safe-area bottom, the lift
      above a visible sticky bar, and the hover under reduced motion. */
