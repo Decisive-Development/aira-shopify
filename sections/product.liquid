@@ -91,134 +91,7 @@
 		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
 
 			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
-			{%- liquid
-				assign media_items = product.media
-				assign media_count = media_items.size
-			-%}
-			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-
-				{%- comment -%} Main display — all items rendered, only one visible {%- endcomment -%}
-				{%- capture gallery_sizes -%}{%- render 'hero-image-candidates', field: 'sizes' -%}{%- endcapture -%}
-				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted" data-gallery>
-					{%- if media_count > 0 -%}
-						{%- for media in media_items -%}
-							{%- capture gallery_srcset -%}{%- render 'hero-image-candidates', image: media, field: 'srcset' -%}{%- endcapture -%}
-							<div
-								class="absolute inset-0 {% unless forloop.first %}hidden{% endunless %}"
-								data-gallery-item="{{ forloop.index0 }}"
-							>
-								{%- case media.media_type -%}
-									{%- when 'video' -%}
-										{%- comment -%}
-											Hidden gallery items are display:none, so the lazy helper
-											only loads a video once its thumbnail reveals it.
-										{%- endcomment -%}
-										{%- render 'lazy-video',
-											video: media,
-											quality: 'full',
-											class: 'w-full h-full object-cover',
-											poster_width: 1080
-										-%}
-									{%- else -%}
-										{%- comment -%}
-											The first item is the page's LCP element: eager and high
-											priority. layout/theme.liquid preloads it with the same srcset
-											and sizes, both from snippets/hero-image-candidates, so the
-											preload is always the request the <img> consumes. (image_tag's
-											own preload: true sends a Link header without fetchpriority,
-											which Chrome fetches at Low priority; hence the explicit one.)
-										{%- endcomment -%}
-										{%- if forloop.first -%}
-											{{
-												media
-												| image_url: width: 1080
-												| image_tag:
-													loading: 'eager',
-													fetchpriority: 'high',
-													decoding: 'async',
-													class: 'w-full h-full object-cover',
-													srcset: gallery_srcset,
-													sizes: gallery_sizes,
-													alt: media.alt
-											}}
-										{%- else -%}
-											{{
-												media
-												| image_url: width: 1080
-												| image_tag:
-													loading: 'lazy',
-													decoding: 'async',
-													class: 'w-full h-full object-cover',
-													srcset: gallery_srcset,
-													sizes: gallery_sizes,
-													alt: media.alt
-											}}
-										{%- endif -%}
-								{%- endcase -%}
-							</div>
-						{%- endfor -%}
-					{%- elsif product.featured_image -%}
-						{%- comment -%} Fallback for products with no media but a featured image {%- endcomment -%}
-						<div class="absolute inset-0" data-gallery-item="0">
-							{%- capture gallery_srcset -%}{%- render 'hero-image-candidates', image: product.featured_image, field: 'srcset' -%}{%- endcapture -%}
-							{{
-								product.featured_image
-								| image_url: width: 1080
-								| image_tag:
-									loading: 'eager',
-									fetchpriority: 'high',
-									decoding: 'async',
-									class: 'w-full h-full object-cover',
-									srcset: gallery_srcset,
-									sizes: gallery_sizes
-							}}
-						</div>
-					{%- endif -%}
-
-					{%- if section.settings.image_badge != blank -%}
-						<div class="absolute top-4 left-4 right-4 flex justify-center z-10">
-							<span class="px-5 py-2 rounded-full bg-highlight text-white text-xs font-bold tracking-wide uppercase">
-								{{ section.settings.image_badge }}
-							</span>
-						</div>
-					{%- endif -%}
-				</div>
-
-				{%- comment -%} Thumbnail row — columns follow the media count so it reflows to fit however many there are {%- endcomment -%}
-				<div class="grid gap-2" style="grid-template-columns: repeat({{ media_count }}, minmax(0, 1fr));">
-					{%- for media in media_items -%}
-						<button
-							type="button"
-							class="relative aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if forloop.first %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
-							data-thumb-btn
-							data-thumb-index="{{ forloop.index0 }}"
-							aria-label="Show {{ media.media_type }} {{ forloop.index }}"
-						>
-							{%- if media.preview_image -%}
-								{{
-									media.preview_image
-									| image_url: width: 200
-									| image_tag:
-										loading: 'lazy',
-										decoding: 'async',
-										class: 'w-full h-full object-cover',
-										widths: '100, 200',
-										alt: ''
-								}}
-							{%- endif -%}
-							{%- if media.media_type == 'video' -%}
-								<span class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/15">
-									<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white drop-shadow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-										<path d="M8 5v14l11-7z"/>
-									</svg>
-								</span>
-							{%- endif -%}
-						</button>
-					{%- endfor -%}
-				</div>
-
-
-			</div>
+			{%- render 'product-gallery', media: product.media, badge: section.settings.image_badge -%}
 
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
@@ -507,8 +380,6 @@
 
 	var sellingPlanInput = section.querySelector('[data-selling-plan-input]');
 	var addBtn = section.querySelector('[data-add-to-cart]');
-	var galleryItems = section.querySelectorAll('[data-gallery-item]');
-	var thumbBtns = section.querySelectorAll('[data-thumb-btn]');
 	var stickyBar = document.querySelector('[data-sticky-bar]');
 	var stickyAtc = stickyBar ? stickyBar.querySelector('[data-sticky-atc]') : null;
 
@@ -538,43 +409,6 @@
 	planBtns.forEach(function (btn) {
 		btn.addEventListener('click', function () {
 			setPlan(btn.getAttribute('data-plan-btn'));
-		});
-	});
-
-	/* ── Thumbnail gallery ── */
-	thumbBtns.forEach(function (btn) {
-		btn.addEventListener('click', function () {
-			var idx = btn.getAttribute('data-thumb-index');
-			if (idx === null) return;
-
-			galleryItems.forEach(function (item) {
-				var match = item.getAttribute('data-gallery-item') === idx;
-				item.classList.toggle('hidden', !match);
-
-				var video = item.querySelector('video');
-				if (!video) return;
-				var lazy = window.airaLazyVideo;
-				if (match) {
-					try { video.currentTime = 0; } catch (e) {}
-					if (lazy) {
-						lazy.activate(video);
-					} else {
-						var p = video.play();
-						if (p && typeof p.catch === 'function') p.catch(function () {});
-					}
-				} else if (lazy) {
-					lazy.pause(video);
-				} else {
-					video.pause();
-				}
-			});
-
-			thumbBtns.forEach(function (b) {
-				b.classList.remove('border-main');
-				b.classList.add('border-transparent');
-			});
-			btn.classList.remove('border-transparent');
-			btn.classList.add('border-main');
 		});
 	});
 

@@ -9,9 +9,10 @@
   tap to play). If play() is refused (iOS Low Power Mode, an autoplay policy)
   the same tap-to-play fallback arms, so a poster always has a way to play.
 
-  Loaded with defer from layout/theme.liquid. A section script that reveals
-  a hidden video itself (the PDP gallery) calls
-  window.airaLazyVideo.activate(video).
+  Loaded with defer from layout/theme.liquid. A script that reveals a
+  display:none video itself can call window.airaLazyVideo.activate(video);
+  the product gallery no longer needs to, since its items sit in a scroll
+  track that the observer sees.
 */
 (function () {
   'use strict';

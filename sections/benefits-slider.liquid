@@ -33,10 +33,6 @@
 -%}
 
 <style>
-	/* ─── Track — scrollbar hidden ─── */
-	#shopify-section-{{ section.id }} .bs-track::-webkit-scrollbar { display: none; }
-	#shopify-section-{{ section.id }} .bs-track { -ms-overflow-style: none; scrollbar-width: none; }
-
 	/* ─── Track ─── */
 	#shopify-section-{{ section.id }} .bs-track {
 		margin: 0; padding: 0; list-style: none;
@@ -217,7 +213,7 @@
 		aria-label="{{ section.settings.heading | escape }}"
 	>
 
-		<ul class="bs-track" data-bs-track role="list">
+		<ul class="bs-track scrollbar-none" data-bs-track role="list">
 			{%- for block in section.blocks -%}
 				<li
 					class="bs-card"

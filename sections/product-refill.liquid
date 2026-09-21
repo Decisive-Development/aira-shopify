@@ -6,7 +6,6 @@
 	if pouch_variant == blank
 		assign pouch_variant = product.selected_or_first_available_variant | default: product.variants.first
 	endif
-	assign main_image = pouch_variant.featured_image | default: product.featured_image
 	assign has_selling_plans = false
 	if product.selling_plan_groups.size > 0
 		assign has_selling_plans = true
@@ -54,79 +53,13 @@
 		{%- comment -%} ══════ Two-column layout ══════ {%- endcomment -%}
 		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
 
-			{%- comment -%} ── Left: Image gallery ── {%- endcomment -%}
-			<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-
-				{%- comment -%} Main image {%- endcomment -%}
-				<div class="relative aspect-square rounded-2xl overflow-hidden bg-bg-muted">
-					{%- if main_image -%}
-						{{
-							main_image
-							| image_url: width: 1200
-							| image_tag:
-								loading: 'eager',
-								class: 'w-full h-full object-cover',
-								widths: '400, 600, 800, 1200',
-								id: 'refill-main-image'
-						}}
-					{%- endif -%}
-				</div>
-
-				{%- comment -%}
-					Thumbnail row. Images assigned to another variant stay out of the
-					gallery; the buy box swaps them into the main frame instead.
-				{%- endcomment -%}
-				{%- assign thumb_count = 0 -%}
-				<div class="grid grid-cols-6 gap-2">
-					{%- for image in product.images -%}
-						{%- liquid
-							assign keep = true
-							if image.variants.size > 0
-								assign keep = false
-								for image_variant in image.variants
-									if image_variant.id == pouch_variant.id
-										assign keep = true
-										break
-									endif
-								endfor
-							endif
-						-%}
-						{%- if keep and thumb_count < 6 -%}
-							{%- assign thumb_count = thumb_count | plus: 1 -%}
-							{%- comment -%}
-								The button carries the label, so the thumbnail inside it is
-								decorative. Repeating the product name on every thumbnail
-								would announce it once per image for no gain. Same pattern
-								as the kit PDP gallery.
-							{%- endcomment -%}
-							<button
-								type="button"
-								class="aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if image.id == main_image.id %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
-								data-thumb-btn
-								data-thumb-src="{{ image | image_url: width: 1200 }}"
-								aria-label="Show image {{ thumb_count }}"
-							>
-								{{
-									image
-									| image_url: width: 200
-									| image_tag:
-										loading: 'lazy',
-										class: 'w-full h-full object-cover',
-										widths: '100, 200',
-										alt: ''
-								}}
-							</button>
-						{%- endif -%}
-					{%- endfor -%}
-					{%- if thumb_count < 6 -%}
-						{%- assign placeholders_needed = 6 | minus: thumb_count -%}
-						{%- for i in (1..placeholders_needed) -%}
-							<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
-						{%- endfor -%}
-					{%- endif -%}
-				</div>
-
-			</div>
+			{%- comment -%}
+				── Left: Image gallery ──
+				Images assigned to another variant stay out of the gallery. The
+				thumbnail row keeps six equal columns whatever the count, so the
+				thumbnails stay the same size as the kit page's.
+			{%- endcomment -%}
+			{%- render 'product-gallery', media: product.images, variant: pouch_variant, max: 6, min_columns: 6 -%}
 
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
@@ -360,8 +293,6 @@
 	var qtyInput = form.querySelector('[data-quantity-input]');
 	var sellingPlanInput = form.querySelector('[data-selling-plan-input]');
 	var addBtn = form.querySelector('[data-add-to-cart]');
-	var mainImage = document.getElementById('refill-main-image');
-	var thumbBtns = section.querySelectorAll('[data-thumb-btn]');
 	var planBtns = section.querySelectorAll('[data-plan-btn]');
 
 	/* ── Card selection — only one active at a time ──
@@ -391,25 +322,6 @@
 	planBtns.forEach(function (btn) {
 		btn.addEventListener('click', function () {
 			selectCard(btn);
-		});
-	});
-
-	/* ── Main image swap (thumbnails) ── */
-	function setMainImage(src) {
-		if (!mainImage || !src) return;
-		mainImage.removeAttribute('srcset');
-		mainImage.removeAttribute('sizes');
-		mainImage.src = src;
-		thumbBtns.forEach(function (b) {
-			var active = b.getAttribute('data-thumb-src') === src;
-			b.classList.toggle('border-main', active);
-			b.classList.toggle('border-transparent', !active);
-		});
-	}
-
-	thumbBtns.forEach(function (btn) {
-		btn.addEventListener('click', function () {
-			setMainImage(btn.getAttribute('data-thumb-src'));
 		});
 	});
 

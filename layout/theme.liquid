@@ -10,7 +10,8 @@
       arrives, and fetchpriority high keeps it ahead of fonts and scripts.
       The candidates and sizes come from snippets/hero-image-candidates, the
       same source the gallery <img> uses, so the preload is always consumed.
-      The refill template has its own main image and is left to the parser.
+      The refill gallery drops images assigned to other variants, so its
+      first image is not known here and is left to the parser.
     {% endcomment %}
     {%- if request.page_type == 'product' and template.suffix == blank and product.featured_media.media_type == 'image' -%}
       {%- capture hero_srcset -%}{%- render 'hero-image-candidates', image: product.featured_media, field: 'srcset' -%}{%- endcapture -%}

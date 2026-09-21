@@ -1,0 +1,182 @@
+{%- comment -%}
+	Snippet: product-gallery
+	The one product media gallery, rendered by sections/product.liquid (the
+	kit) and sections/product-refill.liquid (refills): a square frame plus a
+	thumbnail row.
+
+	The frame is a native scroll-snap track, so on a phone a thumb swipe moves
+	between images with no script at all. assets/product-gallery.js, loaded
+	at the end of this snippet, keeps the thumbnails in step with the frame,
+	scrolls the frame to a tapped thumbnail, and fetches the next image
+	before it can be swiped to.
+
+	Every item sits in the track from the start with a lazy <img>, so the
+	browser requests them as they come near rather than all at once. The
+	first item is the page's LCP element: eager and high priority, with the
+	srcset and sizes from snippets/hero-image-candidates that the kit
+	template's preload in layout/theme.liquid consumes. Videos play and pause
+	through assets/lazy-video.js, which treats an item scrolled out of the
+	frame as out of view.
+
+	Params:
+	  media        {Array}   product.media or product.images (required)
+	  variant      {Object}  drop images assigned only to other variants
+	                         (optional)
+	  max          {Number}  most items to show (optional, default all)
+	  min_columns  {Number}  keep the thumbnail row at least this many columns
+	                         wide, padding with blanks (optional; without it
+	                         the columns follow the count)
+	  badge        {String}  text badge over the frame (optional)
+{%- endcomment -%}
+
+{%- liquid
+	assign max_items = max | default: 999
+	assign count = 0
+	assign items_html = ''
+	assign thumbs_html = ''
+-%}
+{%- capture gallery_sizes -%}{%- render 'hero-image-candidates', field: 'sizes' -%}{%- endcapture -%}
+
+{%- for item in media -%}
+	{%- liquid
+		if count >= max_items
+			break
+		endif
+		if variant != blank and item.variants.size > 0
+			assign keep = false
+			for item_variant in item.variants
+				if item_variant.id == variant.id
+					assign keep = true
+					break
+				endif
+			endfor
+			unless keep
+				continue
+			endunless
+		endif
+		assign index = count
+		assign count = count | plus: 1
+		assign kind = item.media_type | default: 'image'
+		assign thumb_image = item.preview_image | default: item
+	-%}
+	{%- capture gallery_srcset -%}{%- render 'hero-image-candidates', image: item, field: 'srcset' -%}{%- endcapture -%}
+
+	{%- capture items_html -%}
+		{{ items_html }}
+		<div class="relative w-full h-full flex-none snap-start" data-gallery-item="{{ index }}">
+			{%- if kind == 'video' -%}
+				{%- render 'lazy-video',
+					video: item,
+					quality: 'full',
+					class: 'w-full h-full object-cover',
+					poster_width: 1080
+				-%}
+			{%- elsif index == 0 -%}
+				{%- comment -%}
+					image_tag's own preload: true sends a Link header without
+					fetchpriority, which Chrome fetches at Low priority; hence the
+					explicit attribute here and the preload_tag in the layout.
+				{%- endcomment -%}
+				{{
+					item
+					| image_url: width: 1080
+					| image_tag:
+						loading: 'eager',
+						fetchpriority: 'high',
+						decoding: 'async',
+						class: 'w-full h-full object-cover',
+						srcset: gallery_srcset,
+						sizes: gallery_sizes,
+						alt: item.alt
+				}}
+			{%- else -%}
+				{{
+					item
+					| image_url: width: 1080
+					| image_tag:
+						loading: 'lazy',
+						decoding: 'async',
+						class: 'w-full h-full object-cover',
+						srcset: gallery_srcset,
+						sizes: gallery_sizes,
+						alt: item.alt
+				}}
+			{%- endif -%}
+		</div>
+	{%- endcapture -%}
+
+	{%- comment -%}
+		The button carries the label, so the thumbnail inside it is decorative:
+		repeating the product name on every thumbnail would announce it once
+		per image for no gain.
+	{%- endcomment -%}
+	{%- capture thumbs_html -%}
+		{{ thumbs_html }}
+		<button
+			type="button"
+			class="relative aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if index == 0 %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
+			data-thumb-btn
+			data-thumb-index="{{ index }}"
+			aria-label="Show {{ kind }} {{ index | plus: 1 }}"
+			{% if index == 0 %}aria-current="true"{% endif %}
+		>
+			{{
+				thumb_image
+				| image_url: width: 200
+				| image_tag:
+					loading: 'lazy',
+					decoding: 'async',
+					class: 'w-full h-full object-cover',
+					widths: '100, 200',
+					alt: ''
+			}}
+			{%- if kind == 'video' -%}
+				<span class="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/15">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white drop-shadow" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M8 5v14l11-7z"/>
+					</svg>
+				</span>
+			{%- endif -%}
+		</button>
+	{%- endcapture -%}
+{%- endfor -%}
+
+{%- liquid
+	assign columns = count
+	if min_columns != blank and min_columns > columns
+		assign columns = min_columns
+	endif
+	assign blanks = columns | minus: count
+-%}
+
+<div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start" data-gallery>
+	{%- comment -%}
+		isolate gives the rounded frame its own stacking context, which is what
+		iOS Safari needs to clip a scrolling child to the border radius.
+	{%- endcomment -%}
+	<div class="relative isolate aspect-square rounded-2xl overflow-hidden bg-bg-muted">
+		<div class="absolute inset-0 flex overflow-x-auto overscroll-x-contain snap-x snap-mandatory scrollbar-none" data-gallery-track>
+			{{ items_html }}
+		</div>
+		{%- if badge != blank -%}
+			<div class="absolute top-4 left-4 right-4 flex justify-center z-10 pointer-events-none">
+				<span class="px-5 py-2 rounded-full bg-highlight text-white text-xs font-bold tracking-wide uppercase">
+					{{ badge }}
+				</span>
+			</div>
+		{%- endif -%}
+	</div>
+
+	{%- if count > 0 -%}
+		<div class="grid gap-2" style="grid-template-columns: repeat({{ columns }}, minmax(0, 1fr));">
+			{{ thumbs_html }}
+			{%- if blanks > 0 -%}
+				{%- for i in (1..blanks) -%}
+					<div class="aspect-square rounded-lg bg-bg-muted border-2 border-transparent"></div>
+				{%- endfor -%}
+			{%- endif -%}
+		</div>
+	{%- endif -%}
+</div>
+
+<script src="{{ 'product-gallery.js' | asset_url }}" defer></script>

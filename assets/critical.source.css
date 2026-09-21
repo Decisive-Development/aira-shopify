@@ -44,6 +44,15 @@
   --font-weight-bold: 700;
 }
 
+/* Hides the scrollbar of a track that moves by touch, drag or button:
+   the product gallery and the benefits slider. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   .container-contained {
     width: 100%;
