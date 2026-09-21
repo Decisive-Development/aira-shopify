@@ -52,46 +52,47 @@
 						success_text: section.settings.newsletter_success
 					-%}
 
-					{%- comment -%} Social icons (incl. WhatsApp from theme settings) {%- endcomment -%}
-					<div class="flex items-center gap-4">
-						{%- if section.settings.social_instagram != blank -%}
-							<a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram" class="text-main transition-opacity hover:opacity-60">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-									<rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/>
-									<circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/>
-									<circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
-								</svg>
-							</a>
-						{%- endif -%}
-						{%- if section.settings.social_facebook != blank -%}
-							<a href="{{ section.settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook" class="text-main transition-opacity hover:opacity-60">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-									<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-								</svg>
-							</a>
-						{%- endif -%}
-						{%- if section.settings.social_youtube != blank -%}
-							<a href="{{ section.settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube" class="text-main transition-opacity hover:opacity-60">
-								<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-									<path stroke-linecap="round" stroke-linejoin="round" d="M21.5 7.5s-.24-1.65-.97-2.38c-.93-.97-1.97-.97-2.44-1.03C15.6 3.9 12 3.9 12 3.9s-3.6 0-6.09.2c-.48.06-1.51.06-2.44 1.03C2.74 5.85 2.5 7.5 2.5 7.5S2.25 9.43 2.25 11.35v1.79c0 1.93.25 3.85.25 3.85s.24 1.65.97 2.38c.93.97 2.15.94 2.69 1.04C7.71 20.63 12 20.6 12 20.6s3.6 0 6.09-.2c.48-.06 1.51-.06 2.44-1.03.73-.73.97-2.38.97-2.38s.25-1.93.25-3.85v-1.79C21.75 9.43 21.5 7.5 21.5 7.5z"/>
-									<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 15.02V9.02l6.5 3-6.5 3z"/>
-								</svg>
-							</a>
-						{%- endif -%}
-						{%- if section.settings.social_tiktok != blank -%}
-							<a href="{{ section.settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok" class="text-main transition-opacity hover:opacity-60">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-									<path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.81 1.54V6.79a4.85 4.85 0 0 1-1.04-.1z"/>
-								</svg>
-							</a>
-						{%- endif -%}
+					{%- comment -%} Social icons, then the WhatsApp contact line (number from Theme settings → Support & contact; blank hides the line) {%- endcomment -%}
+					<div class="flex flex-col gap-3">
+						<div class="flex items-center gap-4">
+							{%- if section.settings.social_instagram != blank -%}
+								<a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram" class="text-main transition-opacity hover:opacity-60">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+										<rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-linecap="round" stroke-linejoin="round"/>
+										<circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+										<circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+									</svg>
+								</a>
+							{%- endif -%}
+							{%- if section.settings.social_facebook != blank -%}
+								<a href="{{ section.settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook" class="text-main transition-opacity hover:opacity-60">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+										<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+									</svg>
+								</a>
+							{%- endif -%}
+							{%- if section.settings.social_youtube != blank -%}
+								<a href="{{ section.settings.social_youtube }}" target="_blank" rel="noopener" aria-label="YouTube" class="text-main transition-opacity hover:opacity-60">
+									<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M21.5 7.5s-.24-1.65-.97-2.38c-.93-.97-1.97-.97-2.44-1.03C15.6 3.9 12 3.9 12 3.9s-3.6 0-6.09.2c-.48.06-1.51.06-2.44 1.03C2.74 5.85 2.5 7.5 2.5 7.5S2.25 9.43 2.25 11.35v1.79c0 1.93.25 3.85.25 3.85s.24 1.65.97 2.38c.93.97 2.15.94 2.69 1.04C7.71 20.63 12 20.6 12 20.6s3.6 0 6.09-.2c.48-.06 1.51-.06 2.44-1.03.73-.73.97-2.38.97-2.38s.25-1.93.25-3.85v-1.79C21.75 9.43 21.5 7.5 21.5 7.5z"/>
+										<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 15.02V9.02l6.5 3-6.5 3z"/>
+									</svg>
+								</a>
+							{%- endif -%}
+							{%- if section.settings.social_tiktok != blank -%}
+								<a href="{{ section.settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok" class="text-main transition-opacity hover:opacity-60">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+										<path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.81 1.54V6.79a4.85 4.85 0 0 1-1.04-.1z"/>
+									</svg>
+								</a>
+							{%- endif -%}
+						</div>
 						{%- if settings.support_whatsapp_number != blank -%}
-							{%- assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi aira team,' | url_encode -%}
-							<a href="https://wa.me/{{ settings.support_whatsapp_number }}?text={{ wa_prefill }}" target="_blank" rel="noopener" aria-label="WhatsApp" class="text-main transition-opacity hover:opacity-60">
-								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-									<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488"/>
-								</svg>
-							</a>
+							{%- liquid
+								assign wa_label = 'contact.whatsapp_cta' | t
+								assign wa_msg = 'contact.whatsapp_prefill' | t
+							-%}
+							<p class="text-sm m-0">{%- render 'whatsapp-link', source: 'footer', label: wa_label, message: wa_msg -%}</p>
 						{%- endif -%}
 					</div>
 
@@ -183,6 +184,20 @@
 		if (stray) { stray.remove(); }
 	}
 })();
+
+(function () {
+	/* Click-to-WhatsApp analytics: one delegated listener for every placement
+	   (snippets/whatsapp-link sets data-wa-source). Publishes to custom
+	   pixels only; no gtag, no fbq (the Meta pixel runs in the web-pixel
+	   sandbox, so window.fbq is not reliable on this store). */
+	document.addEventListener('click', function (e) {
+		var a = e.target.closest('[data-wa-source]');
+		if (!a) return;
+		if (window.Shopify && Shopify.analytics && Shopify.analytics.publish) {
+			Shopify.analytics.publish('aira_whatsapp_click', { source: a.dataset.waSource });
+		}
+	});
+})();
 </script>
 
 {% schema %}
@@ -250,7 +265,7 @@
 		},
 		{
 			"type": "paragraph",
-			"content": "WhatsApp icon is rendered automatically when the WhatsApp number is set in Theme settings → Support & contact."
+			"content": "The WhatsApp line under the social icons comes from Theme settings → Support & contact. A blank number hides it."
 		},
 		{
 			"type": "paragraph",

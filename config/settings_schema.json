@@ -138,14 +138,27 @@
       {
         "type": "text",
         "id": "support_whatsapp_number",
-        "label": "WhatsApp Business number (no +, no spaces)",
-        "info": "e.g., 971501234567 for +971 50 123 4567"
+        "label": "WhatsApp Business number (digits only, no +, no spaces)",
+        "info": "Powers every WhatsApp link on the site: product pages, footer, contact page and FAQ. Leave blank to remove them all. e.g. 971501234567 for +971 50 123 4567"
       },
       {
         "type": "text",
-        "id": "support_whatsapp_prefill",
-        "label": "Pre-filled WhatsApp message",
-        "default": "Hi aira team,"
+        "id": "support_whatsapp_display",
+        "label": "Number as printed on the contact page",
+        "info": "e.g. +971 50 123 4567"
+      },
+      {
+        "type": "checkbox",
+        "id": "whatsapp_on_product_pages",
+        "label": "Show the WhatsApp line on product pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "whatsapp_bubble",
+        "label": "Show floating WhatsApp bubble",
+        "info": "Bottom-right on every page. Needs the number above.",
+        "default": true
       },
       {
         "type": "header",

@@ -52,6 +52,8 @@ Every colour, space, and type size comes from a token. No raw hex or magic px in
 **Radius:** Tailwind scale; button baseline `rounded-xl` = 0.75rem. Inputs use `settings.input_corner_radius`.
 **Spacing:** Tailwind base `--spacing: 0.25rem`. Max page width `settings.max_page_width` (90rem default).
 
+- **Named exception (Tom, 2026-09-21):** WhatsApp green `#25D366` may exist in exactly one CSS rule, `.wa-bubble` in `critical.source.css` (the floating bubble), and nowhere else. An audit grep for it should find that rule and this note only.
+
 Anything used in the theme that isn't a token above is drift, flag it.
 
 ## 6. Hard rules (code)

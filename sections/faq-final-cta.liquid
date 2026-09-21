@@ -1,33 +1,30 @@
 {%- comment -%}
-	FAQ — Final CTA (scaffold).
-	When the FAQ doesn't answer it, route customers to support.
-	Styling lives in the shared 'cta-banner' snippet.
+	FAQ — Final CTA.
+	When the FAQ doesn't answer it, route customers to support. The body is
+	the section's own copy; where it says "WhatsApp" that word becomes the
+	click-to-WhatsApp link (snippets/whatsapp-link, number from Theme settings
+	→ Support & contact) whenever a number is set. Styling lives in the shared
+	'cta-banner' snippet.
 {%- endcomment -%}
 
 {%- liquid
-	assign wa_number  = settings.support_whatsapp_number
-	assign wa_prefill = settings.support_whatsapp_prefill | default: 'Hi aira team,'
-	assign wa_link    = ''
-	if wa_number != blank
-		assign wa_encoded = wa_prefill | url_encode
-		assign wa_link    = 'https://wa.me/' | append: wa_number | append: '?text=' | append: wa_encoded
-	endif
-
-	assign faq_primary_label = ''
-	if wa_link != blank
-		assign faq_primary_label = 'Message on WhatsApp'
+	assign faq_body = section.settings.body
+	if settings.support_whatsapp_number != blank and faq_body contains 'WhatsApp'
+		assign wa_msg = 'contact.whatsapp_prefill' | t
+		capture wa_link
+			render 'whatsapp-link', source: 'faq', label: 'WhatsApp', message: wa_msg, icon_size: 0
+		endcapture
+		assign wa_link = wa_link | strip
+		assign faq_body = faq_body | replace_first: 'WhatsApp', wa_link
 	endif
 -%}
 
 {%- render 'cta-banner',
 	heading: section.settings.heading,
-	body: section.settings.body,
-	primary_label: faq_primary_label,
-	primary_url: wa_link,
-	primary_variant: 'solid',
-	secondary_label: 'Contact support',
-	secondary_url: '/pages/contact',
-	secondary_variant: 'outline'
+	body: faq_body,
+	primary_label: 'Contact support',
+	primary_url: '/pages/contact',
+	primary_variant: 'solid'
 -%}
 
 {% schema %}
@@ -35,7 +32,7 @@
 	"name": "FAQ - Final CTA",
 	"settings": [
 		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Still have a question?" },
-		{ "type": "textarea", "id": "body",    "label": "Body",    "default": "Reach out — we usually reply within an hour during business hours." }
+		{ "type": "textarea", "id": "body",    "label": "Body",    "info": "The word WhatsApp becomes the click-to-WhatsApp link when a number is set in Theme settings → Support & contact.", "default": "Message us on WhatsApp for the fastest reply, or email contact@shop-aira.com and we'll get back to you within 1 to 2 business days." }
 	],
 	"presets": [{ "name": "FAQ - Final CTA" }]
 }

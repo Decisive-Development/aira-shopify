@@ -90,6 +90,50 @@
     font-weight: 400;
   }
 
+  /* Floating WhatsApp bubble (snippets/whatsapp-bubble, rendered from
+     layout/theme.liquid). Named exception, Tom 2026-09-21: the WhatsApp
+     green may exist in this rule and nowhere else (CLAUDE.md §5). Box, type,
+     shadow and z-index are Tailwind utilities on the anchor; this rule holds
+     what utilities cannot: the brand green, the safe-area bottom, the lift
+     above a visible sticky bar, and the hover under reduced motion. */
+  .wa-bubble {
+    right: calc(var(--spacing) * 4);
+    bottom: calc(var(--spacing) * 4 + env(safe-area-inset-bottom));
+    background-color: #25D366;
+    color: var(--color-bg);
+    transition: bottom 200ms ease, transform 150ms ease, filter 150ms ease;
+    @variant lg {
+      right: calc(var(--spacing) * 6);
+      bottom: calc(var(--spacing) * 6);
+    }
+  }
+  .wa-bubble:hover,
+  .wa-bubble:focus-visible {
+    filter: brightness(0.94);
+    transform: scale(1.04);
+  }
+  .wa-bubble:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+  }
+  body.sticky-bar-visible .wa-bubble {
+    bottom: calc(var(--sticky-bar-h, calc(var(--spacing) * 18)) + calc(var(--spacing) * 3) + env(safe-area-inset-bottom));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wa-bubble {
+      transition: none;
+    }
+    .wa-bubble:hover,
+    .wa-bubble:focus-visible {
+      transform: none;
+    }
+  }
+  @media print {
+    .wa-bubble {
+      display: none;
+    }
+  }
+
   /* ────────────────────────────────────────────────────────────
      Form reveal — animated show/hide for JS-gated content.
      Collapses height (grid 1fr → 0fr) and fades. Without JS it stays

@@ -136,6 +136,15 @@
 			</section>
 		{%- endif -%}
 
+		{%- comment -%} Closing line: route unanswered questions to WhatsApp (Theme settings → Support & contact; blank number hides it). Stays visible when a search empties the list. {%- endcomment -%}
+		{%- if settings.support_whatsapp_number != blank -%}
+			{%- liquid
+				assign wa_label = 'contact.whatsapp_cta' | t
+				assign wa_msg = 'contact.whatsapp_prefill' | t
+			-%}
+			<p class="text-sm md:text-base text-copy m-0">{{ 'contact.whatsapp_lead_faq' | t }} {% render 'whatsapp-link', source: 'faq', label: wa_label, message: wa_msg %}</p>
+		{%- endif -%}
+
 	</div>
 </section>
 

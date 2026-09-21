@@ -40,6 +40,7 @@
 		} else {
 			bar.classList.add('translate-y-full');
 		}
+		document.dispatchEvent(new CustomEvent('aira:sticky-bar', { detail: { visible: shown, bar: bar } }));
 	}
 
 	window.addEventListener('scroll', check, { passive: true });

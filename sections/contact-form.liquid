@@ -24,7 +24,7 @@
 		<div id="contact-form-mount">
 			{%- form 'contact', id: 'contact-fallback-form', class: 'flex flex-col gap-5' -%}
 				{%- if form.posted_successfully? -%}
-					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "Thanks for reaching out. We'll respond within one business day." }}</div>
+					<div class="rounded-xl bg-bg p-5 text-sm text-copy">{{ section.settings.success_message | default: "Thanks for reaching out. We'll respond within 1 to 2 business days." }}</div>
 				{%- endif -%}
 
 				{%- if form.errors -%}
@@ -79,8 +79,8 @@
 	"settings": [
 		{ "type": "text",     "id": "eyebrow",         "label": "Eyebrow",        "default": "Send a message" },
 		{ "type": "text",     "id": "heading",         "label": "Heading",        "default": "How can we help?" },
-		{ "type": "textarea", "id": "subheading",      "label": "Subheading",     "default": "Fill in the form and we'll reply within one business day." },
-		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "Thanks for reaching out. We'll respond within one business day." }
+		{ "type": "textarea", "id": "subheading",      "label": "Subheading",     "default": "Fill in the form and we'll reply within 1 to 2 business days." },
+		{ "type": "textarea", "id": "success_message", "label": "Success message","default": "Thanks for reaching out. We'll respond within 1 to 2 business days." }
 	],
 	"presets": [{ "name": "Contact - Form" }]
 }

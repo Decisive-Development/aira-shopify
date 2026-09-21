@@ -14,8 +14,12 @@
 			"settings": {
 				"eyebrow": "We're here to help",
 				"heading": "Get in touch",
-				"subheading": "Send us a message below and we'll get back to you as soon as possible, typically same day."
+				"subheading": "Message us on WhatsApp for the fastest reply, or use the form below and we'll get back to you within 1 to 2 business days."
 			}
+		},
+		"whatsapp": {
+			"type": "contact-whatsapp",
+			"settings": {}
 		},
 		"form": {
 			"type": "contact-form",
@@ -34,5 +38,5 @@
 			}
 		}
 	},
-	"order": ["hero", "form", "quick_links"]
+	"order": ["hero", "whatsapp", "form", "quick_links"]
 }

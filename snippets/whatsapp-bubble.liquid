@@ -1,0 +1,57 @@
+{%- comment -%}
+	whatsapp-bubble — the floating click-to-WhatsApp door, bottom-right on
+	every template. Rendered from layout/theme.liquid just before </body>.
+	Gated on Theme settings → Support & contact: number set AND "Show floating
+	WhatsApp bubble". The href, tracking attribute and icon come from
+	snippets/whatsapp-link (variant 'bubble'); the footer's delegated listener
+	publishes the click with source "bubble". Box and type are Tailwind
+	utilities on the anchor; .wa-bubble in assets/critical.source.css holds
+	the one permitted WhatsApp green, the safe-area bottom and the lift above
+	a visible sticky bar (CLAUDE.md §5 names the exception).
+
+	Product templates prefill the product line like the buy-box link, from
+	product.title (the layout cannot see the section's heading override), so
+	the kit reads "about aira kit" here and "about the aira kit" in the buy box.
+{%- endcomment -%}
+
+{%- if settings.support_whatsapp_number != blank and settings.whatsapp_bubble -%}
+	{%- liquid
+		assign wa_label = 'contact.whatsapp_cta' | t
+		if template.name == 'product' and product.title != blank
+			assign wa_product = product.title | downcase
+			assign wa_msg = 'contact.whatsapp_prefill_product' | t: product: wa_product
+		else
+			assign wa_msg = 'contact.whatsapp_prefill' | t
+		endif
+	-%}
+	{%- render 'whatsapp-link', source: 'bubble', variant: 'bubble', label: wa_label, message: wa_msg, icon_size: 28 -%}
+
+	<script>
+	(function () {
+		/* Sticky-bar coordination. The product add-to-cart bar and the sitewide
+		   mobile bar announce show/hide with 'aira:sticky-bar' (one line each in
+		   their existing logic). This is the only listener: it marks <body> and
+		   publishes the bar's rendered height so .wa-bubble lifts clear of it.
+		   A bar that is display:none (desktop) measures 0 and counts as hidden. */
+		var body = document.body;
+		var bar = null;
+		function apply() {
+			var h = bar ? bar.getBoundingClientRect().height : 0;
+			if (h > 0) {
+				body.style.setProperty('--sticky-bar-h', Math.round(h) + 'px');
+				body.classList.add('sticky-bar-visible');
+			} else {
+				body.classList.remove('sticky-bar-visible');
+			}
+		}
+		document.addEventListener('aira:sticky-bar', function (e) {
+			bar = e.detail && e.detail.visible ? e.detail.bar : null;
+			apply();
+		});
+		window.addEventListener('resize', apply, { passive: true });
+		/* A bar already shown before this script ran (scroll restoration). */
+		var shown = document.querySelector('[data-sticky-bar].translate-y-0, [data-mobile-sticky-cta]:not(.translate-y-full)');
+		if (shown) { bar = shown; apply(); }
+	})();
+	</script>
+{%- endif -%}
