@@ -1016,9 +1016,8 @@
 
   var storedReviews = [];
 
-  // Judge.me hosts review videos on Vimeo, but its widget DOM only exposes a
-  // 200x150 centre-cropped vimeocdn thumbnail with no video id anywhere in the
-  // markup. The ids and the full-size photo URLs live in the
+  // Judge.me's widget DOM exposes only a thumbnail for a video review, never
+  // the video id. The ids and the full-size photo URLs live in the
   // review_widget_data metafield JSON this section prints above
   // (jdgm.data.reviewWidget), so the final review list is matched back to that
   // JSON. Enrichment runs on the deduplicated list in finishBuild, not during
@@ -1062,6 +1061,33 @@
     return n > 0 && jmBody.slice(0, n) === domBody.slice(0, n);
   }
 
+  // Judge.me has hosted review videos on three services over time and its own
+  // widget (shopify_v2.js) tells them apart by the shape of the id: a UUID is
+  // a Bunny Stream id (the current host, since September 2026), anything
+  // longer than 16 characters is a Cloudflare Stream id, and the rest are
+  // Vimeo ids. Mirror that order. The Bunny library belongs to Judge.me, so
+  // its id is read from their script rather than copied into the theme; with
+  // no id there is no playable URL and the review stays a photo.
+  function videoEmbedFor(id) {
+    if (!id) return null;
+    id = String(id);
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+      var library = window.jdgm && jdgm.BUNNY_STREAM_LIBRARY_ID;
+      if (!library) return null;
+      return {
+        host: 'bunny',
+        src: 'https://iframe.mediadelivery.net/embed/' + encodeURIComponent(library) + '/' + id + '?preload=false&responsive=true'
+      };
+    }
+    if (id.length > 16) {
+      return { host: 'stream', src: 'https://iframe.videodelivery.net/' + encodeURIComponent(id) };
+    }
+    return {
+      host: 'vimeo',
+      src: 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?title=0&byline=0&portrait=0&playsinline=1&dnt=1'
+    };
+  }
+
   function enrichReviews(reviews) {
     var claimed = {};
     var jmSources = jmWidgetData ? (jmWidgetData.photo_gallery || []).concat(jmWidgetData.reviews || []) : [];
@@ -1093,9 +1119,12 @@
       if (!match) return;
       claimed[match.uuid] = true;
 
-      if (match.video_external_ids && match.video_external_ids.length) {
+      var embed = match.video_external_ids && match.video_external_ids.length
+        ? videoEmbedFor(match.video_external_ids[0])
+        : null;
+      if (embed) {
         review.isVideo = true;
-        review.vimeoId = match.video_external_ids[0];
+        review.videoEmbed = embed;
       } else if (match.pictures_urls && match.pictures_urls.length) {
         var pic = match.pictures_urls[0];
         review.image = pic.huge || pic.original || review.image;
@@ -1758,17 +1787,22 @@
     if (review.isVideo) {
       var iframeStyle = 'width:100%; height:100%; border:0; background:transparent;';
 
-      if (review.vimeoId) {
-        var replayIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
-        mediaEl.innerHTML =
-          '<div class="review-video-frame">' +
-            '<iframe src="https://player.vimeo.com/video/' + encodeURIComponent(review.vimeoId) + '?title=0&byline=0&portrait=0&playsinline=1&dnt=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>' +
-            '<div class="review-video-endcap" hidden>' +
-              (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
-              '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
-            '</div>' +
-          '</div>';
-        bindVideoEndcap(mediaEl.querySelector('.review-video-frame'));
+      if (review.videoEmbed) {
+        var frame = '<iframe src="' + review.videoEmbed.src + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
+        if (review.videoEmbed.host === 'vimeo') {
+          // Only Vimeo's player ends on a share screen worth covering.
+          var replayIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
+          mediaEl.innerHTML =
+            '<div class="review-video-frame">' + frame +
+              '<div class="review-video-endcap" hidden>' +
+                (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
+                '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
+              '</div>' +
+            '</div>';
+          bindVideoEndcap(mediaEl.querySelector('.review-video-frame'));
+        } else {
+          mediaEl.innerHTML = frame;
+        }
       } else {
         var videoId = '';
         var src = review.image || '';
