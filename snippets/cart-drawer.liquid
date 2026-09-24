@@ -8,9 +8,10 @@
 	An add-to-cart is one add call that carries the kit and its free pouch
 	together, then one read. A quantity change is one update call, keyed by
 	line position, that moves the kit and the pouch in step. Quantities change
-	on screen the moment they are tapped; prices and totals keep their last
-	known values, dimmed, until Shopify answers. The Checkout link waits for
-	anything still in flight.
+	on screen the moment they are tapped, and a submitted form draws its rows
+	at once from the catalogue written below; prices and totals keep their
+	last known values, dimmed, until Shopify answers. The Checkout link waits
+	for anything still in flight.
 {%- endcomment -%}
 
 {%- assign refill_product = all_products['aira-refill-tabs'] -%}
@@ -148,6 +149,30 @@
 	</div>
 </aside>
 
+{%- comment -%}
+	What a form can add, keyed by variant id (the id the form sends), so the
+	drawer can draw a row the moment a form is submitted instead of after
+	Shopify answers. Images are sized to match the rows drawn from the cart
+	JSON. A variant missing here still adds; its row waits for the reply.
+{%- endcomment -%}
+{%- liquid
+	assign catalogue_variants = '' | split: ','
+	if kit_product != blank
+		assign catalogue_variants = catalogue_variants | concat: kit_product.variants
+	endif
+	if refill_product != blank
+		assign catalogue_variants = catalogue_variants | concat: refill_product.variants
+	endif
+-%}
+<script type="application/json" data-cart-catalogue>
+{
+	{%- for v in catalogue_variants -%}
+		{%- assign v_image = v.featured_image | default: v.product.featured_image -%}
+		"{{ v.id }}": {"title": {{ v.product.title | json }}, "url": {{ v.product.url | json }}, "image": {% if v_image %}{{ v_image | image_url: width: 160 | json }}{% else %}""{% endif %}, "alt": {{ v_image.alt | default: '' | json }}}{% unless forloop.last %},{% endunless %}
+	{%- endfor -%}
+}
+</script>
+
 <script>
 (function () {
 	/* ── Refs ── */
@@ -163,6 +188,9 @@
 	var statusEl = document.querySelector('[data-cart-status]');
 	var checkoutEl = document.querySelector('[data-cart-checkout]');
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
+	var catalogueEl = document.querySelector('[data-cart-catalogue]');
+	var catalogue = {};
+	try { catalogue = JSON.parse(catalogueEl.textContent) || {}; } catch (e) {}
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
 	var KIT_HANDLE = drawer.getAttribute('data-kit-handle');
@@ -179,11 +207,14 @@
 	   so the numbers on screen keep showing where the cart is heading. Each
 	   op is { index, variantId, delta, remove }: `index` is the 1-based line
 	   position when it was tapped, `variantId` finds the line again if the
-	   positions have moved by the time it is sent. */
+	   positions have moved by the time it is sent. `pendingAdds` holds the
+	   { id, quantity } lines of adds on their way, drawn as rows until the
+	   reply has been read. */
 	var currentCart = null;
 	var queue = Promise.resolve();
 	var pending = [];
 	var inflight = [];
+	var pendingAdds = [];
 	var flushTimer = null;
 	var queued = 0;
 	var errorMsg = '';
@@ -322,22 +353,31 @@
 		var item = formItem(form);
 		var giftId = parseInt(form.getAttribute('data-gift-variant-id'), 10) || 0;
 		errorMsg = '';
-		/* Open at once with the lines already known; the new one lands when
-		   Shopify answers. Anything tapped goes first so the order holds. */
+		/* Open at once and draw the rows this add will make, worked out from
+		   the cart the drawer holds; the same maths runs again in the queue
+		   against whatever the cart is by the time the call goes. Anything
+		   tapped goes first so the order holds. */
 		open();
 		flushNow();
+		var done = noteAdds(addItems(currentCart, item, giftId));
 		enqueue(function () {
-			var items = [item];
-			var giftQty = giftToAdd(currentCart, giftId, item.quantity);
-			if (giftQty > 0) items.push({ id: giftId, quantity: giftQty });
-			return postJson('/cart/add.js', { items: items })
+			return postJson('/cart/add.js', { items: addItems(currentCart, item, giftId) })
 				.then(function (res) {
 					if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
 					return fetchCart();
 				})
-				.then(settle);
+				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
 		}).then(resetBtn, resetBtn);
 	});
+
+	/* The lines one add call carries: the form's item, then the free pouch
+	   when the offer calls for it. */
+	function addItems(cart, item, giftId) {
+		var items = [item];
+		var giftQty = giftToAdd(cart, giftId, item.quantity);
+		if (giftQty > 0) items.push({ id: giftId, quantity: giftQty });
+		return items;
+	}
 
 	/* The form's fields as one Ajax line: id, quantity, selling plan and any
 	   properties[...] inputs. */
@@ -390,13 +430,15 @@
 				upsellBtn.textContent = 'Add';
 			}
 			flushNow();
+			var entry = { id: vid, quantity: 1 };
+			var done = noteAdds([entry]);
 			enqueue(function () {
-				return postJson('/cart/add.js', { items: [{ id: vid, quantity: 1 }] })
+				return postJson('/cart/add.js', { items: [entry] })
 					.then(function (res) {
 						if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
 						return fetchCart();
 					})
-					.then(settle);
+					.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
 			}).then(resetUpsell, resetUpsell);
 		});
 	}
@@ -456,10 +498,27 @@
 	function resolveIndex(cart, op) {
 		var at = cart.items[op.index - 1];
 		if (at && at.variant_id === op.variantId) return op.index - 1;
+		return firstIndexOfVariant(cart, op.variantId);
+	}
+
+	function firstIndexOfVariant(cart, variantId) {
 		for (var i = 0; i < cart.items.length; i++) {
-			if (cart.items[i].variant_id === op.variantId) return i;
+			if (cart.items[i].variant_id === variantId) return i;
 		}
 		return -1;
+	}
+
+	/* ── Adds on their way ──
+	   An add is drawn before it is sent: a variant already in the cart has
+	   its row's quantity raised, any other gets a provisional row from the
+	   catalogue. The entries leave `pendingAdds` once the reply has been
+	   read, whichever way the call went, and the next render draws the truth. */
+	function noteAdds(entries) {
+		entries.forEach(function (entry) { pendingAdds.push(entry); });
+		paintPending();
+		return function () {
+			pendingAdds = pendingAdds.filter(function (entry) { return entries.indexOf(entry) < 0; });
+		};
 	}
 
 	/* Applies ops to a cart snapshot and returns the quantity every line
@@ -571,6 +630,56 @@
 		render(cart);
 	}
 
+	/* ── Row markup ──
+	   One template for every row: the lines Shopify sent and the provisional
+	   rows an add draws while it is on its way. */
+	function imgTag(src, alt) {
+		return '<img src="' + escAttr(src) + '" alt="' + escAttr(alt) + '" class="w-full h-full object-cover" loading="lazy">';
+	}
+
+	function qtyMarkup(quantity, stepper) {
+		var span = '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + quantity + '</span>';
+		if (!stepper) return '<div class="flex items-center border border-bg-muted rounded-lg">' + span + '</div>';
+		return '<div class="flex items-center border border-bg-muted rounded-lg">'
+			+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Decrease quantity">−</button>'
+			+ span
+			+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Increase quantity">+</button>'
+			+ '</div>';
+	}
+
+	function lineRow(o) {
+		return '<div class="flex gap-4 items-start" ' + o.attrs + '>'
+			+ '<a href="' + escAttr(o.url) + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + o.img + '</a>'
+			+ '<div class="flex-1 min-w-0">'
+				+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + o.title + '</p>'
+				+ (o.props || '')
+				+ (o.discounts || '')
+				+ '<div class="flex items-center gap-3 mt-2">'
+					+ o.controls
+					+ '<span data-line-price class="shrink-0 font-heading font-bold text-title text-base transition-opacity group-aria-busy:opacity-40">' + o.price + '</span>'
+				+ '</div>'
+				+ (o.removable ? '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>' : '')
+			+ '</div>'
+		+ '</div>';
+	}
+
+	/* A row for a variant not yet in the cart, drawn from the catalogue the
+	   Liquid above wrote. No stepper, no remove and no price until Shopify
+	   has priced it: the discount decides whether a pouch is free. */
+	function pendingRow(add) {
+		var known = catalogue[add.id];
+		if (!known) return '';
+		return lineRow({
+			attrs: 'data-line-pending',
+			url: known.url,
+			img: known.image ? imgTag(known.image, known.alt || '') : '',
+			title: brandTitle(known.title),
+			controls: qtyMarkup(add.quantity, false),
+			price: '',
+			removable: false
+		});
+	}
+
 	function render(cart) {
 		if (!cart || !cart.items) return;
 		var hasItems = cart.item_count > 0;
@@ -646,7 +755,7 @@
 			   speaks when the merchant has written an alt on it. Otherwise it
 			   stays empty and screen readers skip past it to the title. */
 			var img = item.featured_image && item.featured_image.url
-				? '<img src="' + sizedImg(item.featured_image.url, '160x') + '" alt="' + escAttr(item.featured_image.alt || '') + '" class="w-full h-full object-cover" loading="lazy">'
+				? imgTag(sizedImg(item.featured_image.url, '160x'), item.featured_image.alt || '')
 				: '';
 			var props = '';
 			if (item.variant_title) {
@@ -682,47 +791,57 @@
 			/* A fully free gift line has no stepper: its quantity follows the kit,
 			   and remove stays. Paying for more refills happens on the product page,
 			   and a paid line reprices above zero, so the stepper returns there. */
-			var qtyControls = isFreeGift(item)
-				? '<div class="flex items-center border border-bg-muted rounded-lg">'
-					+ '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
-				+ '</div>'
-				: '<div class="flex items-center border border-bg-muted rounded-lg">'
-					+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Decrease quantity">−</button>'
-					+ '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
-					+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Increase quantity">+</button>'
-				+ '</div>';
-			return '<div class="flex gap-4 items-start" data-line="' + (i + 1) + '">'
-				+ '<a href="' + item.url + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + img + '</a>'
-				+ '<div class="flex-1 min-w-0">'
-					+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + brandTitle(item.product_title) + '</p>'
-					+ props
-					+ discounts
-					+ '<div class="flex items-center gap-3 mt-2">'
-						+ qtyControls
-						+ '<span data-line-price class="shrink-0 font-heading font-bold text-title text-base transition-opacity group-aria-busy:opacity-40">' + formatMoney(item.final_line_price) + '</span>'
-					+ '</div>'
-					+ '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>'
-				+ '</div>'
-			+ '</div>';
+			return lineRow({
+				attrs: 'data-line="' + (i + 1) + '"',
+				url: item.url,
+				img: img,
+				title: brandTitle(item.product_title),
+				props: props,
+				discounts: discounts,
+				controls: qtyMarkup(item.quantity, !isFreeGift(item)),
+				price: formatMoney(item.final_line_price),
+				removable: true
+			});
 		}).join('');
 
 		paintPending();
 		refreshStatus();
 	}
 
-	/* Paints the quantities the parked and in-flight taps will produce, so a
-	   tap shows at once. Only the numbers move: prices and the subtotal keep
-	   their last known values, dimmed by aria-busy, until Shopify answers. */
+	/* Paints what the parked taps and the adds on their way will produce, so
+	   a tap or an add shows at once. Only quantities and rows move: prices
+	   and the subtotal keep their last known values, dimmed by aria-busy,
+	   until Shopify answers. An empty cart with an add on its way shows the
+	   rows in place of the empty state, and no subtotal, as none is known. */
 	function paintPending() {
 		if (!currentCart) return;
 		var ops = inflight.concat(pending);
-		var qty = ops.length ? planQuantities(currentCart, ops).qty : null;
+		var qty = ops.length ? planQuantities(currentCart, ops).qty : currentCart.items.map(function (item) { return item.quantity; });
+		var fresh = [];
+		pendingAdds.forEach(function (add) {
+			var i = firstIndexOfVariant(currentCart, add.id);
+			if (i >= 0) { qty[i] += add.quantity; return; }
+			var same = fresh.filter(function (f) { return f.id === add.id; })[0];
+			if (same) same.quantity += add.quantity;
+			else fresh.push({ id: add.id, quantity: add.quantity });
+		});
 		itemsEl.querySelectorAll('[data-line]').forEach(function (row) {
 			var i = parseInt(row.getAttribute('data-line'), 10) - 1;
-			var q = qty ? qty[i] : currentCart.items[i].quantity;
-			row.querySelector('[data-line-qty]').textContent = q;
-			row.classList.toggle('hidden', q === 0);
+			row.querySelector('[data-line-qty]').textContent = qty[i];
+			row.classList.toggle('hidden', qty[i] === 0);
 		});
+		itemsEl.querySelectorAll('[data-line-pending]').forEach(function (row) { row.remove(); });
+		/* Shopify lists the newest line first, so the provisional rows go on
+		   top in that order and stay put when the real ones arrive. */
+		var drawn = fresh.filter(function (add) { return catalogue[add.id]; });
+		itemsEl.insertAdjacentHTML('afterbegin', drawn.slice().reverse().map(pendingRow).join(''));
+		var showRows = currentCart.item_count > 0 || drawn.length > 0;
+		emptyEl.classList.toggle('hidden', showRows);
+		emptyEl.classList.toggle('flex', !showRows);
+		itemsEl.classList.toggle('hidden', !showRows);
+		footerEl.classList.toggle('hidden', !showRows);
+		footerEl.classList.toggle('flex', showRows);
+		if (subtotalEl && currentCart.item_count === 0) subtotalEl.textContent = drawn.length ? '' : formatMoney(currentCart.total_price);
 	}
 
 	/* ── Quantity change / remove (event delegation) ──
