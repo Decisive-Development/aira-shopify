@@ -13,6 +13,14 @@
     "support_whatsapp_number": "971561828772",
     "whatsapp_bubble": true,
     "content_for_index": [],
+    "sections": {
+      "scratch-offer-popup": {
+        "type": "scratch-offer-popup",
+        "settings": {
+          "trigger_delay": 1
+        }
+      }
+    },
     "blocks": {
       "14060646107696862457": {
         "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
