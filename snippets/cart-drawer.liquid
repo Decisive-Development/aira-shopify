@@ -2,6 +2,15 @@
 	snippets/cart-drawer.liquid
 	Slide-out cart drawer with refill upsell.
 	Included once in theme.liquid before </body>.
+
+	Every Shopify cart write costs most of a second (0.7 to 0.9 s measured on
+	2026-09-22, a read about 0.3 s), so the script spends as few as it can.
+	An add-to-cart is one add call that carries the kit and its free pouch
+	together, then one read. A quantity change is one update call, keyed by
+	line position, that moves the kit and the pouch in step. Quantities change
+	on screen the moment they are tapped; prices and totals keep their last
+	known values, dimmed, until Shopify answers. The Checkout link waits for
+	anything still in flight.
 {%- endcomment -%}
 
 {%- assign refill_product = all_products['aira-refill-tabs'] -%}
@@ -27,14 +36,18 @@
 	aria-hidden="true"
 ></div>
 
-{%- comment -%} Drawer {%- endcomment -%}
+{%- comment -%}
+	Drawer. `group` plus aria-busy lets the prices dim through the
+	group-aria-busy: utilities while a cart call is in flight.
+{%- endcomment -%}
 <aside
 	data-cart-drawer
 	data-currency="{{ cart.currency.iso_code | default: shop.currency }}"
 	data-kit-handle="{{ kit_product.handle }}"
 	style="max-width: min(32rem, calc(100vw - 1.5rem));"
-	class="fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
+	class="group fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
 	aria-label="Shopping cart"
+	aria-busy="false"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
@@ -64,6 +77,12 @@
 
 		{%- comment -%} Line items (rendered by JS) {%- endcomment -%}
 		<div data-cart-items class="flex flex-col gap-4"></div>
+
+		{%- comment -%}
+			Status line: "Updating your cart" while a call is in flight, or the
+			reason Shopify refused one. Filled by JS, read out by screen readers.
+		{%- endcomment -%}
+		<p data-cart-status role="status" aria-live="polite" class="hidden text-copy text-sm text-center mt-4"></p>
 
 		{%- comment -%} Upsell — refill tabs {%- endcomment -%}
 		{%- if refill_product != blank and refill_variant != blank -%}
@@ -108,10 +127,10 @@
 	{%- comment -%} Footer — subtotal + checkout {%- endcomment -%}
 	<div data-cart-footer class="hidden border-t border-border px-6 py-5 flex-col gap-4">
 		{%- comment -%} Applied discounts, one line per title, filled by JS from the cart's discount applications {%- endcomment -%}
-		<div data-cart-discounts class="hidden flex-col gap-1"></div>
+		<div data-cart-discounts class="hidden flex-col gap-1 transition-opacity group-aria-busy:opacity-40"></div>
 		<div class="flex items-center justify-between">
 			<span class="font-heading font-semibold text-title text-lg">Subtotal</span>
-			<span class="font-heading font-bold text-title text-xl" data-cart-subtotal></span>
+			<span class="font-heading font-bold text-title text-xl transition-opacity group-aria-busy:opacity-40" data-cart-subtotal></span>
 		</div>
 		<p class="text-center text-highlight text-sm font-semibold">Free shipping to the UAE and Saudi Arabia.</p>
 		{%- render 'cta-button',
@@ -121,7 +140,7 @@
 			size: 'lg',
 			full_width: true,
 			attributes: 'data-cart-checkout',
-			extra_classes: '!px-6 !font-bold'
+			extra_classes: '!px-6 !font-bold aria-busy:opacity-60 aria-busy:pointer-events-none'
 		-%}
 		<button type="button" data-cart-close class="w-full text-center text-copy text-sm font-semibold hover:text-title transition-colors cursor-pointer">
 			Continue shopping
@@ -141,15 +160,33 @@
 	var footerEl = document.querySelector('[data-cart-footer]');
 	var subtotalEl = document.querySelector('[data-cart-subtotal]');
 	var discountsEl = document.querySelector('[data-cart-discounts]');
+	var statusEl = document.querySelector('[data-cart-status]');
+	var checkoutEl = document.querySelector('[data-cart-checkout]');
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
 	var KIT_HANDLE = drawer.getAttribute('data-kit-handle');
+	/* Taps within this many ms of each other travel in one update call. */
+	var FLUSH_DELAY = 200;
 	var isOpen = false;
-	/* Last rendered cart, so a click resolves its line against real state
-	   rather than the markup, and clicks queue instead of racing each other. */
+
+	/* ── State ──
+	   currentCart is the last cart Shopify sent, and the only thing taps are
+	   resolved against; the markup is never read back. Every cart call runs
+	   through `queue`, one at a time, so a tap can never race an add and the
+	   Checkout link can wait for the lot. Taps park in `pending` until the
+	   flush timer sends them; `inflight` holds the batch on its way to Shopify
+	   so the numbers on screen keep showing where the cart is heading. Each
+	   op is { index, variantId, delta, remove }: `index` is the 1-based line
+	   position when it was tapped, `variantId` finds the line again if the
+	   positions have moved by the time it is sent. */
 	var currentCart = null;
 	var queue = Promise.resolve();
+	var pending = [];
+	var inflight = [];
+	var flushTimer = null;
+	var queued = 0;
+	var errorMsg = '';
 
 	/* ── Gift opt-out ──
 	   A visitor who removes the free pouch has said no to it, so it stays out
@@ -189,6 +226,8 @@
 		drawer.classList.remove('cart-drawer-open');
 		drawer.classList.add('cart-drawer-closed');
 		document.body.style.overflow = '';
+		/* Nothing tapped should outlive the drawer being dismissed. */
+		flushNow();
 	}
 
 	document.querySelectorAll('[data-cart-close]').forEach(function (b) { b.addEventListener('click', close); });
@@ -200,9 +239,69 @@
 		el.addEventListener('click', function (e) {
 			e.preventDefault();
 			open();
-			fetchAndRender();
+			/* Re-read in case another tab changed the cart; queued so it
+			   cannot overtake a tap that is on its way. */
+			enqueue(function () { return fetchCart().then(settle); });
 		});
 	});
+
+	/* ── Busy state ──
+	   The drawer is busy from the moment a tap is parked until Shopify's
+	   answer is on screen. aria-busy dims the prices (group-aria-busy: in the
+	   markup) and the status line says so; a refused call leaves its reason
+	   there until the next tap or add. */
+	function isBusy() {
+		return queued > 0 || flushTimer !== null || pending.length > 0 || inflight.length > 0;
+	}
+
+	function refreshStatus() {
+		var busy = isBusy();
+		drawer.setAttribute('aria-busy', busy ? 'true' : 'false');
+		if (checkoutEl && !busy) checkoutEl.removeAttribute('aria-busy');
+		statusEl.textContent = errorMsg || (busy ? 'Updating your cart' : '');
+		statusEl.classList.toggle('hidden', statusEl.textContent === '');
+	}
+
+	/* Runs `work` after everything already queued. A failure inside falls
+	   back to re-reading the cart so the drawer never shows a stale guess. */
+	function enqueue(work) {
+		queued += 1;
+		refreshStatus();
+		queue = queue
+			.then(work)
+			.catch(function () { return fetchCart().then(render).catch(function () {}); })
+			.then(function () { queued -= 1; refreshStatus(); });
+		return queue;
+	}
+
+	/* ── Cart requests ── */
+	function request(url, options) {
+		return fetch(url, options).then(function (r) {
+			return r.json().then(function (body) { return { ok: r.ok, body: body }; });
+		});
+	}
+
+	function postJson(url, body, keepalive) {
+		return request(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body),
+			keepalive: !!keepalive
+		});
+	}
+
+	function fetchCart() {
+		return request('/cart.js').then(function (res) { return res.body; });
+	}
+
+	/* One update call for the whole cart. `quantities` is the full list in
+	   cart order, so lines are addressed by position, never by line key
+	   (keys change as the discount moves between lines). Shopify answers
+	   422 "Cart changed" when the line count moved under us, and the caller
+	   re-reads and plans again. */
+	function updateLines(quantities, keepalive) {
+		return postJson('/cart/update.js', { updates: quantities }, keepalive);
+	}
 
 	/* ── Intercept all add-to-cart forms ── */
 	document.addEventListener('submit', function (e) {
@@ -210,7 +309,6 @@
 		if (!form.matches('form[action*="/cart/add"]')) return;
 		e.preventDefault();
 
-		var formData = new FormData(form);
 		var btn = form.querySelector('[data-add-to-cart]');
 		/* Keep the markup: the label can be two lines, so restore rather than retype */
 		var btnMarkup = btn ? btn.innerHTML : '';
@@ -221,90 +319,85 @@
 		}
 		if (btn) { btn.disabled = true; btn.textContent = 'Adding...'; }
 
-		fetch('/cart/add.js', {
-			method: 'POST',
-			body: formData
-		})
-		.then(function (r) { return r.json(); })
-		.then(function () {
-			return addGift(form.getAttribute('data-gift-variant-id'));
-		})
-		.then(function () {
-			return fetchAndRender();
-		})
-		.then(function () {
-			open();
-			resetBtn();
-		})
-		.catch(resetBtn);
+		var item = formItem(form);
+		var giftId = parseInt(form.getAttribute('data-gift-variant-id'), 10) || 0;
+		errorMsg = '';
+		/* Open at once with the lines already known; the new one lands when
+		   Shopify answers. Anything tapped goes first so the order holds. */
+		open();
+		flushNow();
+		enqueue(function () {
+			var items = [item];
+			var giftQty = giftToAdd(currentCart, giftId, item.quantity);
+			if (giftQty > 0) items.push({ id: giftId, quantity: giftQty });
+			return postJson('/cart/add.js', { items: items })
+				.then(function (res) {
+					if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
+					return fetchCart();
+				})
+				.then(settle);
+		}).then(resetBtn, resetBtn);
 	});
+
+	/* The form's fields as one Ajax line: id, quantity, selling plan and any
+	   properties[...] inputs. */
+	function formItem(form) {
+		var data = new FormData(form);
+		var item = {
+			id: parseInt(data.get('id'), 10),
+			quantity: parseInt(data.get('quantity'), 10) || 1
+		};
+		var plan = data.get('selling_plan');
+		if (plan) item.selling_plan = plan;
+		var props = {};
+		var hasProps = false;
+		data.forEach(function (value, name) {
+			var m = name.match(/^properties\[(.+)\]$/);
+			if (m) { props[m[1]] = value; hasProps = true; }
+		});
+		if (hasProps) item.properties = props;
+		return item;
+	}
 
 	/* ── Free gift ──
 	   A Buy X Get Y automatic discount only zeroes the gift once the gift is
-	   in the cart, so a form carrying data-gift-variant-id adds it here.
-	   The cart is read first, so a repeat add-to-cart never stacks a second one:
-	   a second kit raises the quantity of the line already there instead.
-	   A visitor who removed the gift this session is not handed it again. */
-	function addGift(giftId) {
-		var id = parseInt(giftId, 10);
-		if (!id || giftRemoved()) return Promise.resolve();
-
-		return fetchCart()
-			.then(function (cart) {
-				var alreadyThere = cart.items.some(function (item) {
-					return item.variant_id === id;
-				});
-				if (alreadyThere) return;
-
-				return fetch('/cart/add.js', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ items: [{ id: id, quantity: 1 }] })
-				});
-			})
-			.catch(function () {});
+	   in the cart, so a form carrying data-gift-variant-id (the kit's forms)
+	   gets the pouch sent along in the same add call, as many as it takes to
+	   land the pouch count level with the kit count. The cart the drawer
+	   already holds says how many that is, so nothing is read first. A
+	   visitor who removed the gift this session is not handed it again. With
+	   pouches already there, more only come while Shopify is zeroing one (the
+	   offer is live), and only by the number the kits now outnumber them, so
+	   paid pouches are left alone. */
+	function giftToAdd(cart, giftId, qty) {
+		if (!giftId || giftRemoved()) return 0;
+		if (!cart) return qty;
+		var kitsAfter = kitQty(cart) + qty;
+		var pouches = variantQty(cart, giftId);
+		if (pouches === 0) return Math.max(1, kitsAfter);
+		return giftLine(cart) ? Math.max(0, kitsAfter - pouches) : 0;
 	}
 
 	/* ── Upsell add ── */
 	if (upsellBtn) {
 		upsellBtn.addEventListener('click', function () {
-			var vid = upsellBtn.getAttribute('data-upsell-variant-id');
+			var vid = parseInt(upsellBtn.getAttribute('data-upsell-variant-id'), 10);
 			upsellBtn.disabled = true;
 			upsellBtn.textContent = 'Adding...';
-
-			fetch('/cart/add.js', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ items: [{ id: parseInt(vid, 10), quantity: 1 }] })
-			})
-			.then(function () { return fetchAndRender(); })
-			.then(function () {
+			errorMsg = '';
+			function resetUpsell() {
 				upsellBtn.disabled = false;
 				upsellBtn.textContent = 'Add';
-			})
-			.catch(function () {
-				upsellBtn.disabled = false;
-				upsellBtn.textContent = 'Add';
-			});
-		});
-	}
-
-	/* ── Cart requests ── */
-	function fetchCart() {
-		return fetch('/cart.js').then(function (r) { return r.json(); });
-	}
-
-	function changeLine(key, qty) {
-		return fetch('/cart/change.js', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: key, quantity: qty })
-		})
-		.then(function (r) { return r.json(); })
-		.then(function (cart) {
-			/* A refused change (stock, stale key) answers with an error body, so
-			   fall back to the real cart rather than rendering nothing. */
-			return cart && cart.items ? cart : fetchCart();
+			}
+			flushNow();
+			enqueue(function () {
+				return postJson('/cart/add.js', { items: [{ id: vid, quantity: 1 }] })
+					.then(function (res) {
+						if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
+						return fetchCart();
+					})
+					.then(settle);
+			}).then(resetUpsell, resetUpsell);
 		});
 	}
 
@@ -335,51 +428,151 @@
 		}, 0);
 	}
 
-	/* Moves the gift variant to `want`, re-reading the cart between steps because
-	   Shopify rewrites line keys as the discount moves between lines. */
-	function syncGift(cart, want, guard) {
-		var gift = giftLine(cart);
-		/* No zeroed line means no live offer, so pouches here were paid for. */
-		if (!gift || want < 1 || guard > 3) return Promise.resolve(cart);
-
-		var lines = cart.items.filter(function (item) {
-			return item.variant_id === gift.variant_id;
+	/* Moves the pouch lines in `qty` (quantities in cart order) so the
+	   variant totals `want`: raised on the zeroed line, lowered from the paid
+	   lines first so the free one goes last. */
+	function applyGiftWant(cart, qty, gift, want) {
+		var giftIndex = cart.items.indexOf(gift);
+		var indexes = [];
+		cart.items.forEach(function (item, i) {
+			if (item.variant_id === gift.variant_id) indexes.push(i);
 		});
-		var total = lines.reduce(function (n, item) { return n + item.quantity; }, 0);
-		if (want === total) return Promise.resolve(cart);
-
-		var target, qty;
+		var total = indexes.reduce(function (n, i) { return n + qty[i]; }, 0);
 		if (want > total) {
-			target = gift;
-			qty = gift.quantity + (want - total);
-		} else {
-			/* Any surplus sits on the undiscounted portion, so take it from there. */
-			var paid = lines.filter(function (item) { return !isFreeGift(item); })[0];
-			target = paid || gift;
-			qty = Math.max(0, target.quantity - (total - want));
+			qty[giftIndex] += want - total;
+			return;
 		}
-
-		return changeLine(target.key, qty).then(function (next) {
-			return syncGift(next, want, guard + 1);
+		var surplus = total - want;
+		indexes.filter(function (i) { return i !== giftIndex; }).concat([giftIndex]).forEach(function (i) {
+			var take = Math.min(qty[i], surplus);
+			qty[i] -= take;
+			surplus -= take;
 		});
 	}
 
-	/* ── Fetch cart & render ── */
-	function fetchAndRender() {
-		return fetchCart()
-			.then(function (cart) {
-				/* Top up only. A cart left from before the counts were kept in step
-				   still shows the kit split in two until the pouches catch up, and
-				   only ever raising the count keeps paid pouches untouched. */
-				var gift = giftLine(cart);
-				if (!gift) return cart;
-				var want = Math.max(variantQty(cart, gift.variant_id), kitQty(cart));
-				return syncGift(cart, want, 0);
-			})
-			.then(render);
+	/* The line an op means in `cart`: the position it was tapped at if the
+	   same variant still sits there, otherwise the first line of that variant
+	   (a cart change can split or merge lines and shift the rest). */
+	function resolveIndex(cart, op) {
+		var at = cart.items[op.index - 1];
+		if (at && at.variant_id === op.variantId) return op.index - 1;
+		for (var i = 0; i < cart.items.length; i++) {
+			if (cart.items[i].variant_id === op.variantId) return i;
+		}
+		return -1;
+	}
+
+	/* Applies ops to a cart snapshot and returns the quantity every line
+	   should have, in cart order. The free pouch follows the kit one for
+	   one, with a floor of one so removing the kit leaves a single pouch
+	   behind to reprice rather than emptying the cart. */
+	function planQuantities(cart, ops) {
+		var qty = cart.items.map(function (item) { return item.quantity; });
+		var kitDelta = 0;
+		var changed = false;
+		ops.forEach(function (op) {
+			var i = resolveIndex(cart, op);
+			if (i < 0) return;
+			var next = op.remove ? 0 : Math.max(0, qty[i] + op.delta);
+			if (next === qty[i]) return;
+			if (KIT_HANDLE && cart.items[i].handle === KIT_HANDLE) kitDelta += next - qty[i];
+			qty[i] = next;
+			changed = true;
+		});
+		var gift = giftLine(cart);
+		if (kitDelta && gift) {
+			var pouches = cart.items.reduce(function (n, item, i) {
+				return item.variant_id === gift.variant_id ? n + qty[i] : n;
+			}, 0);
+			applyGiftWant(cart, qty, gift, Math.max(1, pouches + kitDelta));
+		}
+		return { qty: qty, changed: changed };
+	}
+
+	/* ── Sending taps ── */
+	function scheduleFlush() {
+		if (flushTimer) clearTimeout(flushTimer);
+		flushTimer = setTimeout(function () { flushTimer = null; flushNow(); }, FLUSH_DELAY);
+		refreshStatus();
+	}
+
+	/* Sends whatever is parked, after anything already queued. Returns the
+	   queue, which settles once the drawer shows Shopify's answer. */
+	function flushNow(keepalive) {
+		if (flushTimer) { clearTimeout(flushTimer); flushTimer = null; }
+		if (!pending.length) { refreshStatus(); return queue; }
+		return enqueue(function () {
+			if (!pending.length || !currentCart) return;
+			inflight = pending;
+			pending = [];
+			return sendOps(currentCart, inflight, 0, keepalive)
+				.then(function (cart) { inflight = []; return settle(cart); });
+		});
+	}
+
+	/* One update call. A refusal (the line count moved, or Shopify capped a
+	   line) re-reads the cart and plans once more from what is really there;
+	   a second refusal shows its reason and settles on Shopify's cart. */
+	function sendOps(cart, ops, tries, keepalive) {
+		var plan = planQuantities(cart, ops);
+		if (!plan.changed) return Promise.resolve(cart);
+		return updateLines(plan.qty, keepalive).then(function (res) {
+			if (res.ok && res.body && res.body.items) return res.body;
+			return fetchCart().then(function (fresh) {
+				if (tries < 1) return sendOps(fresh, ops, tries + 1, keepalive);
+				errorMsg = (res.body && res.body.description) || 'Your cart could not be updated';
+				return fresh;
+			});
+		});
+	}
+
+	/* A tab going away with taps still parked: send them now, keepalive so
+	   the call outlives the page. A batch already in flight is not waited
+	   for, so a tap made during it can be lost to navigation; the next page
+	   renders whatever Shopify has. */
+	window.addEventListener('pagehide', function () {
+		if (pending.length && queued === 0) flushNow(true);
+	});
+
+	/* ── Checkout waits for the cart ──
+	   Only the quantities on screen are ahead of Shopify; the checkout must
+	   not be. With anything parked or in flight the click sends it all and
+	   follows the link once the drawer shows Shopify's answer. */
+	if (checkoutEl) {
+		checkoutEl.addEventListener('click', function (e) {
+			if (!isBusy()) return;
+			e.preventDefault();
+			if (checkoutEl.getAttribute('aria-busy') === 'true') return;
+			checkoutEl.setAttribute('aria-busy', 'true');
+			var href = checkoutEl.getAttribute('href');
+			var go = function () { window.location.href = href; };
+			flushNow().then(go, go);
+		});
+	}
+
+	/* ── Settle & render ──
+	   Renders the cart, after one top-up when it holds fewer pouches than
+	   kits (a cart from before the two were kept in step). Top up only, so
+	   paid pouches are never touched. */
+	function settle(cart) {
+		if (!cart || !cart.items) return;
+		var gift = giftLine(cart);
+		if (gift) {
+			var have = variantQty(cart, gift.variant_id);
+			var want = Math.max(have, kitQty(cart));
+			if (want > have) {
+				var qty = cart.items.map(function (item) { return item.quantity; });
+				applyGiftWant(cart, qty, gift, want);
+				return updateLines(qty)
+					.then(function (res) { return res.ok && res.body && res.body.items ? res.body : fetchCart(); })
+					.then(render);
+			}
+		}
+		render(cart);
 	}
 
 	function render(cart) {
+		if (!cart || !cart.items) return;
 		var hasItems = cart.item_count > 0;
 		currentCart = cart;
 		/* An empty cart ends the visitor's earlier no to the gift. */
@@ -429,7 +622,7 @@
 			});
 			var shown = order.filter(function (key) { return applied[key].amount > 0; });
 			discountsEl.innerHTML = shown.map(function (key) {
-				return '<p class="flex items-center justify-between gap-4 text-copy text-sm"><span>' + escHtml(applied[key].title) + '</span><span class="shrink-0">\u2212' + formatMoney(applied[key].amount) + '</span></p>';
+				return '<p class="flex items-center justify-between gap-4 text-copy text-sm"><span>' + escHtml(applied[key].title) + '</span><span class="shrink-0">−' + formatMoney(applied[key].amount) + '</span></p>';
 			}).join('');
 			discountsEl.classList.toggle('hidden', shown.length === 0);
 			discountsEl.classList.toggle('flex', shown.length > 0);
@@ -446,8 +639,9 @@
 			upsellEl.classList.toggle('hidden', !hasItems || hasRefills);
 		}
 
-		/* Build line items */
-		itemsEl.innerHTML = cart.items.map(function (item) {
+		/* Build line items. Rows carry their 1-based cart position, which is
+		   what a tap is resolved against and what the update call is keyed by. */
+		itemsEl.innerHTML = cart.items.map(function (item, i) {
 			/* The product title sits beside the thumbnail, so the image only
 			   speaks when the merchant has written an alt on it. Otherwise it
 			   stays empty and screen readers skip past it to the title. */
@@ -482,7 +676,7 @@
 					byTitle[title] = (byTitle[title] || 0) + alloc.amount;
 				});
 				discounts = Object.keys(byTitle).map(function (title) {
-					return '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(title) + ' −' + formatMoney(byTitle[title]) + '</p>';
+					return '<p class="text-highlight text-sm font-semibold mt-0.5 transition-opacity group-aria-busy:opacity-40">' + escHtml(title) + ' −' + formatMoney(byTitle[title]) + '</p>';
 				}).join('');
 			}
 			/* A fully free gift line has no stepper: its quantity follows the kit,
@@ -490,14 +684,14 @@
 			   and a paid line reprices above zero, so the stepper returns there. */
 			var qtyControls = isFreeGift(item)
 				? '<div class="flex items-center border border-bg-muted rounded-lg">'
-					+ '<span class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
+					+ '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
 				+ '</div>'
 				: '<div class="flex items-center border border-bg-muted rounded-lg">'
-					+ '<button type="button" data-qty-change="-1" data-line-key="' + item.key + '" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer">−</button>'
-					+ '<span class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
-					+ '<button type="button" data-qty-change="1" data-line-key="' + item.key + '" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer">+</button>'
+					+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Decrease quantity">−</button>'
+					+ '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + item.quantity + '</span>'
+					+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Increase quantity">+</button>'
 				+ '</div>';
-			return '<div class="flex gap-4 items-start" data-line-key="' + item.key + '">'
+			return '<div class="flex gap-4 items-start" data-line="' + (i + 1) + '">'
 				+ '<a href="' + item.url + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + img + '</a>'
 				+ '<div class="flex-1 min-w-0">'
 					+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + brandTitle(item.product_title) + '</p>'
@@ -505,74 +699,66 @@
 					+ discounts
 					+ '<div class="flex items-center gap-3 mt-2">'
 						+ qtyControls
-						+ '<span class="shrink-0 font-heading font-bold text-title text-base">' + formatMoney(item.final_line_price) + '</span>'
+						+ '<span data-line-price class="shrink-0 font-heading font-bold text-title text-base transition-opacity group-aria-busy:opacity-40">' + formatMoney(item.final_line_price) + '</span>'
 					+ '</div>'
-					+ '<button type="button" data-line-remove data-line-key="' + item.key + '" class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>'
+					+ '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>'
 				+ '</div>'
 			+ '</div>';
 		}).join('');
+
+		paintPending();
+		refreshStatus();
 	}
 
-	/* ── Quantity change / remove (event delegation) ── */
+	/* Paints the quantities the parked and in-flight taps will produce, so a
+	   tap shows at once. Only the numbers move: prices and the subtotal keep
+	   their last known values, dimmed by aria-busy, until Shopify answers. */
+	function paintPending() {
+		if (!currentCart) return;
+		var ops = inflight.concat(pending);
+		var qty = ops.length ? planQuantities(currentCart, ops).qty : null;
+		itemsEl.querySelectorAll('[data-line]').forEach(function (row) {
+			var i = parseInt(row.getAttribute('data-line'), 10) - 1;
+			var q = qty ? qty[i] : currentCart.items[i].quantity;
+			row.querySelector('[data-line-qty]').textContent = q;
+			row.classList.toggle('hidden', q === 0);
+		});
+	}
+
+	/* ── Quantity change / remove (event delegation) ──
+	   A tap is parked, painted, and sent with any others that follow within
+	   FLUSH_DELAY as one update call. */
 	itemsEl.addEventListener('click', function (e) {
 		var qtyBtn = e.target.closest('[data-qty-change]');
 		var removeBtn = e.target.closest('[data-line-remove]');
+		var row = e.target.closest('[data-line]');
+		if (!row || (!qtyBtn && !removeBtn) || !currentCart) return;
 
-		if (qtyBtn) {
-			var delta = parseInt(qtyBtn.getAttribute('data-qty-change'), 10);
-			enqueue(qtyBtn.getAttribute('data-line-key'), function (line) {
-				return updateLine(line.key, Math.max(0, line.quantity + delta));
-			});
-		}
+		var index = parseInt(row.getAttribute('data-line'), 10);
+		var line = currentCart.items[index - 1];
+		if (!line) return;
+		errorMsg = '';
 
 		if (removeBtn) {
-			enqueue(removeBtn.getAttribute('data-line-key'), function (line) {
-				/* Removing the free pouch is a choice, remembered for this session
-				   so the next add-to-cart does not put it straight back. */
-				if (isFreeGift(line)) markGiftRemoved();
-				return updateLine(line.key, 0);
-			});
+			/* Removing the free pouch is a choice, remembered for this session
+			   so the next add-to-cart does not put it straight back. */
+			if (isFreeGift(line)) markGiftRemoved();
+			addOp({ index: index, variantId: line.variant_id, delta: 0, remove: true });
+		} else {
+			addOp({ index: index, variantId: line.variant_id, delta: parseInt(qtyBtn.getAttribute('data-qty-change'), 10), remove: false });
 		}
 	});
 
-	/* Clicks run one at a time and resolve their line when their turn comes:
-	   a cart change can rewrite line keys, and the quantity has to come from the
-	   cart rather than markup a queued click has already outdated. */
-	function enqueue(key, run) {
-		queue = queue
-			.then(function () {
-				var line = lineFor(key);
-				if (line) return run(line);
-			})
-			.catch(function () { return fetchAndRender(); });
-		return queue;
-	}
-
-	function lineFor(key) {
-		if (!currentCart || !key) return null;
-		var exact = currentCart.items.filter(function (item) { return item.key === key; })[0];
-		if (exact) return exact;
-		/* Key churn: the line merged, so fall back to the variant it merged into. */
-		var variantId = parseInt(key.split(':')[0], 10);
-		return currentCart.items.filter(function (item) {
-			return item.variant_id === variantId;
-		})[0] || null;
-	}
-
-	function updateLine(key, qty) {
-		var before = currentCart;
-		return changeLine(key, qty)
-			.then(function (cart) {
-				var delta = before ? kitQty(cart) - kitQty(before) : 0;
-				var gift = before ? giftLine(before) : null;
-				if (!delta || !gift) return cart;
-				/* Pouches follow the kit one for one. The floor of one keeps the
-				   long-standing behaviour where removing the kit leaves a single
-				   pouch behind to reprice rather than emptying the cart. */
-				var want = Math.max(1, variantQty(before, gift.variant_id) + delta);
-				return syncGift(cart, want, 0);
-			})
-			.then(render);
+	function addOp(op) {
+		var same = pending.filter(function (p) { return p.index === op.index; })[0];
+		if (same) {
+			same.delta += op.delta;
+			same.remove = same.remove || op.remove;
+		} else {
+			pending.push(op);
+		}
+		paintPending();
+		scheduleFlush();
 	}
 
 	/* ── Helpers ── */
@@ -604,7 +790,8 @@
 		return escHtml(str).replace(/\bAIRA\b/g, 'aira').replace(/\bAira\b/g, 'aira');
 	}
 
-	/* ── Init: pre-load cart state ── */
-	fetchAndRender();
+	/* ── Init: pre-load cart state, first in the queue so an early tap or
+	   add-to-cart plans against a real cart ── */
+	enqueue(function () { return fetchCart().then(settle); });
 })();
 </script>
