@@ -138,6 +138,7 @@ Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) 
 - *Payment gateway* — [confirm: Tap / Telr + COD]. Don't alter checkout or payment markup without sign-off.
 - *WhatsApp support* — number and prefill from settings (`support_whatsapp_*`).
 - *Tracking pixels* — [confirm which]. Don't add or remove pixels without sign-off.
+- *Cookie banner* — Shopify built-in, regions = Shopify Recommended (Europe) only since 24 Sep 2026. GCC visitors never see it. Never wait for or branch on consent in theme JS; never build a theme banner; never re-enable the banner outside Europe without Tom. Storefront analytics before 24 Sep 2026 were consent-gated (sessions only counted visitors who tapped Accept).
 
 **Past mistakes (don't repeat these)**
 - `science-nasal-breathing` vs `nasal-breathing-science` — two *live* sections on the backed-by-science page with confusingly mirror-reversed names (audit 2026-06-29). The lesson holds: never create reversed-word twins, rename for clarity. This is why hard rule 1 exists.

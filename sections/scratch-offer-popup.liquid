@@ -197,11 +197,10 @@
 		} catch (e) {}
 	}
 
-	/* Shopify's cookie banner is deliberately not waited for. An earlier
-	   version held the timer and exit intent until visitorConsentCollected,
-	   and in a private window that meant no popup until the banner was
-	   answered. Tom's call, 2026-09-06: open regardless, over the banner if
-	   it is up. */
+	/* Shopify's cookie banner is not waited for. Since 24 Sep 2026 it
+	   is shown to European visitors only (admin, Customer privacy);
+	   nobody we sell to sees it, and nothing in the theme may gate on
+	   consent. Tom's calls, 6 Sep and 24 Sep. */
 
 	function open() {
 		/* Never surface over the cart drawer, the QR popup or a lightbox. */
