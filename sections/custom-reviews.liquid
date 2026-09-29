@@ -254,10 +254,25 @@
     background: var(--color-bg-soft);
   }
 
-  .review-lightbox__media iframe {
+  /* ── Video frame ──
+     Sized to the video's own aspect ratio (set per review from its thumbnail,
+     portrait phone video by default) and capped to the dialog height, so the
+     player's cover-fit poster and its contain-fit video both fill the frame:
+     no crop on open, no bars on play. The thumbnail sits underneath as a
+     poster because the embed paints nothing until its player has loaded. */
+  .review-video-frame {
+    position: relative;
+    flex: none;
+    width: min(100%, calc(85vh * var(--review-video-ratio, 0.5625)));
+    aspect-ratio: var(--review-video-ratio, 0.5625);
+    background: var(--color-main) center / cover no-repeat;
+  }
+  .review-video-frame iframe {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    border: none;
+    border: 0;
     display: block;
   }
 
@@ -265,11 +280,6 @@
      Covers the Vimeo player the moment playback finishes, so its share end
      screen (vimeo.com link, social buttons) is never seen. Shown and hidden
      by the player's finish/play events. */
-  .review-video-frame {
-    position: relative;
-    width: 100%;
-    align-self: stretch;
-  }
   .review-video-endcap {
     position: absolute;
     inset: 0;
@@ -409,9 +419,8 @@
       object-fit: contain;
     }
 
-    .review-lightbox__media iframe {
-      width: 100%;
-      height: 45vh;
+    .review-video-frame {
+      width: min(100%, calc(92vh * var(--review-video-ratio, 0.5625)));
     }
 
     .review-lightbox__details {
@@ -453,11 +462,6 @@
       max-height: none;
       height: auto;
       flex: 1 1 auto;
-    }
-
-    .review-lightbox.is-video .review-lightbox__media iframe {
-      height: 100%;
-      min-height: 70vh;
     }
 
     .review-lightbox.is-video .review-lightbox__details {
@@ -1653,6 +1657,21 @@
     }
   });
 
+  // The frame takes the video's aspect ratio from its thumbnail, which every
+  // host renders at the video's own dimensions. The card image is normally
+  // loaded already, so this resolves long before the player does.
+  function fitVideoFrame(frameEl, thumbUrl) {
+    if (!thumbUrl) return;
+    var probe = new Image();
+    probe.onload = function () {
+      if (probe.naturalWidth && probe.naturalHeight) {
+        frameEl.style.setProperty('--review-video-ratio', (probe.naturalWidth / probe.naturalHeight).toFixed(4));
+      }
+    };
+    probe.src = thumbUrl;
+    if (probe.complete) probe.onload();
+  }
+
   function bindVideoEndcap(frameEl) {
     var iframe = frameEl.querySelector('iframe');
     var endcap = frameEl.querySelector('.review-video-endcap');
@@ -1785,40 +1804,32 @@
     // video would start silent. Tapping the player's own play button is a
     // gesture inside the iframe, which is what guarantees sound.
     if (review.isVideo) {
-      var iframeStyle = 'width:100%; height:100%; border:0; background:transparent;';
+      var embedSrc = review.videoEmbed ? review.videoEmbed.src : '';
+      if (!embedSrc) {
+        // A Cloudflare Stream thumbnail carries its video id in the URL.
+        var legacyId = (review.image || '').match(/(?:videodelivery\.net|cloudflarestream\.com)\/([a-zA-Z0-9_-]+)/);
+        if (legacyId) embedSrc = 'https://iframe.videodelivery.net/' + legacyId[1] + '?poster=' + encodeURIComponent(review.image);
+      }
 
-      if (review.videoEmbed) {
-        var frame = '<iframe src="' + review.videoEmbed.src + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
-        if (review.videoEmbed.host === 'vimeo') {
+      if (embedSrc) {
+        var isVimeo = !!review.videoEmbed && review.videoEmbed.host === 'vimeo';
+        var frameHtml = '<iframe src="' + embedSrc + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video"></iframe>';
+        if (isVimeo) {
           // Only Vimeo's player ends on a share screen worth covering.
           var replayIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
-          mediaEl.innerHTML =
-            '<div class="review-video-frame">' + frame +
-              '<div class="review-video-endcap" hidden>' +
-                (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
-                '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
-              '</div>' +
+          frameHtml +=
+            '<div class="review-video-endcap" hidden>' +
+              (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
+              '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
             '</div>';
-          bindVideoEndcap(mediaEl.querySelector('.review-video-frame'));
-        } else {
-          mediaEl.innerHTML = frame;
         }
+        mediaEl.innerHTML = '<div class="review-video-frame">' + frameHtml + '</div>';
+        var frameEl = mediaEl.querySelector('.review-video-frame');
+        if (review.image) frameEl.style.backgroundImage = 'url("' + review.image + '")';
+        fitVideoFrame(frameEl, review.image);
+        if (isVimeo) bindVideoEndcap(frameEl);
       } else {
-        var videoId = '';
-        var src = review.image || '';
-        var vMatch = src.match(/videodelivery\.net\/([a-zA-Z0-9_-]+)/);
-        if (vMatch) videoId = vMatch[1];
-
-        if (!videoId) {
-          var cfMatch = src.match(/cloudflarestream\.com\/([a-zA-Z0-9_-]+)/);
-          if (cfMatch) videoId = cfMatch[1];
-        }
-
-        if (videoId) {
-          mediaEl.innerHTML = '<iframe src="https://iframe.videodelivery.net/' + videoId + '?poster=' + encodeURIComponent(review.image) + '" allow="autoplay; fullscreen" allowfullscreen title="Customer review video" style="' + iframeStyle + '"></iframe>';
-        } else {
-          mediaEl.innerHTML = '<img src="' + review.image + '" alt="Video by ' + review.name + '" />';
-        }
+        mediaEl.innerHTML = '<img src="' + review.image + '" alt="Video by ' + review.name + '" />';
       }
     } else {
       mediaEl.innerHTML = '<img src="' + review.image + '" alt="Photo by ' + review.name + '" />';
