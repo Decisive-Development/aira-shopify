@@ -70,12 +70,12 @@
 						data-plan-btn="subscribe"
 					>
 						<div class="flex items-center justify-between w-full">
-							<span class="font-heading text-sm font-bold text-title">Subscribe & save</span>
+							<span class="font-heading text-sm font-bold text-title">{{ 'snippets.product_card.subscribe_save' | t }}</span>
 							<span class="w-5 h-5 rounded-full border-2 border-main flex items-center justify-center shrink-0" data-plan-radio="subscribe">
 								<span class="w-2.5 h-2.5 rounded-full bg-main"></span>
 							</span>
 						</div>
-						<p class="text-xs text-copy leading-snug">Hassle-free restock at a discount, delivered on your schedule</p>
+						<p class="text-xs text-copy leading-snug">{{ 'snippets.product_card.subscribe_body' | t }}</p>
 						<div class="flex items-baseline gap-2 mt-0.5">
 							<span class="font-heading font-bold text-lg text-title" data-subscribe-price>
 								{%- if sp_allocation -%}{{ sp_allocation.per_delivery_price | money }}{%- endif -%}
@@ -85,14 +85,14 @@
 								{%- assign sp_price = sp_allocation.per_delivery_price -%}
 								{%- assign save_amount = first_variant.price | minus: sp_price -%}
 								{%- if save_amount > 0 -%}
-									<span class="text-xs font-bold text-highlight-green">Save {{ save_amount | money }}</span>
+									{%- assign save_money = save_amount | money -%}<span class="text-xs font-bold text-highlight-green">{{ 'snippets.product_card.save' | t: amount: save_money }}</span>
 								{%- endif -%}
 							{%- endif -%}
 						</div>
 					</button>
 
 					{%- comment -%} ── Divider ── {%- endcomment -%}
-					<p class="text-xs text-copy text-center py-0.5">Or buy one time</p>
+					<p class="text-xs text-copy text-center py-0.5">{{ 'snippets.product_card.or_buy_one_time' | t }}</p>
 
 					{%- comment -%} ── One-time option ── {%- endcomment -%}
 					<button
@@ -100,7 +100,7 @@
 						class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 border-bg-muted bg-bg text-left transition-colors"
 						data-plan-btn="onetime"
 					>
-						<span class="font-heading text-sm font-semibold text-title">One-time purchase</span>
+						<span class="font-heading text-sm font-semibold text-title">{{ 'snippets.product_card.one_time_purchase' | t }}</span>
 						<span class="w-5 h-5 rounded-full border-2 border-bg-muted flex items-center justify-center shrink-0" data-plan-radio="onetime"></span>
 					</button>
 
@@ -211,10 +211,10 @@
 					{%- endif -%}
 				</div>
 				{%- liquid
-					assign card_atc_label = 'Sold out'
+					assign card_atc_label = 'general.sold_out' | t
 					assign card_atc_disabled = true
 					if first_variant.available
-						assign card_atc_label = 'Add to cart'
+						assign card_atc_label = 'general.add_to_cart' | t
 						assign card_atc_disabled = false
 					endif
 				-%}

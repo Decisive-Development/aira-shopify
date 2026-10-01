@@ -127,11 +127,11 @@
 								<source src="{{ video_src }}#t=0.1" type="video/mp4">
 							</video>
 						{%- else -%}
-							<div class="video-placeholder">Tutorial video. Filmed in portrait.</div>
+							<div class="video-placeholder">{{ 'sections.how_it_works_hero.video_placeholder' | t }}</div>
 						{%- endif -%}
 
 						{%- if has_video -%}
-							<button class="video-play-big" data-tutorial-play aria-label="Play tutorial video">
+							<button class="video-play-big" data-tutorial-play aria-label="{{ 'sections.how_it_works_hero.play_tutorial' | t }}">
 								<span class="ring">
 									<svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 										<path d="M8 5v14l11-7z"/>
@@ -170,8 +170,8 @@
 	{%- if has_video -%}
 		<div class="video-modal" data-video-modal hidden>
 			<div class="video-modal__backdrop" data-video-close></div>
-			<div class="video-modal__player" role="dialog" aria-modal="true" aria-label="Tutorial video">
-				<button type="button" class="video-modal__close" data-video-close aria-label="Close video">&times;</button>
+			<div class="video-modal__player" role="dialog" aria-modal="true" aria-label="{{ 'sections.how_it_works_hero.tutorial_video' | t }}">
+				<button type="button" class="video-modal__close" data-video-close aria-label="{{ 'general.close_video' | t }}">&times;</button>
 				<video
 					controls
 					playsinline
@@ -198,7 +198,7 @@
 						<path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
 						<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
 					</svg>
-					Tap for sound
+					{{ 'sections.how_it_works_hero.tap_for_sound' | t }}
 				</button>
 			</div>
 		</div>

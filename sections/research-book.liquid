@@ -111,7 +111,7 @@
 							assign next_no = forloop.index | plus: 1 | prepend: '0' | slice: -2, 2
 							assign ghost = next_no
 						endif
-						assign pager_label = 'Study ' | append: study_no | append: ' of ' | append: study_total
+						assign pager_label = 'sections.research_book.study_of' | t: n: study_no, total: study_total
 					-%}
 					<div
 						class="rb-sheet"
@@ -122,7 +122,7 @@
 						<div class="rb-face rb-face--front rb-paper">
 							<div class="rb-pg">
 								<div class="rb-pg-head">
-									<span class="rb-pg-no">Study {{ study_no }}</span>
+									<span class="rb-pg-no">{{ 'sections.research_book.study' | t: n: study_no }}</span>
 									<span class="rb-pg-field">{{ block.settings.field }}</span>
 								</div>
 								<h2 class="rb-pg-title">{{ block.settings.headline }}</h2>
@@ -261,13 +261,13 @@
 		</div>
 	</div>
 
-	<nav class="rb-pager" aria-label="Pages">
-		<button type="button" class="rb-arrow" data-rb-prev aria-label="Previous page">
+	<nav class="rb-pager" aria-label="{{ 'sections.research_book.pages' | t }}">
+		<button type="button" class="rb-arrow" data-rb-prev aria-label="{{ 'general.previous_page' | t }}">
 			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
 		</button>
 		<div class="rb-ticks" data-rb-ticks></div>
 		<span class="rb-pagelabel" data-rb-pagelabel></span>
-		<button type="button" class="rb-arrow" data-rb-next aria-label="Next page">
+		<button type="button" class="rb-arrow" data-rb-next aria-label="{{ 'general.next_page' | t }}">
 			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
 		</button>
 	</nav>

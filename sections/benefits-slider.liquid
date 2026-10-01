@@ -220,7 +220,7 @@
 					data-bs-card
 					role="group"
 					aria-roledescription="slide"
-					aria-label="{{ forloop.index }} of {{ section.blocks.size }}"
+					aria-label="{{ 'general.n_of_total' | t: n: forloop.index, total: section.blocks.size }}"
 					{{ block.shopify_attributes }}
 				>
 
@@ -275,12 +275,12 @@
 		</ul>
 
 		<div class="bs-controls" aria-hidden="true">
-			<button class="bs-btn" type="button" aria-label="Previous" data-bs-prev disabled>
+			<button class="bs-btn" type="button" aria-label="{{ 'general.previous' | t }}" data-bs-prev disabled>
 				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M15 19l-7-7 7-7"/>
 				</svg>
 			</button>
-			<button class="bs-btn" type="button" aria-label="Next" data-bs-next>
+			<button class="bs-btn" type="button" aria-label="{{ 'general.next' | t }}" data-bs-next>
 				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M9 5l7 7-7 7"/>
 				</svg>

@@ -888,13 +888,13 @@
 
     <!-- ── Navigation ── -->
     <div class="reviews-nav flex items-center justify-center gap-4 mt-8" style="display:none;">
-      <button class="reviews-arrow reviews-arrow--prev w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Previous reviews">
+      <button class="reviews-arrow reviews-arrow--prev w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="{{ 'sections.custom_reviews.previous_reviews' | t }}">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <div class="reviews-dots flex gap-0">
         <!-- Dot indicators injected by JS -->
       </div>
-      <button class="reviews-arrow reviews-arrow--next w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="Next reviews">
+      <button class="reviews-arrow reviews-arrow--next w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="{{ 'sections.custom_reviews.next_reviews' | t }}">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </button>
     </div>
@@ -904,7 +904,7 @@
       <div class="reviews-photo-strip__track">
         <!-- JS populates with clickable thumbnails -->
       </div>
-      <button class="reviews-photo-strip__arrow reviews-photo-strip__arrow--next" aria-label="Scroll photos">
+      <button class="reviews-photo-strip__arrow reviews-photo-strip__arrow--next" aria-label="{{ 'sections.custom_reviews.scroll_photos' | t }}">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
       </button>
     </div>
@@ -985,7 +985,7 @@
         <div class="review-lightbox__helpful"></div>
       </div>
     </div>
-    <button class="review-lightbox__close" aria-label="Close"
+    <button class="review-lightbox__close" aria-label="{{ 'general.close' | t }}"
       onclick="var lb=this.closest('.review-lightbox');if(lb){lb.style.display='none';document.body.classList.remove('lightbox-open');var m=lb.querySelector('iframe');if(m)m.src='';}"
       ontouchstart="this.click();"
     >&times;</button>

@@ -48,14 +48,21 @@
     "add": "Add",
     "add_to_cart": "Add to cart",
     "back": "Back",
+    "close": "Close",
+    "close_video": "Close video",
     "email": "Email",
     "free_shipping": "Free shipping to the UAE and Saudi Arabia.",
     "limited": "Limited",
+    "n_of_total": "{{ n }} of {{ total }}",
+    "next": "Next",
+    "next_page": "Next page",
     "no": "No",
     "open_menu": "Open menu",
     "optional": "(optional)",
     "order_number": "Order number",
     "other": "Other",
+    "previous": "Previous",
+    "previous_page": "Previous page",
     "sold_out": "Sold out",
     "yes": "Yes"
   },
@@ -79,6 +86,10 @@
     "results_for_html": "{{ count }} results found for {{ terms }}"
   },
   "sections": {
+    "collection": {
+      "empty": "No products found in this collection.",
+      "pagination": "Collection pagination"
+    },
     "comparison_table": {
       "adjustable_airflow": "Adjustable airflow",
       "holds_nose_open": "Holds a collapsing nose open",
@@ -91,6 +102,11 @@
       "send": "Send message",
       "subject": "Subject"
     },
+    "custom_reviews": {
+      "next_reviews": "Next reviews",
+      "previous_reviews": "Previous reviews",
+      "scroll_photos": "Scroll photos"
+    },
     "footer": {
       "copyright_html": "&copy; {{ year }} AIRA WELLNESS ECOM FZCO.",
       "facebook": "Facebook",
@@ -102,6 +118,16 @@
       "licence": "Licence {{ number }}",
       "tiktok": "TikTok",
       "youtube": "YouTube"
+    },
+    "how_it_works_hero": {
+      "play_tutorial": "Play tutorial video",
+      "tap_for_sound": "Tap for sound",
+      "tutorial_video": "Tutorial video",
+      "video_placeholder": "Tutorial video. Filmed in portrait."
+    },
+    "policy_content": {
+      "on_this_page": "On this page",
+      "on_this_page_mobile": "On this page (mobile)"
     },
     "product": {
       "contents_manual": "Instruction manual",
@@ -122,6 +148,11 @@
       "pairs": "{{ pairs }} pairs",
       "plan": "Plan",
       "pouch_note": "Each pouch is 30 pairs. Choose 2 or 3 and the pack price applies automatically."
+    },
+    "research_book": {
+      "pages": "Pages",
+      "study": "Study {{ n }}",
+      "study_of": "Study {{ n }} of {{ total }}"
     },
     "returns_eligibility_gate": {
       "attach_photo": "Attach photograph of damage",
@@ -170,6 +201,13 @@
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",
       "your_cart": "Your cart"
+    },
+    "product_card": {
+      "one_time_purchase": "One-time purchase",
+      "or_buy_one_time": "Or buy one time",
+      "save": "Save {{ amount }}",
+      "subscribe_body": "Hassle-free restock at a discount, delivered on your schedule",
+      "subscribe_save": "Subscribe & save"
     }
   }
 }
