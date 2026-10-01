@@ -112,12 +112,15 @@
 	{%- endcomment -%}
 	{%- capture thumbs_html -%}
 		{{ thumbs_html }}
+		{%- assign kind_key = 'snippets.product_gallery.kind_' | append: kind -%}
+		{%- assign kind_label = kind_key | t -%}
+		{%- assign thumb_no = index | plus: 1 -%}
 		<button
 			type="button"
 			class="relative aspect-square rounded-lg overflow-hidden bg-bg-muted border-2 transition-colors cursor-pointer {% if index == 0 %}border-main{% else %}border-transparent hover:border-bg-muted{% endif %}"
 			data-thumb-btn
 			data-thumb-index="{{ index }}"
-			aria-label="Show {{ kind }} {{ index | plus: 1 }}"
+			aria-label="{{ 'snippets.product_gallery.show_media' | t: kind: kind_label, index: thumb_no }}"
 			{% if index == 0 %}aria-current="true"{% endif %}
 		>
 			{{

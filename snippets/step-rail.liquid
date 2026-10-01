@@ -15,16 +15,22 @@
 {%- endcomment -%}
 
 {%- liquid
-	assign s1_title = step1_title | default: 'Find your size'
-	assign s1_sub   = step1_sub   | default: 'Four strips in every kit'
-	assign s2_title = step2_title | default: 'Prep your skin'
-	assign s2_sub   = step2_sub   | default: 'Clean & dry'
-	assign s3_title = step3_title | default: 'Apply tabs & strip'
-	assign s3_sub   = step3_sub   | default: 'Shark fins up'
+	assign s1_title_default = 'snippets.step_rail.step1_title' | t
+	assign s1_sub_default   = 'snippets.step_rail.step1_sub' | t
+	assign s2_title_default = 'snippets.step_rail.step2_title' | t
+	assign s2_sub_default   = 'snippets.step_rail.step2_sub' | t
+	assign s3_title_default = 'snippets.step_rail.step3_title' | t
+	assign s3_sub_default   = 'snippets.step_rail.step3_sub' | t
+	assign s1_title = step1_title | default: s1_title_default
+	assign s1_sub   = step1_sub   | default: s1_sub_default
+	assign s2_title = step2_title | default: s2_title_default
+	assign s2_sub   = step2_sub   | default: s2_sub_default
+	assign s3_title = step3_title | default: s3_title_default
+	assign s3_sub   = step3_sub   | default: s3_sub_default
 -%}
 
 <aside class="hidden md:block md:col-span-3">
-	<nav class="step-rail flex flex-col gap-1.5" aria-label="How it works steps">
+	<nav class="step-rail flex flex-col gap-1.5" aria-label="{{ 'snippets.step_rail.label' | t }}">
 		<a href="#step-1" class="step-link{% if active_step == 1 %} is-active{% endif %}" data-step="1">
 			<span class="step-num">01</span>
 			<span class="flex flex-col leading-tight">

@@ -19,9 +19,9 @@
 				placeholder="{{ section.settings.placeholder | default: 'Search the FAQ…' }}"
 				class="flex-1 bg-transparent text-sm text-main focus:outline-none placeholder:text-copy/50"
 				data-faq-search-input
-				aria-label="Search the FAQ"
+				aria-label="{{ 'sections.faq_search.search_label' | t }}"
 			>
-			<span class="text-xs text-copy/50" data-faq-search-empty hidden>No matches</span>
+			<span class="text-xs text-copy/50" data-faq-search-empty hidden>{{ 'sections.faq_search.no_matches' | t }}</span>
 		</label>
 	</div>
 </section>

@@ -78,8 +78,8 @@
 					style="background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(155,183,212,0.10), transparent 65%);"
 				></div>
 				<div class="absolute inset-0 flex flex-col items-center justify-center gap-1.5 md:gap-2">
-					<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">Hero photograph</span>
-					<span class="font-body text-[10px] md:text-[11px] text-secondary/35">{% if request.design_mode %}{% endif %}lifestyle · dim-lit</span>
+					<span class="font-body text-[10px] md:text-[12px] uppercase tracking-[0.18em] text-secondary/50">{{ 'sections.our_story_hero.placeholder_title' | t }}</span>
+					<span class="font-body text-[10px] md:text-[11px] text-secondary/35">{% if request.design_mode %}{% endif %}{{ 'sections.our_story_hero.placeholder_caption' | t }}</span>
 				</div>
 			{%- endif -%}
 

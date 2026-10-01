@@ -27,7 +27,8 @@
 {%- liquid
 	assign md_backdrop = backdrop_classes | default: 'bg-main/55'
 	assign md_card = card_classes | default: 'w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl'
-	assign md_close_label = close_label | default: 'Close'
+	assign md_close_default = 'general.close' | t
+	assign md_close_label = close_label | default: md_close_default
 -%}
 
 <div

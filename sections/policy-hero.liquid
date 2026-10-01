@@ -34,7 +34,7 @@
 			{%- assign updated_label = section.settings.last_updated -%}
 			{%- if updated_label != blank -%}
 				<p class="font-body text-sm md:text-[15px] text-secondary/60 m-0">
-					Last updated: {{ updated_label }}
+					{{ 'sections.policy_hero.last_updated' | t: date: updated_label }}
 				</p>
 			{%- endif -%}
 

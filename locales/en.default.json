@@ -107,6 +107,10 @@
       "previous_reviews": "Previous reviews",
       "scroll_photos": "Scroll photos"
     },
+    "faq_search": {
+      "no_matches": "No matches",
+      "search_label": "Search the FAQ"
+    },
     "footer": {
       "copyright_html": "&copy; {{ year }} AIRA WELLNESS ECOM FZCO.",
       "facebook": "Facebook",
@@ -119,15 +123,29 @@
       "tiktok": "TikTok",
       "youtube": "YouTube"
     },
+    "hero": {
+      "placeholder_alt": "Hero placeholder"
+    },
     "how_it_works_hero": {
       "play_tutorial": "Play tutorial video",
       "tap_for_sound": "Tap for sound",
       "tutorial_video": "Tutorial video",
       "video_placeholder": "Tutorial video. Filmed in portrait."
     },
+    "kit_offer": {
+      "placeholder_caption": "kit · contents",
+      "placeholder_title": "Product photograph"
+    },
+    "our_story_hero": {
+      "placeholder_caption": "lifestyle · dim-lit",
+      "placeholder_title": "Hero photograph"
+    },
     "policy_content": {
       "on_this_page": "On this page",
       "on_this_page_mobile": "On this page (mobile)"
+    },
+    "policy_hero": {
+      "last_updated": "Last updated: {{ date }}"
     },
     "product": {
       "contents_manual": "Instruction manual",
@@ -188,6 +206,9 @@
       "tell_us_more": "Tell us more",
       "uae": "UAE",
       "wrong_size": "Wrong size"
+    },
+    "ugc_gallery": {
+      "video_player": "Video player"
     }
   },
   "snippets": {
@@ -202,12 +223,35 @@
       "subtotal": "Subtotal",
       "your_cart": "Your cart"
     },
+    "meta_tags": {
+      "page_html": "&ndash; Page {{ page }}",
+      "tagged_html": "&ndash; tagged \"{{ tags }}\""
+    },
     "product_card": {
       "one_time_purchase": "One-time purchase",
       "or_buy_one_time": "Or buy one time",
       "save": "Save {{ amount }}",
       "subscribe_body": "Hassle-free restock at a discount, delivered on your schedule",
       "subscribe_save": "Subscribe & save"
+    },
+    "product_gallery": {
+      "kind_external_video": "external_video",
+      "kind_image": "image",
+      "kind_model": "model",
+      "kind_video": "video",
+      "show_media": "Show {{ kind }} {{ index }}"
+    },
+    "step_rail": {
+      "label": "How it works steps",
+      "step1_sub": "Four strips in every kit",
+      "step1_title": "Find your size",
+      "step2_sub": "Clean & dry",
+      "step2_title": "Prep your skin",
+      "step3_sub": "Shark fins up",
+      "step3_title": "Apply tabs & strip"
+    },
+    "ugc_card": {
+      "play_video": "Play video"
     }
   }
 }

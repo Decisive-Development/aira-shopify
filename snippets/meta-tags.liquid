@@ -253,8 +253,8 @@
 
 <title>
   {{ seo_title }}
-  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
-  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+  {%- if current_tags %}{%- assign tag_list = current_tags | join: ', ' -%} {{ 'snippets.meta_tags.tagged_html' | t: tags: tag_list }}{% endif -%}
+  {%- if current_page != 1 %} {{ 'snippets.meta_tags.page_html' | t: page: current_page }}{% endif -%}
   {%- if append_brand %} &ndash; {{ shop.name }}{% endif -%}
 </title>
 
