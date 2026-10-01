@@ -4,13 +4,30 @@
   localization.available_languages lists PUBLISHED languages only, so this
   renders nothing until a second language is published.
 
+  Dev-only preview: on a theme whose role is not "main" (development or
+  unpublished copies) the switcher also renders with a sample Arabic entry,
+  hidden, and the dev flags script in layout/theme.liquid reveals it on
+  ?switcher=1 (sticky for the browser session, ?switcher=0 clears it) so it
+  can be checked before a second language exists. The live theme never
+  renders the preview.
+
   Params:
     id          unique form id per render (header-dark-desktop, header-light-desktop, header-mobile)
     text_class  the header variant's text colour utility (text-white / text-main)
     form_class  layout utilities for the form (desktop renders hide below md)
 {%- endcomment -%}
-{%- if localization.available_languages.size > 1 -%}
-  {%- form 'localization', id: id, class: form_class -%}
+{%- liquid
+  assign show_switcher = false
+  if localization.available_languages.size > 1
+    assign show_switcher = true
+  endif
+  assign preview = false
+  if show_switcher == false and theme.role != 'main'
+    assign preview = true
+  endif
+-%}
+{%- if show_switcher or preview -%}
+  {%- capture switcher_items -%}
     <input type="hidden" name="return_to" value="{{ request.path }}">
     {%- for language in localization.available_languages -%}
       {%- assign is_current = false -%}
@@ -27,5 +44,14 @@
       </button>
       {%- unless forloop.last -%}<span aria-hidden="true" class="text-sm {{ text_class }}">|</span>{%- endunless -%}
     {%- endfor -%}
-  {%- endform -%}
+    {%- if preview -%}
+      <span aria-hidden="true" class="text-sm {{ text_class }}">|</span>
+      <button type="submit" name="locale_code" value="ar" lang="ar" class="text-sm {{ text_class }} transition-opacity hover:opacity-60">العربية</button>
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- if preview -%}
+    {%- form 'localization', id: id, class: form_class, hidden: 'hidden', data-switcher-preview: 'true' -%}{{ switcher_items }}{%- endform -%}
+  {%- else -%}
+    {%- form 'localization', id: id, class: form_class -%}{{ switcher_items }}{%- endform -%}
+  {%- endif -%}
 {%- endif -%}

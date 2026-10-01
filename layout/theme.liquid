@@ -5,6 +5,32 @@
     {% render 'meta-tags' %}
 
     {% comment %}
+      Dev-only preview flags. theme.role is "main" only on the live theme, so
+      nothing in this block ever reaches customers. ?switcher=1 reveals the
+      language switcher with its sample second entry (rendered hidden by
+      snippets/language-switcher.liquid) so it can be checked before a second
+      language is published; it stays on for the browser session until
+      ?switcher=0. Phase B's ?rtl=1 belongs in the same block.
+    {% endcomment %}
+    {%- if theme.role != 'main' -%}
+      <script>
+        (function () {
+          var flag = new URLSearchParams(location.search).get('switcher');
+          var on = flag === '1';
+          try {
+            if (flag === '1') sessionStorage.setItem('aira-switcher-preview', '1');
+            if (flag === '0') sessionStorage.removeItem('aira-switcher-preview');
+            on = sessionStorage.getItem('aira-switcher-preview') === '1';
+          } catch (e) {}
+          if (!on) return;
+          document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-switcher-preview]').forEach(function (el) { el.removeAttribute('hidden'); });
+          });
+        })();
+      </script>
+    {%- endif -%}
+
+    {% comment %}
       Product hero preload, kit template only. Shopify turns preload_tag into
       a Link header and 103 Early Hints, so the hero starts before the HTML
       arrives, and fetchpriority high keeps it ahead of fonts and scripts.
