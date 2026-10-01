@@ -32,9 +32,9 @@
 
 				{%- if settings.returns_address != blank -%}
 					<div class="rounded-xl border border-main/15 bg-bg p-5 mb-8">
-						<p class="text-xs font-bold uppercase tracking-widest text-copy/60 m-0 mb-2">Return address</p>
+						<p class="text-xs font-bold uppercase tracking-widest text-copy/60 m-0 mb-2">{{ 'sections.returns_form.return_address' | t }}</p>
 						<p class="text-sm text-copy m-0 whitespace-pre-line">{{ settings.returns_address }}</p>
-						<p class="text-xs text-copy/60 m-0 mt-3">Post your return here at your own cost, then submit the form below so we can match your parcel to your order.</p>
+						<p class="text-xs text-copy/60 m-0 mt-3">{{ 'sections.returns_form.return_address_note' | t }}</p>
 					</div>
 				{%- endif -%}
 
@@ -58,49 +58,49 @@
 						<input type="hidden" name="contact[tags]"    value="returns">
 
 						<label class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Full name</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.returns_form.full_name' | t }}</span>
 							<input type="text" name="contact[name]" required autocomplete="name" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 						</label>
 
 						<label class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Email</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'general.email' | t }}</span>
 							<input type="email" name="contact[email]" required autocomplete="email" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 						</label>
 
 						<label class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Order number</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'general.order_number' | t }}</span>
 							<input type="text" name="contact[order_number]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 						</label>
 
 						<label class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Country</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.returns_form.country' | t }}</span>
 							<select name="contact[country]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
-								<option value="">Select country</option>
-								<option value="UAE">UAE</option>
-								<option value="KSA">KSA</option>
-								<option value="Other">Other</option>
+								<option value="">{{ 'sections.returns_form.select_country' | t }}</option>
+								<option value="UAE">{{ 'sections.returns_form.uae' | t }}</option>
+								<option value="KSA">{{ 'sections.returns_form.ksa' | t }}</option>
+								<option value="Other">{{ 'general.other' | t }}</option>
 							</select>
 						</label>
 
 						<label class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Reason</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.returns_form.reason' | t }}</span>
 							<select name="contact[reason]" required data-reason-select class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
-								<option value="">Select reason</option>
-								<option value="Wrong size">Wrong size</option>
-								<option value="No longer needed">No longer needed</option>
-								<option value="Found different solution">Found different solution</option>
-								<option value="Other">Other</option>
+								<option value="">{{ 'sections.returns_form.select_reason' | t }}</option>
+								<option value="Wrong size">{{ 'sections.returns_form.wrong_size' | t }}</option>
+								<option value="No longer needed">{{ 'sections.returns_form.no_longer_needed' | t }}</option>
+								<option value="Found different solution">{{ 'sections.returns_form.found_different_solution' | t }}</option>
+								<option value="Other">{{ 'general.other' | t }}</option>
 							</select>
 						</label>
 
 						<label class="flex flex-col gap-1.5" data-reason-other hidden>
-							<span class="text-xs font-semibold uppercase tracking-widest text-title">Tell us more</span>
+							<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.returns_form.tell_us_more' | t }}</span>
 							<textarea name="contact[reason_other]" rows="4" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main resize-y"></textarea>
 						</label>
 
 						<label class="flex items-start gap-3 cursor-pointer">
 							<input type="checkbox" name="contact[sealed_confirm]" required class="mt-1">
-							<span class="text-base text-copy">I confirm the product is in its original packaging and I have my receipt.</span>
+							<span class="text-base text-copy">{{ 'sections.returns_form.sealed_confirm' | t }}</span>
 						</label>
 
 						{%- comment -%} Audit-trail hidden inputs populated by the eligibility gate JS. {%- endcomment -%}
@@ -110,8 +110,9 @@
 						<input type="hidden" id="eligibility_order_number"      name="contact[eligibility_order_number]"      value="">
 
 						<div class="pt-2 flex justify-end">
+							{%- assign submit_label = 'sections.returns_form.submit' | t -%}
 							{%- render 'cta-button',
-								label: 'Submit return request',
+								label: submit_label,
 								element: 'button',
 								button_type: 'submit',
 								variant: 'solid',

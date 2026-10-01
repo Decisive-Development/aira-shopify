@@ -44,6 +44,15 @@
     "whatsapp_prefill": "Hi aira, I have a question.",
     "whatsapp_prefill_product": "Hi aira, I have a question about {{ product }}."
   },
+  "general": {
+    "back": "Back",
+    "email": "Email",
+    "no": "No",
+    "optional": "(optional)",
+    "order_number": "Order number",
+    "other": "Other",
+    "yes": "Yes"
+  },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
     "card": "Gift card",
@@ -62,5 +71,60 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "sections": {
+    "contact_form": {
+      "message": "Message",
+      "name": "Name",
+      "send": "Send message",
+      "subject": "Subject"
+    },
+    "footer": {
+      "copyright_html": "&copy; {{ year }} AIRA WELLNESS ECOM FZCO.",
+      "facebook": "Facebook",
+      "heading_about": "About",
+      "heading_help": "Help",
+      "heading_legal": "Legal",
+      "heading_shop": "Shop",
+      "instagram": "Instagram",
+      "licence": "Licence {{ number }}",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    },
+    "returns_eligibility_gate": {
+      "attach_photo": "Attach photograph of damage",
+      "condition_body_html": "Change-of-mind returns need to come back in their original packaging with your order number. If something's damaged or faulty, email {{ email_link }} with a photo and we'll make it right.",
+      "condition_heading": "This order isn't eligible for a return.",
+      "damaged_body": "Email us and we'll replace or refund it, with shipping on us.",
+      "damaged_heading": "Sorry your order arrived damaged.",
+      "damaged_subject": "Return damaged item",
+      "eligible_body": "Complete the form below to start it. Used is fine for a change of mind, we just need the original packaging and your order number. Return shipping is yours.",
+      "eligible_heading": "You're eligible for a return.",
+      "eligible_refills": "One thing on the refills: an unopened pouch can come back, but once a pouch is opened we can't take it back.",
+      "email_photo_cta": "Email a photo to support",
+      "include_order_number": "Include order number",
+      "order_number_needed": "You'll need your order number to continue. Find it in your order confirmation email, then answer \"Yes\" above.",
+      "subject_line": "Subject: {{ subject }}",
+      "takes_seconds": "Takes around 20 seconds",
+      "window_body_html": "Our 30-night guarantee covers the 30 nights after delivery, so this order isn't eligible for a return. If you think something's faulty, email {{ email_link }} and we'll take a look.",
+      "window_heading": "This order is outside the return window."
+    },
+    "returns_form": {
+      "country": "Country",
+      "found_different_solution": "Found different solution",
+      "full_name": "Full name",
+      "ksa": "KSA",
+      "no_longer_needed": "No longer needed",
+      "reason": "Reason",
+      "return_address": "Return address",
+      "return_address_note": "Post your return here at your own cost, then submit the form below so we can match your parcel to your order.",
+      "sealed_confirm": "I confirm the product is in its original packaging and I have my receipt.",
+      "select_country": "Select country",
+      "select_reason": "Select reason",
+      "submit": "Submit return request",
+      "tell_us_more": "Tell us more",
+      "uae": "UAE",
+      "wrong_size": "Wrong size"
+    }
   }
 }

@@ -34,33 +34,34 @@
 				{%- endif -%}
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-title">Name</span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.contact_form.name' | t }}</span>
 					<input type="text" name="contact[name]" required autocomplete="name" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 				</label>
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-title">Email</span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'general.email' | t }}</span>
 					<input type="email" name="contact[email]" required autocomplete="email" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 				</label>
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-title">Order number <span class="text-copy/50 normal-case font-normal">(optional)</span></span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'general.order_number' | t }} <span class="text-copy/50 normal-case font-normal">{{ 'general.optional' | t }}</span></span>
 					<input type="text" name="contact[order_number]" class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 				</label>
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-title">Subject</span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.contact_form.subject' | t }}</span>
 					<input type="text" name="contact[subject]" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main">
 				</label>
 
 				<label class="flex flex-col gap-1.5">
-					<span class="text-xs font-semibold uppercase tracking-widest text-title">Message</span>
+					<span class="text-xs font-semibold uppercase tracking-widest text-title">{{ 'sections.contact_form.message' | t }}</span>
 					<textarea name="contact[body]" rows="6" required class="rounded-xl border border-main/20 px-4 py-3 text-sm text-main bg-white focus:outline-none focus:border-main resize-y"></textarea>
 				</label>
 
 				<div class="pt-2 flex justify-center">
+					{%- assign send_label = 'sections.contact_form.send' | t -%}
 					{%- render 'cta-button',
-						label: 'Send message',
+						label: send_label,
 						element: 'button',
 						button_type: 'submit',
 						variant: 'solid',

@@ -14,9 +14,11 @@
 
 {%- liquid
 	assign support_email = settings.support_email | default: 'contact@shop-aira.com'
-	assign dmg_subject   = 'Return damaged item' | replace: ' ', '%20'
+	assign dmg_subject_label = 'sections.returns_eligibility_gate.damaged_subject' | t
+	assign dmg_subject   = dmg_subject_label | replace: ' ', '%20'
 	assign dmg_mailto    = 'mailto:' | append: support_email | append: '?subject=' | append: dmg_subject
 -%}
+{%- capture support_email_link -%}<a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a>{%- endcapture -%}
 
 <section class="bg-bg py-10 md:py-12 flex flex-col justify-center items-center min-h-[60vh]">
 	<div class="w-full max-w-[640px] px-4">
@@ -49,11 +51,11 @@
 							<div class="grid grid-cols-2 gap-3">
 								<label class="block">
 									<input type="radio" name="{{ block.settings.field_id }}" value="yes" class="peer sr-only">
-									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">Yes</span>
+									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">{{ 'general.yes' | t }}</span>
 								</label>
 								<label class="block">
 									<input type="radio" name="{{ block.settings.field_id }}" value="no" class="peer sr-only">
-									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">No</span>
+									<span class="block text-center rounded-xl px-5 py-4 text-base font-heading font-bold cursor-pointer bg-secondary/0 border border-secondary/50 text-secondary transition-all hover:border-secondary hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 peer-checked:bg-secondary peer-checked:text-main peer-checked:border-secondary">{{ 'general.no' | t }}</span>
 								</label>
 							</div>
 						</fieldset>
@@ -65,9 +67,9 @@
 				<div class="flex items-center justify-between mt-9">
 					<button type="button" data-back class="inline-flex items-center gap-1.5 text-sm font-heading font-semibold text-tertiary-light hover:text-secondary disabled:opacity-0 transition" disabled>
 						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-						Back
+						{{ 'general.back' | t }}
 					</button>
-					<span class="text-xs text-tertiary-light">Takes around 20 seconds</span>
+					<span class="text-xs text-tertiary-light">{{ 'sections.returns_eligibility_gate.takes_seconds' | t }}</span>
 				</div>
 			</div>
 
@@ -75,41 +77,42 @@
 
 				{%- comment -%} Eligible — change of mind {%- endcomment -%}
 				<div data-outcome="satisfaction" class="rounded-xl border border-highlight-green/30 bg-highlight-green/10 p-6" hidden>
-					<p class="text-xl font-bold text-highlight-green m-0 mb-2">You're eligible for a return.</p>
-					<p class="text-base text-copy m-0 mb-2">Complete the form below to start it. Used is fine for a change of mind, we just need the original packaging and your order number. Return shipping is yours.</p>
-					<p class="text-base text-copy m-0">One thing on the refills: an unopened pouch can come back, but once a pouch is opened we can't take it back.</p>
+					<p class="text-xl font-bold text-highlight-green m-0 mb-2">{{ 'sections.returns_eligibility_gate.eligible_heading' | t }}</p>
+					<p class="text-base text-copy m-0 mb-2">{{ 'sections.returns_eligibility_gate.eligible_body' | t }}</p>
+					<p class="text-base text-copy m-0">{{ 'sections.returns_eligibility_gate.eligible_refills' | t }}</p>
 				</div>
 
 				{%- comment -%} Damaged or faulty — free, by email. In-form photo upload is still TBD (Shopify's contact form can't attach files without an app). {%- endcomment -%}
 				<div data-outcome="damaged" class="rounded-xl border border-main/15 bg-secondary p-6" hidden>
-					<p class="text-xl font-bold text-title m-0 mb-2">Sorry your order arrived damaged.</p>
-					<p class="text-base text-copy m-0 mb-3">Email us and we'll replace or refund it, with shipping on us.</p>
+					<p class="text-xl font-bold text-title m-0 mb-2">{{ 'sections.returns_eligibility_gate.damaged_heading' | t }}</p>
+					<p class="text-base text-copy m-0 mb-3">{{ 'sections.returns_eligibility_gate.damaged_body' | t }}</p>
 					<ul class="text-base text-copy list-disc pl-5 space-y-1 m-0 mb-5">
-						<li>Subject: Return damaged item</li>
-						<li>Include order number</li>
-						<li>Attach photograph of damage</li>
+						<li>{{ 'sections.returns_eligibility_gate.subject_line' | t: subject: dmg_subject_label }}</li>
+						<li>{{ 'sections.returns_eligibility_gate.include_order_number' | t }}</li>
+						<li>{{ 'sections.returns_eligibility_gate.attach_photo' | t }}</li>
 					</ul>
 					<div class="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2">
-						{%- render 'cta-button', label: 'Email a photo to support', url: dmg_mailto, variant: 'solid', size: 'sm' -%}
+						{%- assign dmg_cta_label = 'sections.returns_eligibility_gate.email_photo_cta' | t -%}
+						{%- render 'cta-button', label: dmg_cta_label, url: dmg_mailto, variant: 'solid', size: 'sm' -%}
 						<a href="mailto:{{ support_email }}" class="text-base font-semibold text-title hover:text-highlight transition-colors">{{ support_email }}</a>
 					</div>
 				</div>
 
 				{%- comment -%} Not eligible — outside the 30-night window {%- endcomment -%}
 				<div data-outcome="window" class="rounded-xl border border-highlight/30 bg-highlight/10 p-6" hidden>
-					<p class="text-xl font-bold text-highlight m-0 mb-2">This order is outside the return window.</p>
-					<p class="text-base text-copy m-0">Our 30-night guarantee covers the 30 nights after delivery, so this order isn't eligible for a return. If you think something's faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> and we'll take a look.</p>
+					<p class="text-xl font-bold text-highlight m-0 mb-2">{{ 'sections.returns_eligibility_gate.window_heading' | t }}</p>
+					<p class="text-base text-copy m-0">{{ 'sections.returns_eligibility_gate.window_body_html' | t: email_link: support_email_link }}</p>
 				</div>
 
 				{%- comment -%} Not eligible — not in original packaging {%- endcomment -%}
 				<div data-outcome="condition" class="rounded-xl border border-highlight/30 bg-highlight/10 p-6" hidden>
-					<p class="text-xl font-bold text-highlight m-0 mb-2">This order isn't eligible for a return.</p>
-					<p class="text-base text-copy m-0">Change-of-mind returns need to come back in their original packaging with your order number. If something's damaged or faulty, email <a href="mailto:{{ support_email }}" class="text-main underline underline-offset-2 font-semibold">{{ support_email }}</a> with a photo and we'll make it right.</p>
+					<p class="text-xl font-bold text-highlight m-0 mb-2">{{ 'sections.returns_eligibility_gate.condition_heading' | t }}</p>
+					<p class="text-base text-copy m-0">{{ 'sections.returns_eligibility_gate.condition_body_html' | t: email_link: support_email_link }}</p>
 				</div>
 
 				{%- comment -%} Needs the order number first {%- endcomment -%}
 				<div data-outcome="order" class="rounded-xl border border-main/15 p-6" hidden>
-					<p class="text-base text-copy m-0">You'll need your order number to continue. Find it in your order confirmation email, then answer "Yes" above.</p>
+					<p class="text-base text-copy m-0">{{ 'sections.returns_eligibility_gate.order_number_needed' | t }}</p>
 				</div>
 
 			</div>
