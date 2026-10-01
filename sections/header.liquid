@@ -144,6 +144,8 @@
 					</a>
 				{%- endif -%}
 
+				{%- render 'language-switcher', id: 'header-dark-desktop', text_class: 'text-white', form_class: 'hidden md:flex items-center gap-2' -%}
+
 				<a
 					href="{{ routes.cart_url }}"
 					data-cart-toggle
@@ -265,6 +267,8 @@
 					</a>
 				{%- endif -%}
 
+				{%- render 'language-switcher', id: 'header-light-desktop', text_class: 'text-main', form_class: 'hidden md:flex items-center gap-2' -%}
+
 				<a
 					href="{{ routes.cart_url }}"
 					data-cart-toggle
@@ -315,6 +319,7 @@
 					{%- endfor -%}
 				{%- endif -%}
 			{%- endfor -%}
+			{%- render 'language-switcher', id: 'header-mobile', text_class: 'text-main', form_class: 'flex items-center gap-2 py-2.5' -%}
 			</div>
 		</div>
 	{%- endif -%}

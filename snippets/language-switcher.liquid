@@ -1,0 +1,31 @@
+{%- comment -%}
+  Language switcher: EN | العربية as plain submit buttons, no JS. The form posts
+  to /localization and Shopify redirects to the localised path.
+  localization.available_languages lists PUBLISHED languages only, so this
+  renders nothing until a second language is published.
+
+  Params:
+    id          unique form id per render (header-dark-desktop, header-light-desktop, header-mobile)
+    text_class  the header variant's text colour utility (text-white / text-main)
+    form_class  layout utilities for the form (desktop renders hide below md)
+{%- endcomment -%}
+{%- if localization.available_languages.size > 1 -%}
+  {%- form 'localization', id: id, class: form_class -%}
+    <input type="hidden" name="return_to" value="{{ request.path }}">
+    {%- for language in localization.available_languages -%}
+      {%- assign is_current = false -%}
+      {%- if language.iso_code == localization.language.iso_code -%}{%- assign is_current = true -%}{%- endif -%}
+      <button
+        type="submit"
+        name="locale_code"
+        value="{{ language.iso_code }}"
+        lang="{{ language.iso_code }}"
+        {% if is_current %}aria-current="true"{% endif %}
+        class="text-sm {{ text_class }} transition-opacity hover:opacity-60{% if is_current %} font-bold{% endif %}"
+      >
+        {%- if language.iso_code == 'en' -%}EN{%- else -%}{{ language.endonym_name }}{%- endif -%}
+      </button>
+      {%- unless forloop.last -%}<span aria-hidden="true" class="text-sm {{ text_class }}">|</span>{%- endunless -%}
+    {%- endfor -%}
+  {%- endform -%}
+{%- endif -%}
