@@ -175,6 +175,9 @@
 
 <script>
 (function () {
+	/* Locale-aware root ("/" in English, "/ar/" under /ar): every cart call carries it */
+	var ROOT = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+
 	/* ── Refs ── */
 	var backdrop = document.querySelector('[data-cart-backdrop]');
 	var drawer   = document.querySelector('[data-cart-drawer]');
@@ -322,7 +325,7 @@
 	}
 
 	function fetchCart() {
-		return request('/cart.js').then(function (res) { return res.body; });
+		return request(ROOT + 'cart.js').then(function (res) { return res.body; });
 	}
 
 	/* One update call for the whole cart. `quantities` is the full list in
@@ -331,7 +334,7 @@
 	   422 "Cart changed" when the line count moved under us, and the caller
 	   re-reads and plans again. */
 	function updateLines(quantities, keepalive) {
-		return postJson('/cart/update.js', { updates: quantities }, keepalive);
+		return postJson(ROOT + 'cart/update.js', { updates: quantities }, keepalive);
 	}
 
 	/* ── Intercept all add-to-cart forms ── */
@@ -361,7 +364,7 @@
 		flushNow();
 		var done = noteAdds(addItems(currentCart, item, giftId));
 		enqueue(function () {
-			return postJson('/cart/add.js', { items: addItems(currentCart, item, giftId) })
+			return postJson(ROOT + 'cart/add.js', { items: addItems(currentCart, item, giftId) })
 				.then(function (res) {
 					if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
 					return fetchCart();
@@ -433,7 +436,7 @@
 			var entry = { id: vid, quantity: 1 };
 			var done = noteAdds([entry]);
 			enqueue(function () {
-				return postJson('/cart/add.js', { items: [entry] })
+				return postJson(ROOT + 'cart/add.js', { items: [entry] })
 					.then(function (res) {
 						if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
 						return fetchCart();
