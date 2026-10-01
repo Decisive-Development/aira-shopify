@@ -140,7 +140,7 @@
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
-											<p class="text-highlight text-sm font-bold mt-0.5">Save {{ save_amount | money }} on refills</p>
+											{%- assign save_money = save_amount | money -%}<p class="text-highlight text-sm font-bold mt-0.5">{{ 'sections.product.save_on_refills' | t: amount: save_money }}</p>
 										{%- endif -%}
 									{%- elsif section.settings.plan_save_text != blank -%}
 										<p class="text-highlight text-sm font-bold mt-0.5">{{ section.settings.plan_save_text }}</p>
@@ -181,26 +181,26 @@
 						{%- endcomment -%}
 						{%- capture onetime_card -%}
 							<div class="flex items-center justify-between gap-4">
-								<span class="font-heading font-bold text-title text-lg leading-tight">Kit + Free refill pouch</span>
+								<span class="font-heading font-bold text-title text-lg leading-tight">{{ 'sections.product.onetime_title' | t }}</span>
 								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0">{{ current_variant.price | money }}</span>
 							</div>
 							<div class="h-px bg-border"></div>
 							<ul class="flex flex-col gap-2">
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									{%- render 'icon-tick' -%}
-									4 magnetic strips (L1 to L4)
+									{{ 'sections.product.contents_strips' | t }}
 								</li>
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									{%- render 'icon-tick' -%}
-									30 adhesive tab pairs
+									{{ 'sections.product.contents_tabs' | t }}
 								</li>
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									{%- render 'icon-tick' -%}
-									Magnetic placement tool
+									{{ 'sections.product.contents_tool' | t }}
 								</li>
 								<li class="flex items-start gap-2.5 text-sm text-copy">
 									{%- render 'icon-tick' -%}
-									Instruction manual
+									{{ 'sections.product.contents_manual' | t }}
 								</li>
 							</ul>
 						{%- endcapture -%}
@@ -260,10 +260,10 @@
 
 					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
-						assign atc_label = 'Sold out'
+						assign atc_label = 'general.sold_out' | t
 						assign atc_disabled = true
 						if current_variant.available
-							assign atc_label = 'Add to cart'
+							assign atc_label = 'general.add_to_cart' | t
 							assign atc_disabled = false
 						endif
 					-%}
@@ -280,7 +280,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}Free shipping to the UAE and Saudi Arabia.</p>
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
 
 				</form>
 
@@ -327,12 +327,12 @@
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
 				<div class="flex flex-col gap-4 pt-2">
 					<div>
-						<p class="font-heading font-semibold text-title text-sm">Will it help with my snoring?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">If your snoring starts with a blocked nose, it can. When your nose is properly open, your body defaults to nasal breathing instead of mouth breathing, and it's the mouth breathing that causes the soft-tissue vibration behind most snoring.</p>
+						<p class="font-heading font-semibold text-title text-sm">{{ 'sections.product.faq_snoring_question' | t }}</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">{{ 'sections.product.faq_snoring_answer' | t }}</p>
 					</div>
 					<div>
-						<p class="font-heading font-semibold text-title text-sm">Does it fall off during sleep?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">No. The tabs use 3M medical-grade adhesive, made to stay on skin for days, not hours. And the magnetic strip clips onto the tabs instead of pulling on your skin, so nothing works it loose while you toss and turn. Fresh tabs each night, full strength every night.</p>
+						<p class="font-heading font-semibold text-title text-sm">{{ 'sections.product.faq_fall_off_question' | t }}</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">{{ 'sections.product.faq_fall_off_answer' | t }}</p>
 					</div>
 				</div>
 
@@ -362,9 +362,10 @@
 		if current_variant.available
 			assign sticky_disabled = false
 		endif
+		assign sticky_label = 'general.add_to_cart' | t
 	-%}
 	{%- render 'cta-button',
-		label: 'Add to cart',
+		label: sticky_label,
 		variant: 'shop',
 		element: 'button',
 		disabled: sticky_disabled,

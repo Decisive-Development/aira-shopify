@@ -91,9 +91,9 @@
 						"Title", so the label is fixed rather than read off the product.
 					{%- endcomment -%}
 					{%- if has_selling_plans -%}
-						<p class="text-xs font-bold uppercase tracking-widest text-copy">Plan</p>
+						<p class="text-xs font-bold uppercase tracking-widest text-copy">{{ 'sections.product_refill.plan' | t }}</p>
 					{%- else -%}
-						<p class="text-xs font-bold uppercase tracking-widest text-copy">Pack size</p>
+						<p class="text-xs font-bold uppercase tracking-widest text-copy">{{ 'sections.product_refill.pack_size' | t }}</p>
 					{%- endif -%}
 
 					<div class="flex flex-col gap-3">
@@ -160,9 +160,9 @@
 								data-pack-price="{{ t[2] | plus: 0 | money }}"
 							>
 								<div class="flex items-baseline gap-2 flex-wrap">
-									<span class="font-heading font-bold text-title text-base">{{ t[1] }} pairs</span>
+									{%- assign pair_count = t[1] -%}<span class="font-heading font-bold text-title text-base">{{ 'sections.product_refill.pairs' | t: pairs: pair_count }}</span>
 									{%- if forloop.last -%}
-										<span class="text-highlight text-sm font-bold">· Biggest saving</span>
+										<span class="text-highlight text-sm font-bold">{{ 'sections.product_refill.biggest_saving' | t }}</span>
 									{%- endif -%}
 								</div>
 								<div class="text-right shrink-0">
@@ -176,14 +176,14 @@
 
 					</div>
 
-					<p class="text-copy text-sm">Each pouch is 30 pairs. Choose 2 or 3 and the pack price applies automatically.</p>
+					<p class="text-copy text-sm">{{ 'sections.product_refill.pouch_note' | t }}</p>
 
 					{%- comment -%} ── Add to cart (cta-button solid/lg) ── {%- endcomment -%}
 					{%- liquid
-						assign atc_label = 'Sold out'
+						assign atc_label = 'general.sold_out' | t
 						assign atc_disabled = true
 						if pouch_variant.available
-							assign atc_label = 'Add to cart'
+							assign atc_label = 'general.add_to_cart' | t
 							assign atc_disabled = false
 						endif
 					-%}
@@ -200,7 +200,7 @@
 					-%}
 
 					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}Free shipping to the UAE and Saudi Arabia.</p>
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
 
 				</form>
 
@@ -247,8 +247,8 @@
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}
 				<div class="flex flex-col gap-4 border-t border-border pt-5 mt-4">
 					<div>
-						<p class="font-heading font-semibold text-title text-sm">Does it fall off during sleep?</p>
-						<p class="text-copy text-sm leading-relaxed mt-1">The medical-grade adhesive holds all night, even for restless sleepers. The magnetic strip weighs less than 2 grams: most people forget it's there within minutes.</p>
+						<p class="font-heading font-semibold text-title text-sm">{{ 'sections.product.faq_fall_off_question' | t }}</p>
+						<p class="text-copy text-sm leading-relaxed mt-1">{{ 'sections.product_refill.faq_fall_off_answer' | t }}</p>
 					</div>
 				</div>
 
@@ -273,9 +273,10 @@
 		if pouch_variant.available
 			assign sticky_disabled = false
 		endif
+		assign sticky_label = 'general.add_to_cart' | t
 	-%}
 	{%- render 'cta-button',
-		label: 'Add to cart',
+		label: sticky_label,
 		variant: 'shop',
 		element: 'button',
 		disabled: sticky_disabled,

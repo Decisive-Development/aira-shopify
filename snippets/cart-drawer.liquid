@@ -47,13 +47,13 @@
 	data-kit-handle="{{ kit_product.handle }}"
 	style="max-width: min(32rem, calc(100vw - 1.5rem));"
 	class="group fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
-	aria-label="Shopping cart"
+	aria-label="{{ 'snippets.cart_drawer.shopping_cart' | t }}"
 	aria-busy="false"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
-		<h2 class="font-heading font-semibold text-title text-xl">Your cart</h2>
-		<button data-cart-close class="text-copy hover:text-title transition-colors cursor-pointer" aria-label="Close cart">
+		<h2 class="font-heading font-semibold text-title text-xl">{{ 'snippets.cart_drawer.your_cart' | t }}</h2>
+		<button data-cart-close class="text-copy hover:text-title transition-colors cursor-pointer" aria-label="{{ 'snippets.cart_drawer.close_cart' | t }}">
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
 			</svg>
@@ -68,9 +68,10 @@
 			<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" class="text-copy opacity-25">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
 			</svg>
-			<p class="text-copy text-base">Your cart is empty</p>
+			<p class="text-copy text-base">{{ 'snippets.cart_drawer.empty' | t }}</p>
+			{%- assign empty_cta_label = 'snippets.cart_drawer.empty_cta' | t -%}
 			{%- render 'cta-button',
-				label: 'Get my kit',
+				label: empty_cta_label,
 				url: '/products/aira-kit',
 				variant: 'solid'
 			-%}
@@ -88,7 +89,7 @@
 		{%- comment -%} Upsell — refill tabs {%- endcomment -%}
 		{%- if refill_product != blank and refill_variant != blank -%}
 			<div data-cart-upsell class="hidden mt-6 p-5 rounded-2xl border border-border bg-bg-soft">
-				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">Complete your kit</p>
+				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ 'snippets.cart_drawer.complete_your_kit' | t }}</p>
 				<div class="flex items-center gap-4">
 					{%- if refill_product.featured_image -%}
 						<a href="{{ refill_product.url }}" class="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-bg-muted">
@@ -100,8 +101,9 @@
 						<p class="text-copy text-base mt-0.5">{{ refill_variant.price | money }}</p>
 					</div>
 					{%- capture upsell_attrs -%}data-upsell-add data-upsell-variant-id="{{ refill_variant.id }}"{%- endcapture -%}
+					{%- assign upsell_label = 'general.add' | t -%}
 					{%- render 'cta-button',
-						label: 'Add',
+						label: upsell_label,
 						variant: 'outline',
 						size: 'sm',
 						element: 'button',
@@ -119,7 +121,7 @@
 					<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
 					<path d="M7 11V7a5 5 0 0110 0v4"></path>
 				</svg>
-				Secure checkout
+				{{ 'snippets.cart_drawer.secure_checkout' | t }}
 			</p>
 		</div>
 
@@ -130,12 +132,13 @@
 		{%- comment -%} Applied discounts, one line per title, filled by JS from the cart's discount applications {%- endcomment -%}
 		<div data-cart-discounts class="hidden flex-col gap-1 transition-opacity group-aria-busy:opacity-40"></div>
 		<div class="flex items-center justify-between">
-			<span class="font-heading font-semibold text-title text-lg">Subtotal</span>
+			<span class="font-heading font-semibold text-title text-lg">{{ 'snippets.cart_drawer.subtotal' | t }}</span>
 			<span class="font-heading font-bold text-title text-xl transition-opacity group-aria-busy:opacity-40" data-cart-subtotal></span>
 		</div>
-		<p class="text-center text-highlight text-sm font-semibold">Free shipping to the UAE and Saudi Arabia.</p>
+		<p class="text-center text-highlight text-sm font-semibold">{{ 'general.free_shipping' | t }}</p>
+		{%- assign checkout_label = 'cart.checkout' | t -%}
 		{%- render 'cta-button',
-			label: 'Checkout',
+			label: checkout_label,
 			url: '/checkout',
 			variant: 'solid',
 			size: 'lg',
@@ -144,7 +147,7 @@
 			extra_classes: '!px-6 !font-bold aria-busy:opacity-60 aria-busy:pointer-events-none'
 		-%}
 		<button type="button" data-cart-close class="w-full text-center text-copy text-sm font-semibold hover:text-title transition-colors cursor-pointer">
-			Continue shopping
+			{{ 'snippets.cart_drawer.continue_shopping' | t }}
 		</button>
 	</div>
 </aside>

@@ -45,12 +45,18 @@
     "whatsapp_prefill_product": "Hi aira, I have a question about {{ product }}."
   },
   "general": {
+    "add": "Add",
+    "add_to_cart": "Add to cart",
     "back": "Back",
     "email": "Email",
+    "free_shipping": "Free shipping to the UAE and Saudi Arabia.",
+    "limited": "Limited",
     "no": "No",
+    "open_menu": "Open menu",
     "optional": "(optional)",
     "order_number": "Order number",
     "other": "Other",
+    "sold_out": "Sold out",
     "yes": "Yes"
   },
   "gift_card": {
@@ -73,6 +79,12 @@
     "results_for_html": "{{ count }} results found for {{ terms }}"
   },
   "sections": {
+    "comparison_table": {
+      "adjustable_airflow": "Adjustable airflow",
+      "holds_nose_open": "Holds a collapsing nose open",
+      "reusable": "Reusable",
+      "sleep_exercise": "Sleep + exercise"
+    },
     "contact_form": {
       "message": "Message",
       "name": "Name",
@@ -90,6 +102,26 @@
       "licence": "Licence {{ number }}",
       "tiktok": "TikTok",
       "youtube": "YouTube"
+    },
+    "product": {
+      "contents_manual": "Instruction manual",
+      "contents_strips": "4 magnetic strips (L1 to L4)",
+      "contents_tabs": "30 adhesive tab pairs",
+      "contents_tool": "Magnetic placement tool",
+      "faq_fall_off_answer": "No. The tabs use 3M medical-grade adhesive, made to stay on skin for days, not hours. And the magnetic strip clips onto the tabs instead of pulling on your skin, so nothing works it loose while you toss and turn. Fresh tabs each night, full strength every night.",
+      "faq_fall_off_question": "Does it fall off during sleep?",
+      "faq_snoring_answer": "If your snoring starts with a blocked nose, it can. When your nose is properly open, your body defaults to nasal breathing instead of mouth breathing, and it's the mouth breathing that causes the soft-tissue vibration behind most snoring.",
+      "faq_snoring_question": "Will it help with my snoring?",
+      "onetime_title": "Kit + Free refill pouch",
+      "save_on_refills": "Save {{ amount }} on refills"
+    },
+    "product_refill": {
+      "biggest_saving": "· Biggest saving",
+      "faq_fall_off_answer": "The medical-grade adhesive holds all night, even for restless sleepers. The magnetic strip weighs less than 2 grams: most people forget it's there within minutes.",
+      "pack_size": "Pack size",
+      "pairs": "{{ pairs }} pairs",
+      "plan": "Plan",
+      "pouch_note": "Each pouch is 30 pairs. Choose 2 or 3 and the pack price applies automatically."
     },
     "returns_eligibility_gate": {
       "attach_photo": "Attach photograph of damage",
@@ -125,6 +157,19 @@
       "tell_us_more": "Tell us more",
       "uae": "UAE",
       "wrong_size": "Wrong size"
+    }
+  },
+  "snippets": {
+    "cart_drawer": {
+      "close_cart": "Close cart",
+      "complete_your_kit": "Complete your kit",
+      "continue_shopping": "Continue shopping",
+      "empty": "Your cart is empty",
+      "empty_cta": "Get my kit",
+      "secure_checkout": "Secure checkout",
+      "shopping_cart": "Shopping cart",
+      "subtotal": "Subtotal",
+      "your_cart": "Your cart"
     }
   }
 }
