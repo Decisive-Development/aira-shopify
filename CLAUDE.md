@@ -7,7 +7,7 @@ Copy rules load automatically from `.claude/rules/copy.md` when you edit templat
 
 aira: premium magnetic nasal strips, GCC market, launching ~late July 2026. Custom Shopify theme (Online Store 2.0): Liquid + Tailwind v4 (compiled) + CSS custom properties + vanilla JS with Lenis for smooth scroll. Pre-revenue and bootstrapped, so keep weight, dependencies, and section count low. Every addition is a liability you maintain.
 
-**Settled, do not reopen:** UK English throughout customer-facing copy. An Arabic version of the site is a future, funded project, not now, so don't add half-translated pages.
+**Settled, do not reopen:** UK English is the source language for all customer-facing copy. The site is going bilingual (en + ar at /ar) via Shopify native languages + Translate & Adapt; Arabic stays unpublished until the Arabic QA gate in AIRA_Arabic_Localization_Plan.md passes.
 
 ## 2. Stack and structure
 
@@ -64,6 +64,10 @@ Anything used in the theme that isn't a token above is drift, flag it.
 4. **Repeated markup becomes a snippet** rendered with `{% render %}` (never `{% include %}`); one canonical snippet per UI element (buttons are always `cta-button`, variants are parameters).
 5. **Section content is editable via `{% schema %}` settings,** not hardcoded in Liquid.
 6. **Dead code is deleted, not commented out.** Git is the history.
+7. **No hard-coded visible strings in Liquid.** Every visible string, including aria-label, placeholder and alt text, is a section/block setting or a key in `locales/en.default.json` rendered with the `t` filter. Submitted form values stay English.
+8. **Links are never hard-coded paths.** Use object URLs (`product.url`, `page.url`, `link.url` from menus) or the `routes` object; JS fetches to Shopify endpoints are prefixed with `window.Shopify.routes.root`.
+9. **Direction-neutral CSS only:** logical Tailwind utilities (`ps-` `pe-` `ms-` `me-` `start-` `end-` `text-start` `text-end` `rounded-s/e` `border-s/e` `float-start/end`); never `pl-` `pr-` `ml-` `mr-` `left-` `right-` `text-left` `text-right` except for symmetric centring. Arrows, chevrons and slide-in motion mirror under `[dir=rtl]`; horizontal scroll maths is sign-aware. English-only media (research book, before/after slider) sit in `dir="ltr"` islands.
+10. **Fonts:** Latin faces Satoshi + Nunito Sans with `unicode-range`; the Arabic face (IBM Plex Sans Arabic) takes Arabic ranges only. No letter-spacing and no italics on Arabic text. Digits and prices stay Western.
 
 Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) and `AIRA_Brand_Copy_Standards.md`.
 
