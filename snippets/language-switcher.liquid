@@ -28,7 +28,6 @@
 -%}
 {%- if show_switcher or preview -%}
   {%- capture switcher_items -%}
-    <input type="hidden" name="return_to" value="{{ request.path }}">
     {%- for language in localization.available_languages -%}
       {%- assign is_current = false -%}
       {%- if language.iso_code == localization.language.iso_code -%}{%- assign is_current = true -%}{%- endif -%}
