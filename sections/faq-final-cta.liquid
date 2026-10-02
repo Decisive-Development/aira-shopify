@@ -3,19 +3,22 @@
 	When the FAQ doesn't answer it, route customers to support. The body is
 	the section's own copy; where it says "WhatsApp" that word becomes the
 	click-to-WhatsApp link (snippets/whatsapp-link, number from Theme settings
-	→ Support & contact) whenever a number is set. Styling lives in the shared
-	'cta-banner' snippet.
+	→ Support & contact) whenever a number is set. The word comes from the
+	locale files (sections.faq_final_cta.whatsapp_word) so the translated body
+	gets its link too; it must match the word as the body writes it. Styling
+	lives in the shared 'cta-banner' snippet.
 {%- endcomment -%}
 
 {%- liquid
 	assign faq_body = section.settings.body
-	if settings.support_whatsapp_number != blank and faq_body contains 'WhatsApp'
+	assign wa_word = 'sections.faq_final_cta.whatsapp_word' | t
+	if settings.support_whatsapp_number != blank and faq_body contains wa_word
 		assign wa_msg = 'contact.whatsapp_prefill' | t
 		capture wa_link
-			render 'whatsapp-link', source: 'faq', label: 'WhatsApp', message: wa_msg, icon_size: 0
+			render 'whatsapp-link', source: 'faq', label: wa_word, message: wa_msg, icon_size: 0
 		endcapture
 		assign wa_link = wa_link | strip
-		assign faq_body = faq_body | replace_first: 'WhatsApp', wa_link
+		assign faq_body = faq_body | replace_first: wa_word, wa_link
 	endif
 -%}
 

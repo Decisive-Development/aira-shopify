@@ -132,6 +132,9 @@
       "video_by": "فيديو من {{ name }}",
       "video_title": "فيديو تقييم من عميل"
     },
+    "faq_final_cta": {
+      "whatsapp_word": "واتساب"
+    },
     "faq_search": {
       "no_matches": "لا توجد نتائج مطابقة",
       "search_label": "ابحث في الأسئلة الشائعة"
@@ -156,6 +159,10 @@
       "tap_for_sound": "اضغط لتشغيل الصوت",
       "tutorial_video": "فيديو الشرح",
       "video_placeholder": "فيديو الشرح. مصوّر بالوضع العمودي."
+    },
+    "how_it_works_step": {
+      "tip_label_sleep": "للنوم:",
+      "tip_label_sport": "للرياضة:"
     },
     "kit_offer": {
       "placeholder_caption": "الطقم · المحتويات",
