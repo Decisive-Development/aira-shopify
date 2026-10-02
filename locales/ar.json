@@ -86,6 +86,16 @@
     "results_for_html": "{{ count }} نتيجة لـ {{ terms }}"
   },
   "sections": {
+    "404": {
+      "breath_done": "أحسنت. هل تشعر أنك أقل ضياعًا الآن؟",
+      "breath_hold": "احبس",
+      "breath_hold_caption": "احبس نفَسك…",
+      "breath_in": "شهيق…",
+      "breath_in_caption": "خذ نفسًا من أنفك",
+      "breath_out": "زفير…",
+      "breath_out_caption": "أخرجه ببطء",
+      "breath_reduced": "شهيق 4 · حبس 1 · زفير 4"
+    },
     "collection": {
       "empty": "لا توجد منتجات في هذه المجموعة.",
       "pagination": "التنقل بين صفحات المجموعة"

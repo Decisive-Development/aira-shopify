@@ -26,7 +26,18 @@
 	assign shop_url = section.settings.button_url | default: kit_product.url
 -%}
 
-<section id="fof-{{ section.id }}" class="fof relative overflow-hidden min-h-svh flex items-center justify-center px-6 py-10">
+<section
+	id="fof-{{ section.id }}"
+	class="fof relative overflow-hidden min-h-svh flex items-center justify-center px-6 py-10"
+	data-breath-in="{{ 'sections.404.breath_in' | t | escape_once }}"
+	data-breath-in-caption="{{ 'sections.404.breath_in_caption' | t | escape_once }}"
+	data-breath-hold="{{ 'sections.404.breath_hold' | t | escape_once }}"
+	data-breath-hold-caption="{{ 'sections.404.breath_hold_caption' | t | escape_once }}"
+	data-breath-out="{{ 'sections.404.breath_out' | t | escape_once }}"
+	data-breath-out-caption="{{ 'sections.404.breath_out_caption' | t | escape_once }}"
+	data-breath-reduced="{{ 'sections.404.breath_reduced' | t | escape_once }}"
+	data-breath-done="{{ 'sections.404.breath_done' | t | escape_once }}"
+>
 
 	{%- comment -%} Decorative starfield + twinkles — behind everything. {%- endcomment -%}
 	<div class="fof__stars" aria-hidden="true"></div>
@@ -353,6 +364,8 @@
 	(function () {
 		var root = document.getElementById('fof-{{ section.id }}');
 		if (!root) return;
+		/* breathing cues from the locale files, so they follow the page's language */
+		var T = root.dataset;
 		var btn = root.querySelector('[data-orb]');
 		if (!btn) return; // breather disabled in settings
 
@@ -367,18 +380,18 @@
 
 		// 8s cycle: 0–3.6s inhale, 3.6–4.4 hold, 4.4–8 exhale.
 		function cycle() {
-			label.textContent = 'In…';
-			caption.textContent = 'Breathe in through your nose';
+			label.textContent = T.breathIn;
+			caption.textContent = T.breathInCaption;
 			caption.classList.add('is-inhale');
 			holdT = setTimeout(function () {
 				if (!running) return;
-				label.textContent = 'Hold';
-				caption.textContent = 'Hold it…';
+				label.textContent = T.breathHold;
+				caption.textContent = T.breathHoldCaption;
 			}, 3600);
 			outT = setTimeout(function () {
 				if (!running) return;
-				label.textContent = 'Out…';
-				caption.textContent = 'Slowly let it go';
+				label.textContent = T.breathOut;
+				caption.textContent = T.breathOutCaption;
 				caption.classList.remove('is-inhale');
 			}, 4400);
 		}
@@ -389,7 +402,7 @@
 			btn.setAttribute('aria-pressed', 'true');
 			if (reduce) {
 				label.textContent = idleLabel;
-				caption.textContent = 'Inhale 4 · hold 1 · exhale 4';
+				caption.textContent = T.breathReduced;
 				return;
 			}
 			cycle();
@@ -404,7 +417,7 @@
 			clearTimeout(holdT);
 			clearTimeout(outT);
 			label.textContent = idleLabel;
-			caption.textContent = 'Nice. Feel a little less lost?';
+			caption.textContent = T.breathDone;
 			caption.classList.remove('is-inhale');
 		}
 

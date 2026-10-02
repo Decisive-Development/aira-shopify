@@ -86,6 +86,16 @@
     "results_for_html": "{{ count }} results found for {{ terms }}"
   },
   "sections": {
+    "404": {
+      "breath_done": "Nice. Feel a little less lost?",
+      "breath_hold": "Hold",
+      "breath_hold_caption": "Hold it…",
+      "breath_in": "In…",
+      "breath_in_caption": "Breathe in through your nose",
+      "breath_out": "Out…",
+      "breath_out_caption": "Slowly let it go",
+      "breath_reduced": "Inhale 4 · hold 1 · exhale 4"
+    },
     "collection": {
       "empty": "No products found in this collection.",
       "pagination": "Collection pagination"
