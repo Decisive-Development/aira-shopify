@@ -22,7 +22,8 @@
 
 {%- liquid
 	assign home_url = section.settings.secondary_button_url | default: routes.root_url
-	assign shop_url = section.settings.button_url | default: '/products/aira-kit'
+	assign kit_product = all_products['aira-kit']
+	assign shop_url = section.settings.button_url | default: kit_product.url
 -%}
 
 <section id="fof-{{ section.id }}" class="fof relative overflow-hidden min-h-svh flex items-center justify-center px-6 py-10">

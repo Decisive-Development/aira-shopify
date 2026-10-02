@@ -121,8 +121,10 @@ Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) 
 - Pushing to `main` deploys straight to the LIVE theme. There is no
   staging. Treat every push as a customer-facing release.
 - Before any push: `shopify theme pull --live` for templates/*.json,
-  sections/*.json and config/settings_data.json, and commit the sync.
-  Editor changes live only in that JSON; an unsynced push deletes them.
+  sections/*.json, config/settings_data.json and locales/ar.json, and
+  commit the sync. Editor changes live only in that JSON, and Translate &
+  Adapt writes reviewer edits into locales/ar.json; an unsynced push
+  deletes them.
 - One logical change per commit; verify on shop-aira.com after every
   push; never push with a red CI gate.
 - Tag every release that a human signed off (`vX.Y-<name>`). Roll back

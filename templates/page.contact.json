@@ -29,8 +29,8 @@
 		"quick_links": {
 			"type": "contact-quick-links",
 			"blocks": {
-				"ql-1": { "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, how to apply and benefits.", "url": "/pages/faq" } },
-				"ql-2": { "type": "link", "settings": { "title": "Want to return?", "body": "Eligibility and how to send something back.",                       "url": "/pages/returns" } }
+				"ql-1": { "type": "link", "settings": { "title": "FAQ",            "body": "Common questions about sizing, materials, how to apply and benefits.", "url": "shopify://pages/faq" } },
+				"ql-2": { "type": "link", "settings": { "title": "Want to return?", "body": "Eligibility and how to send something back.",                       "url": "shopify://pages/returns" } }
 			},
 			"block_order": ["ql-1", "ql-2"],
 			"settings": {

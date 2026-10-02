@@ -221,7 +221,7 @@
         "closing_headline": "The band holds your nose open. The rest follows.",
         "closing_lead": "The research below explains why nasal breathing matters, from snoring to sporting performance. We believe it will be a benefit to everyone, in one way or another. That is why we offer a 30-night guarantee.",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
+        "cta_url": "shopify://products/aira-kit",
         "ship_line": "Free shipping to the UAE and Saudi Arabia. 30-night guarantee.",
         "small_print": "The aira band opens your nasal airway mechanically. It is not a treatment for snoring, sleep apnoea, chronic congestion, or a structural problem, and it does not replace medical care. If you think you have any of those, see your doctor. Figures on these pages are schematic representations of reported results.",
         "closing_pager_title": "Closing"

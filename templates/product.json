@@ -17,7 +17,7 @@
           "settings": {
             "icon_type": "research",
             "text": "Research backed",
-            "link": "/pages/backed-by-science"
+            "link": "shopify://pages/backed-by-science"
           }
         },
         "trust_2": {
@@ -113,7 +113,7 @@
         "gift_product": "",
         "gift_variant_title": "30",
         "refill_link_label": "Already have a strip? Get refills",
-        "refill_link_url": "/products/aira-refill-tabs"
+        "refill_link_url": "shopify://products/aira-refill-tabs"
       }
     },
     "before_after_slider": {
@@ -304,7 +304,7 @@
         "heading": "Better breathing, deeper sleep, better life.",
         "subheading": "Poor nasal breathing affects more than just snoring. Here's what the research says, and what changes when you breathe freely.",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
+        "cta_url": "shopify://products/aira-kit",
         "left_heading": "The problem",
         "right_heading": "With aira"
       }
@@ -447,7 +447,7 @@
       "settings": {
         "heading": "Ready to breathe better?",
         "button_label": "Get my kit",
-        "button_url": "/products/aira-kit",
+        "button_url": "shopify://products/aira-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }
