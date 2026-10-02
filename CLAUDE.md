@@ -67,7 +67,7 @@ Anything used in the theme that isn't a token above is drift, flag it.
 7. **No hard-coded visible strings in Liquid.** Every visible string, including aria-label, placeholder and alt text, is a section/block setting or a key in `locales/en.default.json` rendered with the `t` filter. Submitted form values stay English.
 8. **Links are never hard-coded paths.** Use object URLs (`product.url`, `page.url`, `link.url` from menus) or the `routes` object; JS fetches to Shopify endpoints are prefixed with `window.Shopify.routes.root`.
 9. **Direction-neutral CSS only:** logical Tailwind utilities (`ps-` `pe-` `ms-` `me-` `start-` `end-` `text-start` `text-end` `rounded-s/e` `border-s/e` `float-start/end`); never `pl-` `pr-` `ml-` `mr-` `left-` `right-` `text-left` `text-right` except for symmetric centring. Arrows, chevrons and slide-in motion mirror under `[dir=rtl]`; horizontal scroll maths is sign-aware. English-only media (research book, before/after slider) sit in `dir="ltr"` islands.
-10. **Fonts:** Latin faces Satoshi + Nunito Sans with `unicode-range`; the Arabic face (IBM Plex Sans Arabic) takes Arabic ranges only. No letter-spacing and no italics on Arabic text. Digits and prices stay Western.
+10. **Fonts:** Latin faces Satoshi + Nunito Sans with `unicode-range`; the Arabic face (Almarai) takes Arabic ranges only. No letter-spacing and no italics on Arabic text. Digits and prices stay Western.
 
 Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) and `AIRA_Brand_Copy_Standards.md`.
 
