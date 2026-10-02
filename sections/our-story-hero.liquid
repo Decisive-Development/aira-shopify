@@ -40,9 +40,10 @@
 			assign hero_mobile  = section.settings.hero_image_mobile | default: section.settings.hero_image
 
 			# The hero photo is the page's only image, so it is never decorative.
-			# The section setting wins, then the image's own alt field in Shopify
-			# Files; the last fallback describes the photo currently in the slot
-			# and should be replaced in Files whenever the photo changes.
+			# The section setting wins (it is saved in the template so Translate &
+			# Adapt can translate it), then the image's own alt field in Shopify
+			# Files, then a description of the photo currently in the slot.
+			# Update the setting in the theme editor whenever the photo changes.
 			assign hero_image_alt = section.settings.hero_image_alt | default: hero_desktop.alt | default: 'Two people relaxing on a sofa, both wearing an aira nasal strip'
 		-%}
 		<div
