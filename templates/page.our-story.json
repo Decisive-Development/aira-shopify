@@ -108,9 +108,9 @@
         "headline_accent": "Then the next.",
         "body": "We're not building a vitamin aisle. We're building a small, careful collection of things that help you breathe, sleep, and recover, starting with the strip you came here for.",
         "primary_cta_label": "Get my kit",
-        "primary_cta_url": "/products/aira-kit",
+        "primary_cta_url": "shopify://products/aira-kit",
         "secondary_cta_label": "How to use it",
-        "secondary_cta_url": "/pages/how-it-works"
+        "secondary_cta_url": "shopify://pages/how-it-works"
       }
     }
   },

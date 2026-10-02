@@ -100,7 +100,7 @@
         "plan_compare_price": "",
         "plan_price": "",
         "starter_link_label": "Need an aira kit? Start here",
-        "starter_link_url": "/products/aira-kit"
+        "starter_link_url": "shopify://products/aira-kit"
       }
     },
     "benefits_grid": {
@@ -208,7 +208,7 @@
         "eyebrow": "How it works",
         "heading": "3 steps to better breathing.",
         "tutorial_label": "Watch tutorial",
-        "tutorial_url": "/pages/how-it-works"
+        "tutorial_url": "shopify://pages/how-it-works"
       }
     },
     "before_after_slider": {
@@ -362,7 +362,7 @@
       "settings": {
         "heading": "Ready to breathe better?",
         "button_label": "Get my kit",
-        "button_url": "/products/aira-kit",
+        "button_url": "shopify://products/aira-kit",
         "background_color": "#0a1a34",
         "padding_vertical": "lg"
       }

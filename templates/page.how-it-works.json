@@ -160,7 +160,7 @@
         "cta_title": "Get all four sizes in the aira kit.",
         "cta_body": "Improve your sleep, level up your fitness.",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
+        "cta_url": "shopify://products/aira-kit",
         "cta_style": "button",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
@@ -223,7 +223,7 @@
         "cta_title": "Running low on tabs?",
         "cta_body": "Buy as many as you need now. Free shipping to the UAE and Saudi Arabia.",
         "cta_label": "Get refills",
-        "cta_url": "/products/aira-refill-tabs",
+        "cta_url": "shopify://products/aira-refill-tabs",
         "cta_style": "button-blue",
         "callout_eyebrow": "Don't skip",
         "callout_title": "Rub it in.",
@@ -352,7 +352,7 @@
         "heading": "Three steps. One better night.",
         "lead": "Every aira kit ships with all four strip sizes and 30 pairs of tabs, everything you need for your first month.",
         "primary_label": "Get my kit",
-        "primary_url": "/products/aira-kit",
+        "primary_url": "shopify://products/aira-kit",
         "secondary_label": "Re-watch tutorial",
         "secondary_url": "#tutorialVideo"
       }

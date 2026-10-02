@@ -17,9 +17,9 @@
         "heading_accent": "Open airways at night",
         "subheading": "Quiet nights, deep sleep, peak performance and a nose that's got your back.",
         "button_label": "Get my kit",
-        "button_url": "/products/aira-kit",
+        "button_url": "shopify://products/aira-kit",
         "secondary_button_label": "How it works",
-        "secondary_button_url": "/pages/how-it-works",
+        "secondary_button_url": "shopify://pages/how-it-works",
         "foreground_image": "shopify://shop_images/hero_destop.jpg",
         "foreground_image_mobile": "shopify://shop_images/hero_mobile.jpg",
         "use_gradient": true,
@@ -39,7 +39,7 @@
         "heading_align": "center",
         "heading_size": "md",
         "cta_label": "Experience the difference",
-        "cta_url": "/products/aira-kit",
+        "cta_url": "shopify://products/aira-kit",
         "before_image": "shopify://shop_images/without-aira.jpg",
         "before_label": "Without aira",
         "after_image": "shopify://shop_images/with-aira.jpg",
@@ -111,9 +111,9 @@
         "subheading": "The strip has one goal: effortless breathing. It keeps a blocked, collapsing airway open. That one change can mean less snoring, deeper sleep and a smoother breath when exercising, helping you into a flow state.",
         "background_color": "#fafafa",
         "cta_primary_label": "Get my kit",
-        "cta_primary_url": "/products/aira-kit",
+        "cta_primary_url": "shopify://products/aira-kit",
         "cta_secondary_label": "The science",
-        "cta_secondary_url": "/pages/backed-by-science"
+        "cta_secondary_url": "shopify://pages/backed-by-science"
       }
     },
     "benefits_slider": {
@@ -222,7 +222,7 @@
         "eyebrow": "How it works",
         "heading": "3 simple steps.",
         "tutorial_label": "Watch tutorial",
-        "tutorial_url": "/pages/how-it-works"
+        "tutorial_url": "shopify://pages/how-it-works"
       }
     },
     "ugc_gallery": {
@@ -352,7 +352,7 @@
         "heading": "Everything you need to improve your life.",
         "intro": "One reusable magnetic strip won't fit every face the same way, so we don't make you guess. Every kit ships with all four strip sizes, a month of adhesive tab pairs, and a fit guide that takes two minutes.",
         "cta_label": "Get my kit",
-        "cta_url": "/products/aira-kit",
+        "cta_url": "shopify://products/aira-kit",
         "price_suffix": "",
         "guarantee_line": "Free shipping to the UAE and Saudi Arabia.",
         "image": "shopify://shop_images/product-1.png",
