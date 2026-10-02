@@ -48,6 +48,7 @@
     "add": "أضف",
     "add_to_cart": "أضف إلى السلة",
     "back": "رجوع",
+    "carousel": "عرض شرائح",
     "close": "إغلاق",
     "close_video": "إغلاق الفيديو",
     "email": "البريد الإلكتروني",
@@ -63,6 +64,7 @@
     "other": "أخرى",
     "previous": "السابق",
     "previous_page": "الصفحة السابقة",
+    "slide": "شريحة",
     "sold_out": "نفدت الكمية",
     "yes": "نعم"
   },
@@ -130,7 +132,8 @@
         "other": "{{ rating }} من 5 · عدد التقييمات: {{ count }}"
       },
       "video_by": "فيديو من {{ name }}",
-      "video_title": "فيديو تقييم من عميل"
+      "video_title": "فيديو تقييم من عميل",
+      "watch_again": "شاهد مجددًا"
     },
     "faq_final_cta": {
       "whatsapp_word": "واتساب"

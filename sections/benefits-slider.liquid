@@ -209,7 +209,7 @@
 	{%- comment -%} Carousel — viewport is relative so controls can anchor to its bottom-right {%- endcomment -%}
 	<div
 		class="relative"
-		aria-roledescription="carousel"
+		aria-roledescription="{{ 'general.carousel' | t }}"
 		aria-label="{{ section.settings.heading | escape }}"
 	>
 
@@ -219,7 +219,7 @@
 					class="bs-card"
 					data-bs-card
 					role="group"
-					aria-roledescription="slide"
+					aria-roledescription="{{ 'general.slide' | t }}"
 					aria-label="{{ 'general.n_of_total' | t: n: forloop.index, total: section.blocks.size }}"
 					{{ block.shopify_attributes }}
 				>
