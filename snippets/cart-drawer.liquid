@@ -72,7 +72,7 @@
 			{%- assign empty_cta_label = 'snippets.cart_drawer.empty_cta' | t -%}
 			{%- render 'cta-button',
 				label: empty_cta_label,
-				url: '/products/aira-kit',
+				url: kit_product.url,
 				variant: 'solid'
 			-%}
 		</div>
@@ -137,9 +137,11 @@
 		</div>
 		<p class="text-center text-highlight text-sm font-semibold">{{ 'general.free_shipping' | t }}</p>
 		{%- assign checkout_label = 'cart.checkout' | t -%}
+		{%- comment -%} Built from the locale root, so Arabic visitors reach /ar/checkout and an Arabic checkout. {%- endcomment -%}
+		{%- assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/' -%}
 		{%- render 'cta-button',
 			label: checkout_label,
-			url: '/checkout',
+			url: checkout_url,
 			variant: 'solid',
 			size: 'lg',
 			full_width: true,
