@@ -97,7 +97,7 @@
 		</div>
 	{%- endif -%}
 
-	{%- if section.settings.tutorial_url != blank -%}
+	{%- if section.settings.tutorial_url != blank and section.settings.tutorial_label != blank -%}
 		<div class="container-contained relative z-10">
 			<div class="text-center mt-10">
 				{%- render 'cta-button',
