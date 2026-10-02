@@ -769,3 +769,21 @@
 /* The only Arabic on English pages is the language switcher's own label.
    A system font there means English pages never download Almarai. */
 html:not([lang="ar"]) button[lang="ar"] { font-family: system-ui, sans-serif; }
+
+/* Header rows (sections/header.liquid) while the language switcher shows.
+   Between md and lg the logo, nav, button, switcher and cart need up to
+   about 80px more than the row has, which pushed the cart out of the
+   scrolled bar, so the gaps and the bar padding tighten there. Without a
+   visible switcher (one published language, or the dev preview still
+   hidden) nothing changes. Unlayered, so it outranks the rows' own
+   gap and padding utilities. */
+[data-header-row]:has([data-language-switcher]:not([hidden])) {
+  @variant md {
+    @variant max-lg {
+      column-gap: calc(var(--spacing) * 6);
+      & > nav { column-gap: calc(var(--spacing) * 4); }
+      & > div { column-gap: calc(var(--spacing) * 3); }
+      &[data-header-row="solid"] { padding-inline: calc(var(--spacing) * 4); }
+    }
+  }
+}

@@ -16,6 +16,9 @@
     id          unique form id per render (header-dark-desktop, header-light-desktop, header-mobile)
     text_class  the header variant's text colour utility (text-white / text-main)
     form_class  layout utilities for the form (desktop renders hide below md)
+
+  Every form carries data-language-switcher: the header rows tighten their
+  tablet spacing while one is visible (assets/critical.source.css).
 {%- endcomment -%}
 {%- liquid
   assign show_switcher = false
@@ -52,8 +55,8 @@
     {%- endif -%}
   {%- endcapture -%}
   {%- if preview -%}
-    {%- form 'localization', id: id, class: form_class, hidden: 'hidden', data-switcher-preview: 'true' -%}{{ switcher_items }}{%- endform -%}
+    {%- form 'localization', id: id, class: form_class, hidden: 'hidden', data-switcher-preview: 'true', data-language-switcher: 'true' -%}{{ switcher_items }}{%- endform -%}
   {%- else -%}
-    {%- form 'localization', id: id, class: form_class -%}{{ switcher_items }}{%- endform -%}
+    {%- form 'localization', id: id, class: form_class, data-language-switcher: 'true' -%}{{ switcher_items }}{%- endform -%}
   {%- endif -%}
 {%- endif -%}
