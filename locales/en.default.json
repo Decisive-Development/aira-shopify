@@ -48,6 +48,7 @@
     "add": "Add",
     "add_to_cart": "Add to cart",
     "back": "Back",
+    "carousel": "carousel",
     "close": "Close",
     "close_video": "Close video",
     "email": "Email",
@@ -63,6 +64,7 @@
     "other": "Other",
     "previous": "Previous",
     "previous_page": "Previous page",
+    "slide": "slide",
     "sold_out": "Sold out",
     "yes": "Yes"
   },
@@ -130,7 +132,8 @@
         "other": "{{ rating }} from {{ count }} reviews"
       },
       "video_by": "Video by {{ name }}",
-      "video_title": "Customer review video"
+      "video_title": "Customer review video",
+      "watch_again": "Watch again"
     },
     "faq_final_cta": {
       "whatsapp_word": "WhatsApp"

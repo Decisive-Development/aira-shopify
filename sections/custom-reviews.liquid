@@ -848,7 +848,7 @@
     assign cr_heading_class = 'text-title'
   endif
 -%}
-<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-i18n-anonymous="{{ 'sections.custom_reviews.anonymous' | t | escape_once }}" data-i18n-go-to-slide="{{ 'sections.custom_reviews.go_to_slide' | t: n: '%N%' | escape_once }}" data-i18n-show-details="{{ 'sections.custom_reviews.show_details' | t | escape_once }}" data-i18n-hide-details="{{ 'sections.custom_reviews.hide_details' | t | escape_once }}" data-i18n-helpful="{{ 'sections.custom_reviews.helpful' | t | escape_once }}" data-i18n-review-by="{{ 'sections.custom_reviews.review_by' | t: name: '%NAME%' | escape_once }}" data-i18n-photo-by="{{ 'sections.custom_reviews.photo_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-by="{{ 'sections.custom_reviews.video_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-title="{{ 'sections.custom_reviews.video_title' | t | escape_once }}" data-i18n-reviewing="{{ 'sections.custom_reviews.reviewing' | t | escape_once }}" data-i18n-reviewed-product="{{ 'sections.custom_reviews.reviewed_product' | t | escape_once }}">
+<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-i18n-anonymous="{{ 'sections.custom_reviews.anonymous' | t | escape_once }}" data-i18n-go-to-slide="{{ 'sections.custom_reviews.go_to_slide' | t: n: '%N%' | escape_once }}" data-i18n-show-details="{{ 'sections.custom_reviews.show_details' | t | escape_once }}" data-i18n-hide-details="{{ 'sections.custom_reviews.hide_details' | t | escape_once }}" data-i18n-helpful="{{ 'sections.custom_reviews.helpful' | t | escape_once }}" data-i18n-review-by="{{ 'sections.custom_reviews.review_by' | t: name: '%NAME%' | escape_once }}" data-i18n-photo-by="{{ 'sections.custom_reviews.photo_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-by="{{ 'sections.custom_reviews.video_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-title="{{ 'sections.custom_reviews.video_title' | t | escape_once }}" data-i18n-reviewing="{{ 'sections.custom_reviews.reviewing' | t | escape_once }}" data-i18n-reviewed-product="{{ 'sections.custom_reviews.reviewed_product' | t | escape_once }}" data-i18n-watch-again="{{ 'sections.custom_reviews.watch_again' | t | escape_once }}">
   {%- if cr_theme == 'dark' -%}
     <div
       class="absolute inset-0 pointer-events-none"
@@ -1830,7 +1830,7 @@
           frameHtml +=
             '<div class="review-video-endcap" hidden>' +
               (review.image ? '<img src="' + review.image + '" alt="" />' : '') +
-              '<button type="button" class="review-video-replay">' + replayIcon + 'Watch again</button>' +
+              '<button type="button" class="review-video-replay">' + replayIcon + escA(T.i18nWatchAgain) + '</button>' +
             '</div>';
         }
         mediaEl.innerHTML = '<div class="review-video-frame">' + frameHtml + '</div>';
