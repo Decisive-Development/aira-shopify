@@ -86,6 +86,16 @@
     "results_for_html": "{{ count }} results found for {{ terms }}"
   },
   "sections": {
+    "404": {
+      "breath_done": "Nice. Feel a little less lost?",
+      "breath_hold": "Hold",
+      "breath_hold_caption": "Hold it…",
+      "breath_in": "In…",
+      "breath_in_caption": "Breathe in through your nose",
+      "breath_out": "Out…",
+      "breath_out_caption": "Slowly let it go",
+      "breath_reduced": "Inhale 4 · hold 1 · exhale 4"
+    },
     "collection": {
       "empty": "No products found in this collection.",
       "pagination": "Collection pagination"
@@ -103,13 +113,24 @@
       "subject": "Subject"
     },
     "custom_reviews": {
+      "anonymous": "Anonymous",
+      "go_to_slide": "Go to slide {{ n }}",
+      "helpful": "Was this helpful?",
+      "hide_details": "Hide review details",
       "next_reviews": "Next reviews",
+      "photo_by": "Photo by {{ name }}",
       "previous_reviews": "Previous reviews",
+      "review_by": "Review by {{ name }}",
+      "reviewed_product": "aira Nasal Strips",
+      "reviewing": "Reviewing",
       "scroll_photos": "Scroll photos",
+      "show_details": "Show review details",
       "summary": {
         "one": "{{ rating }} from {{ count }} review",
         "other": "{{ rating }} from {{ count }} reviews"
-      }
+      },
+      "video_by": "Video by {{ name }}",
+      "video_title": "Customer review video"
     },
     "faq_search": {
       "no_matches": "No matches",
@@ -189,6 +210,7 @@
       "email_photo_cta": "Email a photo to support",
       "include_order_number": "Include order number",
       "order_number_needed": "You'll need your order number to continue. Find it in your order confirmation email, then answer \"Yes\" above.",
+      "question_of": "Question {{ n }} of {{ total }}",
       "subject_line": "Subject: {{ subject }}",
       "takes_seconds": "Takes around 20 seconds",
       "window_body_html": "Our 30-night guarantee covers the 30 nights after delivery, so this order isn't eligible for a return. If you think something's faulty, email {{ email_link }} and we'll take a look.",
@@ -217,14 +239,20 @@
   },
   "snippets": {
     "cart_drawer": {
+      "add_failed": "That could not be added to your cart",
+      "adding": "Adding...",
       "close_cart": "Close cart",
       "complete_your_kit": "Complete your kit",
       "continue_shopping": "Continue shopping",
+      "decrease_quantity": "Decrease quantity",
       "empty": "Your cart is empty",
       "empty_cta": "Get my kit",
+      "increase_quantity": "Increase quantity",
       "secure_checkout": "Secure checkout",
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",
+      "update_failed": "Your cart could not be updated",
+      "updating": "Updating your cart",
       "your_cart": "Your cart"
     },
     "meta_tags": {
@@ -244,6 +272,40 @@
       "kind_model": "model",
       "kind_video": "video",
       "show_media": "Show {{ kind }} {{ index }}"
+    },
+    "seo_meta": {
+      "affiliate_description_html": "Earn commission promoting aira magnetic nasal strips. Simple terms, honest products, and a team that answers. Apply to join the aira affiliate programme.",
+      "affiliate_title_html": "Affiliate program | aira",
+      "backed_by_science_description_html": "Seven peer-reviewed studies on nasal dilation, snoring and sleep, and what they do and don't prove. The research behind the aira strip, cited in full.",
+      "backed_by_science_title_html": "Backed by science | aira",
+      "collection_all_description_html": "Two products, one job: keeping your airway open. Start with the aira kit or top up refill tabs. Free shipping to the UAE and Saudi Arabia.",
+      "collection_all_title_html": "Shop nasal strips and refills | aira",
+      "contact_description_html": "Questions about your order, fit or delivery to the UAE and Saudi Arabia? Message the aira team and we'll sort it.",
+      "contact_title_html": "Contact | aira",
+      "faq_description_html": "Do nasal strips work for snoring? How do magnetic nasal strips stay on? Answers on fit, sizing, the 3M adhesive, shipping and the 30-night guarantee.",
+      "faq_title_html": "Nasal strip questions, answered | aira",
+      "how_it_works_description_html": "One magnetic band, a fresh pair each night, ten seconds to put on. See how the aira strip holds your nose open all night, and how to fit your size.",
+      "how_it_works_title_html": "How magnetic nasal strips work | aira",
+      "index_description_html": "Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping to the UAE and Saudi Arabia.",
+      "index_title_html": "Reusable magnetic nasal strips | aira",
+      "kit_description_html": "One reusable band, four sizes in the box, 30 nights of 3M tabs. $49.99 with a free refill pack at launch. Free shipping to the UAE and Saudi Arabia.",
+      "kit_title_html": "Reusable magnetic nasal strip kit, 30 pairs of tabs | aira",
+      "not_found_description_html": "That page has moved or never existed. Head back to the aira kit, refill tabs, or the how it works guide.",
+      "not_found_title_html": "Page not found | aira",
+      "our_story_description_html": "Why two founders in the UAE built a reusable magnetic nasal strip, and what we're building next. The people and the thinking behind aira.",
+      "our_story_title_html": "Our story | aira",
+      "privacy_policy_description_html": "How aira collects, uses and protects your data when you shop with us.",
+      "privacy_policy_title_html": "Privacy policy | aira",
+      "refill_description_html": "Refill tabs for your aira strip. One pouch of 30 pairs, 3M medical-grade adhesive. Buy 1, 2 or 3 pouches from $19.99. Free shipping to the UAE and Saudi Arabia.",
+      "refill_title_html": "Nasal strip refill tabs, 30-pair pouch | aira",
+      "refund_policy_description_html": "How returns, refunds and the 30-night guarantee work.",
+      "refund_policy_title_html": "Refund policy | aira",
+      "returns_description_html": "Not sleeping better after 30 nights? Start a return in a few clicks. Eligibility, steps and refund timelines for UAE and Saudi orders.",
+      "returns_title_html": "Returns and the 30-night guarantee | aira",
+      "shipping_policy_description_html": "Delivery times, costs and coverage for aira orders to the UAE and Saudi Arabia.",
+      "shipping_policy_title_html": "Shipping policy | aira",
+      "terms_of_service_description_html": "The terms that apply when you buy from aira.",
+      "terms_of_service_title_html": "Terms of service | aira"
     },
     "step_rail": {
       "label": "How it works steps",

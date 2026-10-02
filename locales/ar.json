@@ -86,6 +86,16 @@
     "results_for_html": "{{ count }} نتيجة لـ {{ terms }}"
   },
   "sections": {
+    "404": {
+      "breath_done": "أحسنت. هل تشعر أنك أقل ضياعًا الآن؟",
+      "breath_hold": "احبس",
+      "breath_hold_caption": "احبس نفَسك…",
+      "breath_in": "شهيق…",
+      "breath_in_caption": "خذ نفسًا من أنفك",
+      "breath_out": "زفير…",
+      "breath_out_caption": "أخرجه ببطء",
+      "breath_reduced": "شهيق 4 · حبس 1 · زفير 4"
+    },
     "collection": {
       "empty": "لا توجد منتجات في هذه المجموعة.",
       "pagination": "التنقل بين صفحات المجموعة"
@@ -103,13 +113,24 @@
       "subject": "الموضوع"
     },
     "custom_reviews": {
+      "anonymous": "مجهول",
+      "go_to_slide": "الانتقال إلى الشريحة {{ n }}",
+      "helpful": "هل كان هذا مفيدًا؟",
+      "hide_details": "إخفاء تفاصيل التقييم",
       "next_reviews": "التقييمات التالية",
+      "photo_by": "صورة من {{ name }}",
       "previous_reviews": "التقييمات السابقة",
+      "review_by": "تقييم من {{ name }}",
+      "reviewed_product": "شرائط الأنف من aira",
+      "reviewing": "تقييم عن",
       "scroll_photos": "تمرير الصور",
+      "show_details": "عرض تفاصيل التقييم",
       "summary": {
         "one": "{{ rating }} من 5 · عدد التقييمات: {{ count }}",
         "other": "{{ rating }} من 5 · عدد التقييمات: {{ count }}"
-      }
+      },
+      "video_by": "فيديو من {{ name }}",
+      "video_title": "فيديو تقييم من عميل"
     },
     "faq_search": {
       "no_matches": "لا توجد نتائج مطابقة",
@@ -189,6 +210,7 @@
       "email_photo_cta": "أرسل صورة إلى فريق الدعم",
       "include_order_number": "اذكر رقم الطلب",
       "order_number_needed": "ستحتاج إلى رقم طلبك للمتابعة. تجده في رسالة تأكيد الطلب، ثم أجب بـ\"نعم\" أعلاه.",
+      "question_of": "السؤال {{ n }} من {{ total }}",
       "subject_line": "الموضوع: {{ subject }}",
       "takes_seconds": "يستغرق حوالي 20 ثانية",
       "window_body_html": "ضمان 30 ليلة لدينا يغطي أول 30 ليلة بعد التسليم، لذا هذا الطلب غير مؤهل للإرجاع. إذا كنت تعتقد أن هناك عيبًا، راسلنا على {{ email_link }} وسنتحقق من الأمر.",
@@ -217,14 +239,20 @@
   },
   "snippets": {
     "cart_drawer": {
+      "add_failed": "تعذّرت إضافة هذا المنتج إلى سلتك",
+      "adding": "جارٍ الإضافة...",
       "close_cart": "إغلاق السلة",
       "complete_your_kit": "أكمل طقمك",
       "continue_shopping": "متابعة التسوق",
+      "decrease_quantity": "تقليل الكمية",
       "empty": "سلتك فارغة",
       "empty_cta": "اطلب طقمك",
+      "increase_quantity": "زيادة الكمية",
       "secure_checkout": "دفع آمن",
       "shopping_cart": "سلة التسوق",
       "subtotal": "المجموع الفرعي",
+      "update_failed": "تعذّر تحديث سلتك",
+      "updating": "جارٍ تحديث سلتك",
       "your_cart": "سلتك"
     },
     "meta_tags": {
@@ -244,6 +272,40 @@
       "kind_model": "نموذج ثلاثي الأبعاد",
       "kind_video": "فيديو",
       "show_media": "عرض {{ kind }} {{ index }}"
+    },
+    "seo_meta": {
+      "affiliate_description_html": "اكسب عمولة من الترويج لشرائط الأنف المغناطيسية من aira. شروط بسيطة، ومنتجات صادقة، وفريق يردّ عليك. قدّم طلبك للانضمام إلى برنامج الشركاء من aira.",
+      "affiliate_title_html": "برنامج الشركاء | aira",
+      "backed_by_science_description_html": "سبع دراسات محكّمة عن توسيع الأنف والشخير والنوم، وما تثبته وما لا تثبته. الأبحاث التي يستند إليها شريط aira، بمراجعها كاملة.",
+      "backed_by_science_title_html": "مدعوم بالعلم | aira",
+      "collection_all_description_html": "منتجان ومهمة واحدة: إبقاء مجرى الهواء مفتوحًا. ابدأ بطقم aira أو جدّد مخزونك من اللاصقات البديلة. شحن مجاني إلى الإمارات والسعودية.",
+      "collection_all_title_html": "تسوّق شرائط الأنف واللاصقات البديلة | aira",
+      "contact_description_html": "أسئلة عن طلبك أو المقاس أو التوصيل إلى الإمارات والسعودية؟ راسل فريق aira وسنتولى الأمر.",
+      "contact_title_html": "تواصل معنا | aira",
+      "faq_description_html": "هل تساعد شرائط الأنف على تقليل الشخير؟ وكيف تثبت شرائط الأنف المغناطيسية؟ إجابات عن الملاءمة والمقاسات ولاصق 3M والشحن وضمان 30 ليلة.",
+      "faq_title_html": "أسئلة عن شرائط الأنف وإجاباتها | aira",
+      "how_it_works_description_html": "شريط مغناطيسي واحد، وزوج جديد من اللاصقات كل ليلة، وعشر ثوانٍ لوضعه. شاهد كيف يُبقي شريط aira أنفك مفتوحًا طوال الليل، وكيف تختار مقاسك.",
+      "how_it_works_title_html": "كيف تعمل شرائط الأنف المغناطيسية | aira",
+      "index_description_html": "شرائط أنف مغناطيسية قابلة لإعادة الاستخدام تُبقي أنفك مفتوحًا طوال الليل. شخير أقل، نوم أعمق، تمرين أسهل. شحن مجاني إلى الإمارات والسعودية.",
+      "index_title_html": "شرائط أنف مغناطيسية قابلة لإعادة الاستخدام | aira",
+      "kit_description_html": "شريط واحد قابل لإعادة الاستخدام، 4 مقاسات في العلبة، و30 ليلة من لاصقات 3M. $49.99 مع كيس لاصقات بديلة مجاني عند الإطلاق. شحن مجاني إلى الإمارات والسعودية.",
+      "kit_title_html": "طقم شريط أنف مغناطيسي قابل لإعادة الاستخدام | aira",
+      "not_found_description_html": "هذه الصفحة نُقلت أو لم تكن موجودة أصلًا. عُد إلى طقم aira أو اللاصقات البديلة أو دليل «كيف يعمل».",
+      "not_found_title_html": "الصفحة غير موجودة | aira",
+      "our_story_description_html": "لماذا صنع مؤسسان في الإمارات شريط أنف مغناطيسيًا قابلًا لإعادة الاستخدام، وما الذي نصنعه بعده. الأشخاص والأفكار وراء aira.",
+      "our_story_title_html": "قصتنا | aira",
+      "privacy_policy_description_html": "كيف يجمع aira بياناتك ويستخدمها ويحميها عند تسوّقك معنا.",
+      "privacy_policy_title_html": "سياسة الخصوصية | aira",
+      "refill_description_html": "لاصقات بديلة لشريط aira. كيس واحد من 30 زوجًا بلاصق 3M بدرجة طبية. اشترِ كيسًا أو كيسين أو ثلاثة بسعر يبدأ من $19.99. شحن مجاني إلى الإمارات والسعودية.",
+      "refill_title_html": "لاصقات بديلة لشريط الأنف، كيس من 30 زوجًا | aira",
+      "refund_policy_description_html": "كيف يتم الإرجاع والاسترداد، وكيف يعمل ضمان 30 ليلة.",
+      "refund_policy_title_html": "سياسة الاسترداد | aira",
+      "returns_description_html": "لم يتحسن نومك بعد 30 ليلة؟ ابدأ طلب الإرجاع ببضع نقرات. شروط الأهلية والخطوات ومدد الاسترداد لطلبات الإمارات والسعودية.",
+      "returns_title_html": "الإرجاع وضمان 30 ليلة | aira",
+      "shipping_policy_description_html": "مدة التوصيل وتكلفته ونطاقه لطلبات aira إلى الإمارات والسعودية.",
+      "shipping_policy_title_html": "سياسة الشحن | aira",
+      "terms_of_service_description_html": "الشروط التي تنطبق عند شرائك من aira.",
+      "terms_of_service_title_html": "شروط الخدمة | aira"
     },
     "step_rail": {
       "label": "خطوات الاستخدام",

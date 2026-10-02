@@ -49,6 +49,14 @@
 	class="group fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
 	aria-label="{{ 'snippets.cart_drawer.shopping_cart' | t }}"
 	aria-busy="false"
+	data-i18n-updating="{{ 'snippets.cart_drawer.updating' | t | escape_once }}"
+	data-i18n-adding="{{ 'snippets.cart_drawer.adding' | t | escape_once }}"
+	data-i18n-add="{{ 'general.add' | t | escape_once }}"
+	data-i18n-add-failed="{{ 'snippets.cart_drawer.add_failed' | t | escape_once }}"
+	data-i18n-update-failed="{{ 'snippets.cart_drawer.update_failed' | t | escape_once }}"
+	data-i18n-decrease="{{ 'snippets.cart_drawer.decrease_quantity' | t | escape_once }}"
+	data-i18n-increase="{{ 'snippets.cart_drawer.increase_quantity' | t | escape_once }}"
+	data-i18n-remove="{{ 'cart.remove' | t | escape_once }}"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
@@ -187,6 +195,8 @@
 	var backdrop = document.querySelector('[data-cart-backdrop]');
 	var drawer   = document.querySelector('[data-cart-drawer]');
 	var currency = drawer.getAttribute('data-currency');
+	/* UI strings from the locale files, so the drawer speaks the page's language */
+	var i18n     = drawer.dataset;
 	var itemsEl  = document.querySelector('[data-cart-items]');
 	var emptyEl  = document.querySelector('[data-cart-empty]');
 	var upsellEl = document.querySelector('[data-cart-upsell]');
@@ -297,7 +307,7 @@
 		var busy = isBusy();
 		drawer.setAttribute('aria-busy', busy ? 'true' : 'false');
 		if (checkoutEl && !busy) checkoutEl.removeAttribute('aria-busy');
-		statusEl.textContent = errorMsg || (busy ? 'Updating your cart' : '');
+		statusEl.textContent = errorMsg || (busy ? i18n.i18nUpdating : '');
 		statusEl.classList.toggle('hidden', statusEl.textContent === '');
 	}
 
@@ -356,7 +366,7 @@
 			btn.disabled = false;
 			btn.innerHTML = btnMarkup;
 		}
-		if (btn) { btn.disabled = true; btn.textContent = 'Adding...'; }
+		if (btn) { btn.disabled = true; btn.textContent = i18n.i18nAdding; }
 
 		var item = formItem(form);
 		var giftId = parseInt(form.getAttribute('data-gift-variant-id'), 10) || 0;
@@ -371,7 +381,7 @@
 		enqueue(function () {
 			return postJson(ROOT + 'cart/add.js', { items: addItems(currentCart, item, giftId) })
 				.then(function (res) {
-					if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
+					if (!res.ok) errorMsg = (res.body && res.body.description) || i18n.i18nAddFailed;
 					return fetchCart();
 				})
 				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
@@ -431,11 +441,11 @@
 		upsellBtn.addEventListener('click', function () {
 			var vid = parseInt(upsellBtn.getAttribute('data-upsell-variant-id'), 10);
 			upsellBtn.disabled = true;
-			upsellBtn.textContent = 'Adding...';
+			upsellBtn.textContent = i18n.i18nAdding;
 			errorMsg = '';
 			function resetUpsell() {
 				upsellBtn.disabled = false;
-				upsellBtn.textContent = 'Add';
+				upsellBtn.textContent = i18n.i18nAdd;
 			}
 			flushNow();
 			var entry = { id: vid, quantity: 1 };
@@ -443,7 +453,7 @@
 			enqueue(function () {
 				return postJson(ROOT + 'cart/add.js', { items: [entry] })
 					.then(function (res) {
-						if (!res.ok) errorMsg = (res.body && res.body.description) || 'That could not be added to your cart';
+						if (!res.ok) errorMsg = (res.body && res.body.description) || i18n.i18nAddFailed;
 						return fetchCart();
 					})
 					.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
@@ -587,7 +597,7 @@
 			if (res.ok && res.body && res.body.items) return res.body;
 			return fetchCart().then(function (fresh) {
 				if (tries < 1) return sendOps(fresh, ops, tries + 1, keepalive);
-				errorMsg = (res.body && res.body.description) || 'Your cart could not be updated';
+				errorMsg = (res.body && res.body.description) || i18n.i18nUpdateFailed;
 				return fresh;
 			});
 		});
@@ -649,9 +659,9 @@
 		var span = '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + quantity + '</span>';
 		if (!stepper) return '<div class="flex items-center border border-bg-muted rounded-lg">' + span + '</div>';
 		return '<div class="flex items-center border border-bg-muted rounded-lg">'
-			+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Decrease quantity">−</button>'
+			+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="' + escAttr(i18n.i18nDecrease) + '">−</button>'
 			+ span
-			+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="Increase quantity">+</button>'
+			+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="' + escAttr(i18n.i18nIncrease) + '">+</button>'
 			+ '</div>';
 	}
 
@@ -666,7 +676,7 @@
 					+ o.controls
 					+ '<span data-line-price class="shrink-0 font-heading font-bold text-title text-base transition-opacity group-aria-busy:opacity-40">' + o.price + '</span>'
 				+ '</div>'
-				+ (o.removable ? '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="Remove"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>' : '')
+				+ (o.removable ? '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="' + escAttr(i18n.i18nRemove) + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>' : '')
 			+ '</div>'
 		+ '</div>';
 	}

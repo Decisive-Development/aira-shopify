@@ -24,7 +24,7 @@
 	description: collection.description
 -%}
 
-<section style="background-color: {{ section.settings.background_color }};">
+<section style="background-color: {{ section.settings.background_color }};" data-i18n-add-to-cart="{{ 'general.add_to_cart' | t | escape_once }}" data-i18n-sold-out="{{ 'general.sold_out' | t | escape_once }}">
 	<div class="container-contained {{ pt }} {{ pb }}">
 
 		{%- comment -%} Product grid {%- endcomment -%}
@@ -102,6 +102,7 @@
 		var variantInput = card.querySelector('[data-variant-id]');
 		var priceEl      = card.querySelector('[data-price]');
 		var addBtn       = card.querySelector('[data-add-to-cart]');
+		var labelsEl     = card.closest('section');
 		var imgEl        = card.querySelector('a img');
 		var dataEl       = card.querySelector('[data-product-variants]');
 		if (!dataEl) return;
@@ -121,7 +122,7 @@
 			variantInput.value  = variant.id;
 			priceEl.textContent = variant.price_formatted;
 			addBtn.disabled     = !variant.available;
-			addBtn.textContent  = variant.available ? 'Add to cart' : 'Sold out';
+			addBtn.textContent  = labelsEl.getAttribute(variant.available ? 'data-i18n-add-to-cart' : 'data-i18n-sold-out');
 			if (variant.image && imgEl) {
 				imgEl.removeAttribute('srcset');
 				imgEl.removeAttribute('sizes');

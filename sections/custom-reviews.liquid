@@ -848,7 +848,7 @@
     assign cr_heading_class = 'text-title'
   endif
 -%}
-<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}">
+<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-i18n-anonymous="{{ 'sections.custom_reviews.anonymous' | t | escape_once }}" data-i18n-go-to-slide="{{ 'sections.custom_reviews.go_to_slide' | t: n: '%N%' | escape_once }}" data-i18n-show-details="{{ 'sections.custom_reviews.show_details' | t | escape_once }}" data-i18n-hide-details="{{ 'sections.custom_reviews.hide_details' | t | escape_once }}" data-i18n-helpful="{{ 'sections.custom_reviews.helpful' | t | escape_once }}" data-i18n-review-by="{{ 'sections.custom_reviews.review_by' | t: name: '%NAME%' | escape_once }}" data-i18n-photo-by="{{ 'sections.custom_reviews.photo_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-by="{{ 'sections.custom_reviews.video_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-title="{{ 'sections.custom_reviews.video_title' | t | escape_once }}" data-i18n-reviewing="{{ 'sections.custom_reviews.reviewing' | t | escape_once }}" data-i18n-reviewed-product="{{ 'sections.custom_reviews.reviewed_product' | t | escape_once }}">
   {%- if cr_theme == 'dark' -%}
     <div
       class="absolute inset-0 pointer-events-none"
@@ -998,6 +998,11 @@
                 document.currentScript.parentElement.closest('section') ||
                 document.querySelector('[data-custom-reviews]');
   if (!section) return;
+
+  /* UI strings from the locale files, so the widget speaks the page's language */
+  var T = section.dataset;
+  function tpl(s, key, value) { return String(s || '').split(key).join(value); }
+  function escA(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
   // Every page resolves to the same product (see the Liquid at the top), so
   // this one widget is the same review set everywhere.
@@ -1219,7 +1224,7 @@
       }
 
       var nameEl = item.querySelector('.jm-reviewer-info__name');
-      review.name = nameEl ? nameEl.textContent.trim() : 'Anonymous';
+      review.name = nameEl ? nameEl.textContent.trim() : T.i18nAnonymous;
       review.initial = review.name.charAt(0).toUpperCase();
 
       review.date = '';
@@ -1410,7 +1415,7 @@
       if (hasImage) {
         var videoClass = review.isVideo ? ' review-card__image--video' : '';
         imageHTML = '<div class="review-card__image w-[40%] p-3 flex items-stretch cursor-pointer' + videoClass + '" data-review-index="' + index + '">' +
-          '<img src="' + review.image + '" alt="Photo by ' + review.name + '" loading="lazy" class="w-full h-full object-cover block rounded-xl pointer-events-none" />' +
+          '<img src="' + review.image + '" alt="' + escA(tpl(T.i18nPhotoBy, '%NAME%', review.name)) + '" loading="lazy" class="w-full h-full object-cover block rounded-xl pointer-events-none" />' +
           '</div>';
       }
 
@@ -1484,7 +1489,7 @@
         (review.isVideo ? ' reviews-photo-strip__thumb--video' : '');
       thumb.setAttribute('data-review-index', reviews.indexOf(review));
 
-      thumb.innerHTML = '<img src="' + (review.imageSmall || review.image) + '" alt="Review by ' + review.name + '" loading="lazy" />';
+      thumb.innerHTML = '<img src="' + (review.imageSmall || review.image) + '" alt="' + escA(tpl(T.i18nReviewBy, '%NAME%', review.name)) + '" loading="lazy" />';
 
       stripTrack.appendChild(thumb);
     });
@@ -1530,7 +1535,7 @@
         /* The button is the 24px tap target; the span inside is the 8px dot. */
         dot.className = 'reviews-dot w-6 h-6 flex items-center justify-center p-0 bg-transparent border-none cursor-pointer';
         dot.innerHTML = '<span class="w-2 h-2 rounded-full ' + (i === 0 ? 'bg-main' : 'bg-border') + '"></span>';
-        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.setAttribute('aria-label', tpl(T.i18nGoToSlide, '%N%', i + 1));
         (function(idx) {
           dot.addEventListener('click', function() { goToSlide(idx); });
         })(i);
@@ -1792,13 +1797,13 @@
       var expandTab = document.createElement('button');
       expandTab.type = 'button';
       expandTab.className = 'review-lightbox__expand-tab';
-      expandTab.setAttribute('aria-label', 'Show review details');
+      expandTab.setAttribute('aria-label', T.i18nShowDetails);
       expandTab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
       expandTab.addEventListener('click', function () {
         detailsEl.classList.toggle('is-expanded');
         expandTab.setAttribute(
           'aria-label',
-          detailsEl.classList.contains('is-expanded') ? 'Hide review details' : 'Show review details'
+          detailsEl.classList.contains('is-expanded') ? T.i18nHideDetails : T.i18nShowDetails
         );
       });
       detailsEl.insertBefore(expandTab, detailsEl.firstChild);
@@ -1818,7 +1823,7 @@
 
       if (embedSrc) {
         var isVimeo = !!review.videoEmbed && review.videoEmbed.host === 'vimeo';
-        var frameHtml = '<iframe src="' + embedSrc + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Customer review video"></iframe>';
+        var frameHtml = '<iframe src="' + embedSrc + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="' + escA(T.i18nVideoTitle) + '"></iframe>';
         if (isVimeo) {
           // Only Vimeo's player ends on a share screen worth covering.
           var replayIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>';
@@ -1834,17 +1839,17 @@
         fitVideoFrame(frameEl, review.image);
         if (isVimeo) bindVideoEndcap(frameEl);
       } else {
-        mediaEl.innerHTML = '<img src="' + review.image + '" alt="Video by ' + review.name + '" />';
+        mediaEl.innerHTML = '<img src="' + review.image + '" alt="' + escA(tpl(T.i18nVideoBy, '%NAME%', review.name)) + '" />';
       }
     } else {
-      mediaEl.innerHTML = '<img src="' + review.image + '" alt="Photo by ' + review.name + '" />';
+      mediaEl.innerHTML = '<img src="' + review.image + '" alt="' + escA(tpl(T.i18nPhotoBy, '%NAME%', review.name)) + '" />';
     }
 
     // ── Populate reviewer ──
     detailsReviewer.innerHTML =
       '<div>' +
         '<div class="review-lightbox__reviewer-name">' + review.name + '</div>' +
-        '<div class="review-lightbox__reviewer-product">Reviewing<br><strong>aira Nasal Strips</strong></div>' +
+        '<div class="review-lightbox__reviewer-product">' + escA(T.i18nReviewing) + '<br><strong>' + escA(T.i18nReviewedProduct) + '</strong></div>' +
       '</div>';
 
     // ── Populate stars + date ──
@@ -1859,7 +1864,7 @@
     detailsBody.textContent = review.body || '';
 
     // ── Helpful ──
-    detailsHelpful.innerHTML = 'Was this helpful?';
+    detailsHelpful.textContent = T.i18nHelpful;
 
     // ── Show ──
     lightbox.style.display = 'flex';

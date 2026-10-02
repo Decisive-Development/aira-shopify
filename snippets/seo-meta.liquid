@@ -5,6 +5,10 @@
   "Search engine listing" fields (page_title / page_description) for any page
   not mapped here. Pass field: 'title' or field: 'description'.
 
+  The wording lives in locales/en.default.json (snippets.seo_meta), with the
+  Arabic in locales/ar.json. The keys end in _html so t returns the text
+  unescaped and meta-tags.liquid escapes it once, as it did the literals.
+
   Editing rules (see .claude/rules/copy.md and the SEO brief):
     - Titles <= 60 characters, descriptions <= 155.
     - UK English, aira lowercase, no em-dashes or arrows, brand last in titles.
@@ -23,65 +27,66 @@
 
   case request.page_type
     when '404'
-      assign seo_title = "Page not found | aira"
-      assign seo_description = "That page has moved or never existed. Head back to the aira kit, refill tabs, or the how it works guide."
+      assign seo_title = 'snippets.seo_meta.not_found_title_html' | t
+      assign seo_description = 'snippets.seo_meta.not_found_description_html' | t
 
     when 'index'
-      assign seo_title = "Reusable magnetic nasal strips | aira"
-      assign seo_description = "Reusable magnetic nasal strips that hold your nose open all night. Less snoring, deeper sleep, easier training. Free shipping to the UAE and Saudi Arabia."
+      assign seo_title = 'snippets.seo_meta.index_title_html' | t
+      assign seo_description = 'snippets.seo_meta.index_description_html' | t
 
     when 'product'
       case product.handle
         when 'aira-kit'
-          assign seo_title = "Reusable magnetic nasal strip kit, 30 pairs of tabs | aira"
-          # The sentence "$49.99 with a free refill pack at launch." is tied to
+          assign seo_title = 'snippets.seo_meta.kit_title_html' | t
+          # The sentence "$49.99 with a free refill pack at launch." in
+          # snippets.seo_meta.kit_description_html (both locale files) is tied to
           # the launch offer. When the offer ends, drop that sentence and keep
           # the description under 155 characters.
-          assign seo_description = "One reusable band, four sizes in the box, 30 nights of 3M tabs. $49.99 with a free refill pack at launch. Free shipping to the UAE and Saudi Arabia."
+          assign seo_description = 'snippets.seo_meta.kit_description_html' | t
         when 'aira-refill-tabs'
-          assign seo_title = "Nasal strip refill tabs, 30-pair pouch | aira"
-          assign seo_description = "Refill tabs for your aira strip. One pouch of 30 pairs, 3M medical-grade adhesive. Buy 1, 2 or 3 pouches from $19.99. Free shipping to the UAE and Saudi Arabia."
+          assign seo_title = 'snippets.seo_meta.refill_title_html' | t
+          assign seo_description = 'snippets.seo_meta.refill_description_html' | t
       endcase
 
     when 'collection'
       case collection.handle
         when 'all'
-          assign seo_title = "Shop nasal strips and refills | aira"
-          assign seo_description = "Two products, one job: keeping your airway open. Start with the aira kit or top up refill tabs. Free shipping to the UAE and Saudi Arabia."
+          assign seo_title = 'snippets.seo_meta.collection_all_title_html' | t
+          assign seo_description = 'snippets.seo_meta.collection_all_description_html' | t
       endcase
 
     when 'page'
       case template.suffix
         when 'faq'
-          assign seo_title = "Nasal strip questions, answered | aira"
-          assign seo_description = "Do nasal strips work for snoring? How do magnetic nasal strips stay on? Answers on fit, sizing, the 3M adhesive, shipping and the 30-night guarantee."
+          assign seo_title = 'snippets.seo_meta.faq_title_html' | t
+          assign seo_description = 'snippets.seo_meta.faq_description_html' | t
         when 'how-it-works'
-          assign seo_title = "How magnetic nasal strips work | aira"
-          assign seo_description = "One magnetic band, a fresh pair each night, ten seconds to put on. See how the aira strip holds your nose open all night, and how to fit your size."
+          assign seo_title = 'snippets.seo_meta.how_it_works_title_html' | t
+          assign seo_description = 'snippets.seo_meta.how_it_works_description_html' | t
         when 'backed-by-science'
-          assign seo_title = "Backed by science | aira"
-          assign seo_description = "Seven peer-reviewed studies on nasal dilation, snoring and sleep, and what they do and don't prove. The research behind the aira strip, cited in full."
+          assign seo_title = 'snippets.seo_meta.backed_by_science_title_html' | t
+          assign seo_description = 'snippets.seo_meta.backed_by_science_description_html' | t
         when 'contact'
-          assign seo_title = "Contact | aira"
-          assign seo_description = "Questions about your order, fit or delivery to the UAE and Saudi Arabia? Message the aira team and we'll sort it."
+          assign seo_title = 'snippets.seo_meta.contact_title_html' | t
+          assign seo_description = 'snippets.seo_meta.contact_description_html' | t
         when 'our-story'
-          assign seo_title = "Our story | aira"
-          assign seo_description = "Why two founders in the UAE built a reusable magnetic nasal strip, and what we're building next. The people and the thinking behind aira."
+          assign seo_title = 'snippets.seo_meta.our_story_title_html' | t
+          assign seo_description = 'snippets.seo_meta.our_story_description_html' | t
         when 'privacy-policy'
-          assign seo_title = "Privacy policy | aira"
-          assign seo_description = "How aira collects, uses and protects your data when you shop with us."
+          assign seo_title = 'snippets.seo_meta.privacy_policy_title_html' | t
+          assign seo_description = 'snippets.seo_meta.privacy_policy_description_html' | t
         when 'shipping-policy'
-          assign seo_title = "Shipping policy | aira"
-          assign seo_description = "Delivery times, costs and coverage for aira orders to the UAE and Saudi Arabia."
+          assign seo_title = 'snippets.seo_meta.shipping_policy_title_html' | t
+          assign seo_description = 'snippets.seo_meta.shipping_policy_description_html' | t
         when 'terms-of-service'
-          assign seo_title = "Terms of service | aira"
-          assign seo_description = "The terms that apply when you buy from aira."
+          assign seo_title = 'snippets.seo_meta.terms_of_service_title_html' | t
+          assign seo_description = 'snippets.seo_meta.terms_of_service_description_html' | t
         when 'refund-policy'
-          assign seo_title = "Refund policy | aira"
-          assign seo_description = "How returns, refunds and the 30-night guarantee work."
+          assign seo_title = 'snippets.seo_meta.refund_policy_title_html' | t
+          assign seo_description = 'snippets.seo_meta.refund_policy_description_html' | t
         when 'returns'
-          assign seo_title = "Returns and the 30-night guarantee | aira"
-          assign seo_description = "Not sleeping better after 30 nights? Start a return in a few clicks. Eligibility, steps and refund timelines for UAE and Saudi orders."
+          assign seo_title = 'snippets.seo_meta.returns_title_html' | t
+          assign seo_description = 'snippets.seo_meta.returns_description_html' | t
       endcase
 
       comment
@@ -92,8 +97,8 @@
       if seo_title == blank
         case page.handle
           when 'affiliate-program' or 'affilliate-program'
-            assign seo_title = "Affiliate program | aira"
-            assign seo_description = "Earn commission promoting aira magnetic nasal strips. Simple terms, honest products, and a team that answers. Apply to join the aira affiliate programme."
+            assign seo_title = 'snippets.seo_meta.affiliate_title_html' | t
+            assign seo_description = 'snippets.seo_meta.affiliate_description_html' | t
         endcase
       endif
   endcase

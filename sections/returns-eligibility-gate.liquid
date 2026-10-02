@@ -23,7 +23,7 @@
 <section class="bg-bg py-10 md:py-12 flex flex-col justify-center items-center min-h-[60vh]">
 	<div class="w-full max-w-[640px] px-4">
 
-		<div data-eligibility-gate data-progressive class="relative">
+		<div data-eligibility-gate data-progressive class="relative" data-counter-tpl="{{ 'sections.returns_eligibility_gate.question_of' | t: n: '%N%', total: '%TOTAL%' | escape_once }}">
 
 			<div class="rounded-2xl bg-main p-8 md:p-12 text-secondary" data-card>
 
@@ -235,7 +235,7 @@
 				b.classList.toggle('bg-secondary', i < current);
 				b.classList.toggle('bg-secondary/15', i > current);
 			});
-			if (counter) counter.textContent = 'Question ' + (current + 1) + ' of ' + steps.length;
+			if (counter) counter.textContent = (gate.getAttribute('data-counter-tpl') || '').split('%N%').join(current + 1).split('%TOTAL%').join(steps.length);
 			if (backBtn) backBtn.disabled = current === 0;
 		}
 
