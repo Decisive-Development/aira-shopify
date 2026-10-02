@@ -11,7 +11,16 @@
   "sections": {
     "main": {
       "type": "404",
-      "settings": {}
+      "settings": {
+        "eyebrow": "Error 404 · shhh",
+        "heading": "This page is fast asleep.",
+        "subheading": "It dozed off, wandered into a dream, or never existed at all. While it naps, why not take a breath with us?",
+        "breather_label": "Breathe",
+        "breather_caption": "Tap the orb & follow along",
+        "breather_aria": "Start a breathing exercise",
+        "button_label": "Get my kit",
+        "secondary_button_label": "Back to home"
+      }
     }
   },
   "order": [

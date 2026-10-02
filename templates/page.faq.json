@@ -19,7 +19,9 @@
 		},
 		"search": {
 			"type": "faq-search",
-			"settings": {}
+			"settings": {
+				"placeholder": "Search the FAQ…"
+			}
 		},
 		"categories": {
 			"type": "faq-categories",
@@ -55,13 +57,16 @@
 				"cat-use", "q-use-1", "q-use-2", "q-use-3", "q-use-4", "q-use-5",
 				"cat-orders", "q-ord-1", "q-ord-2"
 			],
-			"settings": {}
+			"settings": {
+				"uncategorized_heading": "More questions"
+			}
 		},
 		"final_cta": {
 			"type": "faq-final-cta",
 			"settings": {
 				"heading": "Still have a question?",
-				"body": "Message us on WhatsApp for the fastest reply, or email contact@shop-aira.com and we'll get back to you within 1 to 2 business days."
+				"body": "Message us on WhatsApp for the fastest reply, or email contact@shop-aira.com and we'll get back to you within 1 to 2 business days.",
+				"cta_label": "Contact support"
 			}
 		}
 	},

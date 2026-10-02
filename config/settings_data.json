@@ -17,7 +17,17 @@
       "scratch-offer-popup": {
         "type": "scratch-offer-popup",
         "settings": {
-          "trigger_delay": 1
+          "trigger_delay": 1,
+          "eyebrow": "LIMITED TIME OFFER",
+          "heading": "A free gift with every kit",
+          "subheading": "Scratch the card to see what's inside.",
+          "foil_caption": "SCRATCH TO REVEAL YOUR GIFT",
+          "reveal_text": "You won… a free 30-pair refill pouch",
+          "reveal_subline": "Worth $19.99. While stocks last.",
+          "skip_label": "Reveal your gift",
+          "placeholder": "Your email",
+          "button_label": "Claim my gift",
+          "success_message": "Check your inbox. Your gift is on its way."
         }
       }
     },

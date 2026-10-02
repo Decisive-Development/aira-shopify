@@ -30,7 +30,12 @@
 		},
 		"form": {
 			"type": "returns-form",
-			"settings": {}
+			"settings": {
+				"eyebrow": "Change-of-mind return",
+				"heading": "Tell us about the order",
+				"subheading": "We'll review and email your return instructions within two business days. Return shipping is yours for change-of-mind returns.",
+				"success_message": "We've received your return request. We'll review and email your return instructions within two business days."
+			}
 		}
 	},
 	"order": ["hero", "eligibility_gate", "form"]

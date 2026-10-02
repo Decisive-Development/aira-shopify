@@ -51,11 +51,12 @@
 
 	comment
 		The poster is the cover frame of the tutorial, not decoration, so it
-		carries a description. The image's own alt field in Shopify Files wins;
-		the fallback describes the frame currently in the slot and should be
-		replaced in Files whenever the tutorial is refilmed.
+		carries a description: the section's alt setting first (saved in the
+		template so Translate & Adapt can translate it), then the image's own
+		alt field in Shopify Files, then a description of the frame currently
+		in the slot. Update the setting whenever the tutorial is refilmed.
 	endcomment
-	assign poster_image_alt = poster_image.alt | default: 'Side profile of a woman pressing an aira tab into place just above her nostril'
+	assign poster_image_alt = section.settings.video_poster_alt | default: poster_image.alt | default: 'Side profile of a woman pressing an aira tab into place just above her nostril'
 -%}
 
 <section class="relative overflow-hidden bg-main text-secondary pt-32 md:pt-40 pb-16 md:pb-25">
@@ -378,6 +379,12 @@
 			"id": "video_poster",
 			"label": "Video poster image",
 			"info": "Portrait (9:16) thumbnail shown before the popup opens. Falls back to the uploaded video's preview frame when blank."
+		},
+		{
+			"type": "text",
+			"id": "video_poster_alt",
+			"label": "Video poster alt text",
+			"default": "Side profile of a woman pressing an aira tab into place just above her nostril"
 		}
 	],
 	"blocks": [

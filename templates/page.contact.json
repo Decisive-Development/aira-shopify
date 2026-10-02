@@ -19,7 +19,12 @@
 		},
 		"form": {
 			"type": "contact-form",
-			"settings": {}
+			"settings": {
+				"eyebrow": "Send a message",
+				"heading": "How can we help?",
+				"subheading": "Fill in the form and we'll reply within 1 to 2 business days.",
+				"success_message": "Thanks for reaching out. We'll respond within 1 to 2 business days."
+			}
 		},
 		"quick_links": {
 			"type": "contact-quick-links",

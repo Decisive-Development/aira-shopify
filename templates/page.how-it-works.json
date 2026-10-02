@@ -83,7 +83,8 @@
         "lead": "Watch the 50-second tutorial - we walk you through each step. The whole routine takes under a minute once you've got it!",
         "video": "shopify://files/videos/Tutorial-final.mov",
         "video_url": "",
-        "video_poster": "shopify://shop_images/Tutorial-cover.png"
+        "video_poster": "shopify://shop_images/Tutorial-cover.png",
+        "video_poster_alt": "Side profile of a woman pressing an aira tab into place just above her nostril"
       }
     },
     "intro": {
