@@ -1,0 +1,257 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "404": {
+    "title": "404",
+    "not_found": "الصفحة غير موجودة.",
+    "back_to_shopping": "العودة إلى التسوق"
+  },
+  "blog": {
+    "article_comments": "التعليقات",
+    "article_metadata_html": "{{ date }} بقلم {{ author }}",
+    "comment_form_body": "التعليق",
+    "comment_form_email": "البريد الإلكتروني",
+    "comment_form_name": "الاسم",
+    "comment_form_submit": "نشر",
+    "comment_form_title": "أضف تعليقًا"
+  },
+  "cart": {
+    "checkout": "إتمام الشراء",
+    "title": "السلة",
+    "update": "تحديث",
+    "remove": "إزالة"
+  },
+  "customers": {
+    "login": {
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "title": "تسجيل الدخول"
+    }
+  },
+  "collections": {
+    "title": "المجموعات"
+  },
+  "contact": {
+    "whatsapp_cta": "راسلنا على واتساب",
+    "whatsapp_prefill": "مرحبًا aira، لدي سؤال.",
+    "whatsapp_prefill_product": "مرحبًا aira، لدي سؤال عن {{ product }}."
+  },
+  "general": {
+    "add": "أضف",
+    "add_to_cart": "أضف إلى السلة",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "close_video": "إغلاق الفيديو",
+    "email": "البريد الإلكتروني",
+    "free_shipping": "شحن مجاني إلى الإمارات والسعودية.",
+    "limited": "محدود",
+    "n_of_total": "{{ n }} من {{ total }}",
+    "next": "التالي",
+    "next_page": "الصفحة التالية",
+    "no": "لا",
+    "open_menu": "فتح القائمة",
+    "optional": "(اختياري)",
+    "order_number": "رقم الطلب",
+    "other": "أخرى",
+    "previous": "السابق",
+    "previous_page": "الصفحة السابقة",
+    "sold_out": "نفدت الكمية",
+    "yes": "نعم"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "أضف إلى Apple Wallet",
+    "card": "بطاقة هدية",
+    "expired": "انتهت صلاحية بطاقة الهدية هذه",
+    "expires_on": "تنتهي الصلاحية في {{ expires_on }}",
+    "use_at_checkout": "استخدم بطاقة الهدية هذه عند إتمام الشراء"
+  },
+  "password": {
+    "title": "هذا المتجر خاص",
+    "password": "كلمة المرور",
+    "enter": "دخول"
+  },
+  "search": {
+    "title": "البحث",
+    "placeholder": "ابحث في المقالات والصفحات والمنتجات",
+    "submit": "بحث",
+    "no_results_html": "لا توجد نتائج لـ {{ terms }}",
+    "results_for_html": "{{ count }} نتيجة لـ {{ terms }}"
+  },
+  "sections": {
+    "collection": {
+      "empty": "لا توجد منتجات في هذه المجموعة.",
+      "pagination": "التنقل بين صفحات المجموعة"
+    },
+    "comparison_table": {
+      "adjustable_airflow": "تدفق هواء قابل للتعديل",
+      "holds_nose_open": "يُبقي الأنف المنهار مفتوحًا",
+      "reusable": "قابل لإعادة الاستخدام",
+      "sleep_exercise": "النوم + التمرين"
+    },
+    "contact_form": {
+      "message": "الرسالة",
+      "name": "الاسم",
+      "send": "إرسال الرسالة",
+      "subject": "الموضوع"
+    },
+    "custom_reviews": {
+      "next_reviews": "التقييمات التالية",
+      "previous_reviews": "التقييمات السابقة",
+      "scroll_photos": "تمرير الصور"
+    },
+    "faq_search": {
+      "no_matches": "لا توجد نتائج مطابقة",
+      "search_label": "ابحث في الأسئلة الشائعة"
+    },
+    "footer": {
+      "copyright_html": "&copy; {{ year }} AIRA WELLNESS ECOM FZCO.",
+      "facebook": "فيسبوك",
+      "heading_about": "من نحن",
+      "heading_help": "المساعدة",
+      "heading_legal": "السياسات",
+      "heading_shop": "تسوّق",
+      "instagram": "إنستغرام",
+      "licence": "رخصة رقم {{ number }}",
+      "tiktok": "تيك توك",
+      "youtube": "يوتيوب"
+    },
+    "hero": {
+      "placeholder_alt": "صورة رئيسية مؤقتة"
+    },
+    "how_it_works_hero": {
+      "play_tutorial": "تشغيل فيديو الشرح",
+      "tap_for_sound": "اضغط لتشغيل الصوت",
+      "tutorial_video": "فيديو الشرح",
+      "video_placeholder": "فيديو الشرح. مصوّر بالوضع العمودي."
+    },
+    "kit_offer": {
+      "placeholder_caption": "الطقم · المحتويات",
+      "placeholder_title": "صورة المنتج"
+    },
+    "our_story_hero": {
+      "placeholder_caption": "نمط حياة · إضاءة خافتة",
+      "placeholder_title": "الصورة الرئيسية"
+    },
+    "policy_content": {
+      "on_this_page": "في هذه الصفحة",
+      "on_this_page_mobile": "في هذه الصفحة (الجوال)"
+    },
+    "policy_hero": {
+      "last_updated": "آخر تحديث: {{ date }}"
+    },
+    "product": {
+      "contents_manual": "دليل الاستخدام",
+      "contents_strips": "4 شرائط مغناطيسية (من L1 إلى L4)",
+      "contents_tabs": "30 زوجًا من اللاصقات",
+      "contents_tool": "أداة التثبيت المغناطيسية",
+      "faq_fall_off_answer": "لا. تستخدم اللاصقات لاصقًا بدرجة طبية من 3M، مصممًا ليثبت على البشرة لأيام لا لساعات. والشريط المغناطيسي يثبت على اللاصقات بدل أن يشدّ بشرتك، فلا شيء يرخيه وأنت تتقلّب في نومك. لاصقات جديدة كل ليلة، وثبات كامل كل ليلة.",
+      "faq_fall_off_question": "هل يسقط أثناء النوم؟",
+      "faq_snoring_answer": "إذا كان شخيرك يبدأ من انسداد الأنف، فقد يساعد. عندما يكون أنفك مفتوحًا كما يجب، يعود جسمك تلقائيًا إلى التنفس من الأنف بدل التنفس من الفم، والتنفس من الفم هو ما يسبب اهتزاز الأنسجة الرخوة الذي يقف وراء معظم الشخير.",
+      "faq_snoring_question": "هل يساعد على تقليل الشخير؟",
+      "onetime_title": "الطقم + كيس لاصقات بديلة مجاني",
+      "save_on_refills": "وفّر {{ amount }} على اللاصقات البديلة"
+    },
+    "product_refill": {
+      "biggest_saving": "· أكبر توفير",
+      "faq_fall_off_answer": "اللاصق ذو الدرجة الطبية يثبت طوال الليل، حتى لمن يتقلّبون كثيرًا في نومهم. يزن الشريط المغناطيسي أقل من 2 غرام: معظم الناس ينسون وجوده خلال دقائق.",
+      "pack_size": "حجم العبوة",
+      "pairs": "{{ pairs }} زوجًا",
+      "plan": "الخطة",
+      "pouch_note": "كل كيس يحتوي على 30 زوجًا. اختر 2 أو 3 وسيُطبَّق سعر العبوة تلقائيًا."
+    },
+    "research_book": {
+      "pages": "الصفحات",
+      "study": "الدراسة {{ n }}",
+      "study_of": "الدراسة {{ n }} من {{ total }}"
+    },
+    "returns_eligibility_gate": {
+      "attach_photo": "أرفق صورة للضرر",
+      "condition_body_html": "في حال تغيير الرأي، يجب أن يعود المنتج في عبوته الأصلية مع رقم طلبك. وإذا كان هناك تلف أو عيب، راسلنا على {{ email_link }} مع صورة وسنعالج الأمر.",
+      "condition_heading": "هذا الطلب غير مؤهل للإرجاع.",
+      "damaged_body": "راسلنا عبر البريد الإلكتروني وسنستبدله أو نرد ثمنه، وتكلفة الشحن علينا.",
+      "damaged_heading": "نأسف لأن طلبك وصل تالفًا.",
+      "damaged_subject": "Return damaged item",
+      "eligible_body": "أكمل النموذج أدناه لبدء الإرجاع. لا مشكلة إن كان المنتج مستخدمًا في حال تغيير الرأي، نحتاج فقط إلى العبوة الأصلية ورقم طلبك. تكلفة شحن الإرجاع عليك.",
+      "eligible_heading": "طلبك مؤهل للإرجاع.",
+      "eligible_refills": "ملاحظة عن اللاصقات البديلة: يمكن إرجاع الكيس غير المفتوح، لكن بعد فتحه لا يمكننا استرجاعه.",
+      "email_photo_cta": "أرسل صورة إلى فريق الدعم",
+      "include_order_number": "اذكر رقم الطلب",
+      "order_number_needed": "ستحتاج إلى رقم طلبك للمتابعة. تجده في رسالة تأكيد الطلب، ثم أجب بـ\"نعم\" أعلاه.",
+      "subject_line": "الموضوع: {{ subject }}",
+      "takes_seconds": "يستغرق حوالي 20 ثانية",
+      "window_body_html": "ضمان 30 ليلة لدينا يغطي أول 30 ليلة بعد التسليم، لذا هذا الطلب غير مؤهل للإرجاع. إذا كنت تعتقد أن هناك عيبًا، راسلنا على {{ email_link }} وسنتحقق من الأمر.",
+      "window_heading": "هذا الطلب خارج فترة الإرجاع."
+    },
+    "returns_form": {
+      "country": "الدولة",
+      "found_different_solution": "وجدت حلًا آخر",
+      "full_name": "الاسم الكامل",
+      "ksa": "السعودية",
+      "no_longer_needed": "لم أعد بحاجة إليه",
+      "reason": "السبب",
+      "return_address": "عنوان الإرجاع",
+      "return_address_note": "أرسل المرتجع إلى هذا العنوان على نفقتك، ثم أرسل النموذج أدناه لنتمكن من مطابقة طردك مع طلبك.",
+      "sealed_confirm": "أؤكد أن المنتج في عبوته الأصلية وأن لديّ إيصال الشراء.",
+      "select_country": "اختر الدولة",
+      "select_reason": "اختر السبب",
+      "submit": "إرسال طلب الإرجاع",
+      "tell_us_more": "أخبرنا بالمزيد",
+      "uae": "الإمارات",
+      "wrong_size": "المقاس غير مناسب"
+    },
+    "ugc_gallery": {
+      "video_player": "مشغّل الفيديو"
+    }
+  },
+  "snippets": {
+    "cart_drawer": {
+      "close_cart": "إغلاق السلة",
+      "complete_your_kit": "أكمل طقمك",
+      "continue_shopping": "متابعة التسوق",
+      "empty": "سلتك فارغة",
+      "empty_cta": "اطلب طقمك",
+      "secure_checkout": "دفع آمن",
+      "shopping_cart": "سلة التسوق",
+      "subtotal": "المجموع الفرعي",
+      "your_cart": "سلتك"
+    },
+    "meta_tags": {
+      "page_html": "&ndash; الصفحة {{ page }}",
+      "tagged_html": "&ndash; الوسم \"{{ tags }}\""
+    },
+    "product_card": {
+      "one_time_purchase": "شراء لمرة واحدة",
+      "or_buy_one_time": "أو اشترِ لمرة واحدة",
+      "save": "وفّر {{ amount }}",
+      "subscribe_body": "تجديد تلقائي بلا عناء وبسعر مخفّض، يصلك حسب جدولك",
+      "subscribe_save": "اشترك ووفّر"
+    },
+    "product_gallery": {
+      "kind_external_video": "فيديو خارجي",
+      "kind_image": "صورة",
+      "kind_model": "نموذج ثلاثي الأبعاد",
+      "kind_video": "فيديو",
+      "show_media": "عرض {{ kind }} {{ index }}"
+    },
+    "step_rail": {
+      "label": "خطوات الاستخدام",
+      "step1_sub": "أربعة شرائط في كل طقم",
+      "step1_title": "اختر مقاسك",
+      "step2_sub": "نظيفة وجافة",
+      "step2_title": "حضّر بشرتك",
+      "step3_sub": "الزعانف إلى الأعلى",
+      "step3_title": "ضع اللاصقات والشريط"
+    },
+    "ugc_card": {
+      "play_video": "تشغيل الفيديو"
+    }
+  }
+}
