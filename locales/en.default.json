@@ -105,7 +105,11 @@
     "custom_reviews": {
       "next_reviews": "Next reviews",
       "previous_reviews": "Previous reviews",
-      "scroll_photos": "Scroll photos"
+      "scroll_photos": "Scroll photos",
+      "summary": {
+        "one": "{{ rating }} from {{ count }} review",
+        "other": "{{ rating }} from {{ count }} reviews"
+      }
     },
     "faq_search": {
       "no_matches": "No matches",

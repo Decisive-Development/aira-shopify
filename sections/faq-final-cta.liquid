@@ -22,7 +22,7 @@
 {%- render 'cta-banner',
 	heading: section.settings.heading,
 	body: faq_body,
-	primary_label: 'Contact support',
+	primary_label: section.settings.cta_label,
 	primary_url: '/pages/contact',
 	primary_variant: 'solid'
 -%}
@@ -32,7 +32,8 @@
 	"name": "FAQ - Final CTA",
 	"settings": [
 		{ "type": "text",     "id": "heading", "label": "Heading", "default": "Still have a question?" },
-		{ "type": "textarea", "id": "body",    "label": "Body",    "info": "The word WhatsApp becomes the click-to-WhatsApp link when a number is set in Theme settings → Support & contact.", "default": "Message us on WhatsApp for the fastest reply, or email contact@shop-aira.com and we'll get back to you within 1 to 2 business days." }
+		{ "type": "textarea", "id": "body",    "label": "Body",    "info": "The word WhatsApp becomes the click-to-WhatsApp link when a number is set in Theme settings → Support & contact.", "default": "Message us on WhatsApp for the fastest reply, or email contact@shop-aira.com and we'll get back to you within 1 to 2 business days." },
+		{ "type": "text",     "id": "cta_label", "label": "Button label", "default": "Contact support" }
 	],
 	"presets": [{ "name": "FAQ - Final CTA" }]
 }
