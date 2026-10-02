@@ -848,7 +848,7 @@
     assign cr_heading_class = 'text-title'
   endif
 -%}
-<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape }}">
+<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}">
   {%- if cr_theme == 'dark' -%}
     <div
       class="absolute inset-0 pointer-events-none"
