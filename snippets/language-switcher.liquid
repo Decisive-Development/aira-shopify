@@ -1,6 +1,7 @@
 {%- comment -%}
-  Language switcher: EN | العربية as plain submit buttons, no JS. The form posts
-  to /localization and Shopify redirects to the localised path.
+  Language switcher: English | العربية (each language's own name) as plain
+  submit buttons, no JS. The current language is orange and bold. The form
+  posts to /localization and Shopify redirects to the localised path.
   localization.available_languages lists PUBLISHED languages only, so this
   renders nothing until a second language is published.
 
@@ -37,15 +38,15 @@
         value="{{ language.iso_code }}"
         lang="{{ language.iso_code }}"
         {% if is_current %}aria-current="true"{% endif %}
-        class="text-sm {{ text_class }} transition-opacity hover:opacity-60{% if is_current %} font-bold{% endif %}"
+        class="text-sm cursor-pointer transition-opacity hover:opacity-60 {% if is_current %}font-bold text-highlight{% else %}{{ text_class }}{% endif %}"
       >
-        {%- if language.iso_code == 'en' -%}EN{%- else -%}{{ language.endonym_name }}{%- endif -%}
+        {{- language.endonym_name -}}
       </button>
       {%- unless forloop.last -%}<span aria-hidden="true" class="text-sm {{ text_class }}">|</span>{%- endunless -%}
     {%- endfor -%}
     {%- if preview -%}
       <span aria-hidden="true" class="text-sm {{ text_class }}">|</span>
-      <button type="submit" name="locale_code" value="ar" lang="ar" class="text-sm {{ text_class }} transition-opacity hover:opacity-60">العربية</button>
+      <button type="submit" name="locale_code" value="ar" lang="ar" class="text-sm cursor-pointer transition-opacity hover:opacity-60 {{ text_class }}">العربية</button>
     {%- endif -%}
   {%- endcapture -%}
   {%- if preview -%}
