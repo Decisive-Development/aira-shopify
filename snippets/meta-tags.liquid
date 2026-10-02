@@ -5,7 +5,9 @@
 {%- comment -%}
   Per-page SEO title + description are owned in code via the seo-meta snippet.
   Any page it does not map falls back to the Shopify admin "Search engine
-  listing" fields (page_title / page_description). Edit copy in seo-meta.liquid.
+  listing" fields (page_title / page_description). The wording lives in the
+  snippets.seo_meta keys of locales/en.default.json and locales/ar.json, and
+  seo-meta.liquid maps each page to its key.
 {%- endcomment -%}
 {%- capture seo_title -%}{%- render 'seo-meta', field: 'title' -%}{%- endcapture -%}
 {%- capture seo_description -%}{%- render 'seo-meta', field: 'description' -%}{%- endcapture -%}

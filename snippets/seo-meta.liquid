@@ -7,7 +7,9 @@
 
   The wording lives in locales/en.default.json (snippets.seo_meta), with the
   Arabic in locales/ar.json. The keys end in _html so t returns the text
-  unescaped and meta-tags.liquid escapes it once, as it did the literals.
+  unescaped, exactly as the old literals were: meta-tags.liquid escapes it
+  once in the meta tags and prints the <title> as it is, so an & or < in a
+  title reaches the page unescaped.
 
   Editing rules (see .claude/rules/copy.md and the SEO brief):
     - Titles <= 60 characters, descriptions <= 155.
