@@ -11,8 +11,12 @@
 @source "../sections/**/*.liquid";
 @source "../snippets/**/*.liquid";
 @source "../templates/**/*.liquid";
-/* The generated stylesheet must not feed its own next build. */
+/* The generated stylesheet must not feed its own next build, and neither may
+   the brief in the repo root or the font licences: class names quoted in a
+   brief would otherwise ship as CSS. */
 @source not "../snippets/critical-css.liquid";
+@source not "../Brief.txt";
+@source not "../licenses";
 
 /* @font-face for Satoshi and Nunito Sans lives in snippets/css-variables.liquid,
    where asset_url gives the URLs the font preloads in layout/theme.liquid use. */
@@ -36,8 +40,8 @@
   --color-teal: #50A2A7;
 
   /* Fonts */
-  --font-heading: "Satoshi", sans-serif;
-  --font-body: "Nunito Sans", sans-serif;
+  --font-heading: "Satoshi", "Almarai", system-ui, sans-serif;
+  --font-body: "Nunito Sans", "Almarai", system-ui, sans-serif;
 
   /* Font weights */
   --font-weight-semibold: 600;
@@ -761,3 +765,7 @@
   --foil-mid: color-mix(in srgb, var(--color-main) 78%, #ffffff);
   --foil-ink: var(--color-secondary);
 }
+
+/* The only Arabic on English pages is the language switcher's own label.
+   A system font there means English pages never download Almarai. */
+html:not([lang="ar"]) button[lang="ar"] { font-family: system-ui, sans-serif; }

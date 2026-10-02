@@ -56,6 +56,11 @@
     {% endcomment %}
     {{ 'satoshi-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
     {{ 'nunito-sans-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {%- comment -%} The Arabic face (Almarai) preloads on Arabic pages only; English pages never fetch it. {%- endcomment -%}
+    {%- if request.locale.iso_code == 'ar' -%}
+      {{ 'almarai-400.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+      {{ 'almarai-700.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {%- endif -%}
 
     {% # Inlined CSS variables and @font-face %}
     {% render 'css-variables' %}

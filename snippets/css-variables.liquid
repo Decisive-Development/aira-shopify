@@ -1,5 +1,5 @@
 {% style %}
-  {% # Self-hosted brand fonts. asset_url gives the versioned URL the preloads in layout/theme.liquid use, so each font is one request; a relative url() would break once the stylesheet is inlined. %}
+  {% # Self-hosted brand fonts. asset_url gives the versioned URL the preloads in layout/theme.liquid use, so each font is one request; a relative url() would break once the stylesheet is inlined. The Latin faces' unicode-range covers every character Satoshi and Nunito Sans contain and stops short of every Arabic block, so English keeps every glyph and Arabic falls through to Almarai. %}
   @font-face {
     font-family: "Satoshi";
     src: url("{{ 'satoshi-variable.woff2' | asset_url }}") format("woff2 supports variations"),
@@ -7,6 +7,7 @@
     font-weight: 300 900;
     font-style: normal;
     font-display: swap;
+    unicode-range: U+0000-03FF, U+1E00-1EFF, U+2000-22FF, U+25A0-27BF, U+F8FF, U+FB00-FB06;
   }
   @font-face {
     font-family: "Nunito Sans";
@@ -15,6 +16,24 @@
     font-weight: 200 1000;
     font-style: normal;
     font-display: swap;
+    unicode-range: U+0000-03FF, U+1E00-1EFF, U+2000-22FF, U+25A0-27BF, U+F8FF, U+FB00-FB06;
+  }
+  {% # Arabic face: Almarai (SIL Open Font License, licenses/Almarai-OFL.txt), Regular and Bold subset to the Arabic blocks. Its unicode-range keeps it unfetched until an Arabic character renders. 100-500 render Regular, 600-900 render Bold, so no weight is synthesised. %}
+  @font-face {
+    font-family: "Almarai";
+    src: url("{{ 'almarai-400.woff2' | asset_url }}") format("woff2");
+    font-weight: 100 500;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  }
+  @font-face {
+    font-family: "Almarai";
+    src: url("{{ 'almarai-700.woff2' | asset_url }}") format("woff2");
+    font-weight: 600 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
   }
 
   :root {
