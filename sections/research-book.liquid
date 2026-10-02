@@ -35,7 +35,7 @@
 				{%- endif -%}
 
 				{%- comment -%} Cover {%- endcomment -%}
-				<div class="rb-sheet" data-rb-title="{{ section.settings.cover_pager_title | escape }}" data-rb-label="Cover">
+				<div class="rb-sheet" data-rb-title="{{ section.settings.cover_pager_title | escape }}" data-rb-label="{{ section.settings.cover_pager_title | escape }}">
 					<div class="rb-face rb-face--front rb-cover">
 						<div class="rb-cover-in">
 							<img
@@ -71,7 +71,7 @@
 				</div>
 
 				{%- comment -%} Contents — rows build from the study blocks {%- endcomment -%}
-				<div class="rb-sheet" data-rb-title="{{ section.settings.toc_pager_title | escape }}" data-rb-label="Contents">
+				<div class="rb-sheet" data-rb-title="{{ section.settings.toc_pager_title | escape }}" data-rb-label="{{ section.settings.toc_pager_title | escape }}">
 					<div class="rb-face rb-face--front rb-paper">
 						<div class="rb-pg rb-toc">
 							<div class="rb-pg-head">

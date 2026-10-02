@@ -50,7 +50,7 @@
   tocNodes.forEach(function (tocEl) {
     var label = document.createElement('p');
     label.className = 'policy-toc__label';
-    label.textContent = 'On this page';
+    label.textContent = tocEl.getAttribute('data-label') || '';
     tocEl.appendChild(label);
 
     var ol = document.createElement('ol');
