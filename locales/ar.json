@@ -113,13 +113,24 @@
       "subject": "الموضوع"
     },
     "custom_reviews": {
+      "anonymous": "مجهول",
+      "go_to_slide": "الانتقال إلى الشريحة {{ n }}",
+      "helpful": "هل كان هذا مفيدًا؟",
+      "hide_details": "إخفاء تفاصيل التقييم",
       "next_reviews": "التقييمات التالية",
+      "photo_by": "صورة من {{ name }}",
       "previous_reviews": "التقييمات السابقة",
+      "review_by": "تقييم من {{ name }}",
+      "reviewed_product": "شرائط الأنف من aira",
+      "reviewing": "تقييم عن",
       "scroll_photos": "تمرير الصور",
+      "show_details": "عرض تفاصيل التقييم",
       "summary": {
         "one": "{{ rating }} من 5 · عدد التقييمات: {{ count }}",
         "other": "{{ rating }} من 5 · عدد التقييمات: {{ count }}"
-      }
+      },
+      "video_by": "فيديو من {{ name }}",
+      "video_title": "فيديو تقييم من عميل"
     },
     "faq_search": {
       "no_matches": "لا توجد نتائج مطابقة",

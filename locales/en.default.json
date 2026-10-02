@@ -113,13 +113,24 @@
       "subject": "Subject"
     },
     "custom_reviews": {
+      "anonymous": "Anonymous",
+      "go_to_slide": "Go to slide {{ n }}",
+      "helpful": "Was this helpful?",
+      "hide_details": "Hide review details",
       "next_reviews": "Next reviews",
+      "photo_by": "Photo by {{ name }}",
       "previous_reviews": "Previous reviews",
+      "review_by": "Review by {{ name }}",
+      "reviewed_product": "aira Nasal Strips",
+      "reviewing": "Reviewing",
       "scroll_photos": "Scroll photos",
+      "show_details": "Show review details",
       "summary": {
         "one": "{{ rating }} from {{ count }} review",
         "other": "{{ rating }} from {{ count }} reviews"
-      }
+      },
+      "video_by": "Video by {{ name }}",
+      "video_title": "Customer review video"
     },
     "faq_search": {
       "no_matches": "No matches",
