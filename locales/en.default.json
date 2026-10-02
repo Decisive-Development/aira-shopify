@@ -218,14 +218,20 @@
   },
   "snippets": {
     "cart_drawer": {
+      "add_failed": "That could not be added to your cart",
+      "adding": "Adding...",
       "close_cart": "Close cart",
       "complete_your_kit": "Complete your kit",
       "continue_shopping": "Continue shopping",
+      "decrease_quantity": "Decrease quantity",
       "empty": "Your cart is empty",
       "empty_cta": "Get my kit",
+      "increase_quantity": "Increase quantity",
       "secure_checkout": "Secure checkout",
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",
+      "update_failed": "Your cart could not be updated",
+      "updating": "Updating your cart",
       "your_cart": "Your cart"
     },
     "meta_tags": {
