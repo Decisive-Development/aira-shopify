@@ -132,6 +132,9 @@
       "video_by": "Video by {{ name }}",
       "video_title": "Customer review video"
     },
+    "faq_final_cta": {
+      "whatsapp_word": "WhatsApp"
+    },
     "faq_search": {
       "no_matches": "No matches",
       "search_label": "Search the FAQ"
@@ -156,6 +159,10 @@
       "tap_for_sound": "Tap for sound",
       "tutorial_video": "Tutorial video",
       "video_placeholder": "Tutorial video. Filmed in portrait."
+    },
+    "how_it_works_step": {
+      "tip_label_sleep": "Sleep:",
+      "tip_label_sport": "Sport:"
     },
     "kit_offer": {
       "placeholder_caption": "kit · contents",
