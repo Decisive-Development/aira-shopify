@@ -45,8 +45,10 @@
       {%- unless forloop.last -%}<span aria-hidden="true" class="text-sm {{ text_class }}">|</span>{%- endunless -%}
     {%- endfor -%}
     {%- if preview -%}
+      {%- assign ar_current = false -%}
+      {%- if localization.language.iso_code == 'ar' -%}{%- assign ar_current = true -%}{%- endif -%}
       <span aria-hidden="true" class="text-sm {{ text_class }}">|</span>
-      <button type="submit" name="locale_code" value="ar" lang="ar" class="text-sm cursor-pointer transition-opacity hover:opacity-60 {{ text_class }}">العربية</button>
+      <button type="submit" name="locale_code" value="ar" lang="ar" {% if ar_current %}aria-current="true" {% endif %}class="text-sm cursor-pointer transition-opacity hover:opacity-60 {% if ar_current %}font-bold text-highlight{% else %}{{ text_class }}{% endif %}">العربية</button>
     {%- endif -%}
   {%- endcapture -%}
   {%- if preview -%}
