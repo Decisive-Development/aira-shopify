@@ -134,7 +134,7 @@
 					{%- endcomment -%}
 					{%- for block in section.blocks -%}
 						{%- if block.type == 'product_faq' and block.settings.show_under_headline -%}
-							<div class="product-info-content text-copy text-base leading-relaxed mt-4" {{ block.shopify_attributes }}>{{ block.settings.answer }}</div>
+							<div class="product-info-content text-copy text-sm leading-relaxed mt-4" {{ block.shopify_attributes }}>{{ block.settings.answer }}</div>
 						{%- endif -%}
 					{%- endfor -%}
 				</div>
