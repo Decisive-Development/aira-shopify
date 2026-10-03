@@ -215,23 +215,11 @@
 								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0">{{ current_variant.price | money }}</span>
 							</div>
 							<div class="h-px bg-border"></div>
-							<ul class="flex flex-col gap-2">
-								<li class="flex items-start gap-2.5 text-sm text-copy">
-									{%- render 'icon-tick' -%}
-									{{ 'sections.product.contents_strips' | t }}
-								</li>
-								<li class="flex items-start gap-2.5 text-sm text-copy">
-									{%- render 'icon-tick' -%}
-									{{ 'sections.product.contents_tabs' | t }}
-								</li>
-								<li class="flex items-start gap-2.5 text-sm text-copy">
-									{%- render 'icon-tick' -%}
-									{{ 'sections.product.contents_tool' | t }}
-								</li>
-								<li class="flex items-start gap-2.5 text-sm text-copy">
-									{%- render 'icon-tick' -%}
-									{{ 'sections.product.contents_manual' | t }}
-								</li>
+							<ul class="list-disc ps-5 flex flex-col gap-2 text-sm text-copy">
+								<li>{{ 'sections.product.contents_strips' | t }}</li>
+								<li>{{ 'sections.product.contents_tabs' | t }}</li>
+								<li>{{ 'sections.product.contents_tool' | t }}</li>
+								<li>{{ 'sections.product.contents_manual' | t }}</li>
 							</ul>
 						{%- endcapture -%}
 						{%- if has_selling_plans -%}
