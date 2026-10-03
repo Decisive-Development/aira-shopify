@@ -108,15 +108,16 @@
      green may exist in this rule and nowhere else (CLAUDE.md §5). Box,
      shadow and z-index are Tailwind utilities on the anchor; this rule holds
      what utilities cannot: the brand green, the safe-area bottom, the lift
-     above a visible sticky bar, and the hover under reduced motion. */
+     above a visible sticky bar, and the hover under reduced motion. It sits
+     at the end side: bottom right in English, bottom left in Arabic. */
   .wa-bubble {
-    right: calc(var(--spacing) * 4);
+    inset-inline-end: calc(var(--spacing) * 4);
     bottom: calc(var(--spacing) * 4 + env(safe-area-inset-bottom));
     background-color: #25D366;
     color: var(--color-bg);
     transition: bottom 200ms ease, transform 150ms ease, filter 150ms ease, opacity 150ms ease;
     @variant lg {
-      right: calc(var(--spacing) * 6);
+      inset-inline-end: calc(var(--spacing) * 6);
       bottom: calc(var(--spacing) * 6);
     }
   }
