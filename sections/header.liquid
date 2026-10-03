@@ -48,7 +48,7 @@
 	<div class="nav-transparent {% if request.page_type == 'product' %}bg-main{% else %}pt-2{% endif %}">
 		<div class="container-contained relative flex items-center gap-4 md:gap-10 py-3" data-header-row="transparent">
 
-			{%- comment -%} Mobile: hamburger left {%- endcomment -%}
+			{%- comment -%} Mobile: hamburger at the start side {%- endcomment -%}
 			<button
 				class="md:hidden flex items-center text-white transition-opacity hover:opacity-60"
 				aria-label="{{ 'general.open_menu' | t }}"
@@ -121,8 +121,8 @@
 				</nav>
 			{%- endif -%}
 
-			{%- comment -%} Right — CTA + icons {%- endcomment -%}
-			<div class="flex items-center gap-4 ml-auto">
+			{%- comment -%} End side (right in English, left in Arabic): CTA + icons {%- endcomment -%}
+			<div class="flex items-center gap-4 ms-auto">
 
 				{%- if section.settings.cta_label != blank -%}
 					{%- render 'cta-button',
@@ -161,7 +161,7 @@
 			style="box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.4);"
 		>
 
-			{%- comment -%} Mobile: hamburger left {%- endcomment -%}
+			{%- comment -%} Mobile: hamburger at the start side {%- endcomment -%}
 			<button
 				class="md:hidden flex items-center text-main transition-opacity hover:opacity-60"
 				aria-label="{{ 'general.open_menu' | t }}"
@@ -234,8 +234,8 @@
 				</nav>
 			{%- endif -%}
 
-			{%- comment -%} Right — CTA + icons {%- endcomment -%}
-			<div class="flex items-center gap-4 ml-auto">
+			{%- comment -%} End side (right in English, left in Arabic): CTA + icons {%- endcomment -%}
+			<div class="flex items-center gap-4 ms-auto">
 
 				{%- if section.settings.cta_label != blank -%}
 					{%- render 'cta-button',
