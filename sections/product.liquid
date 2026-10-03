@@ -103,9 +103,19 @@
 					{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
 				{%- endif -%}
 
-				{%- comment -%} Title + description {%- endcomment -%}
+				{%- comment -%}
+					Title + description. With a headline set, the headline takes the large
+					line and the product name sits under it at half the size. The product
+					name stays the h1 either way (AIRA_SEO_Meta_Plan.md).
+				{%- endcomment -%}
 				<div>
-					<h1 class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ section.settings.hero_heading | default: product.title }}</h1>
+					{%- assign product_name = section.settings.hero_heading | default: product.title -%}
+					{%- if section.settings.headline != blank -%}
+						<p class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ section.settings.headline }}</p>
+						<h1 class="font-heading font-semibold text-lg md:text-2xl text-title leading-tight mt-2">{{ product_name }}</h1>
+					{%- else -%}
+						<h1 class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ product_name }}</h1>
+					{%- endif -%}
 					{%- if section.settings.product_subtitle != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
 					{%- elsif product.description != blank -%}
@@ -490,9 +500,15 @@
 		},
 		{
 			"type": "text",
+			"id": "headline",
+			"label": "Headline",
+			"info": "Large line above the product name. Leave blank to show the product name at full size."
+		},
+		{
+			"type": "text",
 			"id": "hero_heading",
-			"label": "Heading override",
-			"info": "Leave blank to use the product title"
+			"label": "Product name",
+			"info": "Leave blank to use the product title. Shown at half size when a headline is set."
 		},
 		{
 			"type": "header",
