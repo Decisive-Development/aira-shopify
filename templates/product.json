@@ -63,6 +63,7 @@
         "info_2": {
           "type": "product_faq",
           "settings": {
+            "show_under_headline": true,
             "question": "BENEFITS",
             "answer": "<ul><li>Instantly wider nostrils</li><li>Quieter snoring from night one</li><li>Stays on all night, even in Gulf heat</li><li>Stronger than disposable strips</li><li>Reusable, with a 30-night guarantee</li></ul>"
           }

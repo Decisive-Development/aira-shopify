@@ -53,6 +53,7 @@
     "close_video": "Close video",
     "email": "Email",
     "free_shipping": "Free shipping to the UAE and Saudi Arabia.",
+    "free_shipping_short": "Free shipping",
     "limited": "Limited",
     "n_of_total": "{{ n }} of {{ total }}",
     "next": "Next",

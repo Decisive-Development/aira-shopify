@@ -53,6 +53,7 @@
     "close_video": "إغلاق الفيديو",
     "email": "البريد الإلكتروني",
     "free_shipping": "شحن مجاني إلى الإمارات والسعودية.",
+    "free_shipping_short": "شحن مجاني",
     "limited": "محدود",
     "n_of_total": "{{ n }} من {{ total }}",
     "next": "التالي",

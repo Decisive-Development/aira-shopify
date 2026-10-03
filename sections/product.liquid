@@ -109,15 +109,15 @@
 
 				{%- comment -%}
 					Title + description. With a headline set, the headline takes the large
-					line (32px on phones, Tom 2026-10-03) and the product name sits under it
-					at half the size from md up; on phones the name is screen-reader only. The product
-					name stays the h1 either way (AIRA_SEO_Meta_Plan.md).
+					line (32px on phones) and the product name is screen-reader only (Tom,
+					2026-10-03). The product name stays the h1 either way
+					(AIRA_SEO_Meta_Plan.md).
 				{%- endcomment -%}
 				<div>
 					{%- assign product_name = section.settings.hero_heading | default: product.title -%}
 					{%- if section.settings.headline != blank -%}
 						<p class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ section.settings.headline }}</p>
-						<h1 class="font-heading font-semibold text-lg md:text-2xl text-title leading-tight mt-2 max-md:sr-only">{{ product_name }}</h1>
+						<h1 class="sr-only">{{ product_name }}</h1>
 					{%- else -%}
 						<h1 class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ product_name }}</h1>
 					{%- endif -%}
@@ -126,6 +126,17 @@
 					{%- elsif product.description != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ product.description }}</p>
 					{%- endif -%}
+
+					{%- comment -%}
+						Info blocks ticked "Show under the headline" print their answer here
+						as an open list (no title, no dropdown). The script below adds the
+						tick icons, as it does for the dropdown lists.
+					{%- endcomment -%}
+					{%- for block in section.blocks -%}
+						{%- if block.type == 'product_faq' and block.settings.show_under_headline -%}
+							<div class="product-info-content text-copy text-base leading-relaxed mt-4" {{ block.shopify_attributes }}>{{ block.settings.answer }}</div>
+						{%- endif -%}
+					{%- endfor -%}
 				</div>
 
 				<form action="{{ routes.cart_add_url }}" method="post" class="flex flex-col gap-5"{% if gift_variant %} data-gift-variant-id="{{ gift_variant.id }}"{% endif %}>
@@ -322,6 +333,7 @@
 				{%- if faq_blocks.size > 0 -%}
 					<div class="flex flex-col gap-0 mt-2 [&>:last-child]:border-b-0">
 						{%- for block in faq_blocks -%}
+							{%- if block.settings.show_under_headline -%}{%- continue -%}{%- endif -%}
 							<div class="border-b border-border" {{ block.shopify_attributes }}>
 								<button
 									type="button"
@@ -383,14 +395,17 @@
 		endif
 		assign sticky_label = 'general.add_to_cart' | t
 	-%}
-	{%- render 'cta-button',
-		label: sticky_label,
-		variant: 'shop',
-		element: 'button',
-		disabled: sticky_disabled,
-		attributes: 'data-sticky-atc',
-		extra_classes: 'shrink-0 disabled:opacity-40 disabled:cursor-not-allowed'
-	-%}
+	<div class="flex flex-col items-center gap-1 shrink-0">
+		{%- render 'cta-button',
+			label: sticky_label,
+			variant: 'shop',
+			element: 'button',
+			disabled: sticky_disabled,
+			attributes: 'data-sticky-atc',
+			extra_classes: 'disabled:opacity-40 disabled:cursor-not-allowed'
+		-%}
+		<span class="text-xs font-semibold text-main leading-tight">{{ 'general.free_shipping_short' | t }}</span>
+	</div>
 </div>
 
 <script>
@@ -479,13 +494,6 @@
 		});
 	}
 
-	/* ── Auto-open first accordion (Benefits) ── */
-	if (faqToggles.length > 0) {
-		var firstBtn = faqToggles[0];
-		firstBtn.setAttribute('aria-expanded', 'true');
-		firstBtn.nextElementSibling.style.maxHeight = 'none';
-	}
-
 	/* ── Sticky mobile bar ── */
 	if (stickyBar && addBtn) {
 		var observer = new IntersectionObserver(function (entries) {
@@ -523,13 +531,13 @@
 			"type": "text",
 			"id": "headline",
 			"label": "Headline",
-			"info": "Large line above the product name. Leave blank to show the product name at full size."
+			"info": "Large line at the top of the buy box. Leave blank to show the product name there instead."
 		},
 		{
 			"type": "text",
 			"id": "hero_heading",
 			"label": "Product name",
-			"info": "Leave blank to use the product title. Shown at half size when a headline is set."
+			"info": "Leave blank to use the product title. When a headline is set this is not shown on the page, only read by search engines and screen readers; the sticky mobile bar still shows it."
 		},
 		{
 			"type": "header",
@@ -746,6 +754,13 @@
 					"id": "answer",
 					"label": "Answer",
 					"default": "<p>Answer goes here.</p>"
+				},
+				{
+					"type": "checkbox",
+					"id": "show_under_headline",
+					"label": "Show under the headline",
+					"info": "Prints the answer as an open list under the subheadline, without its title, instead of as a dropdown.",
+					"default": false
 				}
 			]
 		}
