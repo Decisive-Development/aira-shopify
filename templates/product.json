@@ -460,12 +460,12 @@
   },
   "order": [
     "main",
-    "before_after_slider",
-    "benefits_grid",
-    "social_proof",
-    "benefits_slider",
     "ugc_gallery",
     "custom_reviews",
+    "benefits_grid",
+    "before_after_slider",
+    "social_proof",
+    "benefits_slider",
     "faq",
     "final_cta"
   ]
