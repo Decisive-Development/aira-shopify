@@ -879,15 +879,21 @@
       <div class="flex-1 bg-bg rounded-2xl h-72"></div>
     </div>
 
+    {%- comment -%}
+      Left-to-right island (CLAUDE.md rule 9): customer reviews are written in
+      English and the slide maths is physical, so the carousel, its arrows and
+      the photo strip keep their English order on Arabic pages. The heading,
+      the summary and the write CTA above and below still follow the page.
+    {%- endcomment -%}
     <!-- ── Carousel container (hidden until JS populates it) ── -->
-    <div class="reviews-carousel overflow-hidden relative" style="display:none;">
+    <div class="reviews-carousel overflow-hidden relative" dir="ltr" style="display:none;">
       <div class="reviews-track flex gap-6">
         <!-- Review cards injected here by JS -->
       </div>
     </div>
 
     <!-- ── Navigation ── -->
-    <div class="reviews-nav flex items-center justify-center gap-4 mt-8" style="display:none;">
+    <div class="reviews-nav flex items-center justify-center gap-4 mt-8" dir="ltr" style="display:none;">
       <button class="reviews-arrow reviews-arrow--prev w-10 h-10 rounded-full bg-bg border border-main/8 shadow-sm flex items-center justify-center cursor-pointer text-main transition-shadow duration-200 hover:shadow-md disabled:opacity-30 disabled:cursor-default hidden md:flex" aria-label="{{ 'sections.custom_reviews.previous_reviews' | t }}">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
@@ -900,7 +906,7 @@
     </div>
 
     <!-- Photo Strip -->
-    <div class="reviews-photo-strip" style="display:none;">
+    <div class="reviews-photo-strip" dir="ltr" style="display:none;">
       <div class="reviews-photo-strip__track">
         <!-- JS populates with clickable thumbnails -->
       </div>
