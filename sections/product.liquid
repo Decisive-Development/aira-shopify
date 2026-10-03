@@ -109,14 +109,15 @@
 
 				{%- comment -%}
 					Title + description. With a headline set, the headline takes the large
-					line and the product name sits under it at half the size. The product
+					line (32px on phones, Tom 2026-10-03) and the product name sits under it
+					at half the size from md up; on phones the name is screen-reader only. The product
 					name stays the h1 either way (AIRA_SEO_Meta_Plan.md).
 				{%- endcomment -%}
 				<div>
 					{%- assign product_name = section.settings.hero_heading | default: product.title -%}
 					{%- if section.settings.headline != blank -%}
-						<p class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ section.settings.headline }}</p>
-						<h1 class="font-heading font-semibold text-lg md:text-2xl text-title leading-tight mt-2">{{ product_name }}</h1>
+						<p class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ section.settings.headline }}</p>
+						<h1 class="font-heading font-semibold text-lg md:text-2xl text-title leading-tight mt-2 max-md:sr-only">{{ product_name }}</h1>
 					{%- else -%}
 						<h1 class="font-heading font-semibold text-4xl md:text-5xl text-title leading-tight">{{ product_name }}</h1>
 					{%- endif -%}
