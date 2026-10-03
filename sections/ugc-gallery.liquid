@@ -57,14 +57,20 @@
 		-%}
 
 		{%- comment -%} Image row {%- endcomment -%}
-		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track>
+		{%- comment -%}
+			The scroll maths is physical, so the track and its progress bar stay left
+			to right on Arabic pages (CLAUDE.md rule 9). Each card takes the page
+			direction back through card_dir.
+		{%- endcomment -%}
+		{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
+		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track dir="ltr">
 			{%- for entry in ugc_entries -%}
-				{%- render 'ugc-card', entry: entry -%}
+				{%- render 'ugc-card', entry: entry, card_dir: ugc_card_dir -%}
 			{%- endfor -%}
 		</div>
 
 		{%- comment -%} Scroll progress bar {%- endcomment -%}
-		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full {{ progress_track }} overflow-hidden">
+		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full {{ progress_track }} overflow-hidden" dir="ltr">
 			<div class="h-full rounded-full {{ progress_fill }} transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
 		</div>
 

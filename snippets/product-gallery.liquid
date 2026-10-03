@@ -158,7 +158,8 @@
 		iOS Safari needs to clip a scrolling child to the border radius.
 	{%- endcomment -%}
 	<div class="relative isolate aspect-square rounded-2xl overflow-hidden bg-bg-muted">
-		<div class="absolute inset-0 flex overflow-x-auto overscroll-x-contain snap-x snap-mandatory scrollbar-none" data-gallery-track>
+		{%- comment -%} The scroll maths in assets/product-gallery.js is physical, so the track stays left to right on Arabic pages. {%- endcomment -%}
+		<div class="absolute inset-0 flex overflow-x-auto overscroll-x-contain snap-x snap-mandatory scrollbar-none" data-gallery-track dir="ltr">
 			{{ items_html }}
 		</div>
 		{%- if badge != blank -%}

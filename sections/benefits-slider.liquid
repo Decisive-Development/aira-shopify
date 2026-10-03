@@ -213,11 +213,17 @@
 		aria-label="{{ section.settings.heading | escape }}"
 	>
 
-		<ul class="bs-track scrollbar-none" data-bs-track role="list">
+		{%- comment -%}
+			The scroll maths is physical, so the track and its arrows stay left to
+			right on Arabic pages (CLAUDE.md rule 9). Each card takes the page
+			direction back, so Arabic text inside it still reads right to left.
+		{%- endcomment -%}
+		<ul class="bs-track scrollbar-none" data-bs-track role="list" dir="ltr">
 			{%- for block in section.blocks -%}
 				<li
 					class="bs-card"
 					data-bs-card
+					dir="{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}"
 					role="group"
 					aria-roledescription="{{ 'general.slide' | t }}"
 					aria-label="{{ 'general.n_of_total' | t: n: forloop.index, total: section.blocks.size }}"
@@ -274,7 +280,7 @@
 			{%- endfor -%}
 		</ul>
 
-		<div class="bs-controls" aria-hidden="true">
+		<div class="bs-controls" aria-hidden="true" dir="ltr">
 			<button class="bs-btn" type="button" aria-label="{{ 'general.previous' | t }}" data-bs-prev disabled>
 				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M15 19l-7-7 7-7"/>
