@@ -978,8 +978,15 @@
 
   </div>
 
-  <!-- Review Lightbox Modal -->
-  <div id="review-lightbox" class="review-lightbox" style="display:none;">
+  {%- comment -%}
+    Review pop-up. Part of the same left-to-right island as the carousel: the
+    review it shows is written in English, so on Arabic pages it keeps the
+    English layout (media first, text reading left to right) and sentence
+    punctuation stays at the right end. The translated labels inside it are
+    wrapped in <bdi> by the script, so an Arabic label still reads in its own
+    order.
+  {%- endcomment -%}
+  <div id="review-lightbox" class="review-lightbox" dir="ltr" style="display:none;">
     <div class="review-lightbox__backdrop"></div>
     <div class="review-lightbox__dialog">
       <div class="review-lightbox__media"></div>
@@ -1864,7 +1871,7 @@
     detailsReviewer.innerHTML =
       '<div>' +
         '<div class="review-lightbox__reviewer-name">' + review.name + '</div>' +
-        '<div class="review-lightbox__reviewer-product">' + escA(T.i18nReviewing) + '<br><strong>' + escA(T.i18nReviewedProduct) + '</strong></div>' +
+        '<div class="review-lightbox__reviewer-product"><bdi>' + escA(T.i18nReviewing) + '</bdi><br><strong><bdi>' + escA(T.i18nReviewedProduct) + '</bdi></strong></div>' +
       '</div>';
 
     // ── Populate stars + date ──
@@ -1879,7 +1886,7 @@
     detailsBody.textContent = review.body || '';
 
     // ── Helpful ──
-    detailsHelpful.textContent = T.i18nHelpful;
+    detailsHelpful.innerHTML = '<bdi>' + escA(T.i18nHelpful) + '</bdi>';
 
     // ── Show ──
     lightbox.style.display = 'flex';
