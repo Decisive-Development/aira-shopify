@@ -254,7 +254,7 @@
 						── Launch offer block ──
 						Informational only. Prices come from the variants, never typed.
 					{%- endcomment -%}
-					{%- if section.settings.offer_enabled -%}
+					{%- if section.settings.offer_enabled and section.settings.offer_box -%}
 						{%- comment -%}
 							The accent is highlighted inside the headline rather than sitting on
 							its own line above it, the same `replace` the footer uses on "10% off
@@ -631,6 +631,13 @@
 			"label": "Offer is running",
 			"default": true,
 			"info": "Hides the note and stops the free gift being added to the cart when unticked."
+		},
+		{
+			"type": "checkbox",
+			"id": "offer_box",
+			"label": "Show the offer box",
+			"info": "The box above the add to cart button. Untick to hide the box only; the free gift and the sticky bar text keep running.",
+			"default": true
 		},
 		{
 			"type": "text",

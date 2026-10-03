@@ -109,6 +109,7 @@
         "plan_compare_price": "",
         "plan_price": "",
         "offer_enabled": true,
+        "offer_box": false,
         "offer_eyebrow": "LAUNCH OFFER",
         "offer_headline": "Free refill pouch in every kit.\n60 pairs for the price of 30.",
         "offer_headline_accent": "Free refill pouch",
