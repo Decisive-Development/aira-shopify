@@ -241,6 +241,23 @@
         "type": "product",
         "id": "reviews_product",
         "label": "Product to show reviews for (shared)"
+      },
+      {
+        "type": "header",
+        "content": "Rating shown across the site"
+      },
+      {
+        "type": "text",
+        "id": "reviews_rating_value",
+        "label": "Rating",
+        "default": "4.9",
+        "info": "Every Reviews section shows this rating and the review count below under its heading, instead of the Judge.me figures. Clear both to go back to the Judge.me figures. A section can still set its own."
+      },
+      {
+        "type": "number",
+        "id": "reviews_rating_count",
+        "label": "Review count",
+        "default": 82
       }
     ]
   }
