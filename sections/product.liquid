@@ -96,8 +96,12 @@
 			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
 			<div class="flex flex-col gap-5">
 
-				{%- comment -%} Guarantee badge — stars reclaim this slot once a review system goes live {%- endcomment -%}
-				{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
+				{%- comment -%} Rating line when a rating and a review count are set, otherwise the guarantee badge {%- endcomment -%}
+				{%- if section.settings.rating_value != blank and section.settings.rating_count != blank -%}
+					{%- render 'rating-summary', rating: section.settings.rating_value, count: section.settings.rating_count -%}
+				{%- else -%}
+					{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
+				{%- endif -%}
 
 				{%- comment -%} Title + description {%- endcomment -%}
 				<div>
@@ -513,6 +517,21 @@
 		},
 		{
 			"type": "header",
+			"content": "Rating above title"
+		},
+		{
+			"type": "text",
+			"id": "rating_value",
+			"label": "Rating",
+			"info": "For example 4.9. Fill in the rating and the review count to show stars and the rating line above the title, in place of the badge below."
+		},
+		{
+			"type": "number",
+			"id": "rating_count",
+			"label": "Review count"
+		},
+		{
+			"type": "header",
 			"content": "Badge above title"
 		},
 		{
@@ -520,7 +539,7 @@
 			"id": "pretitle_badge",
 			"label": "Badge text",
 			"default": "30-night guarantee",
-			"info": "Small pill above the product title. Leave blank to hide."
+			"info": "Small pill above the product title. Leave blank to hide. Not shown while a rating and review count are set above."
 		},
 		{
 			"type": "header",

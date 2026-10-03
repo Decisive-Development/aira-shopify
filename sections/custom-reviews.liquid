@@ -848,7 +848,7 @@
     assign cr_heading_class = 'text-title'
   endif
 -%}
-<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}" data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-i18n-anonymous="{{ 'sections.custom_reviews.anonymous' | t | escape_once }}" data-i18n-go-to-slide="{{ 'sections.custom_reviews.go_to_slide' | t: n: '%N%' | escape_once }}" data-i18n-show-details="{{ 'sections.custom_reviews.show_details' | t | escape_once }}" data-i18n-hide-details="{{ 'sections.custom_reviews.hide_details' | t | escape_once }}" data-i18n-helpful="{{ 'sections.custom_reviews.helpful' | t | escape_once }}" data-i18n-review-by="{{ 'sections.custom_reviews.review_by' | t: name: '%NAME%' | escape_once }}" data-i18n-photo-by="{{ 'sections.custom_reviews.photo_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-by="{{ 'sections.custom_reviews.video_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-title="{{ 'sections.custom_reviews.video_title' | t | escape_once }}" data-i18n-reviewing="{{ 'sections.custom_reviews.reviewing' | t | escape_once }}" data-i18n-reviewed-product="{{ 'sections.custom_reviews.reviewed_product' | t | escape_once }}" data-i18n-watch-again="{{ 'sections.custom_reviews.watch_again' | t | escape_once }}">
+<section class="{{ cr_bg_class }} relative overflow-hidden" data-custom-reviews data-theme="{{ cr_theme }}" data-product-id="{{ review_product.id }}"{% if section.settings.rating_value != blank and section.settings.rating_count != blank %} data-summary-rating="{{ section.settings.rating_value | escape }}" data-summary-count="{{ section.settings.rating_count }}"{% endif %} data-summary-one="{{ 'sections.custom_reviews.summary.one' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-summary-other="{{ 'sections.custom_reviews.summary.other' | t: rating: '%RATING%', count: '%COUNT%' | escape_once }}" data-i18n-anonymous="{{ 'sections.custom_reviews.anonymous' | t | escape_once }}" data-i18n-go-to-slide="{{ 'sections.custom_reviews.go_to_slide' | t: n: '%N%' | escape_once }}" data-i18n-show-details="{{ 'sections.custom_reviews.show_details' | t | escape_once }}" data-i18n-hide-details="{{ 'sections.custom_reviews.hide_details' | t | escape_once }}" data-i18n-helpful="{{ 'sections.custom_reviews.helpful' | t | escape_once }}" data-i18n-review-by="{{ 'sections.custom_reviews.review_by' | t: name: '%NAME%' | escape_once }}" data-i18n-photo-by="{{ 'sections.custom_reviews.photo_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-by="{{ 'sections.custom_reviews.video_by' | t: name: '%NAME%' | escape_once }}" data-i18n-video-title="{{ 'sections.custom_reviews.video_title' | t | escape_once }}" data-i18n-reviewing="{{ 'sections.custom_reviews.reviewing' | t | escape_once }}" data-i18n-reviewed-product="{{ 'sections.custom_reviews.reviewed_product' | t | escape_once }}" data-i18n-watch-again="{{ 'sections.custom_reviews.watch_again' | t | escape_once }}">
   {%- if cr_theme == 'dark' -%}
     <div
       class="absolute inset-0 pointer-events-none"
@@ -1380,6 +1380,15 @@
 
     if (!avgRating && allReviews.length > 0) {
       avgRating = allReviews.reduce(function(sum, r) { return sum + r.stars; }, 0) / allReviews.length;
+    }
+
+    // The section can state the rating and the count itself (settings "Rating"
+    // and "Review count"), for reviews held outside Judge.me. Both must be set.
+    var statedRating = parseFloat(section.getAttribute('data-summary-rating'));
+    var statedCount = parseInt(section.getAttribute('data-summary-count'), 10);
+    if (statedRating > 0 && statedCount > 0) {
+      avgRating = statedRating;
+      totalCount = statedCount;
     }
 
     storedReviews = allReviews;
@@ -1969,6 +1978,21 @@
         { "value": "dark",  "label": "Dark (navy)" }
       ],
       "default": "light"
+    },
+    {
+      "type": "header",
+      "content": "Summary line"
+    },
+    {
+      "type": "text",
+      "id": "rating_value",
+      "label": "Rating",
+      "info": "For example 4.9. Fill in the rating and the review count to show them under the heading instead of the Judge.me figures. Leave both blank to use the Judge.me figures."
+    },
+    {
+      "type": "number",
+      "id": "rating_count",
+      "label": "Review count"
     },
     {
       "type": "header",

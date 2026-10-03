@@ -98,6 +98,8 @@
         "hero_heading": "The aira kit",
         "product_subtitle": "A proven breathing aid, aira's magnetic nasal strip kit. Four strip sizes, fresh skin-safe tabs, and your nose held open all night. Less snoring. Deeper sleep. Train harder. Recover faster. Fit guaranteed.",
         "image_badge": "",
+        "rating_value": "4.9",
+        "rating_count": 82,
         "pretitle_badge": "30-night guarantee",
         "plan_title": "The aira kit + monthly refills",
         "plan_badge": "Best value",
@@ -375,6 +377,8 @@
         "heading": "Trusted by better breathers.",
         "cta_text": "Write a review",
         "theme": "light",
+        "rating_value": "4.9",
+        "rating_count": 82,
         "product": "aira-kit"
       }
     },
