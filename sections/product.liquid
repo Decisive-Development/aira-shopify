@@ -276,6 +276,9 @@
 						</div>
 					{%- endif -%}
 
+					{%- comment -%} ── Reassurance micro-copy, above the button (Tom, 2026-10-03) ── {%- endcomment -%}
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
+
 					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
 						assign atc_label = 'general.sold_out' | t
@@ -296,9 +299,6 @@
 						attributes: 'data-add-to-cart',
 						extra_classes: 'disabled:opacity-40 disabled:cursor-not-allowed'
 					-%}
-
-					{%- comment -%} ── Reassurance micro-copy ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
 
 				</form>
 
