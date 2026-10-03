@@ -6,6 +6,9 @@
 	Params:
 		rating — the average rating, e.g. "4.9".
 		count  — the number of reviews, e.g. 82.
+		url    — optional. Makes the line a link, e.g. "#reviews" to jump to the
+		         reviews section. The ::before halo widens the tap target to 44px
+		         on coarse pointers without changing the line box.
 {%- endcomment -%}
 {%- if rating != blank and count != blank -%}
 	{%- liquid
@@ -13,12 +16,17 @@
 		assign rating_display = rating_number | round: 1
 		assign filled_stars = rating_number | round
 	-%}
-	<div class="flex items-center gap-2">
+	{%- capture rating_inner -%}
 		<span class="flex gap-0.5" aria-hidden="true">
 			{%- for i in (1..5) -%}
 				<svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="{% if i <= filled_stars %}var(--color-star){% else %}none{% endif %}" stroke="var(--color-star)" stroke-width="0.5"/></svg>
 			{%- endfor -%}
 		</span>
-		<span class="text-sm text-copy">{{ 'sections.custom_reviews.summary' | t: count: count, rating: rating_display }}</span>
-	</div>
+		<span>{{ 'sections.custom_reviews.summary' | t: count: count, rating: rating_display }}</span>
+	{%- endcapture -%}
+	{%- if url != blank -%}
+		<a href="{{ url }}" class="relative self-start flex items-center gap-2 text-sm text-copy hover:text-highlight transition-colors pointer-coarse:before:absolute pointer-coarse:before:inset-x-0 pointer-coarse:before:-inset-y-3" data-rating-link>{{ rating_inner }}</a>
+	{%- else -%}
+		<div class="flex items-center gap-2 text-sm text-copy">{{ rating_inner }}</div>
+	{%- endif -%}
 {%- endif -%}
