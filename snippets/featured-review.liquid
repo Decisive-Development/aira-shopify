@@ -7,13 +7,19 @@
 	The card is inline-size contained so the one-line quote never widens the
 	buy box column on phones (a nowrap line otherwise counts in full towards
 	the grid column's minimum width).
+	The product section's script slides the card through the other posted
+	Judge.me reviews (the data custom-reviews embeds on the page): it swaps the
+	media, quote and name inside data-review-track, using the initial template
+	for a reviewer without a photo. Without JS or with reduced motion the card
+	stays on this review.
 	Params:
-		quote    — one sentence from the review, without quote marks.
-		name     — the reviewer's first name.
-		image    — optional. The reviewer's photo, cropped square.
-		verified — optional. true adds "verified buyer" after the name.
-		url      — optional. Makes the card a link, e.g. "#reviews"; the product
-		           section eases that jump like the rating line (data-rating-link).
+		quote      — one sentence from the review, without quote marks.
+		name       — the reviewer's first name.
+		image      — optional. The reviewer's photo, cropped square.
+		verified   — optional. true adds "verified buyer" after the name.
+		url        — optional. Makes the card a link, e.g. "#reviews"; the product
+		             section eases that jump like the rating line (data-rating-link).
+		product_id — optional. The product whose Judge.me reviews the slider reads.
 {%- endcomment -%}
 {%- if quote != blank and name != blank -%}
 	{%- liquid
@@ -24,20 +30,23 @@
 			assign card_classes = card_classes | append: ' group transition-shadow hover:shadow-md'
 		endif
 	-%}
-	<{{ card_tag }} class="{{ card_classes }}"{% if url != blank %} href="{{ url }}" data-rating-link{% endif %}>
-		{%- if image != blank -%}
-			{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: widths: '80, 160', sizes: '5rem', class: 'w-20 min-h-20 shrink-0 self-stretch object-cover', draggable: 'false' }}
-		{%- endif -%}
-		<div class="flex-1 min-w-0 flex flex-col justify-center gap-1 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
-			<p class="font-semibold text-title text-base leading-snug truncate" dir="auto">&ldquo;{{ quote }}&rdquo;</p>
-			<p class="text-sm text-copy truncate">
-				{%- if verified -%}
-					{{ 'sections.featured_review.verified_buyer' | t: name: name }}
-				{%- else -%}
-					{{ name }}
-				{%- endif -%}
-			</p>
+	<{{ card_tag }} class="{{ card_classes }}"{% if url != blank %} href="{{ url }}" data-rating-link{% endif %} data-featured-review data-product-id="{{ product_id }}" data-review-name="{{ name | escape }}" data-verified-template="{{ 'sections.featured_review.verified_buyer' | t: name: '%NAME%' | escape }}">
+		<div class="flex-1 min-w-0 flex items-stretch transition-[transform,opacity] duration-300 ease-out" data-review-track>
+			{%- if image != blank -%}
+				{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: widths: '80, 160', sizes: '5rem', class: 'w-20 h-20 shrink-0 self-center object-cover', draggable: 'false' }}
+			{%- endif -%}
+			<div class="flex-1 min-w-0 flex flex-col justify-center gap-1 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
+				<p class="font-semibold text-title text-base leading-snug truncate" dir="auto" data-review-quote>&ldquo;{{ quote }}&rdquo;</p>
+				<p class="text-sm text-copy truncate" data-review-name>
+					{%- if verified -%}
+						{{ 'sections.featured_review.verified_buyer' | t: name: name }}
+					{%- else -%}
+						{{ name }}
+					{%- endif -%}
+				</p>
+			</div>
 		</div>
+		<template data-review-initial-template><span class="w-20 h-20 shrink-0 self-center flex items-center justify-center bg-tertiary-light/30 font-heading font-bold text-main text-xl" aria-hidden="true" data-review-media></span></template>
 		{%- if url != blank -%}
 			<span class="flex items-center ps-2 pe-4 text-copy transition-colors group-hover:text-highlight" aria-hidden="true">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="rtl:-scale-x-100"><path d="M9 18l6-6-6-6"/></svg>

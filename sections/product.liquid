@@ -84,11 +84,11 @@
 </style>
 
 
-<section class="bg-bg pt-20 md:pt-24 pb-8 md:pb-12" data-product-section>
+<section class="bg-bg pt-17.5 md:pt-24 pb-8 md:pb-12" data-product-section>
 	<div class="container-contained">
 
 		{%- comment -%} ══════ Buy box ══════ {%- endcomment -%}
-		<div class="grid lg:grid-cols-2 gap-5 lg:gap-14">
+		<div class="grid lg:grid-cols-2 gap-3 lg:gap-14">
 
 			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
 			{%- render 'product-gallery', media: product.media, badge: section.settings.image_badge -%}
@@ -115,7 +115,8 @@
 						name: section.settings.review_name,
 						image: section.settings.review_image,
 						verified: section.settings.review_verified,
-						url: '#reviews'
+						url: '#reviews',
+						product_id: product.id
 					-%}
 				</div>
 
@@ -432,6 +433,103 @@
 			target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		});
 	});
+
+	/* ── Featured review: slide through the posted reviews ──
+	   The custom-reviews section embeds Judge.me's widget data for this
+	   product (jdgm.data.reviewWidget), so the card can show the other reviews
+	   after the one set in the editor: every few seconds the media, quote and
+	   name slide out towards the start and the next review slides in from the
+	   end (mirrored under dir=rtl). Reviews rated under four stars, anonymous
+	   ones and the one already on the card are skipped. Reduced motion keeps
+	   the card still, as does hovering it or a hidden tab. */
+	var featured = section.querySelector('[data-featured-review]');
+	if (featured && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		var track = featured.querySelector('[data-review-track]');
+		var quoteEl = featured.querySelector('[data-review-quote]');
+		var nameEl = featured.querySelector('[data-review-name]');
+		var initialTemplate = featured.querySelector('[data-review-initial-template]');
+		var verifiedTemplate = featured.getAttribute('data-verified-template') || '%NAME%';
+		var slideOut = document.documentElement.dir === 'rtl' ? 100 : -100;
+
+		function postedReviews() {
+			var all = window.jdgm && jdgm.data && jdgm.data.reviewWidget;
+			if (!all) return [];
+			var widget = all[featured.getAttribute('data-product-id')] || all[Object.keys(all)[0]];
+			if (!widget || !widget.reviews) return [];
+			var own = (featured.getAttribute('data-review-name') || '').toLowerCase();
+			return widget.reviews.filter(function (r) {
+				return Number(r.rating) >= 4 && r.reviewer_name && !r.is_anonymous_reviewer && (r.title || r.body) && r.reviewer_name.toLowerCase() !== own;
+			}).map(function (r) {
+				var pic = r.pictures_urls && r.pictures_urls[0];
+				return {
+					quote: r.title || (r.body || '').split(/[.!?]/)[0],
+					name: r.reviewer_name,
+					initial: r.reviewer_initial || r.reviewer_name.charAt(0),
+					image: pic ? (pic.small || pic.original) : '',
+					verified: !!r.verified_buyer
+				};
+			});
+		}
+
+		function show(slide) {
+			var oldMedia = track.querySelector('[data-review-media]');
+			var media = null;
+			if (slide.node) {
+				media = slide.node;
+			} else if (slide.image) {
+				media = document.createElement('img');
+				media.className = 'w-20 h-20 shrink-0 self-center object-cover';
+				media.width = 160; media.height = 160; media.alt = ''; media.draggable = false; media.loading = 'lazy';
+				media.setAttribute('data-review-media', '');
+				media.src = slide.image;
+			} else if (initialTemplate) {
+				media = initialTemplate.content.firstElementChild.cloneNode(true);
+				media.textContent = slide.initial;
+			}
+			if (oldMedia) oldMedia.remove();
+			if (media) track.insertBefore(media, track.firstChild);
+			if (slide.quoteHTML != null) {
+				quoteEl.innerHTML = slide.quoteHTML;
+				nameEl.innerHTML = slide.nameHTML;
+			} else {
+				quoteEl.textContent = '\u201C' + slide.quote + '\u201D';
+				nameEl.textContent = slide.verified ? verifiedTemplate.split('%NAME%').join(slide.name) : slide.name;
+			}
+		}
+
+		function startSlider() {
+			var others = postedReviews();
+			if (!others.length) return;
+			var firstMedia = track.querySelector('img');
+			if (firstMedia) firstMedia.setAttribute('data-review-media', '');
+			var first = { node: firstMedia, quoteHTML: quoteEl.innerHTML, nameHTML: nameEl.innerHTML };
+			var slides = [first].concat(others);
+			var index = 0;
+			setInterval(function () {
+				if (document.hidden || featured.matches(':hover') || featured.matches(':focus-within')) return;
+				var next = (index + 1) % slides.length;
+				track.addEventListener('transitionend', function settle() {
+					track.removeEventListener('transitionend', settle);
+					track.style.transition = 'none';
+					show(slides[next]);
+					index = next;
+					track.style.transform = 'translateX(' + (-slideOut) + '%)';
+					void track.offsetWidth;
+					track.style.transition = '';
+					track.style.transform = '';
+					track.style.opacity = '';
+				});
+				track.style.transform = 'translateX(' + slideOut + '%)';
+				track.style.opacity = '0';
+			}, 5000);
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', startSlider);
+		} else {
+			startSlider();
+		}
+	}
 
 	/* ── Selling plan toggle ── */
 	var planBtns = section.querySelectorAll('[data-plan-btn]');
