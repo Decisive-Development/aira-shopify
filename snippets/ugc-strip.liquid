@@ -152,8 +152,15 @@
 		modal.classList.add('flex');
 		modal.setAttribute('aria-hidden', 'false');
 		document.body.style.overflow = 'hidden';
+		/* iOS Safari does not run source selection on a <video> cloned out of a
+		   <template>: without load() the player opens black at 00:00. load()
+		   then play() inside the tap keeps the user gesture, so sound is allowed. */
 		var v = modalHolder.querySelector('video');
-		if (v) { v.play().catch(function () {}); }
+		if (v) {
+			v.load();
+			var p = v.play();
+			if (p && typeof p.catch === 'function') p.catch(function () {});
+		}
 	}
 
 	function closeModal() {
