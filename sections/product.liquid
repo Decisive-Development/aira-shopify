@@ -219,17 +219,36 @@
 							A button while there is a plan to toggle between, a plain
 							panel when the buy box has collapsed to one-time only.
 						{%- endcomment -%}
+						{%- comment -%}
+							While the launch offer runs (gift_variant set), the card states the
+							free pouch under the name, its worth and the struck bundle value,
+							all from the two variants' prices, never typed (Tom, 2026-10-11).
+						{%- endcomment -%}
 						{%- capture onetime_card -%}
-							<div class="flex items-center justify-between gap-4">
-								<span class="font-heading font-bold text-title text-lg leading-tight">{{ 'sections.product.onetime_title' | t }}</span>
-								<span class="font-heading font-bold text-title text-xl md:text-2xl shrink-0">{{ current_variant.price | money }}</span>
+							<div class="flex items-start justify-between gap-4">
+								<div>
+									<span class="font-heading font-bold text-title text-lg leading-tight block">{{ product_name }}</span>
+									{%- if gift_variant -%}
+										{%- assign gift_price = gift_variant.price | money -%}
+										<span class="text-highlight text-sm font-bold block mt-0.5">{{ 'sections.product.onetime_gift_line' | t: amount: gift_price }}</span>
+									{%- endif -%}
+								</div>
+								<div class="text-end shrink-0">
+									{%- if gift_variant -%}
+										{%- assign bundle_value = current_variant.price | plus: gift_variant.price -%}
+										<span class="text-highlight text-sm font-semibold line-through block">{{ bundle_value | money }}</span>
+									{%- endif -%}
+									<span class="font-heading font-bold text-title text-xl md:text-2xl block">{{ current_variant.price | money }}</span>
+								</div>
 							</div>
 							<div class="h-px bg-border"></div>
 							<ul class="list-disc ps-5 flex flex-col gap-2 text-sm text-copy">
 								<li>{{ 'sections.product.contents_strips' | t }}</li>
 								<li>{{ 'sections.product.contents_tabs' | t }}</li>
+								{%- if gift_variant -%}
+									<li class="marker:text-highlight font-bold text-title">{{ 'sections.product.contents_pouch' | t }}</li>
+								{%- endif -%}
 								<li>{{ 'sections.product.contents_tool' | t }}</li>
-								<li>{{ 'sections.product.contents_manual' | t }}</li>
 							</ul>
 						{%- endcapture -%}
 						{%- if has_selling_plans -%}
@@ -287,7 +306,7 @@
 					{%- endif -%}
 
 					{%- comment -%} ── Reassurance micro-copy, above the button (Tom, 2026-10-03) ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
+					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', variant: 'circle', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
 
 					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
@@ -350,7 +369,7 @@
 							</div>
 						{%- endfor -%}
 					</div>
-					<template data-tick-template>{%- render 'icon-tick', classes: 'bullet-icon' -%}</template>
+					<template data-tick-template>{%- render 'icon-tick', variant: 'circle', classes: 'bullet-icon' -%}</template>
 				{%- endif -%}
 
 				{%- comment -%} ── Static FAQ pairs ── {%- endcomment -%}

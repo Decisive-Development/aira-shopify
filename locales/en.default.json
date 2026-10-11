@@ -187,15 +187,15 @@
       "last_updated": "Last updated: {{ date }}"
     },
     "product": {
-      "contents_manual": "Instruction manual",
+      "contents_pouch": "Free refill pouch, 30 more pairs",
       "contents_strips": "4 magnetic strips (L1 to L4)",
-      "contents_tabs": "60 adhesive tab pairs",
-      "contents_tool": "Magnetic placement tool",
+      "contents_tabs": "30 pairs of adhesive tabs in the box",
+      "contents_tool": "Magnetic placement tool and manual",
       "faq_fall_off_answer": "No. The tabs use 3M medical-grade adhesive, made to stay on skin for days, not hours. And the magnetic strip clips onto the tabs instead of pulling on your skin, so nothing works it loose while you toss and turn. Fresh tabs each night, full strength every night.",
       "faq_fall_off_question": "Does it fall off during sleep?",
       "faq_snoring_answer": "If your snoring starts with a blocked nose, it can. When your nose is properly open, your body defaults to nasal breathing instead of mouth breathing, and it's the mouth breathing that causes the soft-tissue vibration behind most snoring.",
       "faq_snoring_question": "Will it help with my snoring?",
-      "onetime_title": "Kit + Free refill pouch",
+      "onetime_gift_line": "+ FREE refill pouch, worth {{ amount }}",
       "save_on_refills": "Save {{ amount }} on refills"
     },
     "product_refill": {
