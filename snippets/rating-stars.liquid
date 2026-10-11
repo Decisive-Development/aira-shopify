@@ -1,0 +1,18 @@
+{%- comment -%}
+	rating-stars — the five star glyphs behind every stated rating: the rating
+	line (rating-summary) and the featured review card (featured-review).
+	Decorative; the element around it carries the words.
+	Params:
+		rating — the rating, e.g. 4.9. Filled stars are the rating rounded to the
+		         nearest whole star.
+		size   — optional. Glyph size in px, default 16.
+{%- endcomment -%}
+{%- liquid
+	assign filled_stars = rating | times: 1.0 | round
+	assign star_size = size | default: 16
+-%}
+<span class="flex gap-0.5" aria-hidden="true">
+	{%- for i in (1..5) -%}
+		<svg width="{{ star_size }}" height="{{ star_size }}" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.4l-3.7 1.9.7-4.1-3-2.9 4.2-.7L7 1z" fill="{% if i <= filled_stars %}var(--color-star){% else %}none{% endif %}" stroke="var(--color-star)" stroke-width="0.5"/></svg>
+	{%- endfor -%}
+</span>
