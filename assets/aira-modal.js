@@ -94,6 +94,9 @@
       modal.classList.add('flex');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      // Read by critical.source.css to park Shopify's hCaptcha badge while a
+      // dialog is up: it sits bottom-right on top of a bottom sheet's button.
+      document.body.classList.add('aira-modal-open');
       document.addEventListener('keydown', self.trapFocus);
       self.focusCard();
       modal.dispatchEvent(new CustomEvent('aira:modal:open', { bubbles: true }));
@@ -107,6 +110,7 @@
       modal.classList.remove('flex');
       modal.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      document.body.classList.remove('aira-modal-open');
       document.removeEventListener('keydown', self.trapFocus);
       if (self.lastFocus && self.lastFocus.focus) { self.lastFocus.focus(); }
       modal.dispatchEvent(new CustomEvent('aira:modal:close', { bubbles: true }));

@@ -660,6 +660,12 @@
   .lenis.lenis-smooth iframe { pointer-events: none; }
 }
 
+/* Shopify's hCaptcha badge (#shop-hcaptcha-badge-container, fixed bottom-right,
+   z-index 9999) appears once a customer form is touched and lands on the offer
+   popup's submit button on phones. Out of the way while any theme dialog is
+   open; assets/aira-modal.js toggles the body class. Tom, 2026-10-11. */
+body.aira-modal-open #shop-hcaptcha-badge-container { display: none !important; }
+
 /* Judge.me star gold — in :root so it always emits (Tailwind @theme tree-shakes unused vars) */
 :root { --color-star: #D4A853; }
 

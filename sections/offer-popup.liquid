@@ -11,7 +11,7 @@
 
 	Three steps in one dialog:
 	  1  the forced choice: "Want 10% off your kit?" yes / no thanks
-	  2  the email, an optional "who's it for" chip row and the consent line
+	  2  the email, an optional "what's it for" chip row and the consent line
 	  3  success: the code, a copy button and the Get my kit CTA
 
 	Submission is a native full-page POST, never fetch: newsletter-form wraps
@@ -32,7 +32,7 @@
 	  localStorage.aira_popup_code       the code earned (drawer Checkout link)
 	  sessionStorage.aira_popup_shown    shown this tab session
 	  sessionStorage.aira_popup_closed_at  the exit overlay waits 60 s after this
-	  sessionStorage.aira_popup_who      the chip answer, read back on return
+	  sessionStorage.aira_popup_for      the chip answer, read back on return
 	  sessionStorage.aira_exit_shown     written by the exit overlay; blocks us
 	  sessionStorage.aira_utm            landing-page utm_content / utm_campaign
 
@@ -76,7 +76,7 @@
 
 		assign offer_code = settings.offer_discount_code | strip
 		assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
-		assign popup_tags = 'popup-v2, who:unanswered, src:' | append: popup_page | append: ', ad:none, camp:none'
+		assign popup_tags = 'popup-v2, for:unanswered, src:' | append: popup_page | append: ', ad:none, camp:none'
 		assign image_alt = 'sections.offer_popup.image_alt' | t
 		# The setting carries a literal "{{ code }}" placeholder. Replaced here, inside
 		# a tag, because an output tag would end at the placeholder's own braces.
@@ -111,25 +111,32 @@
 
 	{%- capture popup_fields -%}
 		<p class="text-sm font-semibold text-highlight" data-popup-error role="alert" hidden></p>
-		{%- if section.settings.popup_ask_who_for -%}
+		{%- if section.settings.popup_ask_what_for -%}
+			{%- comment -%}
+				Plain radios, none checked: optional means unanswered until tapped,
+				or a default would be most of the data. White chips so they read as
+				tappable fields like the email box; the chosen one turns navy.
+			{%- endcomment -%}
 			<fieldset class="m-0 min-w-0 border-0 p-0">
-				<legend class="mb-2 text-sm font-semibold text-main">{{ section.settings.who_label }}</legend>
+				<legend class="mb-2 text-sm font-semibold text-main">{{ section.settings.what_label }}</legend>
 				<div class="flex flex-wrap gap-2">
-					{%- assign who_values = 'me,partner,other' | split: ',' -%}
-					{%- for who in who_values -%}
+					{%- assign for_values = 'snoring,sleep,training,nose' | split: ',' -%}
+					{%- for what in for_values -%}
 						{%- liquid
-							case who
-								when 'me'
-									assign who_label = section.settings.who_me
-								when 'partner'
-									assign who_label = section.settings.who_partner
+							case what
+								when 'snoring'
+									assign for_label = section.settings.for_snoring
+								when 'sleep'
+									assign for_label = section.settings.for_sleep
+								when 'training'
+									assign for_label = section.settings.for_training
 								else
-									assign who_label = section.settings.who_other
+									assign for_label = section.settings.for_nose
 							endcase
 						-%}
 						<label class="cursor-pointer">
-							<input type="radio" name="popup_who" value="{{ who }}" class="peer sr-only">
-							<span class="inline-block rounded-full border border-main/30 px-4 py-2 text-sm font-semibold text-main transition-colors hover:border-main peer-checked:border-main peer-checked:bg-main peer-checked:text-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-highlight">{{ who_label }}</span>
+							<input type="radio" name="popup_for" value="{{ what }}" class="peer sr-only">
+							<span class="inline-block rounded-full border border-main/30 bg-bg px-4 py-2 text-sm font-semibold text-main transition-colors hover:border-main peer-checked:border-main peer-checked:bg-main peer-checked:text-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-highlight">{{ for_label }}</span>
 						</label>
 					{%- endfor -%}
 				</div>
@@ -268,7 +275,7 @@
 	var UNTIL_KEY = 'aira_popup_until';
 	var SHOWN_KEY = 'aira_popup_shown';
 	var CLOSED_KEY = 'aira_popup_closed_at';
-	var WHO_KEY = 'aira_popup_who';
+	var FOR_KEY = 'aira_popup_for';
 	var EXIT_KEY = 'aira_exit_shown';
 	var CLOSE_BUTTON_DELAY = 4000; /* step 1 shows its X after this; "No thanks" and Esc are always there */
 	var RETRY_MS = 2000;           /* another overlay was open at fire time: try again */
@@ -423,14 +430,14 @@
 			});
 		}
 		form.addEventListener('submit', function () {
-			/* who:<answer> goes into contact[tags] here; ad:/camp: are filled by
+			/* for:<answer> goes into contact[tags] here; ad:/camp: are filled by
 			   snippets/signup-offer.liquid on the same event. Klaviyo reads the
 			   tags as the profile's Shopify Tags. */
-			var checked = form.querySelector('input[name="popup_who"]:checked');
-			var who = checked ? checked.value : 'unanswered';
+			var checked = form.querySelector('input[name="popup_for"]:checked');
+			var what = checked ? checked.value : 'unanswered';
 			var tags = form.querySelector('input[name="contact[tags]"]');
-			if (tags) { tags.value = tags.value.replace(/\bwho:[^,]*/, 'who:' + who); }
-			write(session(), WHO_KEY, who);
+			if (tags) { tags.value = tags.value.replace(/\bfor:[^,]*/, 'for:' + what); }
+			write(session(), FOR_KEY, what);
 		});
 	}
 
@@ -537,7 +544,7 @@
 				write(session(), SHOWN_KEY, '1');
 				var u = utm();
 				publish('aira_popup_submit', {
-					who_for: read(session(), WHO_KEY) || 'unanswered',
+					what_for: read(session(), FOR_KEY) || 'unanswered',
 					page: page,
 					utm_content: u.ad,
 					utm_campaign: u.camp
@@ -733,41 +740,47 @@
 		},
 		{
 			"type": "checkbox",
-			"id": "popup_ask_who_for",
-			"label": "Ask who the kit is for",
-			"info": "Optional chips, not required. The answer is saved as a customer tag only.",
+			"id": "popup_ask_what_for",
+			"label": "Ask what the kit is for",
+			"info": "Optional chips, none preselected, not required. The answer is saved as the customer tag for:snoring, for:sleep, for:training or for:nose.",
 			"default": true
 		},
 		{
 			"type": "text",
-			"id": "who_label",
+			"id": "what_label",
 			"label": "Question",
-			"default": "Who's it for?"
+			"default": "What's it for?"
 		},
 		{
 			"type": "text",
-			"id": "who_me",
-			"label": "Chip 1",
-			"default": "Me"
+			"id": "for_snoring",
+			"label": "Chip 1 (tag for:snoring)",
+			"default": "Snoring"
 		},
 		{
 			"type": "text",
-			"id": "who_partner",
-			"label": "Chip 2",
-			"default": "My partner"
+			"id": "for_sleep",
+			"label": "Chip 2 (tag for:sleep)",
+			"default": "Sleep"
 		},
 		{
 			"type": "text",
-			"id": "who_other",
-			"label": "Chip 3",
-			"default": "Someone else"
+			"id": "for_training",
+			"label": "Chip 3 (tag for:training)",
+			"default": "Training"
+		},
+		{
+			"type": "text",
+			"id": "for_nose",
+			"label": "Chip 4 (tag for:nose)",
+			"default": "Blocked nose"
 		},
 		{
 			"type": "textarea",
 			"id": "consent",
 			"label": "Consent line",
-			"info": "Shown above the button. Submitting is the consent; there is no tick box.",
-			"default": "You'll also get our sleep and refill emails. Unsubscribe any time."
+			"info": "Small line under the button. States the purpose the email is used for, which UAE and Saudi PDPL need. Submitting is the consent; there is no tick box.",
+			"default": "Emails from aira. Unsubscribe any time."
 		},
 		{
 			"type": "text",
