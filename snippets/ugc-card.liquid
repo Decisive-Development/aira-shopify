@@ -9,8 +9,8 @@
 	  card_dir {String}  optional. dir attribute for the card ('rtl' on Arabic
 	                     pages, the track itself is ltr).
 	  layout   {String}  optional. 'gallery' (default): a 9:16 tile with the
-	                     quote over the frame. 'compact': a 3:4 tile with the
-	                     quote and name under it, for the kit buy box.
+	                     quote over the frame. 'compact': a bare 3:4 tile, no caption, for the
+	                     kit buy box (Tom, 2026-10-11: names and copy off).
 {%- endcomment -%}
 
 {%- liquid
@@ -58,12 +58,6 @@
 			{{ m_image | image_url: width: 400 | image_tag: loading: 'lazy', decoding: 'async', class: 'absolute inset-0 w-full h-full object-cover', widths: '200, 300, 400', draggable: 'false' }}
 		{%- endif -%}
 	</div>
-	{%- if card_quote != blank -%}
-		<p class="text-title text-sm font-semibold leading-snug mt-2 line-clamp-2">&ldquo;{{ card_quote }}&rdquo;</p>
-	{%- endif -%}
-	{%- if card_name != blank -%}
-		<p class="text-copy text-xs mt-0.5">{{ card_name }}</p>
-	{%- endif -%}
 </div>
 {%- else -%}
 <div

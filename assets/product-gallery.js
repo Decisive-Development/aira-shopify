@@ -79,18 +79,27 @@
     track.addEventListener('pointerdown', release, { passive: true });
     track.addEventListener('wheel', release, { passive: true });
 
+    function goTo(idx) {
+      if (!items[idx]) return;
+      pending = idx;
+      setActive(idx);
+      track.scrollTo({
+        left: items[idx].offsetLeft,
+        behavior: reduced.matches ? 'auto' : 'smooth'
+      });
+    }
+
     thumbs.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var idx = parseInt(btn.getAttribute('data-thumb-index'), 10);
-        if (!items[idx]) return;
-        pending = idx;
-        setActive(idx);
-        track.scrollTo({
-          left: items[idx].offsetLeft,
-          behavior: reduced.matches ? 'auto' : 'smooth'
-        });
+        goTo(parseInt(btn.getAttribute('data-thumb-index'), 10));
       });
     });
+
+    /* Side chevrons: one frame back or forward, wrapping at the ends. */
+    var prevBtn = gallery.querySelector('[data-gallery-prev]');
+    var nextBtn = gallery.querySelector('[data-gallery-next]');
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo((indexInView() - 1 + items.length) % items.length); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo((indexInView() + 1) % items.length); });
 
     /* Warm-up: an item within a frame width of the scrollport gets its lazy
        image promoted to eager, which starts the request at once. The margin

@@ -235,6 +235,7 @@
 							all from the two variants' prices, never typed (Tom, 2026-10-11).
 						{%- endcomment -%}
 						{%- capture onetime_card -%}
+							<span class="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-3 py-1 rounded-full bg-main text-white text-xs font-bold">{{ 'general.free_shipping_short' | t }}</span>
 							<div class="flex items-start justify-between gap-4">
 								<div>
 									<span class="font-heading font-bold text-title text-lg leading-tight block">{{ product_name }}</span>
@@ -264,13 +265,13 @@
 						{%- if has_selling_plans -%}
 							<button
 								type="button"
-								class="plan-card flex flex-col gap-3 p-5 rounded-2xl border border-main bg-bg-soft text-left is-selected"
+								class="plan-card relative flex flex-col gap-3 p-5 rounded-2xl border border-main bg-bg-soft text-left is-selected"
 								data-plan-btn="onetime"
 							>
 								{{ onetime_card }}
 							</button>
 						{%- else -%}
-							<div class="flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg-soft shadow-sm">
+							<div class="relative flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg-soft shadow-sm">
 								{{ onetime_card }}
 							</div>
 						{%- endif -%}
@@ -315,9 +316,6 @@
 						</div>
 					{%- endif -%}
 
-					{%- comment -%} ── Reassurance micro-copy, above the button (Tom, 2026-10-03) ── {%- endcomment -%}
-					<p class="text-xs text-title flex items-center justify-center gap-1.5">{%- render 'icon-tick', variant: 'circle', classes: 'w-3.5 h-3.5 shrink-0' -%}{{ 'general.free_shipping' | t }}</p>
-
 					{%- comment -%} ── Add to cart (cta-button shop/lg) ── {%- endcomment -%}
 					{%- liquid
 						assign atc_label = 'general.sold_out' | t
@@ -341,39 +339,17 @@
 
 				</form>
 
-				{%- comment -%} ── Refill link ── {%- endcomment -%}
-				{%- if section.settings.refill_link_url != blank -%}
-					<a
-						href="{{ section.settings.refill_link_url }}"
-						class="self-center text-sm text-copy underline underline-offset-4 hover:text-highlight transition-colors"
-					>
-						{{ section.settings.refill_link_label | default: 'Already have a strip? Get refills' }}
-					</a>
-				{%- endif -%}
-
 				{%- comment -%}
 					── Community strip (Tom, 2026-10-11) ──
 					The shared UGC testimonials (the ugc_testimonial metaobject list, the
 					same entries the ugc-gallery section shows elsewhere) as compact cards
-					under the refill link, so the kit page carries them inside the buy box
-					instead of as a full section further down.
+					under the add to cart button, so the kit page carries them inside the
+					buy box instead of as a full section further down. No heading row.
 				{%- endcomment -%}
 				{%- assign ugc_entries = metaobjects.ugc_testimonial.values -%}
 				{%- if section.settings.show_ugc and ugc_entries.size > 0 -%}
-					<div class="flex flex-col gap-3 mt-2">
-						<div class="flex items-center justify-between gap-4 text-xs font-extrabold uppercase tracking-[0.08em] text-copy">
-							{%- if section.settings.ugc_eyebrow != blank -%}
-								<p class="min-w-0 truncate">{{ section.settings.ugc_eyebrow }}</p>
-							{%- endif -%}
-							{%- if settings.social_instagram_handle != blank -%}
-								{%- if settings.social_instagram_url != blank -%}
-									<a href="{{ settings.social_instagram_url }}" target="_blank" rel="noopener" class="ms-auto shrink-0 hover:text-highlight transition-colors">{{ settings.social_instagram_handle }}</a>
-								{%- else -%}
-									<p class="ms-auto shrink-0">{{ settings.social_instagram_handle }}</p>
-								{%- endif -%}
-							{%- endif -%}
-						</div>
-						{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
+					{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
+					<div class="mt-2">
 						{%- render 'ugc-strip', id: 'buy-box', entries: ugc_entries, layout: 'compact', card_dir: ugc_card_dir -%}
 					</div>
 				{%- endif -%}
@@ -903,30 +879,9 @@
 		{
 			"type": "checkbox",
 			"id": "show_ugc",
-			"label": "Show the community videos under the refill link",
+			"label": "Show the community videos under the add to cart button",
 			"default": true,
-			"info": "The shared UGC testimonials from Content, Metaobjects, UGC testimonial. The handle comes from Theme settings, Social."
-		},
-		{
-			"type": "text",
-			"id": "ugc_eyebrow",
-			"label": "Eyebrow",
-			"default": "From the aira community"
-		},
-		{
-			"type": "header",
-			"content": "Refill link"
-		},
-		{
-			"type": "text",
-			"id": "refill_link_label",
-			"label": "Link text",
-			"default": "Already have a strip? Get refills"
-		},
-		{
-			"type": "url",
-			"id": "refill_link_url",
-			"label": "Link URL"
+			"info": "The shared UGC testimonials from Content, Metaobjects, UGC testimonial."
 		}
 	],
 	"blocks": [
