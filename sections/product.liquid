@@ -88,7 +88,7 @@
 	<div class="container-contained">
 
 		{%- comment -%} ══════ Buy box ══════ {%- endcomment -%}
-		<div class="grid lg:grid-cols-2 gap-8 lg:gap-14">
+		<div class="grid lg:grid-cols-2 gap-5 lg:gap-14">
 
 			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
 			{%- render 'product-gallery', media: product.media, badge: section.settings.image_badge -%}
@@ -114,7 +114,6 @@
 						quote: section.settings.review_quote,
 						name: section.settings.review_name,
 						image: section.settings.review_image,
-						stars: section.settings.review_stars,
 						verified: section.settings.review_verified,
 						url: '#reviews'
 					-%}
@@ -587,7 +586,7 @@
 			"type": "text",
 			"id": "review_quote",
 			"label": "Quote",
-			"info": "One sentence from the review, without quote marks."
+			"info": "Shown on one line, cut with an ellipsis when longer. No quote marks."
 		},
 		{
 			"type": "text",
@@ -599,15 +598,6 @@
 			"id": "review_image",
 			"label": "Reviewer's photo",
 			"info": "Shown as a square along the start of the card. Leave empty for a card without a photo."
-		},
-		{
-			"type": "range",
-			"id": "review_stars",
-			"label": "Stars",
-			"min": 1,
-			"max": 5,
-			"step": 1,
-			"default": 5
 		},
 		{
 			"type": "checkbox",

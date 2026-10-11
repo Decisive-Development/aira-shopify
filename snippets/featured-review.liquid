@@ -1,22 +1,24 @@
 {%- comment -%}
-	featured-review — one customer review as a card: the reviewer's photo along
-	the start edge, the quote, the stars and the reviewer's name. Sits under the
-	rating line in the product buy box. Renders nothing unless a quote and a
-	name are set.
+	featured-review — one customer review as a compact card: the reviewer's
+	photo along the start edge, the quote on one line (cut with an ellipsis
+	when it is longer) and the reviewer's name under it. Sits under the rating
+	line in the product buy box, which already shows the stars. Renders nothing
+	unless a quote and a name are set.
+	The card is inline-size contained so the one-line quote never widens the
+	buy box column on phones (a nowrap line otherwise counts in full towards
+	the grid column's minimum width).
 	Params:
 		quote    — one sentence from the review, without quote marks.
 		name     — the reviewer's first name.
 		image    — optional. The reviewer's photo, cropped square.
-		stars    — optional. Filled stars, 1 to 5. Default 5.
 		verified — optional. true adds "verified buyer" after the name.
 		url      — optional. Makes the card a link, e.g. "#reviews"; the product
 		           section eases that jump like the rating line (data-rating-link).
 {%- endcomment -%}
 {%- if quote != blank and name != blank -%}
 	{%- liquid
-		assign star_count = stars | default: 5
 		assign card_tag = 'div'
-		assign card_classes = 'flex items-stretch rounded-2xl border border-border bg-cream-light shadow-sm overflow-hidden'
+		assign card_classes = 'flex items-stretch rounded-2xl border border-border bg-cream-light shadow-sm overflow-hidden contain-inline-size'
 		if url != blank
 			assign card_tag = 'a'
 			assign card_classes = card_classes | append: ' group transition-shadow hover:shadow-md'
@@ -24,19 +26,16 @@
 	-%}
 	<{{ card_tag }} class="{{ card_classes }}"{% if url != blank %} href="{{ url }}" data-rating-link{% endif %}>
 		{%- if image != blank -%}
-			{{ image | image_url: width: 224, height: 224, crop: 'center' | image_tag: widths: '112, 224', sizes: '7rem', class: 'w-24 md:w-28 min-h-24 md:min-h-28 shrink-0 self-stretch object-cover', draggable: 'false' }}
+			{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: widths: '80, 160', sizes: '5rem', class: 'w-20 min-h-20 shrink-0 self-stretch object-cover', draggable: 'false' }}
 		{%- endif -%}
-		<div class="flex-1 min-w-0 flex flex-col justify-center gap-2 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
-			<p class="font-semibold text-title text-sm md:text-base leading-snug" dir="auto">&ldquo;{{ quote }}&rdquo;</p>
-			<p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-copy">
-				{%- render 'rating-stars', rating: star_count, size: 14 -%}
-				<span>
-					{%- if verified -%}
-						{{ 'sections.featured_review.verified_buyer' | t: name: name }}
-					{%- else -%}
-						{{ name }}
-					{%- endif -%}
-				</span>
+		<div class="flex-1 min-w-0 flex flex-col justify-center gap-1 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
+			<p class="font-semibold text-title text-base leading-snug truncate" dir="auto">&ldquo;{{ quote }}&rdquo;</p>
+			<p class="text-sm text-copy truncate">
+				{%- if verified -%}
+					{{ 'sections.featured_review.verified_buyer' | t: name: name }}
+				{%- else -%}
+					{{ name }}
+				{%- endif -%}
 			</p>
 		</div>
 		{%- if url != blank -%}
