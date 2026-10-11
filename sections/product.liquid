@@ -437,7 +437,8 @@
 	   after the one set in the editor: every few seconds the media, quote and
 	   name slide out towards the start and the next review slides in from the
 	   end (mirrored under dir=rtl). Reviews rated under four stars, anonymous
-	   ones, video reviews and the one already on the card are skipped. Reduced motion keeps
+	   ones, video reviews, reviews without a photo and the one already on the
+	   card are skipped. Reduced motion keeps
 	   the card still, as does hovering it or a hidden tab. */
 	var featured = section.querySelector('[data-featured-review]');
 	if (featured && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -456,7 +457,8 @@
 			var own = (featured.getAttribute('data-review-name') || '').toLowerCase();
 			return widget.reviews.filter(function (r) {
 				var hasVideo = (r.video_external_ids && r.video_external_ids.length) || (r.media_platform_hosted_video_infos && r.media_platform_hosted_video_infos.length);
-				return Number(r.rating) >= 4 && r.reviewer_name && !r.is_anonymous_reviewer && (r.title || r.body) && !hasVideo && r.reviewer_name.toLowerCase() !== own;
+				var hasPhoto = r.pictures_urls && r.pictures_urls.length;
+				return Number(r.rating) >= 4 && r.reviewer_name && !r.is_anonymous_reviewer && (r.title || r.body) && hasPhoto && !hasVideo && r.reviewer_name.toLowerCase() !== own;
 			}).map(function (r) {
 				var pic = r.pictures_urls && r.pictures_urls[0];
 				return {
