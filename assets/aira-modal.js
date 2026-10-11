@@ -4,14 +4,16 @@
   // The one modal behaviour in the theme. Any element carrying [data-modal]
   // with an id gets open/close, a focus trap, Escape, backdrop dismissal and a
   // scroll lock — so a section only owns *when* its dialog opens, never the
-  // plumbing. Extracted from sections/newsletter-popup.liquid when the scratch
-  // offer popup needed the same shell (CLAUDE.md hard rules 1 and 4).
+  // plumbing. Extracted from sections/newsletter-popup.liquid when the offer
+  // popup needed the same shell (CLAUDE.md hard rules 1 and 4).
   //
   // Contract, all set in snippets/modal-dialog.liquid:
   //   [data-modal][id]        the fixed backdrop; hidden <-> flex is the toggle
   //   [data-modal-card]       the panel; the focus trap scopes to this
   //   [data-modal-close]      any number of dismiss buttons
   //   [data-modal-autofocus]  optional; what takes focus on open
+  //   [data-modal-handle]     optional; the bottom sheet's drag handle, a
+  //                           downward drag past DRAG_CLOSE px closes
   //
   // Events fired on the modal element, so sections can react without reaching
   // in: aira:modal:open and aira:modal:close, both bubbling.
@@ -24,6 +26,8 @@
   // input:not([disabled]) and cannot take focus, so leaving them in put an
   // unfocusable node at the end of the ring and the trap stopped holding.
   var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  var DRAG_CLOSE = 80;
 
   var registry = {};
   var openId = null;
@@ -40,9 +44,10 @@
     };
 
     // A dialog can hold a branch that is temporarily inert or hidden — the
-    // scratch popup covers its email form until the foil comes off. Those
-    // elements match FOCUSABLE but cannot take focus, so a raw query puts an
-    // unfocusable node at the boundary and the trap silently stops holding.
+    // offer popup shows one step at a time and hides its close button for a
+    // moment. Those elements match FOCUSABLE but cannot take focus, so a raw
+    // query puts an unfocusable node at the boundary and the trap silently
+    // stops holding.
     function reachable(el) {
       return !!el && !el.closest('[inert]') && !el.closest('[hidden]');
     }
@@ -115,6 +120,26 @@
       if (e.target === modal) { self.close(); }
     });
 
+    // Bottom sheet: dragging the handle down closes, the way phone sheets
+    // dismiss. Pointer Events cover touch and mouse in one path.
+    var handle = card.querySelector('[data-modal-handle]');
+    if (handle) {
+      var dragFrom = null;
+      handle.addEventListener('pointerdown', function (e) {
+        dragFrom = e.clientY;
+        if (handle.setPointerCapture) { handle.setPointerCapture(e.pointerId); }
+      });
+      handle.addEventListener('pointermove', function (e) {
+        if (dragFrom === null) return;
+        if (e.clientY - dragFrom > DRAG_CLOSE) {
+          dragFrom = null;
+          self.close();
+        }
+      });
+      handle.addEventListener('pointerup', function () { dragFrom = null; });
+      handle.addEventListener('pointercancel', function () { dragFrom = null; });
+    }
+
     return self;
   }
 
@@ -158,15 +183,21 @@
     open: function (id) { if (registry[id]) { registry[id].open(); } },
     close: function (id) { if (registry[id]) { registry[id].close(); } },
     isOpen: function (id) { return !!(registry[id] && registry[id].isOpen); },
-    // Four overlays predate this file and each locks the body its own way:
-    // cart-drawer and ugc-gallery set the inline style, how-it-works-hero uses
-    // .video-modal-open, custom-reviews uses .lightbox-open. Read all three
-    // signals so a timed popup never surfaces on top of one of them.
+    // The other overlays predate this file and each shows "open" its own way:
+    // cart-drawer and ugc-gallery lock the body with the inline style,
+    // how-it-works-hero uses .video-modal-open, custom-reviews uses
+    // .lightbox-open, the header's mobile menu toggles .menu-open, and the
+    // Judge.me write-review modal is app markup that is simply displayed.
+    // Read every signal so a timed popup never surfaces on top of one.
     isAnyOpen: function () {
       if (openId) return true;
       if (document.body.style.overflow === 'hidden') return true;
-      return document.body.classList.contains('video-modal-open')
-        || document.body.classList.contains('lightbox-open');
+      if (document.body.classList.contains('video-modal-open')
+        || document.body.classList.contains('lightbox-open')) return true;
+      if (document.querySelector('[data-cart-drawer].cart-drawer-open')) return true;
+      if (document.querySelector('[data-mobile-menu].menu-open')) return true;
+      var jdgm = document.querySelector('.jdgm-write-review-modal, .jdgm-review-widget-modal');
+      return !!(jdgm && jdgm.offsetParent !== null);
     }
   };
 })();

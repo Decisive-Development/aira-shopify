@@ -175,6 +175,13 @@
       "placeholder_caption": "kit · contents",
       "placeholder_title": "Product photograph"
     },
+    "offer_popup": {
+      "copied": "Copied",
+      "copy": "Copy",
+      "error_email": "Check your email address.",
+      "image_alt": "The aira kit, laid out",
+      "keep_browsing": "Keep browsing"
+    },
     "our_story_hero": {
       "placeholder_caption": "lifestyle · dim-lit",
       "placeholder_title": "Hero photograph"
@@ -272,6 +279,9 @@
     "meta_tags": {
       "page_html": "&ndash; Page {{ page }}",
       "tagged_html": "&ndash; tagged \"{{ tags }}\""
+    },
+    "newsletter_form": {
+      "success_default": "Check your inbox. Your code is on its way."
     },
     "product_card": {
       "one_time_purchase": "One-time purchase",

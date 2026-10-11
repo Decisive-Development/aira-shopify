@@ -13,37 +13,63 @@
 	  id                {String}  element id, also the airaModal key       (required)
 	  body              {String}  card contents, pre-captured               (required)
 	  labelledby        {String}  id of the heading that names the dialog
+	  variant           {String}  'card' (default) | 'sheet'
+	                              sheet: full-width bottom sheet on phones with a
+	                              drag handle, a centred card from `sm` up
 	  card_classes      {String}  replaces the default card box classes
 	  backdrop_classes  {String}  replaces the default backdrop classes
 	  close_label       {String}  aria-label on the dismiss button   (default: 'Close')
+	  attributes        {String}  raw extra attributes for the dialog root (data-*)
 
 	Liquid snippets cannot take block content, so `body` arrives as a captured
 	string — same approach as `footer_newsletter_body` in sections/footer.liquid.
 
 	`data-lenis-prevent` on the card is required: Lenis otherwise scrolls the
 	page behind an open dialog instead of the dialog's own overflow.
+
+	The close button is a 44px target (h-11 w-11) with an 18px glyph: the
+	minimum pointer target every dialog in the theme shares.
 {%- endcomment -%}
 
 {%- liquid
-	assign md_backdrop = backdrop_classes | default: 'bg-main/55'
-	assign md_card = card_classes | default: 'w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl'
+	assign md_variant = variant | default: 'card'
+	assign md_backdrop = backdrop_classes | default: 'bg-main/60'
+	if md_variant == 'sheet'
+		assign md_root = 'items-end sm:items-center p-0 sm:p-6'
+		assign md_card_default = 'w-full sm:max-w-120 max-h-[88vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl bg-secondary px-5 pt-3 pb-6 sm:p-8 shadow-2xl'
+	else
+		assign md_root = 'items-center p-6'
+		assign md_card_default = 'w-full max-w-md rounded-2xl bg-secondary p-6 sm:p-8 shadow-2xl'
+	endif
+	assign md_card = card_classes | default: md_card_default
 	assign md_close_default = 'general.close' | t
 	assign md_close_label = close_label | default: md_close_default
 -%}
 
 <div
 	id="{{ id }}"
-	class="fixed inset-0 z-100 hidden items-center justify-center overflow-y-auto p-6 {{ md_backdrop }}"
+	class="fixed inset-0 z-100 hidden justify-center overflow-y-auto {{ md_root }} {{ md_backdrop }}"
 	data-modal
 	role="dialog"
 	aria-modal="true"
 	aria-hidden="true"
 	{% if labelledby != blank %}aria-labelledby="{{ labelledby }}"{% endif %}
+	{{ attributes }}
 >
 	<div class="relative {{ md_card }}" data-modal-card data-lenis-prevent>
+		{%- if md_variant == 'sheet' -%}
+			{%- comment -%}
+				Drag handle, phones only. aira-modal.js reads [data-modal-handle]: a
+				downward drag past the threshold closes the sheet. Decorative to
+				assistive tech; the close button and Escape are the named paths.
+			{%- endcomment -%}
+			<div class="mx-auto -mt-1 mb-2 flex h-6 w-20 touch-none items-center justify-center sm:hidden" data-modal-handle aria-hidden="true">
+				<span class="block h-1 w-10 rounded-full bg-main/20"></span>
+			</div>
+		{%- endif -%}
 		<button
 			type="button"
-			class="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-main/6 text-main transition-opacity hover:opacity-60 cursor-pointer"
+			class="absolute top-3 end-3 flex h-11 w-11 items-center justify-center rounded-full bg-main/6 text-main transition-opacity hover:opacity-60 cursor-pointer"
 			data-modal-close
 			aria-label="{{ md_close_label }}"
 		>

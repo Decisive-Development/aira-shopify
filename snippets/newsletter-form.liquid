@@ -2,7 +2,7 @@
 	Newsletter form — the one email-capture form in the theme.
 
 	Wraps Shopify's `customer` form (which is what creates the subscriber that
-	Klaviyo syncs server-side). Used by the footer and by the newsletter popup;
+	Klaviyo syncs server-side). Used by the footer and by both popups;
 	do not hand-roll another one.
 
 	Parameters:
@@ -18,12 +18,25 @@
 	  button_variant {String}  cta-button variant for the submit         (default: 'solid')
 	  layout         {String}  'inline' (footer) | 'stacked' (popup)     (default: 'inline')
 	  surface        {String}  'light' | 'dark' — passed to cta-button   (default: 'light')
+	  fields_html    {String}  optional extra markup between the email field and
+	                           the submit (the offer popup's chips and its
+	                           client-side error line)
+	  consent_text   {String}  optional consent line rendered above the submit
 	  show_states    {Boolean} render success/error blocks               (default: false)
 	  success_text   {String}  copy for the success block
 	  success_heading {String} optional Satoshi line above success_text
+	  success_html   {String}  optional markup rendered after success_text inside
+	                           the success block (the offer popup's step 3)
 	  success_icon   {Boolean} teal check circle above the success block (default: false)
 	  success_classes {String} extra classes on the success block (e.g. 'text-center')
-	  attributes     {String}  raw extra attributes for the <form>
+	  offer_code     {String}  discount code this signup earns. Rendered ONLY on
+	                           the success block, as data-offer-code, so it never
+	                           sits in the page source before a post succeeds.
+	                           snippets/signup-offer.liquid reads it on the
+	                           redirect and applies it to the checkout.
+	  offer_days     {Number}  how long the popup stays away after this signup
+	                           (data-offer-days, default 30)
+	  attributes     {String}  raw extra attributes for the email <input>
 
 	NOTE on `show_states`: `posted_successfully?` and `form.errors` are
 	page-global — every `{% form 'customer' %}` on the page reports them after
@@ -34,6 +47,10 @@
 	below the fold) — never remove one in JS, there is no form behind it to
 	restore. A stray error block in the non-posting form IS removed by the
 	section scripts, via [data-newsletter-error].
+
+	Submission is a native full-page POST, never fetch: Shopify injects an
+	invisible captcha into the customer form and may route the post through
+	/challenge. The redirect comes back as ?customer_posted=true#<form_id>.
 {%- endcomment -%}
 
 {%- liquid
@@ -44,6 +61,7 @@
 	assign nf_surface     = surface      | default: 'light'
 	assign nf_variant     = button_variant | default: 'solid'
 	assign nf_heading_classes = heading_classes | default: 'text-base font-semibold mb-2 text-main'
+	assign nf_offer_days  = offer_days | default: 30
 
 	if nf_layout == 'stacked'
 		assign nf_wrap_classes  = 'flex flex-col gap-3'
@@ -91,7 +109,14 @@
 			out of the tab order, so no keyboard user can land on it and need a
 			focus ring. Without it the programmatic focus paints a heavy box.
 		{%- endcomment -%}
-		<div class="rounded-xl bg-bg p-5 text-sm text-copy focus:outline-none {{ success_classes }}" data-newsletter-success data-modal-autofocus role="status" tabindex="-1">
+		<div
+			class="rounded-xl bg-bg p-5 text-sm text-copy focus:outline-none {{ success_classes }}"
+			data-newsletter-success
+			data-modal-autofocus
+			role="status"
+			tabindex="-1"
+			{% if offer_code != blank %}data-offer-code="{{ offer_code | strip | escape }}" data-offer-days="{{ nf_offer_days }}"{% endif %}
+		>
 			{%- if success_icon -%}
 				<span class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal/12 text-teal" aria-hidden="true">
 					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -100,9 +125,14 @@
 				</span>
 			{%- endif -%}
 			{%- if success_heading != blank -%}
-				<p class="font-heading text-2xl leading-tight text-main mb-2">{{ success_heading }}</p>
+				<p class="font-heading font-bold text-2xl leading-tight text-main mb-2">{{ success_heading }}</p>
 			{%- endif -%}
-			{{ success_text | default: "Check your inbox. Your code is on its way." }}
+			{%- if success_text != blank -%}
+				{{ success_text }}
+			{%- elsif success_html == blank -%}
+				{{ 'snippets.newsletter_form.success_default' | t }}
+			{%- endif -%}
+			{{ success_html }}
 		</div>
 	{%- else -%}
 
@@ -117,6 +147,7 @@
 			<input
 				id="{{ form_id }}-email"
 				type="email"
+				inputmode="email"
 				name="contact[email]"
 				placeholder="{{ nf_placeholder }}"
 				autocomplete="email"
@@ -124,6 +155,10 @@
 				class="{{ nf_input_classes }} rounded-xl px-4 py-3 text-sm text-main bg-white border border-main focus:outline-2 focus:outline-offset-2 focus:outline-highlight"
 				{{ attributes }}
 			>
+			{{ fields_html }}
+			{%- if consent_text != blank -%}
+				<p class="text-sm leading-relaxed text-copy">{{ consent_text }}</p>
+			{%- endif -%}
 			{%- render 'cta-button',
 				label: nf_label,
 				element: 'button',
