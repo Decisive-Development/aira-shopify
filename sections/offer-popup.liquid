@@ -1,219 +1,508 @@
 {%- comment -%}
-	Scratch offer popup — site-wide email capture for the launch offer.
+	Offer popup — the first-visit 10% off signup (popup v2, Tom's brief of
+	11 Oct 2026). Replaces the September launch popup and its reveal-card
+	gift mechanic in place; nothing of that mechanic remains.
 
-	Rendered from layout/theme.liquid as a static section, so it exists on every
-	page while staying editable in the theme editor. Separate from
-	sections/newsletter-popup.liquid on purpose: that one is the printed QR
-	insert's own popup and only opens on demand, this one chases
-	first orders and opens on a timer or exit intent, once per visitor. In
-	the theme editor it opens when the section is selected and closes when it
-	is deselected; the timer and exit intent are storefront only.
+	Rendered from layout/theme.liquid as a static section, so it stays editable
+	in the theme editor, but it only renders on the homepage and the kit page,
+	in English until the Arabic strings exist, and never for a logged-in
+	customer who has ordered. The QR insert's own popup is the separate
+	sections/newsletter-popup.liquid and is not touched.
 
-	COPY NOTE (2026-09-04, Tom's call). The scratch card reveals the free
-	pouch itself, so nothing above the card names it: named up front, the
-	reveal would reveal nothing. The pouch is a Buy X Get Y automatic offer
-	(see the launch offer block in sections/product.liquid) added to any kit
-	order, email or not, and the theme sends nothing itself: the email that
-	follows the sign-up is a Klaviyo flow outside the theme.
-
-	Three stacked layers inside the card:
-	  base    the shared newsletter-form, present in the served HTML
-	  middle  the reveal panel, hidden until the foil is scratched off
-	  top     the foil canvas, injected by JS only
-
-	Once the foil is gone the panel stays: it settles into the flow above the
-	form so the reveal is still there to read while the visitor types. An
-	earlier version faded it out after 1.4s, which was gone before anyone had
-	read it (Tom, 2026-09-07).
-
-	So with JS off there is no foil and no panel, just a working form. That is
-	the progressive enhancement requirement met by construction.
+	Three steps in one dialog:
+	  1  the forced choice: "Want 10% off your kit?" yes / no thanks
+	  2  the email, an optional "who's it for" chip row and the consent line
+	  3  success: the code, a copy button and the Get my kit CTA
 
 	Submission is a native full-page POST, never fetch: newsletter-form wraps
 	{% form 'customer' %}, which is what creates the subscriber Klaviyo syncs,
-	and Shopify injects an invisible captcha into it. The success state comes
-	back on the redirect (?customer_posted=true#offer-popup) and the popup
-	reopens itself showing it, with the scratch layers skipped.
+	and Shopify injects an invisible captcha into it (it may detour through
+	/challenge). The redirect comes back as ?customer_posted=true#offer-popup
+	and this section reopens straight at step 3, which is the form's
+	server-rendered success state. That is also why the discount code only
+	ever appears in the HTML after a successful post (brief §7).
+
+	Applying the code (GET /discount/<code>, the 30-day suppression and the
+	remembered code the cart drawer reads) is snippets/signup-offer.liquid,
+	driven by data-offer-code on the success block, so the footer signup gets
+	the identical step. This script owns timing, steps, tags and analytics.
+
+	Storage (all reads and writes wrapped in try/catch):
+	  localStorage.aira_popup_until      do not arm before this time
+	  localStorage.aira_popup_code       the code earned (drawer Checkout link)
+	  sessionStorage.aira_popup_shown    shown this tab session
+	  sessionStorage.aira_popup_closed_at  the exit overlay waits 60 s after this
+	  sessionStorage.aira_popup_who      the chip answer, read back on return
+	  sessionStorage.aira_exit_shown     written by the exit overlay; blocks us
+	  sessionStorage.aira_utm            landing-page utm_content / utm_campaign
+
+	Test switches: ?popup=now opens at once, ?popup=off never opens. Both are
+	moot while the enable switch is off, because nothing renders.
 {%- endcomment -%}
 
 {%- liquid
-	assign delay_ms = section.settings.trigger_delay | times: 1000
+	assign popup_page = ''
+	if template.name == 'index'
+		assign popup_page = 'index'
+	elsif template.name == 'product' and product.handle == 'aira-kit'
+		assign popup_page = 'product'
+	endif
+
+	assign popup_on = section.settings.popup_enabled
+	if request.design_mode
+		assign popup_on = true
+	endif
+	if popup_page == blank
+		assign popup_on = false
+	endif
+	if request.locale.iso_code != 'en' and section.settings.popup_enable_on_ar != true
+		assign popup_on = false
+	endif
+	if customer and customer.orders_count > 0
+		assign popup_on = false
+	endif
 -%}
 
-{%- capture scratch_offer_body -%}
-	<div class="text-center">
-		<img
-			src="{{ 'aira-logo-text-blue.svg' | asset_url }}"
-			alt="aira"
-			class="mx-auto h-4 w-auto"
-			width="77"
-			height="18"
-			loading="lazy"
-			decoding="async"
-		>
+{%- if popup_on -%}
+	{%- liquid
+		assign kit_product = all_products['aira-kit']
+		assign kit_in_cart = false
+		for item in cart.items
+			if item.product.handle == 'aira-kit'
+				assign kit_in_cart = true
+				break
+			endif
+		endfor
 
-		{%- if section.settings.eyebrow != blank -%}
-			<p class="mt-5 text-xs font-extrabold uppercase tracking-[0.16em] text-main">
-				{{ section.settings.eyebrow }}
-			</p>
-		{%- endif -%}
+		assign offer_code = settings.offer_discount_code | strip
+		assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
+		assign popup_tags = 'popup-v2, who:unanswered, src:' | append: popup_page | append: ', ad:none, camp:none'
+		assign image_alt = 'sections.offer_popup.image_alt' | t
+		# The setting carries a literal "{{ code }}" placeholder. Replaced here, inside
+		# a tag, because an output tag would end at the placeholder's own braces.
+		assign code_html = '<code class="font-mono font-bold text-main" data-popup-code>' | append: offer_code | append: '</code>'
+		assign success_body_html = section.settings.success_body | replace: '{{ code }}', code_html
+	-%}
 
-		{%- if section.settings.heading != blank -%}
-			<h2 id="scratch-offer-heading" class="font-heading font-normal text-3xl leading-tight text-main mt-2">
-				{{ section.settings.heading }}
-			</h2>
-		{%- endif -%}
-
-		{%- if section.settings.subheading != blank -%}
-			<p class="mx-auto mt-3 max-w-80 text-sm leading-relaxed text-copy">
-				{{ section.settings.subheading }}
-			</p>
-		{%- endif -%}
-	</div>
-
-	{%- comment -%}
-		Separates the tease above from the scratch card below. An <hr> rather than
-		a spacer div, because it is a thematic break and reads as one to a screen
-		reader too.
-	{%- endcomment -%}
-	<hr class="mt-6 border-0 border-t border-main/10">
-
-	<div class="scratch-stage mt-6 rounded-xl border border-border bg-bg" data-scratch-stage>
-		{%- comment -%}
-			Sits over the form once JS takes over, then settles into the flow above
-			it when the foil is gone, which is why it comes first in source. The
-			`hidden` ATTRIBUTE, not the Tailwind class: a no-JS visitor must never
-			see a panel they cannot dismiss, and aira-modal.js reads [hidden] to
-			keep unreachable nodes out of the focus trap.
-		{%- endcomment -%}
-		<div class="scratch-layer scratch-panel" data-scratch-panel hidden>
-			<div>
-				{%- comment -%}
-					Only the word "free" is bold, the same replace trick the footer uses
-					on its own bold span. Keeps the setting plain text for the editor.
-				{%- endcomment -%}
-				<p class="font-heading text-2xl leading-tight text-main">{{ section.settings.reveal_text | replace_first: 'free', '<strong class="font-bold">free</strong>' }}</p>
-				{%- if section.settings.reveal_subline != blank -%}
-					<p class="mt-1 text-sm text-copy">{{ section.settings.reveal_subline }}</p>
-				{%- endif -%}
+	{%- capture popup_step_one -%}
+		<div data-popup-step="1" class="px-6 text-center">
+			{%- if section.settings.eyebrow != blank -%}
+				<p class="font-heading text-xs font-bold uppercase tracking-widest text-copy">{{ section.settings.eyebrow }}</p>
+			{%- endif -%}
+			<h2 id="offer-popup-heading" class="mt-2 font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.heading }}</h2>
+			{%- if section.settings.subheading != blank -%}
+				<p class="mx-auto mt-3 max-w-sm text-base leading-relaxed text-copy">{{ section.settings.subheading }}</p>
+			{%- endif -%}
+			<div class="mt-6 flex flex-col items-center gap-3">
+				{%- render 'cta-button',
+					label: section.settings.yes_label,
+					element: 'button',
+					variant: 'shop',
+					size: 'lg',
+					full_width: true,
+					attributes: 'data-popup-action="yes"'
+				-%}
+				<button type="button" class="py-2 text-sm font-semibold text-copy underline-offset-4 hover:underline cursor-pointer" data-popup-action="no">
+					{{ section.settings.no_label }}
+				</button>
 			</div>
 		</div>
+	{%- endcapture -%}
 
-		<div class="scratch-base p-5" data-scratch-base>
-			{%- comment -%}
-				The form line goes through the snippet's `heading`, not straight into
-				this section, so it clears with the fields on submit. It asks a
-				question the success state has already answered.
-			{%- endcomment -%}
-			{%- render 'newsletter-form',
-				form_id: 'offer-popup',
-				tags: 'newsletter, offer-popup',
-				heading: section.settings.form_line,
-				heading_classes: 'mb-3 text-center text-sm font-bold text-main',
-				intro_on_success: false,
-				placeholder: section.settings.placeholder,
-				button_label: section.settings.button_label,
-				button_variant: 'shop',
-				layout: 'stacked',
-				show_states: true,
-				success_icon: true,
-				success_heading: section.settings.success_heading,
-				success_text: section.settings.success_message,
-				success_classes: 'text-center'
-			-%}
+	{%- capture popup_fields -%}
+		<p class="text-sm font-semibold text-highlight" data-popup-error role="alert" hidden></p>
+		{%- if section.settings.popup_ask_who_for -%}
+			<fieldset class="m-0 min-w-0 border-0 p-0">
+				<legend class="mb-2 text-sm font-semibold text-main">{{ section.settings.who_label }}</legend>
+				<div class="flex flex-wrap gap-2">
+					{%- assign who_values = 'me,partner,other' | split: ',' -%}
+					{%- for who in who_values -%}
+						{%- liquid
+							case who
+								when 'me'
+									assign who_label = section.settings.who_me
+								when 'partner'
+									assign who_label = section.settings.who_partner
+								else
+									assign who_label = section.settings.who_other
+							endcase
+						-%}
+						<label class="cursor-pointer">
+							<input type="radio" name="popup_who" value="{{ who }}" class="peer sr-only">
+							<span class="inline-block rounded-full border border-main/30 px-4 py-2 text-sm font-semibold text-main transition-colors hover:border-main peer-checked:border-main peer-checked:bg-main peer-checked:text-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-highlight">{{ who_label }}</span>
+						</label>
+					{%- endfor -%}
+				</div>
+			</fieldset>
+		{%- endif -%}
+	{%- endcapture -%}
+
+	{%- comment -%}
+		Step 3. Only output inside the form's posted_successfully? branch, so the
+		code is never in the page before a post succeeds.
+	{%- endcomment -%}
+	{%- capture popup_success -%}
+		<p class="text-base leading-relaxed text-copy">
+			{{ success_body_html }}
+			<button
+				type="button"
+				class="ms-1 inline-flex items-center rounded-lg border border-main/30 px-2.5 py-1 align-middle text-xs font-semibold text-main transition-colors hover:border-main cursor-pointer"
+				data-popup-action="copy"
+				data-copied-label="{{ 'sections.offer_popup.copied' | t }}"
+			>{{ 'sections.offer_popup.copy' | t }}</button>
+		</p>
+		<div class="mt-5 flex flex-col items-center gap-3">
+			{%- if popup_page == 'product' -%}
+				{%- if kit_in_cart -%}
+					{%- render 'cta-button',
+						label: section.settings.cta_checkout_label,
+						url: checkout_url,
+						variant: 'shop',
+						size: 'lg',
+						full_width: true,
+						attributes: 'data-popup-action="checkout"'
+					-%}
+				{%- else -%}
+					{%- render 'cta-button',
+						label: section.settings.cta_kit_label,
+						element: 'button',
+						variant: 'shop',
+						size: 'lg',
+						full_width: true,
+						attributes: 'data-popup-action="add_to_cart"'
+					-%}
+				{%- endif -%}
+			{%- else -%}
+				{%- render 'cta-button',
+					label: section.settings.cta_kit_label,
+					url: kit_product.url,
+					variant: 'shop',
+					size: 'lg',
+					full_width: true,
+					attributes: 'data-popup-action="kit_page"'
+				-%}
+			{%- endif -%}
+			<button type="button" class="py-2 text-sm font-semibold text-copy underline-offset-4 hover:underline cursor-pointer" data-popup-action="keep" data-modal-close>
+				{{ 'sections.offer_popup.keep_browsing' | t }}
+			</button>
 		</div>
+	{%- endcapture -%}
 
-		{%- comment -%}
-			The keyboard and screen-reader path onto the same reveal, and the
-			fallback if canvas fails. Visually hidden until it is focused (see
-			.scratch-skip), so a pointer user only ever sees a clean foil while a
-			keyboard user can still get past it. Removing it outright would leave
-			the reveal mouse-only, which §6 does not allow.
+	{%- capture popup_step_two -%}
+		<div data-popup-step="2" hidden>
+			{%- if section.settings.popup_image != blank -%}
+				{%- comment -%}
+					A <template> is inert: the browser fetches nothing inside it. The
+					script clones it into the slot when step 2 opens, so the image
+					costs no request on page load (brief §7).
+				{%- endcomment -%}
+				<template data-popup-image>
+					<div class="mb-5 -mx-5 overflow-hidden sm:mx-0 sm:rounded-xl">
+						{%- render 'image', image: section.settings.popup_image, width: 600, alt: image_alt -%}
+					</div>
+				</template>
+				<div data-popup-image-slot></div>
+			{%- endif -%}
+			<div data-popup-intro class="pe-8">
+				<h2 id="offer-popup-heading-2" class="font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.step2_heading }}</h2>
+				{%- if section.settings.step2_sub != blank -%}
+					<p class="mt-2 text-base leading-relaxed text-copy">{{ section.settings.step2_sub }}</p>
+				{%- endif -%}
+			</div>
+			<div class="mt-5">
+				{%- render 'newsletter-form',
+					form_id: 'offer-popup',
+					tags: popup_tags,
+					placeholder: section.settings.placeholder,
+					button_label: section.settings.submit_label,
+					button_variant: 'shop',
+					layout: 'stacked',
+					fields_html: popup_fields,
+					consent_text: section.settings.consent,
+					show_states: true,
+					success_icon: true,
+					success_classes: 'text-center',
+					success_heading: section.settings.success_heading,
+					success_html: popup_success,
+					offer_code: offer_code,
+					offer_days: section.settings.popup_signup_days
+				-%}
+			</div>
+		</div>
+	{%- endcapture -%}
 
-			Renders after the canvas so it sits above the foil, and goes with it
-			on reveal. Deliberately NOT data-modal-autofocus: that would surface
-			it on every open. Focus falls to the close button instead, and Tab
-			reaches this next.
-		{%- endcomment -%}
-		<button type="button" class="scratch-skip" data-scratch-skip hidden>
-			{{ section.settings.skip_label }}
-		</button>
-	</div>
-{%- endcapture -%}
+	{%- capture popup_body -%}
+		{{ popup_step_one }}
+		{{ popup_step_two }}
+	{%- endcapture -%}
 
-{%- render 'modal-dialog',
-	id: 'scratch-offer-modal',
-	labelledby: 'scratch-offer-heading',
-	body: scratch_offer_body,
-	card_classes: 'w-full max-w-120 rounded-2xl bg-cream-light p-6 sm:p-8 shadow-2xl'
--%}
+	{%- capture popup_attrs -%}
+		data-popup
+		data-popup-page="{{ popup_page }}"
+		data-popup-kit-in-cart="{{ kit_in_cart }}"
+		data-popup-home-delay="{{ section.settings.popup_home_delay_seconds }}"
+		data-popup-pdp-delay="{{ section.settings.popup_pdp_delay_seconds }}"
+		data-popup-pdp-scroll="{{ section.settings.popup_pdp_scroll_percent }}"
+		data-popup-dismiss-days="{{ section.settings.popup_dismiss_days }}"
+	{%- endcapture -%}
+
+	{%- render 'modal-dialog',
+		id: 'offer-popup-modal',
+		variant: 'sheet',
+		labelledby: 'offer-popup-heading',
+		body: popup_body,
+		attributes: popup_attrs
+	-%}
 
 <script>
 (function () {
 	var section = document.querySelector('#shopify-section-{{ section.id }}');
 	if (!section) return;
 
-	var card = section.querySelector('[data-modal-card]');
-	var stage = section.querySelector('[data-scratch-stage]');
-	if (!card || !stage) return;
+	var modal = section.querySelector('[data-popup]');
+	var card = modal && modal.querySelector('[data-modal-card]');
+	if (!modal || !card) return;
 
-	var MODAL_ID = 'scratch-offer-modal';
-	var STORAGE_KEY = 'aira.offerPopup.seen';
+	var MODAL_ID = modal.id;
+	var FORM_ID = 'offer-popup';
+	var UNTIL_KEY = 'aira_popup_until';
+	var SHOWN_KEY = 'aira_popup_shown';
+	var CLOSED_KEY = 'aira_popup_closed_at';
+	var WHO_KEY = 'aira_popup_who';
+	var EXIT_KEY = 'aira_exit_shown';
+	var CLOSE_BUTTON_DELAY = 4000; /* step 1 shows its X after this; "No thanks" and Esc are always there */
+	var RETRY_MS = 2000;           /* another overlay was open at fire time: try again */
+	var MAX_RETRIES = 30;
 
-	var SETTINGS = {
-		delay: {{ delay_ms | default: 5000 }},
-		exitIntent: {% if section.settings.enable_exit_intent %}true{% else %}false{% endif %},
-		scratch: {% if section.settings.enable_scratch %}true{% else %}false{% endif %},
-		perSession: {% if section.settings.frequency == 'session' %}true{% else %}false{% endif %},
-		caption: {{ section.settings.foil_caption | default: '' | json }}
-	};
-
-	/* Brief spec, kept here so the numbers are readable in one place. */
-	var BRUSH_RADIUS = 26;
-	var SAMPLE_EVERY = 6;      /* check clearance every Nth stroke */
-	var SAMPLE_STRIDE = 64;    /* alpha samples: every 64th byte-quad */
-	var CLEARED_AT = 0.45;     /* reveal past 45% erased */
-	var FOIL_FADE = 600;
-
-	var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	var cfg = modal.dataset;
+	var page = cfg.popupPage;
 	var designMode = !!(window.Shopify && window.Shopify.designMode);
+	var steps = {
+		1: card.querySelector('[data-popup-step="1"]'),
+		2: card.querySelector('[data-popup-step="2"]')
+	};
+	var closeBtn = card.querySelector('[data-modal-close]');
+	var form = card.querySelector('#' + FORM_ID);
+	var step = 1;
+	var submitted = false;
+	var closeReason = null;
+
+	function local() { try { return window.localStorage; } catch (e) { return null; } }
+	function session() { try { return window.sessionStorage; } catch (e) { return null; } }
+	function read(store, key) { try { return store ? store.getItem(key) : null; } catch (e) { return null; } }
+	function write(store, key, value) { try { if (store) { store.setItem(key, value); } } catch (e) {} }
+
+	/* Custom pixels only; no gtag, no fbq (see the WhatsApp click in sections/footer.liquid). */
+	function publish(name, data) {
+		if (window.Shopify && Shopify.analytics && Shopify.analytics.publish) {
+			Shopify.analytics.publish(name, data);
+		}
+	}
+	function clarity(state) {
+		if (typeof window.clarity === 'function') { window.clarity('set', 'popup', state); }
+	}
+	function utm() {
+		return window.airaOffer ? window.airaOffer.utm() : { ad: 'none', camp: 'none' };
+	}
+
+	function suppressed() {
+		if (designMode) return false;
+		var until = parseInt(read(local(), UNTIL_KEY), 10);
+		return !!until && until > Date.now();
+	}
+	function suppressFor(days) {
+		if (designMode) return;
+		write(local(), UNTIL_KEY, String(Date.now() + (parseInt(days, 10) || 7) * 864e5));
+	}
+	function blocked() {
+		return suppressed() || read(session(), SHOWN_KEY) === '1' || !!read(session(), EXIT_KEY);
+	}
+
+	function showStep(n) {
+		step = n;
+		steps[1].hidden = n !== 1;
+		steps[2].hidden = n !== 2;
+		modal.setAttribute('aria-labelledby', n === 1 ? 'offer-popup-heading' : 'offer-popup-heading-2');
+	}
+
+	function loadImage() {
+		var tpl = card.querySelector('[data-popup-image]');
+		var slot = card.querySelector('[data-popup-image-slot]');
+		if (!tpl || !slot || slot.firstChild) return;
+		slot.appendChild(tpl.content.cloneNode(true));
+	}
+
+	function addKit() {
+		/* The buy box form: requestSubmit fires the submit event the cart
+		   drawer listens for, so the free pouch and the drawer opening are the
+		   same as a tap on Add to cart. form.submit() would skip that and do a
+		   full POST to /cart/add. */
+		var kitForm = document.querySelector('[data-product-section] form[action*="/cart/add"]');
+		if (!kitForm) return;
+		var button = kitForm.querySelector('[data-add-to-cart]');
+		if (button && button.disabled) return;
+		if (kitForm.requestSubmit) { kitForm.requestSubmit(); } else if (button) { button.click(); }
+	}
+
+	function copyCode(button) {
+		var codeEl = card.querySelector('[data-popup-code]');
+		var text = codeEl ? codeEl.textContent.trim() : '';
+		if (!text || !navigator.clipboard) return;
+		navigator.clipboard.writeText(text).then(function () {
+			var label = button.textContent;
+			button.textContent = button.getAttribute('data-copied-label') || label;
+			window.setTimeout(function () { button.textContent = label; }, 2000);
+		}).catch(function () {});
+	}
+
+	function onAction(e) {
+		var el = e.target.closest ? e.target.closest('[data-popup-action]') : null;
+		if (!el) return;
+		var action = el.getAttribute('data-popup-action');
+
+		if (action === 'yes') {
+			publish('aira_popup_step1', { choice: 'yes' });
+			showStep(2);
+			loadImage();
+			if (closeBtn) { closeBtn.hidden = false; }
+			var email = form && form.querySelector('input[type="email"]');
+			if (email) { email.focus(); }
+		} else if (action === 'no') {
+			closeReason = 'no';
+			window.airaModal.close(MODAL_ID);
+		} else if (action === 'copy') {
+			copyCode(el);
+		} else if (action === 'add_to_cart') {
+			closeReason = 'add_to_cart';
+			publish('aira_popup_cta', { action: action });
+			window.airaModal.close(MODAL_ID);
+			addKit();
+		} else if (action === 'checkout' || action === 'kit_page') {
+			/* A link: the page leaves, the dialog never closes. */
+			closeReason = action;
+			publish('aira_popup_cta', { action: action });
+		} else if (action === 'keep') {
+			closeReason = 'close';
+			/* data-modal-close does the closing. */
+		}
+	}
+
+	function onClose() {
+		var reason = closeReason;
+		closeReason = null;
+		write(session(), CLOSED_KEY, String(Date.now()));
+
+		if (submitted) {
+			if (!reason || reason === 'close') { publish('aira_popup_cta', { action: 'close' }); }
+			return;
+		}
+		if (step === 1) { publish('aira_popup_step1', { choice: reason === 'no' ? 'no' : 'close' }); }
+		suppressFor(cfg.popupDismissDays);
+		clarity('dismissed');
+	}
+
+	function wireForm() {
+		if (!form) return;
+		var email = form.querySelector('input[type="email"]');
+		var errorEl = form.querySelector('[data-popup-error]');
+		if (email) {
+			/* The browser's own bubble is replaced by the inline line under the
+			   field; preventDefault on `invalid` is what suppresses the bubble. */
+			email.addEventListener('invalid', function (e) {
+				e.preventDefault();
+				if (errorEl) {
+					errorEl.textContent = {{ 'sections.offer_popup.error_email' | t | json }};
+					errorEl.hidden = false;
+				}
+				email.setAttribute('aria-invalid', 'true');
+				email.focus();
+			});
+			email.addEventListener('input', function () {
+				if (errorEl) { errorEl.hidden = true; }
+				email.removeAttribute('aria-invalid');
+			});
+		}
+		form.addEventListener('submit', function () {
+			/* who:<answer> goes into contact[tags] here; ad:/camp: are filled by
+			   snippets/signup-offer.liquid on the same event. Klaviyo reads the
+			   tags as the profile's Shopify Tags. */
+			var checked = form.querySelector('input[name="popup_who"]:checked');
+			var who = checked ? checked.value : 'unanswered';
+			var tags = form.querySelector('input[name="contact[tags]"]');
+			if (tags) { tags.value = tags.value.replace(/\bwho:[^,]*/, 'who:' + who); }
+			write(session(), WHO_KEY, who);
+		});
+	}
+
+	/* ── Showing ── */
+	function show(how) {
+		write(session(), SHOWN_KEY, '1');
+		showStep(1);
+		if (closeBtn) {
+			closeBtn.hidden = true;
+			window.setTimeout(function () { closeBtn.hidden = false; }, CLOSE_BUTTON_DELAY);
+		}
+		window.airaModal.open(MODAL_ID);
+		var u = utm();
+		publish('aira_popup_shown', { page: page, trigger: how, utm_content: u.ad, utm_campaign: u.camp });
+		clarity('shown');
+	}
+
+	function attempt(how, tries) {
+		if (document.hidden) {
+			/* Background tab: wait until it is looked at, then show. */
+			document.addEventListener('visibilitychange', function once() {
+				if (document.hidden) return;
+				document.removeEventListener('visibilitychange', once);
+				attempt(how, tries);
+			});
+			return;
+		}
+		/* Re-checked at fire time: a second tab or the exit overlay may have
+		   spent the gate since the timer was armed. */
+		if (blocked()) return;
+		if (window.airaModal.isAnyOpen()) {
+			/* Never over the drawer, a lightbox, the menu or another dialog.
+			   Try again shortly rather than losing the show. */
+			if (tries < MAX_RETRIES) { window.setTimeout(function () { attempt(how, tries + 1); }, RETRY_MS); }
+			return;
+		}
+		show(how);
+	}
+
+	function arm() {
+		var timer = null;
+		var onScroll = null;
+		var armed = true;
+
+		function fire(how) {
+			if (!armed) return;
+			armed = false;
+			if (timer) { window.clearTimeout(timer); }
+			if (onScroll) { window.removeEventListener('scroll', onScroll); }
+			attempt(how, 0);
+		}
+
+		if (page === 'product') {
+			timer = window.setTimeout(function () { fire('time'); }, (parseInt(cfg.popupPdpDelay, 10) || 30) * 1000);
+			var depth = (parseInt(cfg.popupPdpScroll, 10) || 50) / 100;
+			/* Measured each time, never cached: the reviews grow the page after
+			   load. Lenis drives window.scrollY itself, so this reads the real
+			   position on desktop too. */
+			onScroll = function () {
+				var track = document.documentElement.scrollHeight - window.innerHeight;
+				if (track > 0 && window.scrollY / track >= depth) { fire('scroll'); }
+			};
+			window.addEventListener('scroll', onScroll, { passive: true });
+		} else {
+			timer = window.setTimeout(function () { fire('time'); }, (parseInt(cfg.popupHomeDelay, 10) || 10) * 1000);
+		}
+	}
 
 	/* assets/aira-modal.js is deferred, so it has not run yet while this inline
 	   script is parsed. Deferred scripts do finish before DOMContentLoaded. */
 	if (window.airaModal) { boot(); }
 	else { document.addEventListener('DOMContentLoaded', boot); }
-
-	function seen() {
-		if (designMode) return false;
-		try {
-			return (SETTINGS.perSession ? sessionStorage : localStorage).getItem(STORAGE_KEY) === '1';
-		} catch (e) { return false; }
-	}
-
-	function markSeen() {
-		if (designMode) return;
-		try {
-			(SETTINGS.perSession ? sessionStorage : localStorage).setItem(STORAGE_KEY, '1');
-		} catch (e) {}
-	}
-
-	/* Shopify's cookie banner is not waited for. Since 24 Sep 2026 it
-	   is shown to European visitors only (admin, Customer privacy);
-	   nobody we sell to sees it, and nothing in the theme may gate on
-	   consent. Tom's calls, 6 Sep and 24 Sep. */
-
-	function open() {
-		/* Never surface over the cart drawer, the QR popup or a lightbox. */
-		if (window.airaModal.isAnyOpen()) return;
-		/* Checked again at fire time, not only at boot. A page restored from
-		   the back-forward cache resumes its pending timer, and a second tab
-		   runs its own; either would re-show a popup another page has already
-		   spent. Safari restores far more pages than Chrome, so this showed up
-		   on a Mac first. */
-		if (seen()) return;
-		markSeen();
-		window.airaModal.open(MODAL_ID);
-	}
 
 	function boot() {
 		if (!window.airaModal) return;
@@ -221,22 +510,15 @@
 		/* A no-op on first load. In the theme editor a settings change
 		   re-renders this section and runs this script again, and the dialog
 		   the registry holds is by then a detached node: hand it the new one. */
-		window.airaModal.register(section.querySelector('[data-modal]'));
-
-		/* Registered before any early return below, so #offer still works for a
-		   visitor who has already seen the popup. #offer only: the form's own
-		   redirect anchor is #offer-popup and must never be read as a reopen. */
-		window.addEventListener('hashchange', function () {
-			if (window.location.hash !== '#offer') return;
-			if (!card.querySelector('[data-newsletter-success]')) { initScratch(); }
-			window.airaModal.open(MODAL_ID);
-		});
+		window.airaModal.register(modal);
+		modal.addEventListener('aira:modal:close', onClose);
+		card.addEventListener('click', onAction);
+		wireForm();
 
 		var params = new URLSearchParams(window.location.search);
-		var hash = window.location.hash;
-		var errorBlock = card.querySelector('[data-newsletter-error]');
+		var ownsPost = window.location.hash === '#' + FORM_ID;
 		var successBlock = card.querySelector('[data-newsletter-success]');
-		var ownsPost = hash === '#offer-popup';
+		var errorBlock = card.querySelector('[data-newsletter-error]');
 
 		/* Another customer form's error re-render paints the page-global error
 		   into this hidden card too. Stated as "not my anchor" so a further form
@@ -247,47 +529,51 @@
 		}
 
 		if (ownsPost) {
-			/* Came back from our own post. Show the result, never the foil: the
-			   visitor already scratched it on the previous page load. */
-			markSeen();
-			if (params.get('customer_posted') === 'true' || errorBlock) {
-				window.setTimeout(function () { window.airaModal.open(MODAL_ID); }, 300);
+			/* Back from our own post: straight to the result, no delay. */
+			var intro = card.querySelector('[data-popup-intro]');
+			if (successBlock) {
+				submitted = true;
+				if (intro) { intro.hidden = true; }
+				write(session(), SHOWN_KEY, '1');
+				var u = utm();
+				publish('aira_popup_submit', {
+					who_for: read(session(), WHO_KEY) || 'unanswered',
+					page: page,
+					utm_content: u.ad,
+					utm_campaign: u.camp
+				});
+				clarity('submitted');
+				showStep(2);
+				window.airaModal.open(MODAL_ID);
+			} else if (errorBlock) {
+				showStep(2);
+				loadImage();
+				window.airaModal.open(MODAL_ID);
 			}
+			/* The browser's deferred scroll-to-fragment can land after open()
+			   and drop focus back on the page behind the dialog. */
+			window.addEventListener('load', function () {
+				if (window.airaModal.isOpen(MODAL_ID) && !card.contains(document.activeElement)) {
+					var target = card.querySelector('[data-newsletter-success]') || card.querySelector('input[type="email"]');
+					if (target) { target.focus(); }
+				}
+			});
 			return;
 		}
 
-		/* Deliberate open: ?offer=1 or #offer, the same shape as the QR popup's
-		   ?signup=1. It skips the frequency gate WITHOUT spending it, so
-		   re-testing needs no private window, and an ad or an email can link
-		   straight to the offer for someone who has already dismissed it. */
-		var forced = params.get('offer') === '1' || hash === '#offer';
+		/* The footer posted on this page load: its success block is in this
+		   hidden card too (form state is page-global). Do not pitch someone
+		   who has just signed up; signup-offer has already applied their code. */
+		if (successBlock) return;
 
-		if (!forced) {
-			/* A footer or QR post leaves this hidden card showing its own success
-			   block (form state is page-global, see snippets/newsletter-form.liquid).
-			   That is a true message but this popup did not earn it, so do not open
-			   on a timer and re-pitch someone who has just subscribed. */
-			if (successBlock) { markSeen(); return; }
-
-			if (seen()) return;
-		}
-
-		/* Nothing to cover when the card is already showing a success block. */
-		if (!successBlock) { initScratch(); }
-
-		if (forced) {
-			/* Small delay so first paint lands before the popup covers it. */
-			window.setTimeout(function () { window.airaModal.open(MODAL_ID); }, 300);
-			return;
-		}
+		if (params.get('popup') === 'off') return;
+		if (params.get('popup') === 'now') { show('manual'); return; }
 
 		if (designMode) {
-			/* Theme editor: the frequency gate is off here (see seen), so the
-			   timer would bring the popup back on every page the merchant
-			   previews. Open it when they select this section instead, and
-			   close it when they move on. */
+			/* Theme editor: open when the merchant selects this section and
+			   close when they move on. No timers, no storage. */
 			document.addEventListener('shopify:section:select', function (e) {
-				if (e.detail && e.detail.sectionId === '{{ section.id }}') { window.airaModal.open(MODAL_ID); }
+				if (e.detail && e.detail.sectionId === '{{ section.id }}') { showStep(1); window.airaModal.open(MODAL_ID); }
 			});
 			document.addEventListener('shopify:section:deselect', function (e) {
 				if (e.detail && e.detail.sectionId === '{{ section.id }}') { window.airaModal.close(MODAL_ID); }
@@ -295,306 +581,149 @@
 			return;
 		}
 
-		if (SETTINGS.delay > 0) { window.setTimeout(open, SETTINGS.delay); }
+		if (blocked()) return;
+		if (cfg.popupKitInCart === 'true') return;
 
-		if (SETTINGS.exitIntent && window.matchMedia('(pointer: fine)').matches) {
-			document.addEventListener('mouseout', function onExit(e) {
-				if (e.relatedTarget || e.clientY > 0) return;
-				document.removeEventListener('mouseout', onExit);
-				open();
-			});
-		}
-	}
-
-	/* ── Scratch foil ─────────────────────────────────────────────────────
-	   A canvas laid over the form, erased with destination-out arcs. Pointer
-	   Events cover mouse and touch in one path (the theme's older drag, in
-	   sections/before-after-slider.liquid, predates that and binds both
-	   separately). touch-action: none in the CSS stops a finger scratch from
-	   scrolling the page. */
-	/* A custom property's computed value is the token stream as written, so
-	   --foil-mid comes back as a literal color-mix() expression. Canvas throws
-	   on a colour it cannot parse, so let the browser resolve it: an
-	   unsupported value is dropped on assignment and the fallback survives. */
-	function resolveColor(value, fallback) {
-		var probe = document.createElement('span');
-		probe.style.color = fallback;
-		probe.style.color = (value || '').trim();
-		probe.style.display = 'none';
-		document.body.appendChild(probe);
-		var resolved = getComputedStyle(probe).color;
-		probe.remove();
-		return resolved || fallback;
-	}
-
-	var scratchReady = false;
-
-	function initScratch() {
-		/* Reachable twice: once at boot and again from the #offer hashchange.
-		   A second pass would stack another canvas on the stage. */
-		if (scratchReady) return;
-
-		var panel = stage.querySelector('[data-scratch-panel]');
-		var skip = stage.querySelector('[data-scratch-skip]');
-		var base = stage.querySelector('[data-scratch-base]');
-		if (!panel || !skip || !base) return;
-
-		scratchReady = true;
-
-		panel.hidden = false;
-		skip.hidden = false;
-		/* inert, not aria-hidden alone: the form is still on screen underneath
-		   the foil, so it must leave both the tab order and the a11y tree until
-		   the reveal finishes. */
-		base.inert = true;
-
-		var canvas = null;
-		var revealed = false;
-
-		/* The panel stays after the reveal: it drops out of the overlay into
-		   the flow above the form, so the line just revealed is still there to
-		   read while the visitor types. */
-		function settle(viaSkip) {
-			panel.classList.add('is-settled');
-			stage.classList.add('is-revealed');
-			base.inert = false;
-			/* Keyboard users land on the field, and so do desktop pointers. On
-			   a phone the on-screen keyboard would cover the reveal, so a touch
-			   visitor taps the field themselves. */
-			if (viaSkip || window.matchMedia('(pointer: fine)').matches) {
-				var input = base.querySelector('input[type="email"]');
-				if (input) { input.focus(); }
-			}
-		}
-
-		function reveal(viaSkip) {
-			if (revealed) return;
-			revealed = true;
-			skip.remove();
-			if (!canvas) { settle(viaSkip); return; }
-			canvas.style.pointerEvents = 'none';
-			canvas.classList.add('is-gone');
-			window.setTimeout(function () {
-				canvas.remove();
-				settle(viaSkip);
-			}, reduceMotion ? 0 : FOIL_FADE);
-		}
-
-		function revealBySkip() { reveal(true); }
-
-		if (!SETTINGS.scratch) {
-			skip.addEventListener('click', revealBySkip);
-			return;
-		}
-
-		canvas = document.createElement('canvas');
-		canvas.className = 'scratch-layer scratch-canvas';
-		canvas.setAttribute('aria-hidden', 'true');
-		var ctx = canvas.getContext('2d');
-		if (!ctx) {
-			/* No canvas: the skip button is the whole interaction. */
-			canvas = null;
-			skip.addEventListener('click', revealBySkip);
-			return;
-		}
-		stage.insertBefore(canvas, skip);
-
-		var dpr = Math.min(window.devicePixelRatio || 1, 2);
-		var strokes = 0;
-		var drawing = false;
-		var last = null;
-
-		function paintFoil() {
-			var rect = stage.getBoundingClientRect();
-			if (!rect.width || !rect.height) return;
-
-			canvas.width = Math.round(rect.width * dpr);
-			canvas.height = Math.round(rect.height * dpr);
-			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			ctx.globalCompositeOperation = 'source-over';
-			ctx.clearRect(0, 0, rect.width, rect.height);
-
-			/* Gradient stops come from CSS so the foil tracks the navy token
-			   rather than hardcoding it (see :root in critical.source.css). */
-			var styles = getComputedStyle(canvas);
-			var edge = resolveColor(styles.getPropertyValue('--foil-edge'), '#0A1A34');
-			var mid = resolveColor(styles.getPropertyValue('--foil-mid'), '#13294F');
-
-			var grad = ctx.createLinearGradient(0, 0, rect.width, rect.height);
-			grad.addColorStop(0, edge);
-			grad.addColorStop(0.5, mid);
-			grad.addColorStop(1, edge);
-			ctx.fillStyle = grad;
-			ctx.fillRect(0, 0, rect.width, rect.height);
-
-			if (SETTINGS.caption) {
-				ctx.fillStyle = resolveColor(styles.getPropertyValue('--foil-ink'), '#F1EBE1');
-				ctx.font = '800 13px ' + (styles.getPropertyValue('--font-body').trim() || 'sans-serif');
-				ctx.textAlign = 'center';
-				ctx.textBaseline = 'middle';
-				if ('letterSpacing' in ctx) { ctx.letterSpacing = '0.16em'; }
-				ctx.fillText(SETTINGS.caption, rect.width / 2, rect.height / 2);
-			}
-
-			ctx.globalCompositeOperation = 'destination-out';
-		}
-
-		function point(e) {
-			var rect = canvas.getBoundingClientRect();
-			return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-		}
-
-		function erase(from, to) {
-			/* Interpolate, or a fast drag leaves gaps between sampled points. */
-			var dx = to.x - from.x;
-			var dy = to.y - from.y;
-			var steps = Math.max(1, Math.ceil(Math.hypot(dx, dy) / (BRUSH_RADIUS / 2)));
-			for (var i = 0; i <= steps; i++) {
-				ctx.beginPath();
-				ctx.arc(from.x + (dx * i / steps), from.y + (dy * i / steps), BRUSH_RADIUS, 0, Math.PI * 2);
-				ctx.fill();
-			}
-		}
-
-		function clearedEnough() {
-			var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-			var clear = 0;
-			var total = 0;
-			for (var i = 3; i < data.length; i += 4 * SAMPLE_STRIDE) {
-				total++;
-				if (data[i] < 128) { clear++; }
-			}
-			return total > 0 && (clear / total) > CLEARED_AT;
-		}
-
-		canvas.addEventListener('pointerdown', function (e) {
-			drawing = true;
-			last = point(e);
-			erase(last, last);
-			if (canvas.setPointerCapture) { canvas.setPointerCapture(e.pointerId); }
-			e.preventDefault();
-		});
-
-		canvas.addEventListener('pointermove', function (e) {
-			if (!drawing || revealed) return;
-			var next = point(e);
-			erase(last, next);
-			last = next;
-			strokes++;
-			if (strokes % SAMPLE_EVERY === 0 && clearedEnough()) { reveal(); }
-		});
-
-		function stop(e) {
-			if (!drawing) return;
-			drawing = false;
-			if (canvas.releasePointerCapture && e.pointerId != null) {
-				try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
-			}
-			if (!revealed && clearedEnough()) { reveal(); }
-		}
-
-		canvas.addEventListener('pointerup', stop);
-		canvas.addEventListener('pointercancel', stop);
-		canvas.addEventListener('pointerleave', stop);
-
-		skip.addEventListener('click', revealBySkip);
-
-		/* The foil can only be painted once the stage has a size, and the stage
-		   sits in a display:none dialog until it opens — measuring before that
-		   returns 0x0 and leaves a blank 300x150 default canvas. So paint on
-		   open, then again when the webfont lands so the caption is not stuck
-		   in the fallback face the way DOM text would self-correct. Never
-		   repaint over work in progress: it would wipe the visitor's scratch. */
-		function repaint() {
-			if (revealed || strokes) return;
-			paintFoil();
-		}
-
-		var modalEl = stage.closest('[data-modal]');
-		if (modalEl) { modalEl.addEventListener('aira:modal:open', repaint); }
-		if (document.fonts && document.fonts.ready) { document.fonts.ready.then(repaint); }
-		window.addEventListener('resize', repaint);
-		repaint();
+		arm();
 	}
 })();
 </script>
+{%- endif -%}
 
 {% schema %}
 {
-	"name": "Scratch offer popup",
+	"name": "Offer popup",
 	"tag": "section",
 	"class": "shopify-section",
 	"settings": [
 		{
 			"type": "paragraph",
-			"content": "Site-wide launch offer popup. Opens once per visitor, on a timer or when the pointer leaves the window. The printed QR insert's popup is the separate Newsletter popup section."
+			"content": "The first-visit 10% off signup. Opens on the homepage and the kit page only, as a bottom sheet on phones. The printed QR insert's popup is the separate Newsletter popup section. The discount code it hands out is set under Theme settings, Signup offer."
+		},
+		{
+			"type": "checkbox",
+			"id": "popup_enabled",
+			"label": "Show the popup",
+			"info": "Off: nothing renders and no script runs. Create the discount code in the admin first (one use per customer, combines with product discounts).",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "popup_enable_on_ar",
+			"label": "Also show on Arabic pages",
+			"info": "Leave off until the Arabic strings have passed QA.",
+			"default": false
+		},
+		{
+			"type": "header",
+			"content": "When it opens"
+		},
+		{
+			"type": "range",
+			"id": "popup_home_delay_seconds",
+			"label": "Homepage: seconds on page",
+			"unit": "s",
+			"min": 3,
+			"max": 60,
+			"step": 1,
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "popup_pdp_delay_seconds",
+			"label": "Kit page: seconds on page",
+			"unit": "s",
+			"min": 5,
+			"max": 120,
+			"step": 5,
+			"default": 30
+		},
+		{
+			"type": "range",
+			"id": "popup_pdp_scroll_percent",
+			"label": "Kit page: or scroll depth",
+			"info": "Whichever comes first.",
+			"unit": "%",
+			"min": 10,
+			"max": 90,
+			"step": 5,
+			"default": 50
+		},
+		{
+			"type": "range",
+			"id": "popup_dismiss_days",
+			"label": "Days away after a dismiss",
+			"unit": "d",
+			"min": 1,
+			"max": 30,
+			"step": 1,
+			"default": 7
+		},
+		{
+			"type": "range",
+			"id": "popup_signup_days",
+			"label": "Days away after a signup",
+			"unit": "d",
+			"min": 1,
+			"max": 90,
+			"step": 1,
+			"default": 30
+		},
+		{
+			"type": "header",
+			"content": "Step 1: the choice"
 		},
 		{
 			"type": "text",
 			"id": "eyebrow",
-			"label": "Eyebrow, above the offer",
-			"info": "Capitals are only allowed on the eyebrow. Keep it to three words.",
-			"default": "LIMITED TIME OFFER"
+			"label": "Eyebrow",
+			"default": "One thing before you go on"
 		},
 		{
 			"type": "text",
 			"id": "heading",
 			"label": "Heading",
-			"default": "A free gift with every kit"
+			"default": "Want 10% off your kit?"
 		},
 		{
 			"type": "textarea",
 			"id": "subheading",
-			"label": "Supporting copy",
-			"default": "Scratch the card to see what's inside."
+			"label": "Supporting line",
+			"default": "Plus the free refill pouch that comes with every order."
+		},
+		{
+			"type": "text",
+			"id": "yes_label",
+			"label": "Yes button",
+			"default": "Yes, show me"
+		},
+		{
+			"type": "text",
+			"id": "no_label",
+			"label": "No link",
+			"default": "No thanks"
 		},
 		{
 			"type": "header",
-			"content": "Scratch card"
+			"content": "Step 2: the email"
 		},
 		{
-			"type": "checkbox",
-			"id": "enable_scratch",
-			"label": "Show the scratch foil",
-			"info": "Off shows the reveal panel with a button instead. The email form works either way.",
-			"default": true
-		},
-		{
-			"type": "text",
-			"id": "foil_caption",
-			"label": "Foil caption",
-			"info": "Drawn on the foil itself, on one line. Keep it short.",
-			"default": "SCRATCH TO REVEAL YOUR GIFT"
+			"type": "image_picker",
+			"id": "popup_image",
+			"label": "Image",
+			"info": "Optional, shown above the heading. The kit flat-lay. Loads only when this step opens."
 		},
 		{
 			"type": "text",
-			"id": "reveal_text",
-			"label": "Reveal line",
-			"info": "The first word free is shown bold.",
-			"default": "You won… a free 30-pair refill pouch"
-		},
-		{
-			"type": "text",
-			"id": "reveal_subline",
-			"label": "Reveal sub-line",
-			"default": "Worth $19.99. While stocks last."
-		},
-		{
-			"type": "text",
-			"id": "skip_label",
-			"label": "Reveal button label",
-			"info": "Not shown on screen. Only keyboard and screen reader users reach this, since they cannot scratch the foil.",
-			"default": "Reveal your gift"
-		},
-		{
-			"type": "header",
-			"content": "Email form"
+			"id": "step2_heading",
+			"label": "Heading",
+			"default": "10% off your kit, applied at checkout."
 		},
 		{
 			"type": "textarea",
-			"id": "form_line",
-			"label": "Form line",
-			"info": "Optional line above the email field. Blank by default: the revealed card already says what the email is for."
+			"id": "step2_sub",
+			"label": "Supporting line",
+			"default": "Enter your email and we apply it to your cart. Nothing to copy."
 		},
 		{
 			"type": "text",
@@ -603,53 +732,78 @@
 			"default": "Your email"
 		},
 		{
+			"type": "checkbox",
+			"id": "popup_ask_who_for",
+			"label": "Ask who the kit is for",
+			"info": "Optional chips, not required. The answer is saved as a customer tag only.",
+			"default": true
+		},
+		{
 			"type": "text",
-			"id": "button_label",
-			"label": "Button label",
-			"default": "Claim my gift"
+			"id": "who_label",
+			"label": "Question",
+			"default": "Who's it for?"
+		},
+		{
+			"type": "text",
+			"id": "who_me",
+			"label": "Chip 1",
+			"default": "Me"
+		},
+		{
+			"type": "text",
+			"id": "who_partner",
+			"label": "Chip 2",
+			"default": "My partner"
+		},
+		{
+			"type": "text",
+			"id": "who_other",
+			"label": "Chip 3",
+			"default": "Someone else"
+		},
+		{
+			"type": "textarea",
+			"id": "consent",
+			"label": "Consent line",
+			"info": "Shown above the button. Submitting is the consent; there is no tick box.",
+			"default": "You'll also get our sleep and refill emails. Unsubscribe any time."
+		},
+		{
+			"type": "text",
+			"id": "submit_label",
+			"label": "Button",
+			"default": "Get my 10% off"
+		},
+		{
+			"type": "header",
+			"content": "Step 3: done"
 		},
 		{
 			"type": "text",
 			"id": "success_heading",
-			"label": "Success heading",
-			"info": "Optional. Blank by default so the success state is the one line below."
+			"label": "Heading",
+			"default": "Done. Your 10% is applied at checkout."
 		},
 		{
 			"type": "textarea",
-			"id": "success_message",
-			"label": "Success message",
-			"default": "Check your inbox. Your gift is on its way."
+			"id": "success_body",
+			"label": "Body",
+			"info": "{{ code }} is replaced with the discount code.",
+			"default": "Code {{ code }} is yours for one order, in case you need it later."
 		},
 		{
-			"type": "header",
-			"content": "When it opens"
+			"type": "text",
+			"id": "cta_kit_label",
+			"label": "Button",
+			"info": "On the kit page this adds the kit to the cart. On the homepage it links to the kit page.",
+			"default": "Get my kit"
 		},
 		{
-			"type": "range",
-			"id": "trigger_delay",
-			"label": "Delay before opening",
-			"unit": "s",
-			"min": 0,
-			"max": 30,
-			"step": 1,
-			"default": 5
-		},
-		{
-			"type": "checkbox",
-			"id": "enable_exit_intent",
-			"label": "Also open when the pointer leaves the window",
-			"info": "Desktop only. Phones have no exit intent, so the delay covers them.",
-			"default": true
-		},
-		{
-			"type": "select",
-			"id": "frequency",
-			"label": "How often a visitor sees it",
-			"options": [
-				{ "value": "once", "label": "Once, ever" },
-				{ "value": "session", "label": "Once per session" }
-			],
-			"default": "once"
+			"type": "text",
+			"id": "cta_checkout_label",
+			"label": "Button when the kit is already in the cart",
+			"default": "Go to checkout"
 		}
 	]
 }

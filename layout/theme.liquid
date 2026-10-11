@@ -83,7 +83,7 @@
     <script src="{{ 'smooth-scroll.js' | asset_url }}" defer></script>
 
     {% comment %}
-      The one dialog behaviour, shared by the newsletter and scratch offer
+      The one dialog behaviour, shared by the newsletter and offer
       popups (snippets/modal-dialog.liquid). Deferred, so it runs after parsing
       but before DOMContentLoaded — which is what the section scripts wait on.
     {% endcomment %}
@@ -180,16 +180,24 @@
 
     {{ content_for_layout }}
 
+    {% comment %}
+      window.airaOffer: landing-URL utm capture, the /discount/<code> apply
+      step and the remembered code. Inline (no request) and ahead of the
+      footer, the drawer and the popup, whose scripts read it.
+    {% endcomment %}
+    {% render 'signup-offer' %}
+
     {% sections 'footer-group' %}
 
     {% render 'cart-drawer' %}
 
     {% comment %}
-      Site-wide launch offer popup. A static section rather than a snippet so
-      its copy and timing stay editable in the theme editor. The QR insert's
-      10% off popup is a separate section, on the homepage template only.
+      The 10% off signup popup. A static section rather than a snippet so its
+      copy and timing stay editable in the theme editor; it renders only on
+      the homepage and the kit page, and only once its switch is on. The QR
+      insert's own popup is a separate section, on the homepage template only.
     {% endcomment %}
-    {% section 'scratch-offer-popup' %}
+    {% section 'offer-popup' %}
 
     {% render 'whatsapp-bubble' %}
   </body>

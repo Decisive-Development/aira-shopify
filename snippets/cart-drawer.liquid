@@ -212,6 +212,24 @@
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
 	var KIT_HANDLE = drawer.getAttribute('data-kit-handle');
+
+	/* ── Checkout carries the signup code ──
+	   Belt and braces for the /discount/<code> call snippets/signup-offer.liquid
+	   makes on signup: while localStorage holds aira_popup_code, the Checkout
+	   link appends ?discount=<code> so the 10% reaches the order even if that
+	   cookie did not take. Re-read on every open: the popup can set it
+	   mid-session. The href is read at click time (see the busy path), so a
+	   rewritten attribute is enough for both paths. */
+	var CHECKOUT_BASE = checkoutEl ? checkoutEl.getAttribute('href') : '';
+	function tagCheckout() {
+		if (!checkoutEl) return;
+		var code = '';
+		try { code = localStorage.getItem('aira_popup_code') || ''; } catch (e) {}
+		checkoutEl.setAttribute('href', code
+			? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(code)
+			: CHECKOUT_BASE);
+	}
+	tagCheckout();
 	/* Taps within this many ms of each other travel in one update call. */
 	var FLUSH_DELAY = 200;
 	var isOpen = false;
@@ -265,6 +283,7 @@
 		drawer.classList.remove('cart-drawer-closed');
 		drawer.classList.add('cart-drawer-open');
 		document.body.style.overflow = 'hidden';
+		tagCheckout();
 	}
 
 	function close() {

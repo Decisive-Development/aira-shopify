@@ -267,5 +267,20 @@
         "default": 82
       }
     ]
+  },
+  {
+    "name": "Signup offer",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The discount code a signup earns, from the Offer popup and the footer form alike. Create it in Discounts first: 10% off, one use per customer, no end date, and Combines with product discounts ON so the free pouch stays on the order."
+      },
+      {
+        "type": "text",
+        "id": "offer_discount_code",
+        "label": "Discount code",
+        "default": "AIRA10"
+      }
+    ]
   }
 ]

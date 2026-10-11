@@ -1,0 +1,100 @@
+{%- comment -%}
+	Signup offer helper — the one place the signup discount code is applied.
+
+	Rendered inline on every page from layout/theme.liquid (zero extra
+	requests), ahead of the footer, the cart drawer and the offer popup, whose
+	scripts read window.airaOffer:
+
+	  utm()                  { ad, camp } from the landing URL's utm_content and
+	                         utm_campaign, kept in sessionStorage so they survive
+	                         the walk from a landing page to the kit page
+	  apply(code)            GET /discount/<code>: Shopify sets the discount for
+	                         this browser's checkout. Fire and forget, errors
+	                         swallowed, no redirect followed (the response would
+	                         otherwise be the homepage HTML).
+	  remember(code, days)   localStorage aira_popup_code (the cart drawer appends
+	                         it to Checkout as ?discount=) and aira_popup_until
+	                         (the popup stays away until then)
+	  storedCode()           the remembered code, or ''
+
+	And on its own:
+	  - on submit of any newsletter-form, fills ad:<utm_content> and
+	    camp:<utm_campaign> in contact[tags] (the Liquid ships ad:none, camp:none)
+	  - on the redirect back from a signup (?customer_posted=true#<form_id>),
+	    reads data-offer-code from that form's success block, applies the code
+	    and remembers it. The footer, the offer popup and any later signup get
+	    the identical step by passing offer_code to snippets/newsletter-form.
+{%- endcomment -%}
+<script>
+(function () {
+	/* Locale-aware root ("/" in English, "/ar/" under /ar), as every fetch in the theme. */
+	var ROOT = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+	var UTM_KEY = 'aira_utm';
+	var CODE_KEY = 'aira_popup_code';
+	var UNTIL_KEY = 'aira_popup_until';
+
+	/* A tag value: no commas (the tag separator), no whitespace, bounded. */
+	function clean(value) {
+		return String(value || '').replace(/[,\s]+/g, '-').slice(0, 60) || 'none';
+	}
+
+	var params = new URLSearchParams(window.location.search);
+	var ad = params.get('utm_content');
+	var camp = params.get('utm_campaign');
+	if (ad || camp) {
+		try { sessionStorage.setItem(UTM_KEY, JSON.stringify({ ad: clean(ad), camp: clean(camp) })); } catch (e) {}
+	}
+
+	function utm() {
+		try {
+			var held = JSON.parse(sessionStorage.getItem(UTM_KEY));
+			if (held && held.ad && held.camp) return held;
+		} catch (e) {}
+		return { ad: 'none', camp: 'none' };
+	}
+
+	function apply(code) {
+		if (!code || typeof window.fetch !== 'function') return;
+		try {
+			window.fetch(ROOT + 'discount/' + encodeURIComponent(code), { redirect: 'manual', credentials: 'same-origin' })
+				.catch(function () {});
+		} catch (e) {}
+	}
+
+	function remember(code, days) {
+		try {
+			localStorage.setItem(CODE_KEY, code);
+			localStorage.setItem(UNTIL_KEY, String(Date.now() + (parseInt(days, 10) || 30) * 864e5));
+		} catch (e) {}
+	}
+
+	function storedCode() {
+		try { return localStorage.getItem(CODE_KEY) || ''; } catch (e) { return ''; }
+	}
+
+	document.addEventListener('submit', function (e) {
+		var form = e.target;
+		if (!form || !form.classList || !form.classList.contains('newsletter-form')) return;
+		var tags = form.querySelector('input[name="contact[tags]"]');
+		if (!tags) return;
+		var u = utm();
+		tags.value = tags.value.replace(/\bad:[^,]*/, 'ad:' + u.ad).replace(/\bcamp:[^,]*/, 'camp:' + u.camp);
+	});
+
+	function onReturn() {
+		if (params.get('customer_posted') !== 'true') return;
+		var id = window.location.hash.slice(1);
+		var form = id ? document.getElementById(id) : null;
+		if (!form) return;
+		var success = form.querySelector('[data-newsletter-success][data-offer-code]');
+		if (!success) return;
+		var code = success.getAttribute('data-offer-code');
+		apply(code);
+		remember(code, success.getAttribute('data-offer-days'));
+	}
+	if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', onReturn); }
+	else { onReturn(); }
+
+	window.airaOffer = { utm: utm, apply: apply, remember: remember, storedCode: storedCode };
+})();
+</script>
