@@ -148,11 +148,12 @@
 
 	{%- comment -%}
 		Screen 2. Checkbox chips: multi-select, keyboard-operable (Tab, Space),
-		nothing checked on load. White, 1px navy border, 44px tall; a checked
-		chip shows its tick and a second navy ring. The ring is inset so the
-		chip's size never changes. The inputs carry no name: they sit outside
-		the customer form and the script writes the ticks into contact[tags]
-		at submit time.
+		nothing checked on load. Equal-width grid per row (Tom's mock,
+		2026-10-11): white with a navy border, filled navy when picked, 44px
+		tall. The inputs carry no name: they sit outside the customer form and
+		the script writes the ticks into contact[tags] at submit time. A div
+		with role=group rather than fieldset/legend, so the label and its
+		"Pick any" hint can share one line.
 	{%- endcomment -%}
 	{%- capture popup_chip_rows -%}
 		{%- assign row_keys = 'for,who' | split: ',' -%}
@@ -161,17 +162,27 @@
 				if row == 'for'
 					assign row_on = section.settings.popup_ask_for
 					assign row_label = section.settings.for_label
+					assign row_hint = section.settings.for_hint
 					assign row_values = 'for:snoring,for:sleep,for:training,for:blocked-nose' | split: ','
+					assign row_cols = 'grid-cols-2'
 				else
 					assign row_on = section.settings.popup_ask_who
 					assign row_label = section.settings.who_label
+					assign row_hint = section.settings.who_hint
 					assign row_values = 'who:me,who:partner,who:other' | split: ','
+					assign row_cols = 'grid-cols-3'
 				endif
 			-%}
 			{%- if row_on -%}
-				<fieldset class="m-0 min-w-0 border-0 p-0" data-popup-row="{{ row }}">
-					<legend class="mb-2 text-sm font-semibold text-main">{{ row_label }}</legend>
-					<div class="flex flex-wrap gap-2">
+				<div role="group" aria-labelledby="offer-popup-row-{{ row }}" data-popup-row="{{ row }}">
+					{%- comment -%} End padding keeps the hint clear of the dialog's close button. {%- endcomment -%}
+					<div class="mb-2 flex items-baseline justify-between gap-3 pe-10 sm:pe-6">
+						<span id="offer-popup-row-{{ row }}" class="text-sm font-semibold text-main">{{ row_label }}</span>
+						{%- if row_hint != blank -%}
+							<span class="text-xs text-copy">{{ row_hint }}</span>
+						{%- endif -%}
+					</div>
+					<div class="grid gap-2 sm:gap-3 {{ row_cols }}">
 						{%- for chip in row_values -%}
 							{%- liquid
 								case chip
@@ -191,21 +202,20 @@
 										assign chip_label = section.settings.who_other
 								endcase
 							-%}
-							<label class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-main bg-bg px-4 text-base font-semibold text-main has-checked:ring-1 has-checked:ring-inset has-checked:ring-main has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-highlight">
-								<input type="checkbox" value="{{ chip }}" class="peer sr-only" data-popup-chip="{{ chip }}">
-								<svg class="me-1.5 hidden h-4 w-4 shrink-0 peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+							<label class="flex min-h-11 cursor-pointer items-center justify-center rounded-full border border-main bg-bg px-1.5 text-center text-sm font-semibold text-main transition-colors has-checked:bg-main has-checked:text-secondary has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-highlight">
+								<input type="checkbox" value="{{ chip }}" class="sr-only" data-popup-chip="{{ chip }}">
 								<span>{{ chip_label }}</span>
 							</label>
 						{%- endfor -%}
 					</div>
-				</fieldset>
+				</div>
 			{%- endif -%}
 		{%- endfor -%}
 	{%- endcapture -%}
 
 	{%- capture popup_step_two -%}
 		{%- if ask_rows -%}
-			<div data-popup-step="2" class="pe-8" hidden>
+			<div data-popup-step="2" hidden>
 				<h2 id="offer-popup-heading-2" class="sr-only">{{ section.settings.for_label }} {{ section.settings.who_label }}</h2>
 				<div class="flex flex-col gap-5">
 					{{ popup_chip_rows }}
@@ -881,6 +891,13 @@
 		},
 		{
 			"type": "text",
+			"id": "for_hint",
+			"label": "Row 1 hint",
+			"info": "Small, to the right of the label. Blank hides it.",
+			"default": "Pick any"
+		},
+		{
+			"type": "text",
 			"id": "for_snoring",
 			"label": "Chip: for:snoring",
 			"default": "Snoring"
@@ -915,6 +932,12 @@
 			"id": "who_label",
 			"label": "Row 2 label",
 			"default": "Who's it for?"
+		},
+		{
+			"type": "text",
+			"id": "who_hint",
+			"label": "Row 2 hint",
+			"info": "Small, to the right of the label. Blank hides it."
 		},
 		{
 			"type": "text",
