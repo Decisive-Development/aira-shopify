@@ -423,39 +423,53 @@
 	</div>
 </section>
 
-{%- comment -%} ══════ Sticky mobile add-to-cart bar ══════ {%- endcomment -%}
+{%- comment -%}
+	══════ Sticky mobile add-to-cart bar ══════
+	One line of name, offer note and prices, then a full-width button that
+	also carries the free shipping line (Tom, 2026-10-11). The struck value is
+	the kit plus the gift pouch, from the variants, like the card above.
+{%- endcomment -%}
 <div
-	class="fixed bottom-0 inset-x-0 z-40 bg-secondary px-4 py-3 flex items-center justify-between gap-4 lg:hidden translate-y-full transition-transform duration-300"
+	class="fixed bottom-0 inset-x-0 z-40 bg-secondary px-4 py-3 flex flex-col gap-3 lg:hidden translate-y-full transition-transform duration-300"
 	data-sticky-bar
 	style="box-shadow: 0 -4px 24px rgba(10,26,52,0.1);"
 >
-	<div class="flex flex-col min-w-0">
-		<p class="font-heading font-semibold text-main text-sm truncate">{{ section.settings.hero_heading | default: product.title }}</p>
-		<div class="flex items-baseline gap-1.5 min-w-0">
-			<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
+	<div class="flex items-baseline justify-between gap-3">
+		<p class="min-w-0 truncate">
+			<span class="font-heading font-semibold text-main text-sm">{{ section.settings.hero_heading | default: product.title }}</span>
 			{%- if section.settings.offer_enabled and section.settings.sticky_offer_text != blank -%}
-				<span class="text-xs font-bold text-main truncate">{{ section.settings.sticky_offer_text }}</span>
+				<span class="text-xs font-bold text-highlight ms-1">{{ section.settings.sticky_offer_text }}</span>
 			{%- endif -%}
-		</div>
+		</p>
+		<p class="shrink-0 flex items-baseline gap-1.5">
+			{%- if gift_variant -%}
+				{%- assign sticky_bundle_value = current_variant.price | plus: gift_variant.price -%}
+				<span class="text-sm font-semibold text-highlight line-through">{{ sticky_bundle_value | money }}</span>
+			{%- endif -%}
+			<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
+		</p>
 	</div>
 	{%- liquid
 		assign sticky_disabled = true
 		if current_variant.available
 			assign sticky_disabled = false
 		endif
-		assign sticky_label = 'general.add_to_cart' | t
+		assign sticky_shipping = 'general.free_shipping_short' | t
+		assign sticky_atc = 'general.add_to_cart' | t
+		assign sticky_label = sticky_shipping | append: ' · ' | append: sticky_atc
+		if sticky_disabled
+			assign sticky_label = 'general.sold_out' | t
+		endif
 	-%}
-	<div class="flex flex-col items-center gap-1 shrink-0">
-		{%- render 'cta-button',
-			label: sticky_label,
-			variant: 'shop',
-			element: 'button',
-			disabled: sticky_disabled,
-			attributes: 'data-sticky-atc',
-			extra_classes: 'disabled:opacity-40 disabled:cursor-not-allowed'
-		-%}
-		<span class="text-xs font-semibold text-main leading-tight">{{ 'general.free_shipping_short' | t }}</span>
-	</div>
+	{%- render 'cta-button',
+		label: sticky_label,
+		variant: 'shop',
+		element: 'button',
+		full_width: true,
+		disabled: sticky_disabled,
+		attributes: 'data-sticky-atc',
+		extra_classes: 'disabled:opacity-40 disabled:cursor-not-allowed'
+	-%}
 </div>
 
 <script>
@@ -862,8 +876,8 @@
 			"type": "text",
 			"id": "sticky_offer_text",
 			"label": "Mobile bar offer text",
-			"default": "+ Free $19.99 refill pouch",
-			"info": "Shown beside the price in the sticky mobile bar while the offer runs."
+			"default": "+ free refill pouch",
+			"info": "Shown after the product name in the sticky mobile bar while the offer runs. Keep it to three words."
 		},
 		{
 			"type": "product",
