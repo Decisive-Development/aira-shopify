@@ -1,9 +1,9 @@
 {%- comment -%}
 	featured-review — one customer review as a compact card: the reviewer's
-	photo along the start edge, the quote on one line (cut with an ellipsis
-	when it is longer) and the reviewer's name under it. Sits under the rating
-	line in the product buy box, which already shows the stars. Renders nothing
-	unless a quote and a name are set.
+	photo along the start edge, then the review title, the first line of the
+	review and the reviewer's name, each on one line cut with an ellipsis when
+	longer. Sits under the rating line in the product buy box, which already
+	shows the stars. Renders nothing unless a title and a name are set.
 	The card is inline-size contained so the one-line quote never widens the
 	buy box column on phones (a nowrap line otherwise counts in full towards
 	the grid column's minimum width).
@@ -13,7 +13,8 @@
 	for a reviewer without a photo. Without JS or with reduced motion the card
 	stays on this review.
 	Params:
-		quote      — one sentence from the review, without quote marks.
+		quote      — the review title, without quote marks.
+		body       — optional. The review text; only its first line shows.
 		name       — the reviewer's first name.
 		image      — optional. The reviewer's photo, cropped square.
 		verified   — optional. true adds "verified buyer" after the name.
@@ -33,11 +34,12 @@
 	<{{ card_tag }} class="{{ card_classes }}"{% if url != blank %} href="{{ url }}" data-rating-link{% endif %} data-featured-review data-product-id="{{ product_id }}" data-review-name="{{ name | escape }}" data-verified-template="{{ 'sections.featured_review.verified_buyer' | t: name: '%NAME%' | escape }}">
 		<div class="flex-1 min-w-0 flex items-stretch transition-[transform,opacity] duration-300 ease-out" data-review-track>
 			{%- if image != blank -%}
-				{{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: widths: '80, 160', sizes: '5rem', class: 'w-20 h-20 shrink-0 self-center object-cover', draggable: 'false' }}
+				{{ image | image_url: width: 192, height: 192, crop: 'center' | image_tag: widths: '96, 192', sizes: '6rem', class: 'w-24 h-24 shrink-0 self-center object-cover', draggable: 'false' }}
 			{%- endif -%}
-			<div class="flex-1 min-w-0 flex flex-col justify-center gap-1 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
-				<p class="font-semibold text-title text-base leading-snug truncate" dir="auto" data-review-quote>&ldquo;{{ quote }}&rdquo;</p>
-				<p class="text-sm text-copy truncate" data-review-name>
+			<div class="flex-1 min-w-0 flex flex-col justify-center gap-0.5 py-3 ps-4{% if url == blank %} pe-4{% endif %}">
+				<p class="font-semibold text-title text-base leading-snug truncate" dir="auto" data-review-quote>{{ quote }}</p>
+				<p class="text-sm text-copy truncate empty:hidden" dir="auto" data-review-body>{{ body | strip_html | strip_newlines }}</p>
+				<p class="text-xs text-copy truncate" data-review-name>
 					{%- if verified -%}
 						{{ 'sections.featured_review.verified_buyer' | t: name: name }}
 					{%- else -%}
@@ -46,7 +48,7 @@
 				</p>
 			</div>
 		</div>
-		<template data-review-initial-template><span class="w-20 h-20 shrink-0 self-center flex items-center justify-center bg-tertiary-light/30 font-heading font-bold text-main text-xl" aria-hidden="true" data-review-media></span></template>
+		<template data-review-initial-template><span class="w-24 h-24 shrink-0 self-center flex items-center justify-center bg-tertiary-light/30 font-heading font-bold text-main text-xl" aria-hidden="true" data-review-media></span></template>
 		{%- if url != blank -%}
 			<span class="flex items-center ps-2 pe-4 text-copy transition-colors group-hover:text-highlight" aria-hidden="true">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="rtl:-scale-x-100"><path d="M9 18l6-6-6-6"/></svg>

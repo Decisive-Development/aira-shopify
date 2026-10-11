@@ -117,6 +117,7 @@
 					{%- endif -%}
 					{%- render 'featured-review',
 						quote: section.settings.review_quote,
+						body: section.settings.review_body,
 						name: section.settings.review_name,
 						image: section.settings.review_image,
 						verified: section.settings.review_verified,
@@ -495,6 +496,7 @@
 	if (featured && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 		var track = featured.querySelector('[data-review-track]');
 		var quoteEl = featured.querySelector('[data-review-quote]');
+		var bodyEl = featured.querySelector('[data-review-body]');
 		var nameEl = featured.querySelector('[data-review-name]');
 		var initialTemplate = featured.querySelector('[data-review-initial-template]');
 		var verifiedTemplate = featured.getAttribute('data-verified-template') || '%NAME%';
@@ -514,6 +516,7 @@
 				var pic = r.pictures_urls && r.pictures_urls[0];
 				return {
 					quote: r.title || (r.body || '').split(/[.!?]/)[0],
+					body: r.title ? (r.body || '') : '',
 					name: r.reviewer_name,
 					initial: r.reviewer_initial || r.reviewer_name.charAt(0),
 					image: pic ? (pic.small || pic.original) : '',
@@ -529,8 +532,8 @@
 				media = slide.node;
 			} else if (slide.image) {
 				media = document.createElement('img');
-				media.className = 'w-20 h-20 shrink-0 self-center object-cover';
-				media.width = 160; media.height = 160; media.alt = ''; media.draggable = false; media.loading = 'lazy';
+				media.className = 'w-24 h-24 shrink-0 self-center object-cover';
+				media.width = 192; media.height = 192; media.alt = ''; media.draggable = false; media.loading = 'lazy';
 				media.setAttribute('data-review-media', '');
 				media.src = slide.image;
 			} else if (initialTemplate) {
@@ -541,9 +544,11 @@
 			if (media) track.insertBefore(media, track.firstChild);
 			if (slide.quoteHTML != null) {
 				quoteEl.innerHTML = slide.quoteHTML;
+				if (bodyEl) bodyEl.innerHTML = slide.bodyHTML;
 				nameEl.innerHTML = slide.nameHTML;
 			} else {
-				quoteEl.textContent = '\u201C' + slide.quote + '\u201D';
+				quoteEl.textContent = slide.quote;
+				if (bodyEl) bodyEl.textContent = slide.body;
 				nameEl.textContent = slide.verified ? verifiedTemplate.split('%NAME%').join(slide.name) : slide.name;
 			}
 		}
@@ -553,7 +558,7 @@
 			if (!others.length) return;
 			var firstMedia = track.querySelector('img');
 			if (firstMedia) firstMedia.setAttribute('data-review-media', '');
-			var first = { node: firstMedia, quoteHTML: quoteEl.innerHTML, nameHTML: nameEl.innerHTML };
+			var first = { node: firstMedia, quoteHTML: quoteEl.innerHTML, bodyHTML: bodyEl ? bodyEl.innerHTML : '', nameHTML: nameEl.innerHTML };
 			var slides = [first].concat(others);
 			var index = 0;
 			setInterval(function () {
@@ -734,8 +739,14 @@
 		{
 			"type": "text",
 			"id": "review_quote",
-			"label": "Quote",
+			"label": "Review title",
 			"info": "Shown on one line, cut with an ellipsis when longer. No quote marks."
+		},
+		{
+			"type": "textarea",
+			"id": "review_body",
+			"label": "Review text",
+			"info": "Only the first line shows, cut with an ellipsis."
 		},
 		{
 			"type": "text",
