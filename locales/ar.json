@@ -139,6 +139,9 @@
     "faq_final_cta": {
       "whatsapp_word": "واتساب"
     },
+    "featured_review": {
+      "verified_buyer": "{{ name }}\u00a0· مشترٍ\u00a0موثق"
+    },
     "faq_search": {
       "no_matches": "لا توجد نتائج مطابقة",
       "search_label": "ابحث في الأسئلة الشائعة"

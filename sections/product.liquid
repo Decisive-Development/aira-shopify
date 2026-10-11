@@ -99,13 +99,26 @@
 				{%- comment -%}
 					Rating line when a rating and a review count are set, otherwise the
 					guarantee badge. The line links to the reviews section on the page
-					(sections/custom-reviews carries id="reviews").
+					(sections/custom-reviews carries id="reviews"). Under it, the
+					featured review card (Tom, 2026-10-11): one real review with the
+					reviewer's photo, linking to the same place; hidden until a quote
+					and a name are set.
 				{%- endcomment -%}
-				{%- if section.settings.rating_value != blank and section.settings.rating_count != blank -%}
-					{%- render 'rating-summary', rating: section.settings.rating_value, count: section.settings.rating_count, url: '#reviews' -%}
-				{%- else -%}
-					{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
-				{%- endif -%}
+				<div class="flex flex-col gap-3">
+					{%- if section.settings.rating_value != blank and section.settings.rating_count != blank -%}
+						{%- render 'rating-summary', rating: section.settings.rating_value, count: section.settings.rating_count, url: '#reviews' -%}
+					{%- else -%}
+						{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
+					{%- endif -%}
+					{%- render 'featured-review',
+						quote: section.settings.review_quote,
+						name: section.settings.review_name,
+						image: section.settings.review_image,
+						stars: section.settings.review_stars,
+						verified: section.settings.review_verified,
+						url: '#reviews'
+					-%}
+				</div>
 
 				{%- comment -%}
 					Title + description. With a headline set, the headline takes the large
@@ -406,12 +419,11 @@
 	var stickyBar = document.querySelector('[data-sticky-bar]');
 	var stickyAtc = stickyBar ? stickyBar.querySelector('[data-sticky-atc]') : null;
 
-	/* ── Rating line: ease down to the reviews section ──
+	/* ── Rating line and featured review card: ease down to the reviews ──
 	   On desktop assets/smooth-scroll.js already eases in-page links through
 	   Lenis. Where Lenis is off (touch, small screens) the plain link would
 	   jump, so scroll smoothly here instead. Reduced motion keeps the jump. */
-	var ratingLink = section.querySelector('[data-rating-link]');
-	if (ratingLink) {
+	section.querySelectorAll('[data-rating-link]').forEach(function (ratingLink) {
 		ratingLink.addEventListener('click', function (e) {
 			if (window.lenis) return;
 			if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -420,7 +432,7 @@
 			e.preventDefault();
 			target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		});
-	}
+	});
 
 	/* ── Selling plan toggle ── */
 	var planBtns = section.querySelectorAll('[data-plan-btn]');
@@ -562,6 +574,47 @@
 			"type": "number",
 			"id": "rating_count",
 			"label": "Review count"
+		},
+		{
+			"type": "header",
+			"content": "Featured review"
+		},
+		{
+			"type": "paragraph",
+			"content": "A review card under the rating line, linking to the reviews section. Leave the quote blank to hide it."
+		},
+		{
+			"type": "text",
+			"id": "review_quote",
+			"label": "Quote",
+			"info": "One sentence from the review, without quote marks."
+		},
+		{
+			"type": "text",
+			"id": "review_name",
+			"label": "Reviewer's first name"
+		},
+		{
+			"type": "image_picker",
+			"id": "review_image",
+			"label": "Reviewer's photo",
+			"info": "Shown as a square along the start of the card. Leave empty for a card without a photo."
+		},
+		{
+			"type": "range",
+			"id": "review_stars",
+			"label": "Stars",
+			"min": 1,
+			"max": 5,
+			"step": 1,
+			"default": 5
+		},
+		{
+			"type": "checkbox",
+			"id": "review_verified",
+			"label": "Verified buyer",
+			"default": true,
+			"info": "Adds \"verified buyer\" after the name."
 		},
 		{
 			"type": "header",

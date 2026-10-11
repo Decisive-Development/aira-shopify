@@ -139,6 +139,9 @@
     "faq_final_cta": {
       "whatsapp_word": "WhatsApp"
     },
+    "featured_review": {
+      "verified_buyer": "{{ name }}\u00a0· verified\u00a0buyer"
+    },
     "faq_search": {
       "no_matches": "No matches",
       "search_label": "Search the FAQ"
