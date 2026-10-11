@@ -339,10 +339,33 @@
 				{%- if section.settings.refill_link_url != blank -%}
 					<a
 						href="{{ section.settings.refill_link_url }}"
-						class="text-sm text-copy hover:text-highlight transition-colors"
+						class="self-center text-sm text-copy underline underline-offset-4 hover:text-highlight transition-colors"
 					>
 						{{ section.settings.refill_link_label | default: 'Already have a strip? Get refills' }}
 					</a>
+				{%- endif -%}
+
+				{%- comment -%}
+					── Community strip (Tom, 2026-10-11) ──
+					The shared UGC testimonials (the ugc_testimonial metaobject list, the
+					same entries the ugc-gallery section shows elsewhere) as compact cards
+					under the refill link, so the kit page carries them inside the buy box
+					instead of as a full section further down.
+				{%- endcomment -%}
+				{%- assign ugc_entries = metaobjects.ugc_testimonial.values -%}
+				{%- if section.settings.show_ugc and ugc_entries.size > 0 -%}
+					<div class="flex flex-col gap-3 mt-2">
+						<div class="flex items-center justify-between gap-4 text-xs font-extrabold uppercase tracking-[0.08em] text-copy">
+							{%- if section.settings.ugc_eyebrow != blank -%}
+								<p class="min-w-0 truncate">{{ section.settings.ugc_eyebrow }}</p>
+							{%- endif -%}
+							{%- if settings.social_instagram_handle != blank -%}
+								<p class="ms-auto shrink-0">{{ settings.social_instagram_handle }}</p>
+							{%- endif -%}
+						</div>
+						{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
+						{%- render 'ugc-strip', id: 'buy-box', entries: ugc_entries, layout: 'compact', card_dir: ugc_card_dir -%}
+					</div>
 				{%- endif -%}
 
 				{%- comment -%} ── Trust badges ── {%- endcomment -%}
@@ -838,6 +861,23 @@
 			"label": "Free gift variant",
 			"default": "30",
 			"info": "Variant title to add, e.g. 30. Falls back to the first available variant."
+		},
+		{
+			"type": "header",
+			"content": "Community strip"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_ugc",
+			"label": "Show the community videos under the refill link",
+			"default": true,
+			"info": "The shared UGC testimonials from Content, Metaobjects, UGC testimonial. The handle comes from Theme settings, Social."
+		},
+		{
+			"type": "text",
+			"id": "ugc_eyebrow",
+			"label": "Eyebrow",
+			"default": "From the aira community"
 		},
 		{
 			"type": "header",

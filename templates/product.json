@@ -63,9 +63,9 @@
         "info_2": {
           "type": "product_faq",
           "settings": {
-            "show_under_headline": true,
             "question": "BENEFITS",
-            "answer": "<ul><li>Instantly wider nostrils</li><li>Quieter snoring from night one</li><li>Stays on all night, even in Gulf heat</li><li>Stronger than disposable strips</li><li>Reusable, with a 30-night guarantee</li></ul>"
+            "answer": "<ul><li>Instantly wider nostrils</li><li>Quieter snoring from night one</li><li>Stays on all night, even in Gulf heat</li><li>Stronger than disposable strips</li><li>Reusable, with a 30-night guarantee</li></ul>",
+            "show_under_headline": true
           }
         },
         "info_3": {
@@ -118,7 +118,7 @@
         "offer_headline": "Free refill pouch in every kit.\n60 pairs for the price of 30.",
         "offer_headline_accent": "Free refill pouch",
         "offer_footnote": "While the offer lasts.",
-        "sticky_offer_text": "+ Free $19.99 refill pouch",
+        "sticky_offer_text": "+ Free refill pouch, worth $19.99",
         "gift_product": "",
         "gift_variant_title": "30",
         "refill_link_label": "Already have a strip? Get refills",
@@ -363,20 +363,6 @@
         "padding_vertical": "lg"
       }
     },
-    "ugc_gallery": {
-      "type": "ugc-gallery",
-      "settings": {
-        "eyebrow": "The aira community",
-        "heading": "See it in action.",
-        "subheading": "",
-        "handle": "@airabreathing",
-        "cta_text": "Tag us and share your experience. @airabreathing",
-        "offer_text": "Claim a discount or free gift!",
-        "theme": "dark",
-        "shop_cta_label": "",
-        "shop_cta_url": ""
-      }
-    },
     "custom_reviews": {
       "type": "custom-reviews",
       "settings": {
@@ -464,7 +450,6 @@
   },
   "order": [
     "main",
-    "ugc_gallery",
     "custom_reviews",
     "benefits_grid",
     "before_after_slider",

@@ -26,24 +26,10 @@
 
 {%- if ugc_count > 0 -%}
 
-<style>
-	#shopify-section-{{ section.id }} .ugc-track::-webkit-scrollbar { display: none; }
-	#shopify-section-{{ section.id }} .ugc-track {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-		cursor: grab;
-		scroll-behavior: smooth;
-	}
-	#shopify-section-{{ section.id }} .ugc-track.is-dragging {
-		cursor: grabbing;
-		scroll-behavior: auto;
-	}
-</style>
 
 <section
 	class="py-16 md:py-24 {{ bg_class }}"
 	style="{{ bg_style }}"
-	data-ugc-section="{{ section.id }}"
 >
 	<div class="container-contained">
 
@@ -56,23 +42,22 @@
 			surface:    theme
 		-%}
 
-		{%- comment -%} Image row {%- endcomment -%}
 		{%- comment -%}
-			The scroll maths is physical, so the track and its progress bar stay left
-			to right on Arabic pages (CLAUDE.md rule 9). Each card takes the page
+			The row, its drag and auto-advance and the video lightbox live in
+			snippets/ugc-strip, shared with the kit buy box. The track stays left
+			to right on Arabic pages (CLAUDE.md rule 9); each card takes the page
 			direction back through card_dir.
 		{%- endcomment -%}
 		{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
-		<div class="flex gap-3 overflow-x-auto mt-10 md:mt-12 ugc-track" data-ugc-track dir="ltr">
-			{%- for entry in ugc_entries -%}
-				{%- render 'ugc-card', entry: entry, card_dir: ugc_card_dir -%}
-			{%- endfor -%}
-		</div>
-
-		{%- comment -%} Scroll progress bar {%- endcomment -%}
-		<div class="mt-6 mx-auto w-48 md:w-64 h-1 rounded-full {{ progress_track }} overflow-hidden" dir="ltr">
-			<div class="h-full rounded-full {{ progress_fill }} transition-[width] duration-100" data-ugc-progress style="width: 0%;"></div>
-		</div>
+		{%- render 'ugc-strip',
+			id: section.id,
+			entries: ugc_entries,
+			layout: 'gallery',
+			card_dir: ugc_card_dir,
+			track_classes: 'mt-10 md:mt-12',
+			progress_track: progress_track,
+			progress_fill: progress_fill
+		-%}
 
 		{%- comment -%} Optional shop CTA (rendered when label is set) {%- endcomment -%}
 		{%- if section.settings.shop_cta_label != blank -%}
@@ -98,165 +83,7 @@
 		</div>
 
 	</div>
-	{%- comment -%} Video lightbox modal — one per section, populated on click {%- endcomment -%}
-	<div
-		data-ugc-modal
-		class="fixed inset-0 z-100 hidden items-center justify-center bg-black/80 p-4"
-		role="dialog"
-		aria-modal="true"
-		aria-hidden="true"
-		aria-label="{{ 'sections.ugc_gallery.video_player' | t }}"
-	>
-		<button
-			type="button"
-			data-ugc-close
-			class="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
-			aria-label="{{ 'general.close_video' | t }}"
-		>
-			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
-		</button>
-		<div data-ugc-modal-holder class="relative h-[80vh] max-h-[80vh] aspect-9/16 max-w-[92vw] rounded-2xl overflow-hidden bg-black"></div>
-	</div>
-
 </section>
-
-<script>
-(function () {
-	var section = document.querySelector('[data-ugc-section="{{ section.id }}"]');
-	if (!section) return;
-	var track = section.querySelector('[data-ugc-track]');
-	var bar = section.querySelector('[data-ugc-progress]');
-	if (!track) return;
-
-	/* ── Scroll progress ── */
-	function updateProgress() {
-		if (!bar) return;
-		var max = track.scrollWidth - track.clientWidth;
-		if (max <= 0) { bar.style.width = '100%'; return; }
-		var pct = (track.scrollLeft / max) * 100;
-		bar.style.width = Math.max(5, Math.min(100, pct)) + '%';
-	}
-	track.addEventListener('scroll', updateProgress, { passive: true });
-	updateProgress();
-
-	/* ── Drag to scroll (desktop) ── */
-	var isDown = false, startX = 0, scrollLeft = 0, hasDragged = false;
-
-	track.addEventListener('mousedown', function (e) {
-		isDown = true;
-		hasDragged = false;
-		startX = e.pageX - track.offsetLeft;
-		scrollLeft = track.scrollLeft;
-		track.classList.add('is-dragging');
-	});
-
-	window.addEventListener('mousemove', function (e) {
-		if (!isDown) return;
-		var x = e.pageX - track.offsetLeft;
-		var delta = startX - x;
-		if (Math.abs(delta) > 4) hasDragged = true;
-		track.scrollLeft = scrollLeft + delta;
-	});
-
-	window.addEventListener('mouseup', function () {
-		if (!isDown) return;
-		isDown = false;
-		track.classList.remove('is-dragging');
-		resetAutoplay();
-	});
-
-	track.addEventListener('click', function (e) {
-		if (hasDragged) e.stopPropagation();
-	}, true);
-
-	/* ── Auto-scroll every 6 seconds ── */
-	var autoTimer = null;
-	var userTouching = false;
-
-	function getCardStep() {
-		var card = track.firstElementChild;
-		if (!card) return 200;
-		return card.getBoundingClientRect().width + 12; /* 12 = gap-3 */
-	}
-
-	function autoScroll() {
-		if (userTouching || isDown) return;
-		var max = track.scrollWidth - track.clientWidth;
-		var next = track.scrollLeft + getCardStep();
-		if (next >= max - 2) {
-			track.scrollTo({ left: 0, behavior: 'smooth' });
-		} else {
-			track.scrollTo({ left: next, behavior: 'smooth' });
-		}
-	}
-
-	function resetAutoplay() {
-		clearInterval(autoTimer);
-		autoTimer = setInterval(autoScroll, 6000);
-	}
-
-	/* Pause on touch / hover */
-	track.addEventListener('touchstart', function () { userTouching = true; clearInterval(autoTimer); }, { passive: true });
-	track.addEventListener('touchend', function () { userTouching = false; resetAutoplay(); }, { passive: true });
-	track.addEventListener('mouseenter', function () { clearInterval(autoTimer); });
-	track.addEventListener('mouseleave', function () { if (!isDown) resetAutoplay(); });
-
-	/* ── Video lightbox ── */
-	var modal = section.querySelector('[data-ugc-modal]');
-	var modalHolder = modal && modal.querySelector('[data-ugc-modal-holder]');
-	var closeBtn = modal && modal.querySelector('[data-ugc-close]');
-
-	function openModal(card) {
-		var tpl = card.querySelector('[data-ugc-modal-content]');
-		if (!tpl || !modalHolder || !modal) return;
-		modalHolder.innerHTML = '';
-		modalHolder.appendChild(tpl.content.cloneNode(true));
-		modal.classList.remove('hidden');
-		modal.classList.add('flex');
-		modal.setAttribute('aria-hidden', 'false');
-		document.body.style.overflow = 'hidden';
-		var v = modalHolder.querySelector('video');
-		if (v) { v.play().catch(function () {}); }
-	}
-
-	function closeModal() {
-		if (!modal || !modalHolder) return;
-		var v = modalHolder.querySelector('video');
-		if (v) { try { v.pause(); } catch (e) {} }
-		modalHolder.innerHTML = '';
-		modal.classList.add('hidden');
-		modal.classList.remove('flex');
-		modal.setAttribute('aria-hidden', 'true');
-		document.body.style.overflow = '';
-	}
-
-	section.querySelectorAll('[data-ugc-card]').forEach(function (card) {
-		card.addEventListener('click', function () {
-			if (hasDragged) return;
-			openModal(card);
-		});
-		card.addEventListener('keydown', function (e) {
-			if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-				e.preventDefault();
-				openModal(card);
-			}
-		});
-	});
-
-	if (closeBtn) closeBtn.addEventListener('click', closeModal);
-	if (modal) {
-		modal.addEventListener('click', function (e) {
-			if (e.target === modal) closeModal();
-		});
-	}
-	document.addEventListener('keydown', function (e) {
-		if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
-	});
-
-	/* Start the auto-advance */
-	resetAutoplay();
-})();
-</script>
 
 {%- endif -%}
 
