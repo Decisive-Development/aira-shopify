@@ -95,11 +95,6 @@
       });
     });
 
-    /* Side chevrons: one frame back or forward, wrapping at the ends. */
-    var prevBtn = gallery.querySelector('[data-gallery-prev]');
-    var nextBtn = gallery.querySelector('[data-gallery-next]');
-    if (prevBtn) prevBtn.addEventListener('click', function () { goTo((indexInView() - 1 + items.length) % items.length); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { goTo((indexInView() + 1) % items.length); });
 
     /* Warm-up: an item within a frame width of the scrollport gets its lazy
        image promoted to eager, which starts the request at once. The margin
