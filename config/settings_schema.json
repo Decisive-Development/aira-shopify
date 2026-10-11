@@ -210,7 +210,7 @@
         "info": "Shown sitewide (e.g. the community gallery). Set once here."
       },
       {
-        "type": "url",
+        "type": "text",
         "id": "social_instagram_url",
         "label": "Instagram profile link",
         "default": "https://www.instagram.com/airabreathing",
