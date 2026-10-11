@@ -124,13 +124,11 @@
 	-%}
 
 	{%- capture popup_step_one -%}
-		<div data-popup-step="1" class="px-6 text-center">
-			{%- if section.settings.eyebrow != blank -%}
-				<p class="font-heading text-xs font-bold uppercase tracking-widest text-copy">{{ section.settings.eyebrow }}</p>
-			{%- endif -%}
-			<h2 id="offer-popup-heading" class="mt-2 font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.heading }}</h2>
+		<div data-popup-step="1" class="px-6 pt-2 text-center">
+			<h2 id="offer-popup-heading" class="font-heading font-extrabold text-2xl leading-tight text-main text-balance">{{ section.settings.heading }}</h2>
 			{%- if section.settings.subheading != blank -%}
-				<p class="mx-auto mt-3 max-w-sm text-base leading-relaxed text-copy text-balance">{{ section.settings.subheading }}</p>
+				{%- comment -%} Rich text, so the phrases to weight are bolded in the editor; strong renders semibold here. {%- endcomment -%}
+				<div class="mx-auto mt-3 max-w-sm text-base leading-relaxed text-copy text-balance [&_strong]:font-semibold">{{ section.settings.subheading }}</div>
 			{%- endif -%}
 			<div class="mt-6 flex flex-col items-center gap-3">
 				{%- render 'cta-button',
@@ -838,21 +836,16 @@
 		},
 		{
 			"type": "text",
-			"id": "eyebrow",
-			"label": "Eyebrow",
-			"default": "One thing before you go on"
-		},
-		{
-			"type": "text",
 			"id": "heading",
 			"label": "Heading",
 			"default": "Want 10% off your kit?"
 		},
 		{
-			"type": "textarea",
+			"type": "richtext",
 			"id": "subheading",
 			"label": "Supporting line",
-			"default": "Plus the free refill pouch that comes with every order."
+			"info": "Bold in the editor shows as semibold.",
+			"default": "<p>Plus the <strong>free refill pouch</strong> that comes with <strong>every order</strong>.</p>"
 		},
 		{
 			"type": "text",
