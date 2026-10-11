@@ -37,19 +37,33 @@
 						form — Klaviyo Form Submission wiring is not configured anywhere
 						in the theme yet. Swap to a Klaviyo embed/form when flows are set.
 					{%- endcomment -%}
-					{%- capture footer_newsletter_body -%}
-						{{- section.settings.newsletter_body | replace: 'free gift with your first kit', '<strong class="font-bold">free gift with your first kit</strong>' -}}
-					{%- endcapture -%}
+					{%- comment -%}
+						Same tags as the offer popup (sections/offer-popup.liquid) so Tom
+						segments both in Klaviyo, with src: naming the page this one
+						footer sat on. ad:/camp: are filled from the landing URL on
+						submit by snippets/signup-offer.liquid, which also applies the
+						code on the way back (offer_code lands on the success block).
+					{%- endcomment -%}
+					{%- liquid
+						assign footer_signup_src = 'footer'
+						if template.name == 'index'
+							assign footer_signup_src = 'footer-index'
+						elsif template.name == 'product' and product.handle == 'aira-kit'
+							assign footer_signup_src = 'footer-product'
+						endif
+						assign footer_signup_tags = 'newsletter, popup-v2, who:unanswered, src:' | append: footer_signup_src | append: ', ad:none, camp:none'
+					-%}
 					{%- render 'newsletter-form',
 						form_id: 'footer-newsletter',
-						tags: 'newsletter',
+						tags: footer_signup_tags,
 						heading: section.settings.newsletter_heading,
-						body_html: footer_newsletter_body,
+						body_html: section.settings.newsletter_body,
 						placeholder: section.settings.newsletter_placeholder,
 						button_label: section.settings.newsletter_button,
 						layout: 'inline',
 						show_states: true,
-						success_text: section.settings.newsletter_success
+						success_text: section.settings.newsletter_success,
+						offer_code: settings.offer_discount_code
 					-%}
 
 					{%- comment -%} Social icons {%- endcomment -%}
@@ -230,7 +244,7 @@
 			"type": "textarea",
 			"id": "newsletter_body",
 			"label": "Body",
-			"default": "Join the aira list for early access to new drops, giveaways, exclusive offers and a free gift with your first kit."
+			"default": "10% off your first kit, plus early access to new drops and offers."
 		},
 		{
 			"type": "text",
@@ -242,14 +256,14 @@
 			"type": "text",
 			"id": "newsletter_button",
 			"label": "Button label",
-			"default": "Claim my gift"
+			"default": "Get my 10% off"
 		},
 		{
 			"type": "textarea",
 			"id": "newsletter_success",
 			"label": "Success message",
-			"info": "Shown in place of the email field after a successful signup. Never show the discount code here, it arrives by email.",
-			"default": "Check your inbox. Your code is on its way."
+			"info": "Shown in place of the email field after a successful signup. The code itself is applied to the checkout automatically (Theme settings, Signup offer).",
+			"default": "Done. Your 10% is applied at checkout."
 		},
 		{
 			"type": "header",

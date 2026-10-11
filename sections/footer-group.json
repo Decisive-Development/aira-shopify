@@ -23,14 +23,14 @@
       "type": "footer",
       "settings": {
         "newsletter_heading": "Better breathing, in your inbox.",
-        "newsletter_body": "Join the aira list for early access to new drops, giveaways, exclusive offers and a free gift with your first kit.",
+        "newsletter_body": "10% off your first kit, plus early access to new drops and offers.",
         "newsletter_placeholder": "Your email",
-        "newsletter_button": "Claim my gift",
+        "newsletter_button": "Get my 10% off",
         "social_instagram": "https://www.instagram.com/airabreathing/",
         "social_facebook": "https://www.facebook.com/profile.php?id=61593984874971",
         "social_youtube": "",
         "social_tiktok": "https://www.tiktok.com/@aira.breathing",
-        "newsletter_success": "Check your inbox. Your code is on its way."
+        "newsletter_success": "Done. Your 10% is applied at checkout."
       }
     }
   },
