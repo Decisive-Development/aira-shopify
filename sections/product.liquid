@@ -121,15 +121,19 @@
 				</div>
 
 				{%- comment -%}
-					Title + description. The product name is the large line and the h1
-					(AIRA_SEO_Meta_Plan.md); the headline sits under it as a smaller
-					subheader (Tom, 2026-10-11), then the subtitle.
+					Title + description. With a headline set it is the large line and the
+					h1, and the product name is screen-reader only, so the buy box starts
+					about 40px higher on phones (Tom, 2026-10-11; overrides the SEO plan's
+					h1). Without one the product name takes the line. The sticky bar
+					still shows the product name.
 				{%- endcomment -%}
 				<div>
 					{%- assign product_name = section.settings.hero_heading | default: product.title -%}
-					<h1 class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ product_name }}</h1>
 					{%- if section.settings.headline != blank -%}
-						<p class="font-heading font-semibold text-xl md:text-2xl text-title leading-snug mt-2">{{ section.settings.headline }}</p>
+						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ section.settings.headline }}</h1>
+						<p class="sr-only">{{ product_name }}</p>
+					{%- else -%}
+						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ product_name }}</h1>
 					{%- endif -%}
 					{%- if section.settings.product_subtitle != blank -%}
 						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
@@ -647,13 +651,13 @@
 			"type": "text",
 			"id": "headline",
 			"label": "Headline",
-			"info": "Subheader under the product name. Leave blank to hide."
+			"info": "The large line at the top of the buy box and the page h1. Leave blank to show the product name there instead."
 		},
 		{
 			"type": "text",
 			"id": "hero_heading",
 			"label": "Product name",
-			"info": "The large line at the top of the buy box and the page h1. Leave blank to use the product title. The sticky mobile bar shows it too."
+			"info": "Leave blank to use the product title. While a headline is set this is read by screen readers only; the sticky mobile bar still shows it."
 		},
 		{
 			"type": "header",
