@@ -51,7 +51,7 @@
 						elsif template.name == 'product' and product.handle == 'aira-kit'
 							assign footer_signup_src = 'footer-product'
 						endif
-						assign footer_signup_tags = 'newsletter, popup-v2, for:unanswered, src:' | append: footer_signup_src | append: ', ad:none, camp:none'
+						assign footer_signup_tags = 'newsletter, popup-v2, src:' | append: footer_signup_src | append: ', ad:none, camp:none'
 					-%}
 					{%- render 'newsletter-form',
 						form_id: 'footer-newsletter',

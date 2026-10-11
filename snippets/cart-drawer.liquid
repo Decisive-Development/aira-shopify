@@ -144,6 +144,8 @@
 			<span class="font-heading font-bold text-title text-xl transition-opacity group-aria-busy:opacity-40" data-cart-subtotal></span>
 		</div>
 		<p class="text-center text-highlight text-sm font-semibold">{{ 'general.free_shipping' | t }}</p>
+		{%- comment -%} Shown by the script only while the signup code is remembered (localStorage aira_popup_code). {%- endcomment -%}
+		<p class="text-center text-highlight-green text-sm font-semibold" data-cart-offer-note hidden>{{ 'snippets.cart_drawer.discount_applied' | t }}</p>
 		{%- assign checkout_label = 'cart.checkout' | t -%}
 		{%- comment -%} Built from the locale root, so Arabic visitors reach /ar/checkout and an Arabic checkout. {%- endcomment -%}
 		{%- assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/' -%}
@@ -221,13 +223,17 @@
 	   mid-session. The href is read at click time (see the busy path), so a
 	   rewritten attribute is enough for both paths. */
 	var CHECKOUT_BASE = checkoutEl ? checkoutEl.getAttribute('href') : '';
+	var offerNoteEl = document.querySelector('[data-cart-offer-note]');
 	function tagCheckout() {
-		if (!checkoutEl) return;
 		var code = '';
 		try { code = localStorage.getItem('aira_popup_code') || ''; } catch (e) {}
-		checkoutEl.setAttribute('href', code
-			? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(code)
-			: CHECKOUT_BASE);
+		if (checkoutEl) {
+			checkoutEl.setAttribute('href', code
+				? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(code)
+				: CHECKOUT_BASE);
+		}
+		/* The "10% off applied at checkout." line above the button, only while the code is held. */
+		if (offerNoteEl) { offerNoteEl.hidden = !code; }
 	}
 	tagCheckout();
 	/* Taps within this many ms of each other travel in one update call. */

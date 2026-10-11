@@ -1,7 +1,8 @@
 {%- comment -%}
 	Offer popup — the first-visit 10% off signup (popup v2, Tom's brief of
-	11 Oct 2026). Replaces the September launch popup and its reveal-card
-	gift mechanic in place; nothing of that mechanic remains.
+	11 Oct 2026 and his consolidated list of the same day). Replaces the
+	September launch popup and its reveal-card gift mechanic in place; nothing
+	of that mechanic remains.
 
 	Rendered from layout/theme.liquid as a static section, so it stays editable
 	in the theme editor, but it only renders on the homepage and the kit page,
@@ -9,35 +10,41 @@
 	customer who has ordered. The QR insert's own popup is the separate
 	sections/newsletter-popup.liquid and is not touched.
 
-	Four screens in one dialog (Tom, 2026-10-11: a tap before the ask lifts
-	completion, and a question after the field is the one people skip):
+	Four screens in one dialog:
 	  1  the forced choice: "Want 10% off your kit?" yes / no thanks
-	  2  "What's it for?" four chips; a tap is the answer and advances
-	     (optional screen via popup_ask_what_for; no skip link, the X still works)
-	  3  the email and the button; the sub-line carries the purpose statement
-	  4  success: the code, a copy button and the Get my kit CTA
+	  2  two chip rows, "What's it for?" and "Who's it for?", multi-select,
+	     both required, Continue disabled until each visible row has a tick.
+	     Each row has its own switch; both off skips the screen.
+	  3  the email and the button
+	  4  success: the code, a copy button and "Add to cart, 10% applied"
 
 	Submission is a native full-page POST, never fetch: newsletter-form wraps
 	{% form 'customer' %}, which is what creates the subscriber Klaviyo syncs,
 	and Shopify injects an invisible captcha into it (it may detour through
 	/challenge). The redirect comes back as ?customer_posted=true#offer-popup
-	and this section reopens straight at step 3, which is the form's
-	server-rendered success state. That is also why the discount code only
-	ever appears in the HTML after a successful post (brief §7).
+	on the page the visitor signed up on, and this section reopens straight at
+	screen 4, which is the form's server-rendered success state. That is also
+	why the discount code only ever appears in the HTML after a successful
+	post (brief §7).
 
 	Applying the code (GET /discount/<code>, the 30-day suppression and the
 	remembered code the cart drawer reads) is snippets/signup-offer.liquid,
 	driven by data-offer-code on the success block, so the footer signup gets
-	the identical step. This script owns timing, steps, tags and analytics.
+	the identical step. This script owns timing, screens, tags and analytics.
+
+	Screen 4's button adds the kit through a cart/add form so the drawer's
+	document-level handler runs: on the kit page that is the buy box form, on
+	the homepage a hidden form rendered below the dialog. Both carry the free
+	pouch's variant id, which is what makes the drawer send the pouch along.
 
 	Storage (all reads and writes wrapped in try/catch):
-	  localStorage.aira_popup_until      do not arm before this time
-	  localStorage.aira_popup_code       the code earned (drawer Checkout link)
-	  sessionStorage.aira_popup_shown    shown this tab session
+	  localStorage.aira_popup_until        do not arm before this time
+	  localStorage.aira_popup_code         the code earned (drawer Checkout link)
+	  sessionStorage.aira_popup_shown      shown this tab session
 	  sessionStorage.aira_popup_closed_at  the exit overlay waits 60 s after this
-	  sessionStorage.aira_popup_for      the chip answer, read back on return
-	  sessionStorage.aira_exit_shown     written by the exit overlay; blocks us
-	  sessionStorage.aira_utm            landing-page utm_content / utm_campaign
+	  sessionStorage.aira_popup_answers    the screen 2 ticks, read back on return
+	  sessionStorage.aira_exit_shown       written by the exit overlay; blocks us
+	  sessionStorage.aira_utm              landing-page utm_content / utm_campaign
 
 	Test switches: ?popup=now opens at once, ?popup=off never opens. Both are
 	moot while the enable switch is off, because nothing renders.
@@ -79,12 +86,41 @@
 
 		assign offer_code = settings.offer_discount_code | strip
 		assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/'
-		assign popup_tags = 'popup-v2, for:unanswered, src:' | append: popup_page | append: ', ad:none, camp:none'
+		assign code_param = offer_code | url_encode
+		assign checkout_discount_url = checkout_url | append: '?discount=' | append: code_param
+		assign popup_tags = 'popup-v2, src:' | append: popup_page | append: ', ad:none, camp:none'
 		assign image_alt = 'sections.offer_popup.image_alt' | t
 		# The setting carries a literal "{{ code }}" placeholder. Replaced here, inside
 		# a tag, because an output tag would end at the placeholder's own braces.
 		assign code_html = '<code class="font-mono font-bold text-main" data-popup-code>' | append: offer_code | append: '</code>'
 		assign success_body_html = section.settings.success_body | replace: '{{ code }}', code_html
+
+		assign ask_rows = false
+		if section.settings.popup_ask_for or section.settings.popup_ask_who
+			assign ask_rows = true
+		endif
+
+		# The homepage's hidden kit form needs the free pouch's variant for the
+		# drawer to send the pouch along. The buy box resolves it from its own
+		# section settings (sections/product.liquid, "Launch offer"); those are
+		# not readable from here, so this mirrors its defaults: the refill
+		# product's 30-pair variant, else its first available one. When the
+		# launch offer ends, untick it there and clear this too.
+		assign gift_variant = nil
+		if popup_page == 'index'
+			assign gift_product = all_products['aira-refill-tabs']
+			if gift_product != blank
+				for v in gift_product.variants
+					if v.title == '30'
+						assign gift_variant = v
+						break
+					endif
+				endfor
+				if gift_variant == nil
+					assign gift_variant = gift_product.first_available_variant
+				endif
+			endif
+		endif
 	-%}
 
 	{%- capture popup_step_one -%}
@@ -112,44 +148,87 @@
 		</div>
 	{%- endcapture -%}
 
-	{%- capture popup_fields -%}
-		<p class="text-sm font-semibold text-highlight" data-popup-error role="alert" hidden></p>
+	{%- comment -%}
+		Screen 2. Checkbox chips: multi-select, keyboard-operable (Tab, Space),
+		nothing checked on load. White, 1px navy border, 44px tall; a checked
+		chip shows its tick and a second navy ring. The ring is inset so the
+		chip's size never changes. The inputs carry no name: they sit outside
+		the customer form and the script writes the ticks into contact[tags]
+		at submit time.
+	{%- endcomment -%}
+	{%- capture popup_chip_rows -%}
+		{%- assign row_keys = 'for,who' | split: ',' -%}
+		{%- for row in row_keys -%}
+			{%- liquid
+				if row == 'for'
+					assign row_on = section.settings.popup_ask_for
+					assign row_label = section.settings.for_label
+					assign row_values = 'for:snoring,for:sleep,for:training,for:blocked-nose' | split: ','
+				else
+					assign row_on = section.settings.popup_ask_who
+					assign row_label = section.settings.who_label
+					assign row_values = 'who:me,who:partner,who:other' | split: ','
+				endif
+			-%}
+			{%- if row_on -%}
+				<fieldset class="m-0 min-w-0 border-0 p-0" data-popup-row="{{ row }}">
+					<legend class="mb-2 text-sm font-semibold text-main">{{ row_label }}</legend>
+					<div class="flex flex-wrap gap-2">
+						{%- for chip in row_values -%}
+							{%- liquid
+								case chip
+									when 'for:snoring'
+										assign chip_label = section.settings.for_snoring
+									when 'for:sleep'
+										assign chip_label = section.settings.for_sleep
+									when 'for:training'
+										assign chip_label = section.settings.for_training
+									when 'for:blocked-nose'
+										assign chip_label = section.settings.for_nose
+									when 'who:me'
+										assign chip_label = section.settings.who_me
+									when 'who:partner'
+										assign chip_label = section.settings.who_partner
+									else
+										assign chip_label = section.settings.who_other
+								endcase
+							-%}
+							<label class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-main bg-bg px-4 text-base font-semibold text-main has-checked:ring-1 has-checked:ring-inset has-checked:ring-main has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-highlight">
+								<input type="checkbox" value="{{ chip }}" class="peer sr-only" data-popup-chip="{{ chip }}">
+								<svg class="me-1.5 hidden h-4 w-4 shrink-0 peer-checked:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+								<span>{{ chip_label }}</span>
+							</label>
+						{%- endfor -%}
+					</div>
+				</fieldset>
+			{%- endif -%}
+		{%- endfor -%}
 	{%- endcapture -%}
 
-	{%- comment -%}
-		Screen 2. Buttons, not radios: the tap is the answer and moves on, so
-		there is no selected state to keep and no default to leave alone. White
-		chips so they read as tappable fields like the email box.
-	{%- endcomment -%}
 	{%- capture popup_step_two -%}
-		{%- if section.settings.popup_ask_what_for -%}
-			<div data-popup-step="2" class="px-6 text-center" hidden>
-				<h2 id="offer-popup-heading-2" class="font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.what_label }}</h2>
-				<div class="mt-5 flex flex-wrap justify-center gap-2" role="group" aria-labelledby="offer-popup-heading-2">
-					{%- assign for_values = 'snoring,sleep,training,nose' | split: ',' -%}
-					{%- for what in for_values -%}
-						{%- liquid
-							case what
-								when 'snoring'
-									assign for_label = section.settings.for_snoring
-								when 'sleep'
-									assign for_label = section.settings.for_sleep
-								when 'training'
-									assign for_label = section.settings.for_training
-								else
-									assign for_label = section.settings.for_nose
-							endcase
-						-%}
-						<button
-							type="button"
-							class="rounded-full border border-main/30 bg-bg px-5 py-3 text-base font-semibold text-main transition-colors hover:border-main hover:bg-main hover:text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight cursor-pointer"
-							data-popup-action="for"
-							data-popup-for="{{ what }}"
-						>{{ for_label }}</button>
-					{%- endfor -%}
+		{%- if ask_rows -%}
+			<div data-popup-step="2" class="pe-8" hidden>
+				<h2 id="offer-popup-heading-2" class="sr-only">{{ section.settings.for_label }} {{ section.settings.who_label }}</h2>
+				<div class="flex flex-col gap-5">
+					{{ popup_chip_rows }}
+				</div>
+				<div class="mt-6">
+					{%- render 'cta-button',
+						label: section.settings.continue_label,
+						element: 'button',
+						variant: 'shop',
+						size: 'lg',
+						full_width: true,
+						disabled: true,
+						attributes: 'data-popup-action="continue"'
+					-%}
 				</div>
 			</div>
 		{%- endif -%}
+	{%- endcapture -%}
+
+	{%- capture popup_fields -%}
+		<p class="text-sm font-semibold text-highlight" data-popup-error role="alert" hidden></p>
 	{%- endcapture -%}
 
 	{%- comment -%}
@@ -167,34 +246,23 @@
 			>{{ 'sections.offer_popup.copy' | t }}</button>
 		</p>
 		<div class="mt-5 flex flex-col items-center gap-3">
-			{%- if popup_page == 'product' -%}
-				{%- if kit_in_cart -%}
-					{%- render 'cta-button',
-						label: section.settings.cta_checkout_label,
-						url: checkout_url,
-						variant: 'shop',
-						size: 'lg',
-						full_width: true,
-						attributes: 'data-popup-action="checkout"'
-					-%}
-				{%- else -%}
-					{%- render 'cta-button',
-						label: section.settings.cta_kit_label,
-						element: 'button',
-						variant: 'shop',
-						size: 'lg',
-						full_width: true,
-						attributes: 'data-popup-action="add_to_cart"'
-					-%}
-				{%- endif -%}
-			{%- else -%}
+			{%- if popup_page == 'product' and kit_in_cart -%}
 				{%- render 'cta-button',
-					label: section.settings.cta_kit_label,
-					url: kit_product.url,
+					label: section.settings.cta_checkout_label,
+					url: checkout_discount_url,
 					variant: 'shop',
 					size: 'lg',
 					full_width: true,
-					attributes: 'data-popup-action="kit_page"'
+					attributes: 'data-popup-action="checkout"'
+				-%}
+			{%- else -%}
+				{%- render 'cta-button',
+					label: section.settings.cta_kit_label,
+					element: 'button',
+					variant: 'shop',
+					size: 'lg',
+					full_width: true,
+					attributes: 'data-popup-action="add_to_cart"'
 				-%}
 			{%- endif -%}
 			<button type="button" class="py-2 text-sm font-semibold text-copy underline-offset-4 hover:underline cursor-pointer" data-popup-action="keep" data-modal-close>
@@ -269,6 +337,19 @@
 		attributes: popup_attrs
 	-%}
 
+	{%- if popup_page == 'index' and kit_product != blank -%}
+		{%- comment -%}
+			The homepage has no buy box, so screen 4 submits this instead. It
+			sits outside the dialog because the success block lives inside the
+			customer form and forms cannot nest. No button: the script calls
+			requestSubmit(), which fires the submit event the drawer intercepts.
+		{%- endcomment -%}
+		<form action="{{ routes.cart_add_url }}" method="post" hidden data-popup-kit-form{% if gift_variant %} data-gift-variant-id="{{ gift_variant.id }}"{% endif %}>
+			<input type="hidden" name="id" value="{{ kit_product.selected_or_first_available_variant.id }}">
+			<input type="hidden" name="quantity" value="1">
+		</form>
+	{%- endif -%}
+
 <script>
 (function () {
 	var section = document.querySelector('#shopify-section-{{ section.id }}');
@@ -283,26 +364,28 @@
 	var UNTIL_KEY = 'aira_popup_until';
 	var SHOWN_KEY = 'aira_popup_shown';
 	var CLOSED_KEY = 'aira_popup_closed_at';
-	var FOR_KEY = 'aira_popup_for';
+	var ANSWERS_KEY = 'aira_popup_answers';
 	var EXIT_KEY = 'aira_exit_shown';
-	var CLOSE_BUTTON_DELAY = 4000; /* step 1 shows its X after this; "No thanks" and Esc are always there */
+	var CLOSE_BUTTON_DELAY = 4000; /* screen 1 shows its X after this; "No thanks" and Esc are always there */
 	var RETRY_MS = 2000;           /* another overlay was open at fire time: try again */
 	var MAX_RETRIES = 30;
 
 	var cfg = modal.dataset;
 	var page = cfg.popupPage;
 	var designMode = !!(window.Shopify && window.Shopify.designMode);
-	var steps = {
+	var screens = {
 		1: card.querySelector('[data-popup-step="1"]'),
-		2: card.querySelector('[data-popup-step="2"]'), /* null when the question is switched off */
+		2: card.querySelector('[data-popup-step="2"]'), /* null when both rows are switched off */
 		3: card.querySelector('[data-popup-step="3"]')
 	};
 	var closeBtn = card.querySelector('[data-modal-close]');
 	var form = card.querySelector('#' + FORM_ID);
-	var step = 1;
+	var continueBtn = card.querySelector('[data-popup-action="continue"]');
+	var screen = 1;
 	var submitted = false;
 	var closeReason = null;
-	var whatFor = 'unanswered';
+	var tracked = {};
+	var answers = { for: [], who: [] };
 
 	function local() { try { return window.localStorage; } catch (e) { return null; } }
 	function session() { try { return window.sessionStorage; } catch (e) { return null; } }
@@ -311,6 +394,7 @@
 
 	/* Custom pixels only; no gtag, no fbq (see the WhatsApp click in sections/footer.liquid). */
 	function publish(name, data) {
+		if (designMode) return;
 		if (window.Shopify && Shopify.analytics && Shopify.analytics.publish) {
 			Shopify.analytics.publish(name, data);
 		}
@@ -320,6 +404,14 @@
 	}
 	function utm() {
 		return window.airaOffer ? window.airaOffer.utm() : { ad: 'none', camp: 'none' };
+	}
+	/* One aira_popup_step per screen per page load, so drop-off per screen
+	   can be read without double counting a screen shown twice. */
+	function trackScreen(n) {
+		if (tracked[n]) return;
+		tracked[n] = true;
+		var u = utm();
+		publish('aira_popup_step', { step: n, page: page, utm_content: u.ad, utm_campaign: u.camp });
 	}
 
 	function suppressed() {
@@ -335,18 +427,11 @@
 		return suppressed() || read(session(), SHOWN_KEY) === '1' || !!read(session(), EXIT_KEY);
 	}
 
-	function showStep(n) {
-		step = n;
-		[1, 2, 3].forEach(function (i) { if (steps[i]) { steps[i].hidden = i !== n; } });
+	function showScreen(n) {
+		screen = n;
+		[1, 2, 3].forEach(function (i) { if (screens[i]) { screens[i].hidden = i !== n; } });
 		modal.setAttribute('aria-labelledby', n === 1 ? 'offer-popup-heading' : 'offer-popup-heading-' + n);
-	}
-
-	function goEmail() {
-		showStep(3);
-		loadImage();
-		if (closeBtn) { closeBtn.hidden = false; }
-		var email = form && form.querySelector('input[type="email"]');
-		if (email) { email.focus(); }
+		trackScreen(n);
 	}
 
 	function loadImage() {
@@ -356,12 +441,47 @@
 		slot.appendChild(tpl.content.cloneNode(true));
 	}
 
+	function goEmail() {
+		showScreen(3);
+		loadImage();
+		if (closeBtn) { closeBtn.hidden = false; }
+		var email = form && form.querySelector('input[type="email"]');
+		if (email) { email.focus(); }
+	}
+
+	/* ── Screen 2 ── */
+	function rowsComplete() {
+		var rows = screens[2] ? screens[2].querySelectorAll('[data-popup-row]') : [];
+		return Array.prototype.every.call(rows, function (row) {
+			return !!row.querySelector('[data-popup-chip]:checked');
+		});
+	}
+	function readAnswers() {
+		var picked = { for: [], who: [] };
+		if (!screens[2]) return picked;
+		Array.prototype.forEach.call(screens[2].querySelectorAll('[data-popup-chip]:checked'), function (chip) {
+			var tag = chip.getAttribute('data-popup-chip');
+			var key = tag.split(':')[0];
+			if (picked[key]) { picked[key].push(tag.slice(key.length + 1)); }
+		});
+		return picked;
+	}
+	function wireChips() {
+		if (!screens[2] || !continueBtn) return;
+		screens[2].addEventListener('change', function () {
+			continueBtn.disabled = !rowsComplete();
+		});
+	}
+
+	/* ── Screen 4 ── */
 	function addKit() {
-		/* The buy box form: requestSubmit fires the submit event the cart
-		   drawer listens for, so the free pouch and the drawer opening are the
-		   same as a tap on Add to cart. form.submit() would skip that and do a
-		   full POST to /cart/add. */
-		var kitForm = document.querySelector('[data-product-section] form[action*="/cart/add"]');
+		/* requestSubmit fires the submit event the cart drawer listens for, so
+		   the free pouch and the drawer opening are the same as a tap on Add to
+		   cart. form.submit() would skip that and do a full POST to /cart/add.
+		   The kit page uses its buy box form, the homepage the hidden form
+		   rendered under the dialog. */
+		var kitForm = document.querySelector('[data-product-section] form[action*="/cart/add"]')
+			|| document.querySelector('[data-popup-kit-form]');
 		if (!kitForm) return;
 		var button = kitForm.querySelector('[data-add-to-cart]');
 		if (button && button.disabled) return;
@@ -386,18 +506,18 @@
 
 		if (action === 'yes') {
 			publish('aira_popup_step1', { choice: 'yes' });
-			if (steps[2]) {
-				showStep(2);
+			if (screens[2]) {
+				showScreen(2);
 				if (closeBtn) { closeBtn.hidden = false; }
-				var first = steps[2].querySelector('[data-popup-action="for"]');
+				var first = screens[2].querySelector('[data-popup-chip]');
 				if (first) { first.focus(); }
 			} else {
 				goEmail();
 			}
-		} else if (action === 'for') {
-			whatFor = el.getAttribute('data-popup-for') || 'unanswered';
-			write(session(), FOR_KEY, whatFor);
-			publish('aira_popup_step2', { what_for: whatFor });
+		} else if (action === 'continue') {
+			if (!rowsComplete()) return;
+			answers = readAnswers();
+			write(session(), ANSWERS_KEY, JSON.stringify(answers));
 			goEmail();
 		} else if (action === 'no') {
 			closeReason = 'no';
@@ -409,7 +529,7 @@
 			publish('aira_popup_cta', { action: action });
 			window.airaModal.close(MODAL_ID);
 			addKit();
-		} else if (action === 'checkout' || action === 'kit_page') {
+		} else if (action === 'checkout') {
 			/* A link: the page leaves, the dialog never closes. */
 			closeReason = action;
 			publish('aira_popup_cta', { action: action });
@@ -428,7 +548,7 @@
 			if (!reason || reason === 'close') { publish('aira_popup_cta', { action: 'close' }); }
 			return;
 		}
-		if (step === 1) { publish('aira_popup_step1', { choice: reason === 'no' ? 'no' : 'close' }); }
+		if (screen === 1) { publish('aira_popup_step1', { choice: reason === 'no' ? 'no' : 'close' }); }
 		suppressFor(cfg.popupDismissDays);
 		clarity('dismissed');
 	}
@@ -455,19 +575,24 @@
 			});
 		}
 		form.addEventListener('submit', function () {
-			/* for:<answer> (the screen 2 tap) goes into contact[tags] here;
-			   ad:/camp: are filled by snippets/signup-offer.liquid on the same
-			   event. Klaviyo reads the tags as the profile's Shopify Tags. */
+			/* One tag per screen 2 tick goes into contact[tags] here; ad:/camp:
+			   are filled by snippets/signup-offer.liquid on the same event.
+			   Klaviyo reads the tags as the profile's Shopify Tags. */
 			var tags = form.querySelector('input[name="contact[tags]"]');
-			if (tags) { tags.value = tags.value.replace(/\bfor:[^,]*/, 'for:' + whatFor); }
-			write(session(), FOR_KEY, whatFor);
+			if (!tags) return;
+			var base = tags.value.replace(/,\s*(for|who):[^,]*/g, '');
+			var extra = [];
+			['for', 'who'].forEach(function (key) {
+				answers[key].forEach(function (value) { extra.push(key + ':' + value); });
+			});
+			tags.value = extra.length ? base + ', ' + extra.join(', ') : base;
 		});
 	}
 
 	/* ── Showing ── */
 	function show(how) {
 		write(session(), SHOWN_KEY, '1');
-		showStep(1);
+		showScreen(1);
 		if (closeBtn) {
 			closeBtn.hidden = true;
 			window.setTimeout(function () { closeBtn.hidden = false; }, CLOSE_BUTTON_DELAY);
@@ -543,6 +668,7 @@
 		window.airaModal.register(modal);
 		modal.addEventListener('aira:modal:close', onClose);
 		card.addEventListener('click', onAction);
+		wireChips();
 		wireForm();
 
 		var params = new URLSearchParams(window.location.search);
@@ -559,24 +685,31 @@
 		}
 
 		if (ownsPost) {
-			/* Back from our own post: straight to the result, no delay. */
+			/* Back from our own post, on the page the visitor signed up on:
+			   straight to the result, no delay. Screens 1 to 3 are not tracked
+			   again; only screen 4 fires. */
 			var intro = card.querySelector('[data-popup-intro]');
 			if (successBlock) {
 				submitted = true;
 				if (intro) { intro.hidden = true; }
 				write(session(), SHOWN_KEY, '1');
+				try { answers = JSON.parse(read(session(), ANSWERS_KEY)) || answers; } catch (e) {}
 				var u = utm();
 				publish('aira_popup_submit', {
-					what_for: read(session(), FOR_KEY) || 'unanswered',
+					for: answers.for || [],
+					who: answers.who || [],
 					page: page,
 					utm_content: u.ad,
 					utm_campaign: u.camp
 				});
 				clarity('submitted');
-				showStep(3);
+				tracked[3] = true;
+				showScreen(3);
+				trackScreen(4);
 				window.airaModal.open(MODAL_ID);
 			} else if (errorBlock) {
-				showStep(3);
+				try { answers = JSON.parse(read(session(), ANSWERS_KEY)) || answers; } catch (e) {}
+				showScreen(3);
 				loadImage();
 				window.airaModal.open(MODAL_ID);
 			}
@@ -601,9 +734,9 @@
 
 		if (designMode) {
 			/* Theme editor: open when the merchant selects this section and
-			   close when they move on. No timers, no storage. */
+			   close when they move on. No timers, no storage, no events. */
 			document.addEventListener('shopify:section:select', function (e) {
-				if (e.detail && e.detail.sectionId === '{{ section.id }}') { showStep(1); window.airaModal.open(MODAL_ID); }
+				if (e.detail && e.detail.sectionId === '{{ section.id }}') { showScreen(1); window.airaModal.open(MODAL_ID); }
 			});
 			document.addEventListener('shopify:section:deselect', function (e) {
 				if (e.detail && e.detail.sectionId === '{{ section.id }}') { window.airaModal.close(MODAL_ID); }
@@ -701,7 +834,7 @@
 		},
 		{
 			"type": "header",
-			"content": "Step 1: the choice"
+			"content": "Screen 1: the choice"
 		},
 		{
 			"type": "text",
@@ -735,48 +868,88 @@
 		},
 		{
 			"type": "header",
-			"content": "Step 2: what it's for"
+			"content": "Screen 2: the questions"
+		},
+		{
+			"type": "paragraph",
+			"content": "Two rows of chips, pick any number in each, both required before Continue. A row switched off disappears and adds no tags; both off skips the screen. Each tick becomes a customer tag (for:snoring, for:sleep, for:training, for:blocked-nose, who:me, who:partner, who:other)."
 		},
 		{
 			"type": "checkbox",
-			"id": "popup_ask_what_for",
-			"label": "Ask what the kit is for",
-			"info": "Its own screen between the choice and the email. A tap answers and moves on; nothing is preselected. Saved as the customer tag for:snoring, for:sleep, for:training or for:nose. Off skips the screen.",
+			"id": "popup_ask_for",
+			"label": "Ask what it's for",
 			"default": true
 		},
 		{
 			"type": "text",
-			"id": "what_label",
-			"label": "Heading",
+			"id": "for_label",
+			"label": "Row 1 label",
 			"default": "What's it for?"
 		},
 		{
 			"type": "text",
 			"id": "for_snoring",
-			"label": "Chip 1 (tag for:snoring)",
+			"label": "Chip: for:snoring",
 			"default": "Snoring"
 		},
 		{
 			"type": "text",
 			"id": "for_sleep",
-			"label": "Chip 2 (tag for:sleep)",
+			"label": "Chip: for:sleep",
 			"default": "Sleep"
 		},
 		{
 			"type": "text",
 			"id": "for_training",
-			"label": "Chip 3 (tag for:training)",
+			"label": "Chip: for:training",
 			"default": "Training"
 		},
 		{
 			"type": "text",
 			"id": "for_nose",
-			"label": "Chip 4 (tag for:nose)",
+			"label": "Chip: for:blocked-nose",
 			"default": "Blocked nose"
 		},
 		{
+			"type": "checkbox",
+			"id": "popup_ask_who",
+			"label": "Ask who it's for",
+			"info": "Switch off without a deploy if this row costs too much drop-off.",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "who_label",
+			"label": "Row 2 label",
+			"default": "Who's it for?"
+		},
+		{
+			"type": "text",
+			"id": "who_me",
+			"label": "Chip: who:me",
+			"default": "Me"
+		},
+		{
+			"type": "text",
+			"id": "who_partner",
+			"label": "Chip: who:partner",
+			"default": "My partner"
+		},
+		{
+			"type": "text",
+			"id": "who_other",
+			"label": "Chip: who:other",
+			"default": "Someone else"
+		},
+		{
+			"type": "text",
+			"id": "continue_label",
+			"label": "Button",
+			"default": "Continue"
+		},
+		{
 			"type": "header",
-			"content": "Step 3: the email"
+			"content": "Screen 3: the email"
 		},
 		{
 			"type": "image_picker",
@@ -794,8 +967,8 @@
 			"type": "textarea",
 			"id": "email_sub",
 			"label": "Supporting line",
-			"info": "Also the purpose statement UAE and Saudi PDPL need for marketing email: say what the address is used for. Submitting is the consent; there is no tick box and no separate line.",
-			"default": "Enter your email for 10% off and our sleep emails. We apply it to your cart."
+			"info": "The only copy besides the heading. Nothing is shown under the button. If the marketing purpose has to be stated here, say so in this line.",
+			"default": "Enter your email and we apply it to your cart. Nothing to copy."
 		},
 		{
 			"type": "text",
@@ -811,7 +984,7 @@
 		},
 		{
 			"type": "header",
-			"content": "Step 4: done"
+			"content": "Screen 4: done"
 		},
 		{
 			"type": "text",
@@ -830,14 +1003,15 @@
 			"type": "text",
 			"id": "cta_kit_label",
 			"label": "Button",
-			"info": "On the kit page this adds the kit to the cart. On the homepage it links to the kit page.",
-			"default": "Get my kit"
+			"info": "Adds the kit and the free pouch to the cart and opens the drawer, on both pages.",
+			"default": "Add to cart, 10% applied"
 		},
 		{
 			"type": "text",
 			"id": "cta_checkout_label",
 			"label": "Button when the kit is already in the cart",
-			"default": "Go to checkout"
+			"info": "Links to the checkout with the code in the address.",
+			"default": "Go to checkout, 10% applied"
 		}
 	]
 }
