@@ -19,9 +19,7 @@
 	  layout         {String}  'inline' (footer) | 'stacked' (popup)     (default: 'inline')
 	  surface        {String}  'light' | 'dark' — passed to cta-button   (default: 'light')
 	  fields_html    {String}  optional extra markup between the email field and
-	                           the submit (the offer popup's chips and its
-	                           client-side error line)
-	  consent_text   {String}  optional small consent line rendered under the submit
+	                           the submit (the offer popup's client-side error line)
 	  show_states    {Boolean} render success/error blocks               (default: false)
 	  success_text   {String}  copy for the success block
 	  success_heading {String} optional Satoshi line above success_text
@@ -164,9 +162,6 @@
 				surface: nf_surface,
 				extra_classes: nf_btn_classes
 			-%}
-			{%- if consent_text != blank -%}
-				<p class="text-xs leading-relaxed text-copy">{{ consent_text }}</p>
-			{%- endif -%}
 		</div>
 	{%- endif -%}
 {%- endform -%}

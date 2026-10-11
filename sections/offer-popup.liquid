@@ -9,10 +9,13 @@
 	customer who has ordered. The QR insert's own popup is the separate
 	sections/newsletter-popup.liquid and is not touched.
 
-	Three steps in one dialog:
+	Four screens in one dialog (Tom, 2026-10-11: a tap before the ask lifts
+	completion, and a question after the field is the one people skip):
 	  1  the forced choice: "Want 10% off your kit?" yes / no thanks
-	  2  the email, an optional "what's it for" chip row and the consent line
-	  3  success: the code, a copy button and the Get my kit CTA
+	  2  "What's it for?" four chips; a tap is the answer and advances
+	     (optional screen via popup_ask_what_for; no skip link, the X still works)
+	  3  the email and the button; the sub-line carries the purpose statement
+	  4  success: the code, a copy button and the Get my kit CTA
 
 	Submission is a native full-page POST, never fetch: newsletter-form wraps
 	{% form 'customer' %}, which is what creates the subscriber Klaviyo syncs,
@@ -91,7 +94,7 @@
 			{%- endif -%}
 			<h2 id="offer-popup-heading" class="mt-2 font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.heading }}</h2>
 			{%- if section.settings.subheading != blank -%}
-				<p class="mx-auto mt-3 max-w-sm text-base leading-relaxed text-copy">{{ section.settings.subheading }}</p>
+				<p class="mx-auto mt-3 max-w-sm text-base leading-relaxed text-copy text-balance">{{ section.settings.subheading }}</p>
 			{%- endif -%}
 			<div class="mt-6 flex flex-col items-center gap-3">
 				{%- render 'cta-button',
@@ -111,15 +114,18 @@
 
 	{%- capture popup_fields -%}
 		<p class="text-sm font-semibold text-highlight" data-popup-error role="alert" hidden></p>
+	{%- endcapture -%}
+
+	{%- comment -%}
+		Screen 2. Buttons, not radios: the tap is the answer and moves on, so
+		there is no selected state to keep and no default to leave alone. White
+		chips so they read as tappable fields like the email box.
+	{%- endcomment -%}
+	{%- capture popup_step_two -%}
 		{%- if section.settings.popup_ask_what_for -%}
-			{%- comment -%}
-				Plain radios, none checked: optional means unanswered until tapped,
-				or a default would be most of the data. White chips so they read as
-				tappable fields like the email box; the chosen one turns navy.
-			{%- endcomment -%}
-			<fieldset class="m-0 min-w-0 border-0 p-0">
-				<legend class="mb-2 text-sm font-semibold text-main">{{ section.settings.what_label }}</legend>
-				<div class="flex flex-wrap gap-2">
+			<div data-popup-step="2" class="px-6 text-center" hidden>
+				<h2 id="offer-popup-heading-2" class="font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.what_label }}</h2>
+				<div class="mt-5 flex flex-wrap justify-center gap-2" role="group" aria-labelledby="offer-popup-heading-2">
 					{%- assign for_values = 'snoring,sleep,training,nose' | split: ',' -%}
 					{%- for what in for_values -%}
 						{%- liquid
@@ -134,19 +140,21 @@
 									assign for_label = section.settings.for_nose
 							endcase
 						-%}
-						<label class="cursor-pointer">
-							<input type="radio" name="popup_for" value="{{ what }}" class="peer sr-only">
-							<span class="inline-block rounded-full border border-main/30 bg-bg px-4 py-2 text-sm font-semibold text-main transition-colors hover:border-main peer-checked:border-main peer-checked:bg-main peer-checked:text-secondary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-highlight">{{ for_label }}</span>
-						</label>
+						<button
+							type="button"
+							class="rounded-full border border-main/30 bg-bg px-5 py-3 text-base font-semibold text-main transition-colors hover:border-main hover:bg-main hover:text-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight cursor-pointer"
+							data-popup-action="for"
+							data-popup-for="{{ what }}"
+						>{{ for_label }}</button>
 					{%- endfor -%}
 				</div>
-			</fieldset>
+			</div>
 		{%- endif -%}
 	{%- endcapture -%}
 
 	{%- comment -%}
-		Step 3. Only output inside the form's posted_successfully? branch, so the
-		code is never in the page before a post succeeds.
+		Screen 4. Only output inside the form's posted_successfully? branch, so
+		the code is never in the page before a post succeeds.
 	{%- endcomment -%}
 	{%- capture popup_success -%}
 		<p class="text-base leading-relaxed text-copy">
@@ -195,13 +203,13 @@
 		</div>
 	{%- endcapture -%}
 
-	{%- capture popup_step_two -%}
-		<div data-popup-step="2" hidden>
+	{%- capture popup_step_three -%}
+		<div data-popup-step="3" hidden>
 			{%- if section.settings.popup_image != blank -%}
 				{%- comment -%}
 					A <template> is inert: the browser fetches nothing inside it. The
-					script clones it into the slot when step 2 opens, so the image
-					costs no request on page load (brief §7).
+					script clones it into the slot when this screen opens, so the
+					image costs no request on page load (brief §7).
 				{%- endcomment -%}
 				<template data-popup-image>
 					<div class="mb-5 -mx-5 overflow-hidden sm:mx-0 sm:rounded-xl">
@@ -211,9 +219,9 @@
 				<div data-popup-image-slot></div>
 			{%- endif -%}
 			<div data-popup-intro class="pe-8">
-				<h2 id="offer-popup-heading-2" class="font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.step2_heading }}</h2>
-				{%- if section.settings.step2_sub != blank -%}
-					<p class="mt-2 text-base leading-relaxed text-copy">{{ section.settings.step2_sub }}</p>
+				<h2 id="offer-popup-heading-3" class="font-heading font-bold text-2xl leading-tight text-main text-balance">{{ section.settings.email_heading }}</h2>
+				{%- if section.settings.email_sub != blank -%}
+					<p class="mt-2 text-base leading-relaxed text-copy text-balance">{{ section.settings.email_sub }}</p>
 				{%- endif -%}
 			</div>
 			<div class="mt-5">
@@ -225,7 +233,6 @@
 					button_variant: 'shop',
 					layout: 'stacked',
 					fields_html: popup_fields,
-					consent_text: section.settings.consent,
 					show_states: true,
 					success_icon: true,
 					success_classes: 'text-center',
@@ -241,6 +248,7 @@
 	{%- capture popup_body -%}
 		{{ popup_step_one }}
 		{{ popup_step_two }}
+		{{ popup_step_three }}
 	{%- endcapture -%}
 
 	{%- capture popup_attrs -%}
@@ -286,13 +294,15 @@
 	var designMode = !!(window.Shopify && window.Shopify.designMode);
 	var steps = {
 		1: card.querySelector('[data-popup-step="1"]'),
-		2: card.querySelector('[data-popup-step="2"]')
+		2: card.querySelector('[data-popup-step="2"]'), /* null when the question is switched off */
+		3: card.querySelector('[data-popup-step="3"]')
 	};
 	var closeBtn = card.querySelector('[data-modal-close]');
 	var form = card.querySelector('#' + FORM_ID);
 	var step = 1;
 	var submitted = false;
 	var closeReason = null;
+	var whatFor = 'unanswered';
 
 	function local() { try { return window.localStorage; } catch (e) { return null; } }
 	function session() { try { return window.sessionStorage; } catch (e) { return null; } }
@@ -327,9 +337,16 @@
 
 	function showStep(n) {
 		step = n;
-		steps[1].hidden = n !== 1;
-		steps[2].hidden = n !== 2;
-		modal.setAttribute('aria-labelledby', n === 1 ? 'offer-popup-heading' : 'offer-popup-heading-2');
+		[1, 2, 3].forEach(function (i) { if (steps[i]) { steps[i].hidden = i !== n; } });
+		modal.setAttribute('aria-labelledby', n === 1 ? 'offer-popup-heading' : 'offer-popup-heading-' + n);
+	}
+
+	function goEmail() {
+		showStep(3);
+		loadImage();
+		if (closeBtn) { closeBtn.hidden = false; }
+		var email = form && form.querySelector('input[type="email"]');
+		if (email) { email.focus(); }
 	}
 
 	function loadImage() {
@@ -369,11 +386,19 @@
 
 		if (action === 'yes') {
 			publish('aira_popup_step1', { choice: 'yes' });
-			showStep(2);
-			loadImage();
-			if (closeBtn) { closeBtn.hidden = false; }
-			var email = form && form.querySelector('input[type="email"]');
-			if (email) { email.focus(); }
+			if (steps[2]) {
+				showStep(2);
+				if (closeBtn) { closeBtn.hidden = false; }
+				var first = steps[2].querySelector('[data-popup-action="for"]');
+				if (first) { first.focus(); }
+			} else {
+				goEmail();
+			}
+		} else if (action === 'for') {
+			whatFor = el.getAttribute('data-popup-for') || 'unanswered';
+			write(session(), FOR_KEY, whatFor);
+			publish('aira_popup_step2', { what_for: whatFor });
+			goEmail();
 		} else if (action === 'no') {
 			closeReason = 'no';
 			window.airaModal.close(MODAL_ID);
@@ -430,14 +455,12 @@
 			});
 		}
 		form.addEventListener('submit', function () {
-			/* for:<answer> goes into contact[tags] here; ad:/camp: are filled by
-			   snippets/signup-offer.liquid on the same event. Klaviyo reads the
-			   tags as the profile's Shopify Tags. */
-			var checked = form.querySelector('input[name="popup_for"]:checked');
-			var what = checked ? checked.value : 'unanswered';
+			/* for:<answer> (the screen 2 tap) goes into contact[tags] here;
+			   ad:/camp: are filled by snippets/signup-offer.liquid on the same
+			   event. Klaviyo reads the tags as the profile's Shopify Tags. */
 			var tags = form.querySelector('input[name="contact[tags]"]');
-			if (tags) { tags.value = tags.value.replace(/\bfor:[^,]*/, 'for:' + what); }
-			write(session(), FOR_KEY, what);
+			if (tags) { tags.value = tags.value.replace(/\bfor:[^,]*/, 'for:' + whatFor); }
+			write(session(), FOR_KEY, whatFor);
 		});
 	}
 
@@ -550,10 +573,10 @@
 					utm_campaign: u.camp
 				});
 				clarity('submitted');
-				showStep(2);
+				showStep(3);
 				window.airaModal.open(MODAL_ID);
 			} else if (errorBlock) {
-				showStep(2);
+				showStep(3);
 				loadImage();
 				window.airaModal.open(MODAL_ID);
 			}
@@ -712,43 +735,19 @@
 		},
 		{
 			"type": "header",
-			"content": "Step 2: the email"
-		},
-		{
-			"type": "image_picker",
-			"id": "popup_image",
-			"label": "Image",
-			"info": "Optional, shown above the heading. The kit flat-lay. Loads only when this step opens."
-		},
-		{
-			"type": "text",
-			"id": "step2_heading",
-			"label": "Heading",
-			"default": "10% off your kit, applied at checkout."
-		},
-		{
-			"type": "textarea",
-			"id": "step2_sub",
-			"label": "Supporting line",
-			"default": "Enter your email and we apply it to your cart. Nothing to copy."
-		},
-		{
-			"type": "text",
-			"id": "placeholder",
-			"label": "Email field placeholder",
-			"default": "Your email"
+			"content": "Step 2: what it's for"
 		},
 		{
 			"type": "checkbox",
 			"id": "popup_ask_what_for",
 			"label": "Ask what the kit is for",
-			"info": "Optional chips, none preselected, not required. The answer is saved as the customer tag for:snoring, for:sleep, for:training or for:nose.",
+			"info": "Its own screen between the choice and the email. A tap answers and moves on; nothing is preselected. Saved as the customer tag for:snoring, for:sleep, for:training or for:nose. Off skips the screen.",
 			"default": true
 		},
 		{
 			"type": "text",
 			"id": "what_label",
-			"label": "Question",
+			"label": "Heading",
 			"default": "What's it for?"
 		},
 		{
@@ -776,11 +775,33 @@
 			"default": "Blocked nose"
 		},
 		{
+			"type": "header",
+			"content": "Step 3: the email"
+		},
+		{
+			"type": "image_picker",
+			"id": "popup_image",
+			"label": "Image",
+			"info": "Optional, shown above the heading. The kit flat-lay. Loads only when this screen opens."
+		},
+		{
+			"type": "text",
+			"id": "email_heading",
+			"label": "Heading",
+			"default": "10% off your kit, applied at checkout."
+		},
+		{
 			"type": "textarea",
-			"id": "consent",
-			"label": "Consent line",
-			"info": "Small line under the button. States the purpose the email is used for, which UAE and Saudi PDPL need. Submitting is the consent; there is no tick box.",
-			"default": "Emails from aira. Unsubscribe any time."
+			"id": "email_sub",
+			"label": "Supporting line",
+			"info": "Also the purpose statement UAE and Saudi PDPL need for marketing email: say what the address is used for. Submitting is the consent; there is no tick box and no separate line.",
+			"default": "Enter your email for 10% off and our sleep emails. We apply it to your cart."
+		},
+		{
+			"type": "text",
+			"id": "placeholder",
+			"label": "Email field placeholder",
+			"default": "Your email"
 		},
 		{
 			"type": "text",
@@ -790,7 +811,7 @@
 		},
 		{
 			"type": "header",
-			"content": "Step 3: done"
+			"content": "Step 4: done"
 		},
 		{
 			"type": "text",
