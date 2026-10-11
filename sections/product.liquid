@@ -93,8 +93,13 @@
 			{%- comment -%} ── Left: Media gallery (sticky on desktop) ── {%- endcomment -%}
 			{%- render 'product-gallery', media: product.media, badge: section.settings.image_badge -%}
 
-			{%- comment -%} ── Right: Product info + form ── {%- endcomment -%}
-			<div class="flex flex-col gap-5">
+			{%- comment -%}
+				── Right: Product info + form ──
+				min-w-0: as a grid item the column would otherwise grow to the widest
+				no-wrap line inside it (the community eyebrow row, the review card) and
+				push the whole page past the phone width.
+			{%- endcomment -%}
+			<div class="flex flex-col gap-5 min-w-0">
 
 				{%- comment -%}
 					Rating line when a rating and a review count are set, otherwise the
