@@ -366,7 +366,11 @@
 								<p class="min-w-0 truncate">{{ section.settings.ugc_eyebrow }}</p>
 							{%- endif -%}
 							{%- if settings.social_instagram_handle != blank -%}
-								<p class="ms-auto shrink-0">{{ settings.social_instagram_handle }}</p>
+								{%- if settings.social_instagram_url != blank -%}
+									<a href="{{ settings.social_instagram_url }}" target="_blank" rel="noopener" class="ms-auto shrink-0 hover:text-highlight transition-colors">{{ settings.social_instagram_handle }}</a>
+								{%- else -%}
+									<p class="ms-auto shrink-0">{{ settings.social_instagram_handle }}</p>
+								{%- endif -%}
 							{%- endif -%}
 						</div>
 						{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}

@@ -78,7 +78,7 @@
 				<p class="text-lg font-semibold {{ eyebrow_color }} mt-1">{{ section.settings.offer_text }}</p>
 			{%- endif -%}
 			{%- if section.settings.cta_text != blank -%}
-				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text | replace: section.settings.handle, '' | replace: ig_handle, '' | strip }} <strong class="font-bold">{{ ig_handle }}</strong></p>
+				<p class="text-base {{ cta_color }} mt-1">{{ section.settings.cta_text | replace: section.settings.handle, '' | replace: ig_handle, '' | strip }} {%- if settings.social_instagram_url != blank -%}<a href="{{ settings.social_instagram_url }}" target="_blank" rel="noopener" class="font-bold hover:underline underline-offset-4">{{ ig_handle }}</a>{%- else -%}<strong class="font-bold">{{ ig_handle }}</strong>{%- endif -%}</p>
 			{%- endif -%}
 		</div>
 
