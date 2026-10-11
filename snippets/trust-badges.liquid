@@ -1,12 +1,12 @@
 {%- comment -%}
 	trust-badges — the trust badge row under a product buy box: three plain
-	columns between two hairlines, outline icons, label from the block, optional
+	columns, outline icons, label from the block, optional
 	per-badge link (Tom, 2026-10-11: tiles dropped for the flat row).
 	Params:
 		blocks — the section's trust_badge blocks.
 {%- endcomment -%}
 {%- if blocks.size > 0 -%}
-	<div class="grid grid-cols-3 gap-3 border-y border-border py-5">
+	<div class="grid grid-cols-3 gap-3 py-2">
 		{%- for block in blocks -%}
 			{%- capture badge_classes -%}flex flex-col items-center justify-start text-center gap-2 px-1{%- endcapture -%}
 			{%- capture badge_inner -%}
