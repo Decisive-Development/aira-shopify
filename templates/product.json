@@ -123,7 +123,9 @@
         "gift_product": "",
         "gift_variant_title": "30",
         "refill_link_label": "Already have a strip? Get refills",
-        "refill_link_url": "shopify://products/aira-refill-tabs"
+        "refill_link_url": "shopify://products/aira-refill-tabs",
+        "show_ugc": true,
+        "ugc_eyebrow": "From the aira community"
       }
     },
     "before_after_slider": {
