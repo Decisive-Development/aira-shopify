@@ -345,8 +345,16 @@
 					same entries the ugc-gallery section shows elsewhere) as compact cards
 					under the add to cart button, so the kit page carries them inside the
 					buy box instead of as a full section further down. No heading row.
+					The admin cannot reorder metaobjects (Shopify returns them newest
+					first), so the "Community videos, in order" setting picks and orders
+					them for this page; empty falls back to the whole list.
 				{%- endcomment -%}
-				{%- assign ugc_entries = metaobjects.ugc_testimonial.values -%}
+				{%- liquid
+					assign ugc_entries = section.settings.ugc_entries
+					if ugc_entries == blank or ugc_entries.size == 0
+						assign ugc_entries = metaobjects.ugc_testimonial.values
+					endif
+				-%}
 				{%- if section.settings.show_ugc and ugc_entries.size > 0 -%}
 					{%- capture ugc_card_dir -%}{% if request.locale.iso_code == 'ar' %}rtl{% else %}ltr{% endif %}{%- endcapture -%}
 					<div class="mt-2">
@@ -882,6 +890,13 @@
 			"label": "Show the community videos under the add to cart button",
 			"default": true,
 			"info": "The shared UGC testimonials from Content, Metaobjects, UGC testimonial."
+		},
+		{
+			"type": "metaobject_list",
+			"id": "ugc_entries",
+			"metaobject_type": "ugc_testimonial",
+			"label": "Community videos, in order",
+			"info": "Pick and order the videos for this page. Leave empty to show every UGC testimonial, newest first. A new testimonial added in the admin only shows here once it is picked."
 		}
 	],
 	"blocks": [
