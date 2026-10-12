@@ -140,7 +140,7 @@
       "whatsapp_word": "واتساب"
     },
     "featured_review": {
-      "verified_buyer": "{{ name }}\u00a0· مشترٍ\u00a0موثق"
+      "verified_buyer": "{{ name }} · مشترٍ موثق"
     },
     "faq_search": {
       "no_matches": "لا توجد نتائج مطابقة",
@@ -249,6 +249,11 @@
     },
     "ugc_gallery": {
       "video_player": "مشغّل الفيديو"
+    },
+    "offer_popup": {
+      "error_email": "تحقّق من عنوان بريدك الإلكتروني.",
+      "image_alt": "طقم aira بكامل محتوياته",
+      "keep_browsing": "متابعة التصفح"
     }
   },
   "snippets": {
@@ -267,7 +272,8 @@
       "subtotal": "المجموع الفرعي",
       "update_failed": "تعذّر تحديث سلتك",
       "updating": "جارٍ تحديث سلتك",
-      "your_cart": "سلتك"
+      "your_cart": "سلتك",
+      "discount_applied": "خصم 10% مُطبَّق عند الدفع."
     },
     "meta_tags": {
       "page_html": "&ndash; الصفحة {{ page }}",
@@ -332,6 +338,9 @@
     },
     "ugc_card": {
       "play_video": "تشغيل الفيديو"
+    },
+    "newsletter_form": {
+      "success_default": "تحقق من بريدك. كودك في الطريق."
     }
   }
 }

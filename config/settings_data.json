@@ -12,12 +12,10 @@
     "color_accent": "#ff4000",
     "support_whatsapp_number": "971561828772",
     "whatsapp_bubble": true,
-    "content_for_index": [],
     "sections": {
       "scratch-offer-popup": {
         "type": "scratch-offer-popup",
         "settings": {
-          "trigger_delay": 1,
           "eyebrow": "LIMITED TIME OFFER",
           "heading": "A free gift with every kit",
           "subheading": "Scratch the card to see what's inside.",
@@ -27,10 +25,51 @@
           "skip_label": "Reveal your gift",
           "placeholder": "Your email",
           "button_label": "Claim my gift",
-          "success_message": "Check your inbox. Your gift is on its way."
+          "success_message": "Check your inbox. Your gift is on its way.",
+          "trigger_delay": 1
+        }
+      },
+      "offer-popup": {
+        "type": "offer-popup",
+        "settings": {
+          "popup_enabled": true,
+          "popup_enable_on_ar": false,
+          "popup_home_delay_seconds": 10,
+          "popup_pdp_delay_seconds": 30,
+          "popup_pdp_scroll_percent": 50,
+          "popup_dismiss_days": 7,
+          "popup_signup_days": 30,
+          "heading": "Want 10% off your kit?",
+          "subheading": "<p>Plus the <strong>free refill pouch</strong> that comes with <strong>every order</strong>.</p>",
+          "yes_label": "Yes, show me",
+          "no_label": "No thanks",
+          "popup_ask_for": true,
+          "for_label": "What's it for?",
+          "for_hint": "Pick any",
+          "for_snoring": "Snoring",
+          "for_sleep": "Sleep",
+          "for_training": "Training",
+          "for_nose": "Blocked nose",
+          "popup_ask_who": true,
+          "who_label": "Who's it for?",
+          "who_hint": "",
+          "who_me": "Me",
+          "who_partner": "My partner",
+          "who_other": "Someone else",
+          "continue_label": "Continue",
+          "email_heading": "10% off your kit, applied at checkout.",
+          "email_sub": "Enter your email and we apply it to your cart. Nothing to copy.",
+          "placeholder": "Your email",
+          "submit_label": "Get my 10% off",
+          "success_heading": "Done!",
+          "success_heading_line2": "10% off your first order.",
+          "success_body": "Applied at checkout. Code {{ code }} if you need it later.",
+          "cta_kit_label": "Add to cart, 10% applied",
+          "cta_checkout_label": "Go to checkout, 10% applied"
         }
       }
     },
+    "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
         "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
