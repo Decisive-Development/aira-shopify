@@ -24,6 +24,15 @@
 	    reads data-offer-code from that form's success block, applies the code
 	    and remembers it. The footer, the offer popup and any later signup get
 	    the identical step by passing offer_code to snippets/newsletter-form.
+	  - restores the form anchor Shopify's captcha detour drops. A direct post
+	    comes back as ?customer_posted=true#<form_id>; when Shopify routes the
+	    post through /challenge, its own form re-submits and the redirect lands
+	    on ?customer_posted=true with no hash, which every section script reads
+	    as "another form posted". So the submit handler leaves
+	    sessionStorage.aira_signup_pending = { form, t }, and this script, which
+	    runs inline before the footer and the popup, puts the hash back with
+	    history.replaceState when the return has none and the marker is under
+	    15 minutes old. Reproduced on an iPhone behind a VPN, 12 Oct 2026.
 {%- endcomment -%}
 <script>
 (function () {
@@ -32,6 +41,28 @@
 	var UTM_KEY = 'aira_utm';
 	var CODE_KEY = 'aira_popup_code';
 	var UNTIL_KEY = 'aira_popup_until';
+	var PENDING_KEY = 'aira_signup_pending';
+	var PENDING_MAX_AGE = 15 * 60 * 1000;
+
+	function readPending() {
+		try {
+			var held = JSON.parse(sessionStorage.getItem(PENDING_KEY));
+			if (held && held.form && Date.now() - held.t < PENDING_MAX_AGE) return held;
+		} catch (e) {}
+		return null;
+	}
+	function clearPending() {
+		try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+	}
+
+	/* Synchronous, before any section script reads location.hash. replaceState
+	   fires no hashchange and does not scroll. */
+	if (new URLSearchParams(window.location.search).get('customer_posted') === 'true' && !window.location.hash) {
+		var pending = readPending();
+		if (pending && window.history && window.history.replaceState) {
+			window.history.replaceState(null, '', window.location.pathname + window.location.search + '#' + pending.form);
+		}
+	}
 
 	/* A tag value: no commas (the tag separator), no whitespace, bounded. */
 	function clean(value) {
@@ -75,6 +106,11 @@
 	document.addEventListener('submit', function (e) {
 		var form = e.target;
 		if (!form || !form.classList || !form.classList.contains('newsletter-form')) return;
+		/* Which form is on its way, for the return when the captcha detour
+		   drops the anchor. Written before the browser leaves. */
+		if (form.id) {
+			try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ form: form.id, t: Date.now() })); } catch (e) {}
+		}
 		var tags = form.querySelector('input[name="contact[tags]"]');
 		if (!tags) return;
 		var u = utm();
@@ -83,6 +119,8 @@
 
 	function onReturn() {
 		if (params.get('customer_posted') !== 'true') return;
+		/* A return, direct or restored, spends the marker either way. */
+		clearPending();
 		var id = window.location.hash.slice(1);
 		var form = id ? document.getElementById(id) : null;
 		if (!form) return;

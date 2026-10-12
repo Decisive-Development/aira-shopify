@@ -660,6 +660,53 @@
   .lenis.lenis-smooth iframe { pointer-events: none; }
 }
 
+/* Shopify's /challenge page (the hCaptcha detour on a customer-form post)
+   renders inside layout/theme.liquid as bare text and a default button.
+   Centred, with room under the fixed header, and the submit as the primary
+   orange button so it matches snippets/cta-button. Tom, 2026-10-12. */
+.shopify-challenge__container {
+  max-width: 32rem;
+  margin: 8rem auto 6rem;
+  padding: 0 1rem;
+  text-align: center;
+  font-family: var(--font-body);
+  color: var(--color-copy);
+}
+.shopify-challenge__container .shopify-challenge__message {
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--color-title);
+}
+.shopify-challenge__container .g-recaptcha,
+.shopify-challenge__container .h-captcha {
+  display: flex;
+  justify-content: center;
+}
+.shopify-challenge__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0.75rem 2.5rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--color-highlight);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+}
+.shopify-challenge__button:hover {
+  filter: brightness(0.95);
+}
+.shopify-challenge__button:focus-visible {
+  outline: 2px solid var(--color-highlight);
+  outline-offset: 2px;
+}
+
 /* Shopify's hCaptcha badge (#shop-hcaptcha-badge-container, fixed bottom-right,
    z-index 9999) appears once a customer form is touched and lands on the offer
    popup's submit button on phones. Out of the way while any theme dialog is
