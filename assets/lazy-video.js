@@ -15,10 +15,19 @@
   track that the observer sees.
 
   A video rendered with poster_defer carries data-poster instead of poster,
-  so its poster is not fetched at parse time. The poster is set the moment
-  the video enters the same 200px margin, just before it activates, or at
-  bind time when the observer is not used (data-saver, no
-  IntersectionObserver), since those visitors get the poster and a tap.
+  so its poster is not fetched at parse time. A second observer sets it
+  once the video is within 450px of the viewport, ahead of the 200px
+  activation margin: measured on a Moto G profile over slow 4G (12 Oct
+  2026), posters set at activation were still downloading when the tiles
+  came into view, because the video streams start at the same moment. 450px
+  is the widest margin that keeps the kit page's UGC row (1325px down on a
+  412x823 phone) out of reach at load, so nothing is fetched before a
+  scroll. activate() also sets the poster, as a fallback. With no observer
+  (data-saver, no IntersectionObserver) the poster is set at bind time,
+  since those visitors get the poster and a tap.
+  Inside a [data-poster-group] (a horizontal track, where cards off to the
+  side only intersect once swiped in) the whole group's posters are set
+  together, so a card never slides in as an empty box.
 */
 (function () {
   'use strict';
@@ -27,12 +36,22 @@
   var saveData = !!(navigator.connection && navigator.connection.saveData === true);
   var inView = [];
   var io = null;
+  var posterIo = null;
 
-  function showPoster(video) {
+  function setPoster(video) {
     var poster = video.getAttribute('data-poster');
     if (!poster) return;
     video.setAttribute('poster', poster);
     video.removeAttribute('data-poster');
+    if (posterIo) posterIo.unobserve(video);
+  }
+
+  function showPoster(video) {
+    if (!video.hasAttribute('data-poster')) return;
+    var group = video.closest('[data-poster-group]');
+    if (!group) { setPoster(video); return; }
+    var pending = group.querySelectorAll(SELECTOR + '[data-poster]');
+    for (var i = 0; i < pending.length; i++) setPoster(pending[i]);
   }
 
   function hydrate(video) {
@@ -87,6 +106,7 @@
     if (video.dataset.lazyBound) return;
     video.dataset.lazyBound = '1';
     if (saveData || !io) { showPoster(video); armTap(video); return; }
+    if (posterIo && video.hasAttribute('data-poster')) posterIo.observe(video);
     io.observe(video);
   }
 
@@ -103,6 +123,14 @@
         if (entry.isIntersecting) activate(video); else pause(video);
       });
     }, { rootMargin: '200px 0px' });
+
+    posterIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        showPoster(entry.target);
+        posterIo.unobserve(entry.target);
+      });
+    }, { rootMargin: '450px 0px' });
   }
 
   document.addEventListener('visibilitychange', function () {
