@@ -8,17 +8,30 @@
 	Outputs one string, nothing else.
 
 	Params:
-	  image {Object}  product media or image (the kit master is 1080px square;
-	                  a candidate wider than the image is left out)
-	  field {String}  'srcset' or 'sizes'
+	  image   {Object}  product media or image (the kit master is 1080px square;
+	                    a candidate wider than the image is left out)
+	  field   {String}  'srcset', 'sizes' or 'thumb_sizes'
+	  columns {Number}  thumb_sizes only: columns in the thumbnail row
 
 	sizes follows .container-contained (max 1280px, padding 1.5/2.5/3rem) and
 	the buy box grid (lg:grid-cols-2 lg:gap-14): one column below lg, half
 	the contained width minus half the gap above it.
+
+	thumb_sizes is one thumbnail in the row under the frame: the same frame
+	width at each breakpoint, less the row's gap-2 (0.5rem) gutters, divided
+	by the columns. Without it the browser assumes 100vw and always takes
+	the largest thumbnail candidate (kit page speed brief, 12 Oct 2026).
 {%- endcomment -%}
 {%- liquid
 	if field == 'sizes'
 		echo '(min-width: 1280px) 564px, (min-width: 1024px) calc(50vw - 76px), (min-width: 768px) calc(100vw - 5rem), calc(100vw - 3rem)'
+	elsif field == 'thumb_sizes'
+		assign cols = columns | default: 1 | at_least: 1
+		assign gutters = cols | minus: 1 | times: 0.5 | append: 'rem'
+		echo '(min-width: 1280px) calc((564px - ' | append: gutters | append: ') / ' | append: cols | append: '), '
+		echo '(min-width: 1024px) calc((50vw - 76px - ' | append: gutters | append: ') / ' | append: cols | append: '), '
+		echo '(min-width: 768px) calc((100vw - 5rem - ' | append: gutters | append: ') / ' | append: cols | append: '), '
+		echo 'calc((100vw - 3rem - ' | append: gutters | append: ') / ' | append: cols | append: ')'
 	else
 		assign natural = image.preview_image.width | default: image.width | default: 99999
 		assign widths = '480,640,832,1080' | split: ','

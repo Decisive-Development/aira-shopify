@@ -13,6 +13,12 @@
   display:none video itself can call window.airaLazyVideo.activate(video);
   the product gallery no longer needs to, since its items sit in a scroll
   track that the observer sees.
+
+  A video rendered with poster_defer carries data-poster instead of poster,
+  so its poster is not fetched at parse time. The poster is set the moment
+  the video enters the same 200px margin, just before it activates, or at
+  bind time when the observer is not used (data-saver, no
+  IntersectionObserver), since those visitors get the poster and a tap.
 */
 (function () {
   'use strict';
@@ -21,6 +27,13 @@
   var saveData = !!(navigator.connection && navigator.connection.saveData === true);
   var inView = [];
   var io = null;
+
+  function showPoster(video) {
+    var poster = video.getAttribute('data-poster');
+    if (!poster) return;
+    video.setAttribute('poster', poster);
+    video.removeAttribute('data-poster');
+  }
 
   function hydrate(video) {
     if (video.dataset.lazyLoaded) return;
@@ -47,6 +60,7 @@
   }
 
   function activate(video) {
+    showPoster(video);
     hydrate(video);
     var p = video.play();
     if (p && typeof p.catch === 'function') {
@@ -72,7 +86,7 @@
   function bind(video) {
     if (video.dataset.lazyBound) return;
     video.dataset.lazyBound = '1';
-    if (saveData || !io) { armTap(video); return; }
+    if (saveData || !io) { showPoster(video); armTap(video); return; }
     io.observe(video);
   }
 

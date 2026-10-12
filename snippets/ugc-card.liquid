@@ -36,10 +36,18 @@
 >
 	<div class="relative rounded-2xl overflow-hidden bg-bg-muted" style="aspect-ratio: 3 / 4;">
 		{%- if has_video -%}
+			{%- comment -%}
+				The tile renders about 138px wide on a phone and 169px on desktop,
+				so a 480px poster covers a 3x screen; it waits for the tile to come
+				near (poster_defer) so it never competes with the hero. The muted
+				box behind it stands in until then.
+			{%- endcomment -%}
 			{%- render 'lazy-video',
 				video: m_video,
 				quality: 'card',
-				class: 'absolute inset-0 w-full h-full object-cover'
+				class: 'absolute inset-0 w-full h-full object-cover',
+				poster_width: 480,
+				poster_defer: true
 			-%}
 			{%- comment -%} A small soft play glyph, no disc (Tom, 2026-10-11). {%- endcomment -%}
 			<div class="absolute inset-0 flex items-center justify-center pointer-events-none">

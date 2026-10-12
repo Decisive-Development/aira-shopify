@@ -244,7 +244,8 @@
 							{%- render 'lazy-video',
 								video: block.settings.video,
 								quality: 'full',
-								aria_label: slide_media_alt
+								aria_label: slide_media_alt,
+								poster_defer: true
 							-%}
 						{%- elsif block.settings.image != blank -%}
 							{{

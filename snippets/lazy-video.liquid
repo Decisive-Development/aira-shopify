@@ -30,6 +30,13 @@
 	  class        {String}  classes on the <video> (optional)
 	  aria_label   {String}  spoken description (optional)
 	  poster_width {Number}  poster image width, default 800
+	  poster_defer {Boolean} lazy mode only: ship the poster as data-poster so
+	                         it is not fetched at parse time; assets/lazy-video.js
+	                         sets it once the video is within 200px of the
+	                         viewport (or at once under data-saver). The caller's
+	                         box must carry a background colour, which stands in
+	                         until then and for visitors without JS. (Kit page
+	                         speed brief, 12 Oct 2026.)
 {%- endcomment -%}
 
 {%- liquid
@@ -78,8 +85,11 @@
 	endif
 
 	assign src_attr = 'data-src'
+	assign poster_attr = 'poster'
 	if mode == 'modal'
 		assign src_attr = 'src'
+	elsif poster_defer
+		assign poster_attr = 'data-poster'
 	endif
 -%}
 
@@ -88,7 +98,7 @@
 	{% if mode == 'modal' %}controls{% else %}muted loop data-lazy-video{% endif %}
 	playsinline
 	preload="none"
-	{% if poster_url != blank %}poster="{{ poster_url }}"{% endif %}
+	{% if poster_url != blank %}{{ poster_attr }}="{{ poster_url }}"{% endif %}
 	{% if class != blank %}class="{{ class }}"{% endif %}
 	{% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
 >

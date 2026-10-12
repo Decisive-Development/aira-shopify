@@ -123,6 +123,10 @@
 			aria-label="{{ 'snippets.product_gallery.show_media' | t: kind: kind_label, index: thumb_no }}"
 			{% if index == 0 %}aria-current="true"{% endif %}
 		>
+			{%- comment -%}
+				The column count is only known after the loop, so sizes carries a
+				token that is swapped for the real value below.
+			{%- endcomment -%}
 			{{
 				thumb_image
 				| image_url: width: 200
@@ -131,6 +135,7 @@
 					decoding: 'async',
 					class: 'w-full h-full object-cover',
 					widths: '100, 200',
+					sizes: '__AIRA_THUMB_SIZES__',
 					alt: ''
 			}}
 			{%- if kind == 'video' -%}
@@ -151,6 +156,8 @@
 	endif
 	assign blanks = columns | minus: count
 -%}
+{%- capture thumb_sizes -%}{%- render 'hero-image-candidates', field: 'thumb_sizes', columns: columns -%}{%- endcapture -%}
+{%- assign thumbs_html = thumbs_html | replace: '__AIRA_THUMB_SIZES__', thumb_sizes -%}
 
 <div class="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start" data-gallery>
 	{%- comment -%}
