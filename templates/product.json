@@ -72,14 +72,16 @@
           "type": "product_faq",
           "settings": {
             "question": "HOW TO USE",
-            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing.</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril.</li><li><strong>3.</strong> Attach the magnetic strip and breathe freely all night.</li></ul><p><a href=\"/pages/how-it-works\">Watch our tutorial video</a></p>"
+            "answer": "<ul><li><strong>1.</strong> Peel the adhesive tab from its backing.</li><li><strong>2.</strong> Place a tab on each side of your nose, just above the nostril.</li><li><strong>3.</strong> Attach the magnetic strip and breathe freely all night.</li></ul><p><a href=\"/pages/how-it-works\">Watch our tutorial video</a></p>",
+            "show_under_headline": false
           }
         },
         "info_4": {
           "type": "product_faq",
           "settings": {
             "question": "SHIPPING & RETURNS",
-            "answer": "<p>Free shipping to the UAE and Saudi Arabia, the only countries we deliver to for now. Orders arrive in <strong>1 to 3 days</strong>. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>"
+            "answer": "<p>Free shipping to the UAE and Saudi Arabia, the only countries we deliver to for now. Orders arrive in <strong>1 to 3 days</strong>. Try aira for 30 nights. Not for you? Send it back for a full refund.</p>",
+            "show_under_headline": false
           }
         }
       },
@@ -125,25 +127,15 @@
         "show_ugc": true
       }
     },
-    "before_after_slider": {
-      "type": "before-after-slider",
+    "custom_reviews": {
+      "type": "custom-reviews",
       "settings": {
-        "eyebrow": "Before & After",
-        "heading": "See the difference for yourself.",
-        "subheading": "Drag to compare your airways: with and without the aira nasal strip.",
-        "heading_align": "center",
-        "heading_size": "md",
-        "cta_label": "",
-        "cta_url": "",
-        "before_image": "shopify://shop_images/without-aira.jpg",
-        "before_label": "Without aira",
-        "after_image": "shopify://shop_images/with-aira.jpg",
-        "after_label": "With aira",
-        "background_color": "#ffffff",
-        "overlay_color": "#000000",
-        "overlay_opacity": 0,
-        "container_width": "contained",
-        "padding_vertical": "lg"
+        "eyebrow": "What our customers say",
+        "heading": "Trusted by better breathers.",
+        "cta_text": "Write a review",
+        "theme": "light",
+        "rating_value": "",
+        "product": "aira-kit"
       }
     },
     "benefits_grid": {
@@ -155,7 +147,7 @@
             "heading": "Less snoring, from night one",
             "body": "<p>Snoring starts with a restricted airflow. Air can't get through, your mouth falls open, and your tongue gets in the way. The aira strip holds your nose open, so your mouth stays shut and the vibration quiets down. In a 14-night trial of nasal strips, partners rated the snoring quieter (Ulfberg & Fenton, 1997).</p>",
             "image": "shopify://shop_images/snore-no-more.png",
-            "image_mobile": "shopify://shop_images/snore-no-more-MOBILE_0a942a62-c274-4d75-8dd4-c43fc8a2de12.png",
+            "image_mobile": "shopify://shop_images/Design_sans_titre_1.png",
             "stat_number": "1 in 3",
             "stat_finding": "adults in the UAE snore nightly.",
             "stat_source": "AL SHAIKH ET AL., 2018",
@@ -209,6 +201,27 @@
         "cta_primary_url": "",
         "cta_secondary_label": "",
         "cta_secondary_url": ""
+      }
+    },
+    "before_after_slider": {
+      "type": "before-after-slider",
+      "settings": {
+        "eyebrow": "Before & After",
+        "heading": "See the difference for yourself.",
+        "subheading": "Drag to compare your airways: with and without the aira nasal strip.",
+        "heading_align": "center",
+        "heading_size": "md",
+        "cta_label": "",
+        "cta_url": "",
+        "before_image": "shopify://shop_images/without-aira.jpg",
+        "before_label": "Without aira",
+        "after_image": "shopify://shop_images/with-aira.jpg",
+        "after_label": "With aira",
+        "background_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "container_width": "contained",
+        "padding_vertical": "lg"
       }
     },
     "social_proof": {
@@ -361,16 +374,6 @@
         "overlay_opacity": 0,
         "container_width": "contained",
         "padding_vertical": "lg"
-      }
-    },
-    "custom_reviews": {
-      "type": "custom-reviews",
-      "settings": {
-        "eyebrow": "What our customers say",
-        "heading": "Trusted by better breathers.",
-        "cta_text": "Write a review",
-        "theme": "light",
-        "product": "aira-kit"
       }
     },
     "faq": {
