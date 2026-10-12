@@ -24,15 +24,25 @@
 	    reads data-offer-code from that form's success block, applies the code
 	    and remembers it. The footer, the offer popup and any later signup get
 	    the identical step by passing offer_code to snippets/newsletter-form.
-	  - restores the form anchor Shopify's captcha detour drops. A direct post
-	    comes back as ?customer_posted=true#<form_id>; when Shopify routes the
-	    post through /challenge, its own form re-submits and the redirect lands
-	    on ?customer_posted=true with no hash, which every section script reads
-	    as "another form posted". So the submit handler leaves
-	    sessionStorage.aira_signup_pending = { form, t }, and this script, which
-	    runs inline before the footer and the popup, puts the hash back with
-	    history.replaceState when the return has none and the marker is under
-	    15 minutes old. Reproduced on an iPhone behind a VPN, 12 Oct 2026.
+	  - recovers the return from Shopify's captcha detour. A direct post comes
+	    back as ?customer_posted=true#<form_id>, which is what every section
+	    script and Shopify's own posted_successfully? key on. When Shopify
+	    routes the post through /challenge (URL
+	    /challenge?form_key=…&form_type=customer&return_path=/products/aira-kit#<form_id>),
+	    solving the captcha sends the visitor to the bare return_path: no
+	    parameter, no hash, so the server renders no success state at all.
+	    Three marks fix that:
+	      1. the submit handler leaves sessionStorage.aira_signup_pending =
+	         { form, t } before the browser leaves;
+	      2. on the /challenge page this script refreshes that marker from the
+	         hash and records the captcha form's submit in
+	         sessionStorage.aira_signup_challenge;
+	      3. on the next page load with no customer_posted and a challenge
+	         submit under two minutes old, it reloads the page once with
+	         ?customer_posted=true#<form_id>, which Shopify renders as the
+	         success state, and the normal return path runs unchanged.
+	    A return that has the parameter but no hash gets the hash back with
+	    history.replaceState. Reproduced on an iPhone behind a VPN, 12 Oct 2026.
 {%- endcomment -%}
 <script>
 (function () {
@@ -43,6 +53,8 @@
 	var UNTIL_KEY = 'aira_popup_until';
 	var PENDING_KEY = 'aira_signup_pending';
 	var PENDING_MAX_AGE = 15 * 60 * 1000;
+	var CHALLENGE_KEY = 'aira_signup_challenge';
+	var CHALLENGE_MAX_AGE = 2 * 60 * 1000;
 
 	function readPending() {
 		try {
@@ -51,16 +63,50 @@
 		} catch (e) {}
 		return null;
 	}
+	function writePending(form) {
+		try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ form: form, t: Date.now() })); } catch (e) {}
+	}
 	function clearPending() {
-		try { sessionStorage.removeItem(PENDING_KEY); } catch (e) {}
+		try { sessionStorage.removeItem(PENDING_KEY); sessionStorage.removeItem(CHALLENGE_KEY); } catch (e) {}
+	}
+	function challengeSolvedAt() {
+		try { return parseInt(sessionStorage.getItem(CHALLENGE_KEY), 10) || 0; } catch (e) { return 0; }
 	}
 
-	/* Synchronous, before any section script reads location.hash. replaceState
-	   fires no hashchange and does not scroll. */
-	if (new URLSearchParams(window.location.search).get('customer_posted') === 'true' && !window.location.hash) {
+	var params = new URLSearchParams(window.location.search);
+	var posted = params.get('customer_posted') === 'true';
+	var onChallenge = /\/challenge\/?$/.test(window.location.pathname);
+
+	if (onChallenge) {
+		/* The detour kept the form's anchor on its own URL: keep the marker
+		   fresh from it, and note when the captcha form goes. Any form here
+		   that is not one of ours is Shopify's challenge form. */
+		if (window.location.hash.length > 1) { writePending(window.location.hash.slice(1)); }
+		document.addEventListener('submit', function (e) {
+			var f = e.target;
+			if (!f || (f.classList && f.classList.contains('newsletter-form'))) return;
+			try { sessionStorage.setItem(CHALLENGE_KEY, String(Date.now())); } catch (e2) {}
+		});
+	} else if (posted && !window.location.hash) {
+		/* The parameter came back without the anchor: put it back before any
+		   section script reads location.hash. replaceState fires no hashchange
+		   and does not scroll. */
 		var pending = readPending();
 		if (pending && window.history && window.history.replaceState) {
 			window.history.replaceState(null, '', window.location.pathname + window.location.search + '#' + pending.form);
+		}
+	} else if (!posted) {
+		/* Back from the captcha with nothing on the URL: one reload with the
+		   parameter and the anchor, which Shopify renders as the success state.
+		   Only within two minutes of the captcha form going, so a visitor who
+		   abandoned the challenge and browsed on is left alone. */
+		var detour = readPending();
+		var solved = challengeSolvedAt();
+		if (detour && solved && Date.now() - solved < CHALLENGE_MAX_AGE) {
+			try { sessionStorage.removeItem(CHALLENGE_KEY); } catch (e3) {}
+			var sep = window.location.search ? '&' : '?';
+			window.location.replace(window.location.pathname + window.location.search + sep + 'customer_posted=true#' + detour.form);
+			return;
 		}
 	}
 
@@ -69,7 +115,6 @@
 		return String(value || '').replace(/[,\s]+/g, '-').slice(0, 60) || 'none';
 	}
 
-	var params = new URLSearchParams(window.location.search);
 	var ad = params.get('utm_content');
 	var camp = params.get('utm_campaign');
 	if (ad || camp) {
@@ -108,9 +153,7 @@
 		if (!form || !form.classList || !form.classList.contains('newsletter-form')) return;
 		/* Which form is on its way, for the return when the captcha detour
 		   drops the anchor. Written before the browser leaves. */
-		if (form.id) {
-			try { sessionStorage.setItem(PENDING_KEY, JSON.stringify({ form: form.id, t: Date.now() })); } catch (e) {}
-		}
+		if (form.id) { writePending(form.id); }
 		var tags = form.querySelector('input[name="contact[tags]"]');
 		if (!tags) return;
 		var u = utm();
