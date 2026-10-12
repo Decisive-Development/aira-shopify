@@ -92,8 +92,13 @@
 		assign image_alt = 'sections.offer_popup.image_alt' | t
 		# The setting carries a literal "{{ code }}" placeholder. Replaced here, inside
 		# a tag, because an output tag would end at the placeholder's own braces.
-		assign code_html = '<code class="font-mono font-bold text-main" data-popup-code>' | append: offer_code | append: '</code>'
+		assign code_html = '<code class="font-body font-bold tracking-wider text-main" data-popup-code>' | append: offer_code | append: '</code>'
 		assign success_body_html = section.settings.success_body | replace: '{{ code }}', code_html
+		# Two-line heading (Tom's mock): "Done!" over the offer line.
+		assign success_heading_html = section.settings.success_heading
+		if section.settings.success_heading_line2 != blank
+			assign success_heading_html = success_heading_html | append: '<br>' | append: section.settings.success_heading_line2
+		endif
 
 		assign ask_rows = false
 		if section.settings.popup_ask_for or section.settings.popup_ask_who
@@ -244,16 +249,8 @@
 		the code is never in the page before a post succeeds.
 	{%- endcomment -%}
 	{%- capture popup_success -%}
-		<p class="text-base leading-relaxed text-copy">
-			{{ success_body_html }}
-			<button
-				type="button"
-				class="ms-1 inline-flex items-center rounded-lg border border-main/30 px-2.5 py-1 align-middle text-xs font-semibold text-main transition-colors hover:border-main cursor-pointer"
-				data-popup-action="copy"
-				data-copied-label="{{ 'sections.offer_popup.copied' | t }}"
-			>{{ 'sections.offer_popup.copy' | t }}</button>
-		</p>
-		<div class="mt-5 flex flex-col items-center gap-3">
+		<p class="text-base leading-relaxed text-copy text-balance">{{ success_body_html }}</p>
+		<div class="mt-6 flex flex-col items-center gap-3">
 			{%- if popup_page == 'product' and kit_in_cart -%}
 				{%- render 'cta-button',
 					label: section.settings.cta_checkout_label,
@@ -310,9 +307,9 @@
 					layout: 'stacked',
 					fields_html: popup_fields,
 					show_states: true,
-					success_icon: true,
+					success_plain: true,
 					success_classes: 'text-center',
-					success_heading: section.settings.success_heading,
+					success_heading: success_heading_html,
 					success_html: popup_success,
 					offer_code: offer_code,
 					offer_days: section.settings.popup_signup_days
@@ -496,17 +493,6 @@
 		if (kitForm.requestSubmit) { kitForm.requestSubmit(); } else if (button) { button.click(); }
 	}
 
-	function copyCode(button) {
-		var codeEl = card.querySelector('[data-popup-code]');
-		var text = codeEl ? codeEl.textContent.trim() : '';
-		if (!text || !navigator.clipboard) return;
-		navigator.clipboard.writeText(text).then(function () {
-			var label = button.textContent;
-			button.textContent = button.getAttribute('data-copied-label') || label;
-			window.setTimeout(function () { button.textContent = label; }, 2000);
-		}).catch(function () {});
-	}
-
 	function onAction(e) {
 		var el = e.target.closest ? e.target.closest('[data-popup-action]') : null;
 		if (!el) return;
@@ -530,8 +516,6 @@
 		} else if (action === 'no') {
 			closeReason = 'no';
 			window.airaModal.close(MODAL_ID);
-		} else if (action === 'copy') {
-			copyCode(el);
 		} else if (action === 'add_to_cart') {
 			closeReason = 'add_to_cart';
 			publish('aira_popup_cta', { action: action });
@@ -1005,15 +989,21 @@
 		{
 			"type": "text",
 			"id": "success_heading",
-			"label": "Heading",
-			"default": "Done. Your 10% is applied at checkout."
+			"label": "Heading, line 1",
+			"default": "Done!"
+		},
+		{
+			"type": "text",
+			"id": "success_heading_line2",
+			"label": "Heading, line 2",
+			"default": "10% off your first order."
 		},
 		{
 			"type": "textarea",
 			"id": "success_body",
 			"label": "Body",
-			"info": "{{ code }} is replaced with the discount code.",
-			"default": "Code {{ code }} is yours for one order, in case you need it later."
+			"info": "{{ code }} is replaced with the discount code, shown bold.",
+			"default": "Applied at checkout. Code {{ code }} if you need it later."
 		},
 		{
 			"type": "text",

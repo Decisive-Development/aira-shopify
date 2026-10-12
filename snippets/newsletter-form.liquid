@@ -26,6 +26,9 @@
 	  success_html   {String}  optional markup rendered after success_text inside
 	                           the success block (the offer popup's step 3)
 	  success_icon   {Boolean} teal check circle above the success block (default: false)
+	  success_plain  {Boolean} no box around the success block (no background,
+	                           radius or padding); the content sits on the
+	                           surface itself (default: false)
 	  success_classes {String} extra classes on the success block (e.g. 'text-center')
 	  offer_code     {String}  discount code this signup earns. Rendered ONLY on
 	                           the success block, as data-offer-code, so it never
@@ -60,6 +63,11 @@
 	assign nf_variant     = button_variant | default: 'solid'
 	assign nf_heading_classes = heading_classes | default: 'text-base font-semibold mb-2 text-main'
 	assign nf_offer_days  = offer_days | default: 30
+	if success_plain
+		assign nf_success_box = 'text-sm text-copy'
+	else
+		assign nf_success_box = 'rounded-xl bg-bg p-5 text-sm text-copy'
+	endif
 
 	if nf_layout == 'stacked'
 		assign nf_wrap_classes  = 'flex flex-col gap-3'
@@ -108,7 +116,7 @@
 			focus ring. Without it the programmatic focus paints a heavy box.
 		{%- endcomment -%}
 		<div
-			class="rounded-xl bg-bg p-5 text-sm text-copy focus:outline-none {{ success_classes }}"
+			class="{{ nf_success_box }} focus:outline-none {{ success_classes }}"
 			data-newsletter-success
 			data-modal-autofocus
 			role="status"
