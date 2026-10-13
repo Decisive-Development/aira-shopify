@@ -40,8 +40,8 @@
   pauses and drops its src, so it stops downloading. The track is the
   observer root for left and right, since its overflow clips anything
   measured against the viewport. A file that errors, a refused play() (Low
-  Power Mode, an in-app browser) or Save-Data leaves the poster and the
-  play icon. Tiles have no tap-to-play of their own: a tap on the card
+  Power Mode, an in-app browser) or Save-Data leaves the poster. Tiles
+  have no tap-to-play of their own: a tap on the card
   opens the strip's player, which calls suspendTiles() and resumeTiles() to
   stop every tile while it is open.
   The file is picked when it is attached: the 480p mp4 (data-src) below md,
@@ -173,7 +173,7 @@
     if (p && typeof p.catch === 'function') {
       p.catch(function (err) {
         if (!err || err.name !== 'NotAllowedError') return;
-        /* Autoplay refused: every tile keeps its poster and play icon. */
+        /* Autoplay refused: every tile keeps its poster. */
         tilesRefused = true;
         strips.forEach(updateStrip);
       });
@@ -238,7 +238,7 @@
     var t = { video: video, strip: s, inStrip: false, inRange: false, half: false, attached: false, failed: false };
     video.airaTile = t;
     s.tiles.push(t);
-    /* The file is missing (or will not decode): keep the poster and the play icon. */
+    /* The file is missing (or will not decode): keep the poster. */
     video.addEventListener('error', function () {
       if (!t.attached) return;
       t.failed = true;
