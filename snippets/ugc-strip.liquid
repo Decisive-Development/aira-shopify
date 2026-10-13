@@ -40,24 +40,43 @@
 		</div>
 	{%- endif -%}
 
-	{%- comment -%} Video lightbox, one per strip, filled from the card's template on click {%- endcomment -%}
+	{%- comment -%}
+		Video lightbox, one per strip, filled from the card's template on click.
+		The close button has its own row above the video, never over it, and
+		ugc-player-frame (assets/critical.source.css) sizes the 9:16 box from
+		the visible screen height, so the box and its controls fit with the
+		browser bars showing or hidden. The unmute button only shows when the
+		browser refused sound and the video had to start muted.
+	{%- endcomment -%}
 	<div
 		data-ugc-modal
-		class="fixed inset-0 z-100 hidden items-center justify-center bg-black/80 p-4"
+		class="ugc-player fixed inset-0 z-100 hidden items-center justify-center bg-black/80"
 		role="dialog"
 		aria-modal="true"
 		aria-hidden="true"
 		aria-label="{{ 'sections.ugc_gallery.video_player' | t }}"
 	>
-		<button
-			type="button"
-			data-ugc-close
-			class="absolute top-4 end-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
-			aria-label="{{ 'general.close_video' | t }}"
-		>
-			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
-		</button>
-		<div data-ugc-modal-holder class="relative h-[80vh] max-h-[80vh] aspect-9/16 max-w-[92vw] rounded-2xl overflow-hidden bg-black"></div>
+		<div data-ugc-frame class="ugc-player-frame flex flex-col items-end gap-2">
+			<button
+				type="button"
+				data-ugc-close
+				class="shrink-0 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+				aria-label="{{ 'general.close_video' | t }}"
+			>
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+			</button>
+			<div class="relative w-full aspect-9/16">
+				<div data-ugc-modal-holder class="absolute inset-0 rounded-2xl overflow-hidden bg-black"></div>
+				<button
+					type="button"
+					data-ugc-unmute
+					class="absolute top-3 start-3 w-11 h-11 rounded-full bg-black/60 hover:bg-black/80 text-white hidden items-center justify-center transition-colors"
+					aria-label="{{ 'general.unmute_video' | t }}"
+				>
+					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linejoin="round" d="M11 5 6 9H3v6h3l5 4z"/><path stroke-linecap="round" d="m16 9 5 6m0-6-5 6"/></svg>
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -115,6 +134,7 @@
 	/* ── Auto-scroll every 6 seconds ── */
 	var autoTimer = null;
 	var userTouching = false;
+	var modalOpen = false;
 
 	function getCardStep() {
 		var card = track.firstElementChild;
@@ -123,7 +143,7 @@
 	}
 
 	function autoScroll() {
-		if (userTouching || isDown || document.hidden) return;
+		if (userTouching || isDown || document.hidden || modalOpen) return;
 		var max = track.scrollWidth - track.clientWidth;
 		var next = track.scrollLeft + getCardStep();
 		if (next >= max - 2) {
@@ -133,8 +153,11 @@
 		}
 	}
 
+	/* No restart while the player is open, whatever the pointer does over
+	   the overlay; closeModal() starts it again. */
 	function resetAutoplay() {
 		clearInterval(autoTimer);
+		if (modalOpen) return;
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		autoTimer = setInterval(autoScroll, 6000);
 	}
@@ -147,38 +170,101 @@
 
 	/* ── Video lightbox ── */
 	var modal = root.querySelector('[data-ugc-modal]');
+	var modalFrame = modal && modal.querySelector('[data-ugc-frame]');
 	var modalHolder = modal && modal.querySelector('[data-ugc-modal-holder]');
 	var closeBtn = modal && modal.querySelector('[data-ugc-close]');
+	var unmuteBtn = modal && modal.querySelector('[data-ugc-unmute]');
+
+	function showUnmute(on) {
+		if (!unmuteBtn) return;
+		unmuteBtn.classList.toggle('hidden', !on);
+		unmuteBtn.classList.toggle('flex', on);
+	}
+
+	/* If the browser refuses sound, start muted and offer the unmute button. */
+	function startPlayer(v) {
+		var p = v.play();
+		if (!p || typeof p.catch !== 'function') return;
+		p.catch(function (err) {
+			if (!err || err.name !== 'NotAllowedError' || v.muted) return;
+			v.muted = true;
+			showUnmute(true);
+			var retry = v.play();
+			if (retry && typeof retry.catch === 'function') retry.catch(function () {});
+		});
+	}
 
 	function openModal(card) {
 		var tpl = card.querySelector('[data-ugc-modal-content]');
 		if (!tpl || !modalHolder || !modal) return;
+		/* Every tile pauses and drops its file, and the row stops moving, so the
+		   player has the connection to itself. */
+		var lazy = window.airaLazyVideo;
+		if (lazy && lazy.suspendTiles) lazy.suspendTiles(root);
+		modalOpen = true;
+		clearInterval(autoTimer);
+		showUnmute(false);
 		modalHolder.innerHTML = '';
 		modalHolder.appendChild(tpl.content.cloneNode(true));
 		modal.classList.remove('hidden');
 		modal.classList.add('flex');
 		modal.setAttribute('aria-hidden', 'false');
 		document.body.style.overflow = 'hidden';
+		var v = modalHolder.querySelector('video');
+		if (!v) return;
+		/* The player plays the file for this screen (720p below md, 1080p from
+		   md up). A src attribute outranks the <source> list, so if that file
+		   errors, dropping the attribute hands the browser today's sources:
+		   the HLS stream, then the 1080p mp4. */
+		var src = lazy && lazy.pickSource ? lazy.pickSource(v) : '';
+		if (src) {
+			v.setAttribute('src', src);
+			v.addEventListener('error', function fallback() {
+				v.removeEventListener('error', fallback);
+				if (!v.hasAttribute('src')) return;
+				v.removeAttribute('src');
+				v.load();
+				startPlayer(v);
+			});
+		}
+		v.addEventListener('volumechange', function () {
+			if (!v.muted) showUnmute(false);
+		});
 		/* iOS Safari does not run source selection on a <video> cloned out of a
 		   <template>: without load() the player opens black at 00:00. load()
 		   then play() inside the tap keeps the user gesture, so sound is allowed. */
-		var v = modalHolder.querySelector('video');
-		if (v) {
-			v.load();
-			var p = v.play();
-			if (p && typeof p.catch === 'function') p.catch(function () {});
-		}
+		v.load();
+		startPlayer(v);
 	}
 
 	function closeModal() {
 		if (!modal || !modalHolder) return;
 		var v = modalHolder.querySelector('video');
-		if (v) { try { v.pause(); } catch (e) {} }
+		if (v) {
+			/* Drop the file so its download stops before the tiles come back. */
+			v.pause();
+			v.removeAttribute('src');
+			v.innerHTML = '';
+			v.load();
+		}
 		modalHolder.innerHTML = '';
+		showUnmute(false);
 		modal.classList.add('hidden');
 		modal.classList.remove('flex');
 		modal.setAttribute('aria-hidden', 'true');
 		document.body.style.overflow = '';
+		modalOpen = false;
+		var lazy = window.airaLazyVideo;
+		if (lazy && lazy.resumeTiles) lazy.resumeTiles(root);
+		resetAutoplay();
+	}
+
+	if (unmuteBtn) {
+		unmuteBtn.addEventListener('click', function () {
+			var v = modalHolder.querySelector('video');
+			if (v) v.muted = false;
+			showUnmute(false);
+		});
 	}
 
 	root.querySelectorAll('[data-ugc-card]').forEach(function (card) {
@@ -197,7 +283,7 @@
 	if (closeBtn) closeBtn.addEventListener('click', closeModal);
 	if (modal) {
 		modal.addEventListener('click', function (e) {
-			if (e.target === modal) closeModal();
+			if (e.target === modal || e.target === modalFrame) closeModal();
 		});
 	}
 	document.addEventListener('keydown', function (e) {

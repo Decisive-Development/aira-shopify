@@ -391,6 +391,28 @@
     overflow: hidden;
   }
 
+  /* UGC player (snippets/ugc-strip.liquid). The close button has its own
+     row above the video (spacing 11, then a spacing 2 gap), and the frame
+     is as wide as the 9:16 box that fits under it in the visible screen
+     height, capped at 92vw. svh, because phones size vh as if the browser
+     bars were hidden, which pushed the old 80vh box under the close button
+     and its controls off the bottom. vh stays as the fallback for browsers
+     without svh. The padding clears the safe areas. */
+  .ugc-player {
+    --ugc-player-top: max(calc(var(--spacing) * 4), env(safe-area-inset-top));
+    --ugc-player-bottom: max(calc(var(--spacing) * 4), env(safe-area-inset-bottom));
+    padding: var(--ugc-player-top) calc(var(--spacing) * 4) var(--ugc-player-bottom);
+  }
+  .ugc-player-frame {
+    max-width: 100%;
+    width: min(92vw, calc((100vh - var(--ugc-player-top) - var(--ugc-player-bottom) - var(--spacing) * 13) * 9 / 16));
+  }
+  @supports (height: 100svh) {
+    .ugc-player-frame {
+      width: min(92vw, calc((100svh - var(--ugc-player-top) - var(--ugc-player-bottom) - var(--spacing) * 13) * 9 / 16));
+    }
+  }
+
   /* Sticky step rail (Steps 01/02/03) — active row sits on a navy card */
   .step-rail {
     position: sticky;
