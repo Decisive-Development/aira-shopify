@@ -243,7 +243,7 @@
 			assign v_image = v.featured_image | default: v.product.featured_image
 			assign v_thumb = v.product.metafields.custom.cart_thumbnail.value
 		-%}
-		"{{ v.id }}": {"title": {{ v.product.title | json }}, "name": {{ v.product.metafields.custom.short_name.value | default: '' | json }}, "handle": {{ v.product.handle | json }}, "single": {% if v.product.variants.size == 1 %}true{% else %}false{% endif %}, "url": {{ v.product.url | json }}, "image": {% if v_image %}{{ v_image | image_url: width: 160 | json }}{% else %}""{% endif %}, "alt": {{ v_image.alt | default: '' | json }}, "thumb": {% if v_thumb %}{{ v_thumb | image_url: width: 160 | json }}{% else %}""{% endif %}, "thumbAlt": {{ v_thumb.alt | default: '' | json }}}{% unless forloop.last %},{% endunless %}
+		"{{ v.id }}": {"title": {{ v.product.title | json }}, "name": {{ v.product.metafields.custom.short_name.value | default: '' | json }}, "handle": {{ v.product.handle | json }}, "single": {% if v.product.variants.size == 1 %}true{% else %}false{% endif %}, "url": {{ v.product.url | json }}, "image": {% if v_image %}{{ v_image | image_url: width: 240 | json }}{% else %}""{% endif %}, "alt": {{ v_image.alt | default: '' | json }}, "thumb": {% if v_thumb %}{{ v_thumb | image_url: width: 240 | json }}{% else %}""{% endif %}, "thumbAlt": {{ v_thumb.alt | default: '' | json }}}{% unless forloop.last %},{% endunless %}
 	{%- endfor -%}
 }
 </script>
@@ -822,7 +822,7 @@
 
 	function lineRow(o) {
 		return '<div class="flex items-start gap-3 md:gap-4 px-6 py-4" ' + o.attrs + '>'
-			+ '<a href="' + escAttr(o.url) + '" aria-label="' + escAttr(o.name) + '" class="shrink-0 size-16 md:size-20 overflow-hidden rounded-xl border border-bg-muted bg-bg p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">' + o.img + '</a>'
+			+ '<a href="' + escAttr(o.url) + '" aria-label="' + escAttr(o.name) + '" class="shrink-0 size-20 md:size-24 overflow-hidden rounded-xl border border-bg-muted bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">' + o.img + '</a>'
 			+ '<div class="flex-1 min-w-0">'
 				+ '<div class="flex items-start justify-between gap-3">'
 					+ '<div class="min-w-0">'
@@ -900,7 +900,7 @@
 		var free = isRefill ? freePouches(row) : 0;
 		var single = typeof known.single === 'boolean' ? known.single : item.product_has_only_default_variant;
 		var cartImg = item.featured_image && item.featured_image.url ? item.featured_image : null;
-		var src = known.thumb || (cartImg ? sizedImg(cartImg.url, '160x') : '');
+		var src = known.thumb || (cartImg ? sizedImg(cartImg.url, '240x') : '');
 		var alt = known.thumb ? known.thumbAlt : (cartImg && cartImg.alt);
 		return lineRow({
 			attrs: 'data-variant="' + item.variant_id + '" data-rank="' + rank(item.handle) + '"' + (isRefill ? ' data-free="' + free + '"' : '') + (row.hasFree ? ' data-has-free' : ''),
@@ -1118,7 +1118,7 @@
 	}
 
 	function sizedImg(url, size) {
-		/* Shopify CDN: insert _160x before the file extension */
+		/* Shopify CDN: insert _240x (the size asked for) before the file extension */
 		return url.replace(/(\.\w+)(\?|$)/, '_' + size + '$1$2');
 	}
 
