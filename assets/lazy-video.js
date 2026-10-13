@@ -28,6 +28,23 @@
   Inside a [data-poster-group] (a horizontal track, where cards off to the
   side only intersect once swiped in) the whole group's posters are set
   together, so a card never slides in as an empty box.
+
+  Strip tiles (video[data-lazy-video="tile"], from lazy-video.liquid's tile
+  mode; UGC tiles brief v2, 13 Oct 2026) take their own path. Nothing is
+  attached before window load. After it, a tile gets one mp4 as its src
+  (data-src below md, data-src-md from md up, picked when it is attached)
+  with preload="metadata" while its track ([data-tile-track]) is within a
+  screen of the viewport and the tile is visible in the track or is the
+  next card along. At the end of the row the first screenful counts as
+  next, because the auto-scroll goes back to the start. A tile plays while
+  at least half of it is on screen and pauses below that. Out of range it
+  pauses and drops its src, so it stops downloading. The track is the
+  observer root for left and right, since its overflow clips anything
+  measured against the viewport. A file that errors, a refused play() (Low
+  Power Mode, an in-app browser) or Save-Data leaves the poster and the
+  play icon. Tiles have no tap-to-play of their own: a tap on the card
+  opens the strip's player, which calls suspendTiles() and resumeTiles() to
+  stop every tile while it is open.
 */
 (function () {
   'use strict';
@@ -102,9 +119,152 @@
     if (!intersecting && idx !== -1) inView.splice(idx, 1);
   }
 
+  /* ── Strip tiles ── */
+  var MD_QUERY = '(min-width: 48rem)'; /* Tailwind md, where the strip cards widen */
+  var strips = [];
+  var tilesStarted = false;
+  var tilesRefused = false;
+  var nearIo = null;
+  var halfIo = null;
+
+  /* The rendition for this screen: data-src below md, data-src-md from md up.
+     The UGC player reads its own pair through the same picker. */
+  function pickSource(el) {
+    var md = window.matchMedia && window.matchMedia(MD_QUERY).matches;
+    return el.getAttribute(md ? 'data-src-md' : 'data-src') || '';
+  }
+
+  function attachTile(t) {
+    var src = pickSource(t.video);
+    if (!src) { t.failed = true; return; }
+    t.video.muted = true;
+    t.video.preload = 'metadata';
+    t.video.src = src;
+    t.attached = true;
+  }
+
+  function detachTile(t) {
+    t.attached = false;
+    t.video.pause();
+    t.video.removeAttribute('src');
+    t.video.load();
+  }
+
+  /* The 450px poster observer has normally set the poster long before a tile
+     is half on screen; showPoster() here is the fallback, as in activate(). */
+  function playTile(t) {
+    showPoster(t.video);
+    var p = t.video.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function (err) {
+        if (!err || err.name !== 'NotAllowedError') return;
+        /* Autoplay refused: every tile keeps its poster and play icon. */
+        tilesRefused = true;
+        strips.forEach(updateStrip);
+      });
+    }
+  }
+
+  function updateTile(t) {
+    var s = t.strip;
+    var want = tilesStarted && s.near && !s.suspended && t.inRange && !t.failed && !tilesRefused;
+    if (want && !t.attached) attachTile(t);
+    else if (!want && t.attached) detachTile(t);
+    if (!t.attached) return;
+    if (t.half && !document.hidden) {
+      if (t.video.paused) playTile(t);
+    } else if (!t.video.paused) {
+      t.video.pause();
+    }
+  }
+
+  function startsInView(s, t) {
+    var trackBox = s.track.getBoundingClientRect();
+    var left = t.video.getBoundingClientRect().left - trackBox.left + s.track.scrollLeft;
+    return left < s.track.clientWidth;
+  }
+
+  function updateStrip(s) {
+    var last = -1;
+    s.tiles.forEach(function (t, i) { if (t.inStrip) last = i; });
+    var atEnd = last === s.tiles.length - 1;
+    s.tiles.forEach(function (t, i) {
+      t.inRange = t.inStrip || (last !== -1 && i === last + 1) || (atEnd && startsInView(s, t));
+      updateTile(t);
+    });
+  }
+
+  function watchStrip(s) {
+    nearIo.observe(s.track);
+    s.io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var t = entry.target.airaTile;
+        if (t) t.inStrip = entry.isIntersecting;
+      });
+      updateStrip(s);
+    }, { root: s.track });
+    s.tiles.forEach(function (t) { s.io.observe(t.video); halfIo.observe(t.video); });
+  }
+
+  function stripFor(track) {
+    for (var i = 0; i < strips.length; i++) {
+      if (strips[i].track === track) return strips[i];
+    }
+    var s = { track: track, tiles: [], near: false, suspended: false, io: null };
+    strips.push(s);
+    if (tilesStarted) watchStrip(s);
+    return s;
+  }
+
+  function bindTile(video) {
+    if (saveData || !io) { showPoster(video); return; }
+    if (posterIo && video.hasAttribute('data-poster')) posterIo.observe(video);
+    var s = stripFor(video.closest('[data-tile-track]') || video.parentElement);
+    var t = { video: video, strip: s, inStrip: false, inRange: false, half: false, attached: false, failed: false };
+    video.airaTile = t;
+    s.tiles.push(t);
+    /* The file is missing (or will not decode): keep the poster and the play icon. */
+    video.addEventListener('error', function () {
+      if (!t.attached) return;
+      t.failed = true;
+      updateTile(t);
+    });
+    if (tilesStarted) { s.io.observe(video); halfIo.observe(video); }
+  }
+
+  function startTiles() {
+    if (tilesStarted || !io) return;
+    tilesStarted = true;
+    nearIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var s = stripFor(entry.target);
+        s.near = entry.isIntersecting;
+        updateStrip(s);
+      });
+    }, { rootMargin: '100% 0px' });
+    halfIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var t = entry.target.airaTile;
+        if (!t) return;
+        t.half = entry.intersectionRatio >= 0.5;
+        updateTile(t);
+      });
+    }, { threshold: [0, 0.5] });
+    strips.forEach(watchStrip);
+  }
+
+  function setTilesSuspended(root, on) {
+    strips.forEach(function (s) {
+      if (root && !root.contains(s.track)) return;
+      s.suspended = on;
+      updateStrip(s);
+    });
+  }
+
   function bind(video) {
     if (video.dataset.lazyBound) return;
     video.dataset.lazyBound = '1';
+    if (video.getAttribute('data-lazy-video') === 'tile') { bindTile(video); return; }
     if (saveData || !io) { showPoster(video); armTap(video); return; }
     if (posterIo && video.hasAttribute('data-poster')) posterIo.observe(video);
     io.observe(video);
@@ -139,16 +299,30 @@
     } else {
       inView.forEach(activate);
     }
+    strips.forEach(updateStrip);
   });
 
   /* The theme editor re-renders a section in place: bind its new videos. */
   document.addEventListener('shopify:section:load', function (e) { init(e.target); });
 
-  window.airaLazyVideo = { activate: activate, pause: pause };
+  window.airaLazyVideo = {
+    activate: activate,
+    pause: pause,
+    pickSource: pickSource,
+    suspendTiles: function (root) { setTilesSuspended(root, true); },
+    resumeTiles: function (root) { setTilesSuspended(root, false); }
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { init(); });
   } else {
     init();
+  }
+
+  /* Strip tiles wait for window load, so they never compete with the page. */
+  if (document.readyState === 'complete') {
+    startTiles();
+  } else {
+    window.addEventListener('load', startTiles);
   }
 })();

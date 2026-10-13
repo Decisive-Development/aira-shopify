@@ -10,13 +10,21 @@
 	<img> fallback with no alt attribute that nothing in the theme can reach.
 
 	The HLS playlist goes first: Safari, iOS, Chrome and Android play it
-	natively and pick a bitrate for the connection (480p on a slow link).
-	One mp4 follows for browsers without native HLS, chosen from
-	video.sources by the short side of the frame (a portrait 720p file is
-	720 wide and 1280 tall), never by filename. On this store Shopify exposes
-	only the top mp4 rendition through video.sources, so that fallback is
-	the 1080p file; the smaller mp4s exist on the CDN but Liquid cannot
-	name them. Re-uploading masters at 720p or below is the fix for that.
+	natively and pick a bitrate for the connection. One mp4 follows for
+	browsers without native HLS, chosen from video.sources by the short side
+	of the frame, never by filename. On this store Shopify exposes only the
+	top mp4 rendition through video.sources, so that fallback is the 1080p
+	file. Shopify names each rendition by the height of its encoded frame,
+	so a portrait upload's "1080p" file is 606x1080 and passes the 720 test
+	as well (a clip stored landscape with a rotation flag gives 1080x1920).
+
+	The 720p and 480p mp4s exist on the CDN next to the 1080p one, with the
+	same name apart from the rendition label (checked 13 Oct 2026 for every
+	UGC video: HTTP 200, faststart, byte ranges). Liquid cannot list them,
+	so the tile and modal modes derive them by swapping "HD-1080p-7.2Mbps".
+	That naming is undocumented: a video without that label gets no derived
+	URLs, and assets/lazy-video.js treats a derived file that errors as
+	missing (a tile keeps its poster, the modal falls back to its sources).
 
 	Params:
 	  video        {Object}  Shopify video media: a `video` setting, a
@@ -24,19 +32,29 @@
 	                         A generic file with only a url plays as mp4.
 	  quality      {String}  'full' (default): the largest mp4 with a short
 	                         side of 720 or less. 'card': the smallest mp4.
+	                         Both resolve to the 1080p file on this store.
 	  mode         {String}  'lazy' (default): muted loop, data-src, no bytes
-	                         until in view. 'modal': controls and real src,
-	                         for a <template> cloned and played on click.
+	                         until in view.
+	                         'tile': a UGC strip tile. Muted loop with no
+	                         <source> and no HLS: data-src holds the 480p mp4
+	                         (phones) and data-src-md the 720p mp4 (md and up),
+	                         which assets/lazy-video.js attaches after window
+	                         load while the tile is in range.
+	                         'modal': controls and real src, for a <template>
+	                         cloned and played on click. data-src (720p) and
+	                         data-src-md (1080p) name the file the UGC player
+	                         plays first; the <source> list is its fallback.
 	  class        {String}  classes on the <video> (optional)
 	  aria_label   {String}  spoken description (optional)
 	  poster_width {Number}  poster image width, default 800
-	  poster_defer {Boolean} lazy mode only: ship the poster as data-poster so
-	                         it is not fetched at parse time; assets/lazy-video.js
-	                         sets it once the video is within 200px of the
-	                         viewport (or at once under data-saver). The caller's
-	                         box must carry a background colour, which stands in
-	                         until then and for visitors without JS. (Kit page
-	                         speed brief, 12 Oct 2026.)
+	  poster_defer {Boolean} lazy and tile modes: ship the poster as
+	                         data-poster so it is not fetched at parse time;
+	                         assets/lazy-video.js sets it once the video is
+	                         within 450px of the viewport (or at once under
+	                         data-saver). The caller's box must carry a
+	                         background colour, which stands in until then and
+	                         for visitors without JS. (Kit page speed brief,
+	                         12 Oct 2026.)
 {%- endcomment -%}
 
 {%- liquid
@@ -49,10 +67,14 @@
 	assign best_short = 0
 	assign smallest_source = nil
 	assign smallest_short = 0
+	assign top_url = ''
 
 	for source in video.sources
 		if source.format != 'mp4'
 			continue
+		endif
+		if source.url contains 'HD-1080p-7.2Mbps'
+			assign top_url = source.url
 		endif
 		assign short = source.height | at_most: source.width
 		if smallest_source == nil or short < smallest_short
@@ -79,6 +101,13 @@
 		assign mp4_url = video.url
 	endif
 
+	assign sd_url = ''
+	assign hd_url = ''
+	if top_url != blank
+		assign sd_url = top_url | replace: 'HD-1080p-7.2Mbps', 'SD-480p-1.5Mbps'
+		assign hd_url = top_url | replace: 'HD-1080p-7.2Mbps', 'HD-720p-4.5Mbps'
+	endif
+
 	assign poster_url = ''
 	if video.preview_image != blank
 		assign poster_url = video.preview_image | image_url: width: poster_width
@@ -94,10 +123,21 @@
 -%}
 
 {%- if mp4_url != blank or hls_source != nil -%}
+{%- if mode == 'tile' -%}
+<video
+	muted loop playsinline data-lazy-video="tile"
+	preload="none"
+	{% if sd_url != blank %}data-src="{{ sd_url }}" data-src-md="{{ hd_url }}"{% endif %}
+	{% if poster_url != blank %}{{ poster_attr }}="{{ poster_url }}"{% endif %}
+	{% if class != blank %}class="{{ class }}"{% endif %}
+	{% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
+></video>
+{%- else -%}
 <video
 	{% if mode == 'modal' %}controls{% else %}muted loop data-lazy-video{% endif %}
 	playsinline
 	preload="none"
+	{% if mode == 'modal' and hd_url != blank %}data-src="{{ hd_url }}" data-src-md="{{ top_url }}"{% endif %}
 	{% if poster_url != blank %}{{ poster_attr }}="{{ poster_url }}"{% endif %}
 	{% if class != blank %}class="{{ class }}"{% endif %}
 	{% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}
@@ -109,4 +149,5 @@
 		<source {{ src_attr }}="{{ mp4_url }}" type="video/mp4">
 	{%- endif -%}
 </video>
+{%- endif -%}
 {%- endif -%}

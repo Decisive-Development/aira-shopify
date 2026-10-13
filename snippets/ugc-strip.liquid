@@ -25,8 +25,10 @@
 		data-poster-group: cards off to the side of this track only intersect
 		once swiped or auto-advanced in, so assets/lazy-video.js sets every
 		deferred poster in the track as soon as the first one comes near.
+		data-tile-track: the observer root assets/lazy-video.js measures the
+		tiles against for left and right (which are visible, which is next).
 	{%- endcomment -%}
-	<div class="flex gap-3 overflow-x-auto scrollbar-none cursor-grab scroll-smooth {{ track_classes }}" data-ugc-track data-poster-group dir="ltr">
+	<div class="flex gap-3 overflow-x-auto scrollbar-none cursor-grab scroll-smooth {{ track_classes }}" data-ugc-track data-poster-group data-tile-track dir="ltr">
 		{%- for entry in entries -%}
 			{%- render 'ugc-card', entry: entry, card_dir: card_dir, layout: strip_layout -%}
 		{%- endfor -%}
