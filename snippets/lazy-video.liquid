@@ -36,10 +36,13 @@
 	  mode         {String}  'lazy' (default): muted loop, data-src, no bytes
 	                         until in view.
 	                         'tile': a UGC strip tile. Muted loop with no
-	                         <source> and no HLS: data-src holds the 480p mp4
-	                         (phones) and data-src-md the 720p mp4 (md and up),
-	                         which assets/lazy-video.js attaches after window
-	                         load while the tile is in range.
+	                         <source> and no HLS: data-src holds the 480p mp4,
+	                         data-src-md the 720p mp4 and data-src-width the
+	                         480p file's width. assets/lazy-video.js attaches
+	                         one after window load while the tile is in range:
+	                         480p below md, and from md up 720p only when the
+	                         tile is wider than the 480p file at the screen's
+	                         pixel ratio (a 2x laptop).
 	                         'modal': controls and real src, for a <template>
 	                         cloned and played on click. data-src (720p) and
 	                         data-src-md (1080p) name the file the UGC player
@@ -68,6 +71,7 @@
 	assign smallest_source = nil
 	assign smallest_short = 0
 	assign top_url = ''
+	assign top_width = 0
 
 	for source in video.sources
 		if source.format != 'mp4'
@@ -75,6 +79,7 @@
 		endif
 		if source.url contains 'HD-1080p-7.2Mbps'
 			assign top_url = source.url
+			assign top_width = source.width
 		endif
 		assign short = source.height | at_most: source.width
 		if smallest_source == nil or short < smallest_short
@@ -103,9 +108,16 @@
 
 	assign sd_url = ''
 	assign hd_url = ''
+	assign sd_width = 0
 	if top_url != blank
 		assign sd_url = top_url | replace: 'HD-1080p-7.2Mbps', 'SD-480p-1.5Mbps'
 		assign hd_url = top_url | replace: 'HD-1080p-7.2Mbps', 'HD-720p-4.5Mbps'
+		comment
+			Every rendition is the 1080p frame scaled by its label, so the 480p
+			file is 480/1080 of its width (606 -> 270, 1080 -> 480), rounded up
+			as the encoder does.
+		endcomment
+		assign sd_width = top_width | times: 480.0 | divided_by: 1080 | ceil
 	endif
 
 	assign poster_url = ''
@@ -127,7 +139,7 @@
 <video
 	muted loop playsinline data-lazy-video="tile"
 	preload="none"
-	{% if sd_url != blank %}data-src="{{ sd_url }}" data-src-md="{{ hd_url }}"{% endif %}
+	{% if sd_url != blank %}data-src="{{ sd_url }}" data-src-md="{{ hd_url }}"{% if sd_width > 0 %} data-src-width="{{ sd_width }}"{% endif %}{% endif %}
 	{% if poster_url != blank %}{{ poster_attr }}="{{ poster_url }}"{% endif %}
 	{% if class != blank %}class="{{ class }}"{% endif %}
 	{% if aria_label != blank %}aria-label="{{ aria_label | escape }}"{% endif %}

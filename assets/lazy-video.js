@@ -32,7 +32,6 @@
   Strip tiles (video[data-lazy-video="tile"], from lazy-video.liquid's tile
   mode; UGC tiles brief v2, 13 Oct 2026) take their own path. Nothing is
   attached before window load. After it, a tile gets one mp4 as its src
-  (data-src below md, data-src-md from md up, picked when it is attached)
   with preload="metadata" while its track ([data-tile-track]) is within a
   screen of the viewport and the tile is visible in the track or is the
   next card along. At the end of the row the first screenful counts as
@@ -45,6 +44,10 @@
   play icon. Tiles have no tap-to-play of their own: a tap on the card
   opens the strip's player, which calls suspendTiles() and resumeTiles() to
   stop every tile while it is open.
+  The file is picked when it is attached: the 480p mp4 (data-src) below md,
+  and from md up the 720p one (data-src-md) only when the tile's width at
+  the screen's pixel ratio is wider than the 480p file (data-src-width), as
+  on a 2x laptop. A 1x desktop screen gets 480p too (Tom, 13 Oct 2026).
 */
 (function () {
   'use strict';
@@ -127,15 +130,27 @@
   var nearIo = null;
   var halfIo = null;
 
-  /* The rendition for this screen: data-src below md, data-src-md from md up.
-     The UGC player reads its own pair through the same picker. */
+  function wide() {
+    return !!(window.matchMedia && window.matchMedia(MD_QUERY).matches);
+  }
+
+  /* The UGC player's file: data-src below md, data-src-md from md up. */
   function pickSource(el) {
-    var md = window.matchMedia && window.matchMedia(MD_QUERY).matches;
-    return el.getAttribute(md ? 'data-src-md' : 'data-src') || '';
+    return el.getAttribute(wide() ? 'data-src-md' : 'data-src') || '';
+  }
+
+  /* A tile's file: 480p, unless the screen is md or wider and the tile needs
+     more pixels than the 480p file has (width x pixel ratio). */
+  function tileSource(video) {
+    var sd = video.getAttribute('data-src') || '';
+    var hd = video.getAttribute('data-src-md');
+    if (!hd || !wide()) return sd;
+    var sdWidth = parseFloat(video.getAttribute('data-src-width')) || 0;
+    return video.clientWidth * (window.devicePixelRatio || 1) > sdWidth ? hd : sd;
   }
 
   function attachTile(t) {
-    var src = pickSource(t.video);
+    var src = tileSource(t.video);
     if (!src) { t.failed = true; return; }
     t.video.muted = true;
     t.video.preload = 'metadata';

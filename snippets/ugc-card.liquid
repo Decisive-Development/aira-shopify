@@ -44,10 +44,12 @@
 				Shopify names each video file by the height of its encoded frame,
 				so for a portrait upload "480p" is 270x480 and "720p" is 404x720
 				(a phone clip stored landscape with a rotation flag gives 480x852
-				and 720x1280 instead). The tile plays 480p on a phone and 720p
-				from md up, where a 2x laptop needs about 340px of video (UGC
-				tiles brief v2, 13 Oct 2026). The player below opens on the same
-				poster URL, which the tile has already fetched.
+				and 720x1280 instead). The tile plays 480p on a phone and on a 1x
+				desktop screen; from md up it plays 720p only when its width at
+				the screen's pixel ratio is wider than the 480p file, as on a 2x
+				laptop, where it needs about 340px of video (UGC tiles brief v2,
+				13 Oct 2026). The player below opens on the same poster URL,
+				which the tile has already fetched.
 			{%- endcomment -%}
 			{%- render 'lazy-video',
 				video: m_video,
@@ -87,8 +89,9 @@
 			encoded frame, so for a portrait upload "480p" is 270x480, "720p"
 			is 404x720 and "1080p" is 606x1080 (a clip stored landscape with a
 			rotation flag gives 480x852, 720x1280 and 1080x1920 instead).
-			The tile plays 480p on a phone and 720p from md up; the player
-			below plays 720p on a phone and 1080p from md up, and opens on the
+			The tile plays 480p, and from md up 720p only when its width at the
+			screen's pixel ratio is wider than the 480p file; the player below
+			plays 720p on a phone and 1080p from md up, and opens on the
 			tile's poster URL (the default 800px in both renders). Neither
 			loads before it is needed.
 		{%- endcomment -%}
