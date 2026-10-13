@@ -12,6 +12,12 @@
 	at once from the catalogue written below; prices and totals keep their
 	last known values, dimmed, until Shopify answers. The Checkout link waits
 	for anything still in flight.
+
+	The drawer does no price maths (redesign brief, 2026-10-13): every amount
+	on screen is a figure from /cart.js or a sum of them, so it matches
+	checkout to the cent. Shopify can split one variant over several lines (a
+	free pouch beside a paid one), so the drawer shows one row per variant and
+	a tap acts on the variant.
 {%- endcomment -%}
 
 {%- assign refill_product = all_products['aira-refill-tabs'] -%}
@@ -57,19 +63,54 @@
 	data-i18n-decrease="{{ 'snippets.cart_drawer.decrease_quantity' | t | escape_once }}"
 	data-i18n-increase="{{ 'snippets.cart_drawer.increase_quantity' | t | escape_once }}"
 	data-i18n-remove="{{ 'cart.remove' | t | escape_once }}"
+	data-i18n-free="{{ 'snippets.cart_drawer.free' | t | escape_once }}"
+	data-i18n-free-gift="{{ 'snippets.cart_drawer.free_gift' | t | escape_once }}"
+	data-i18n-you-save="{{ 'snippets.cart_drawer.you_save' | t: amount: '__AMOUNT__' | escape_once }}"
+	data-i18n-code-percent="{{ 'snippets.cart_drawer.code_percent_off' | t: code: '__CODE__', percent: '__PERCENT__' | escape_once }}"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
 		<h2 class="font-heading font-semibold text-title text-xl">{{ 'snippets.cart_drawer.your_cart' | t }}</h2>
-		<button data-cart-close class="text-copy hover:text-title transition-colors cursor-pointer" aria-label="{{ 'snippets.cart_drawer.close_cart' | t }}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+		<button type="button" data-cart-close class="relative text-copy hover:text-title transition-colors cursor-pointer pointer-coarse:before:absolute pointer-coarse:before:-inset-2.5" aria-label="{{ 'snippets.cart_drawer.close_cart' | t }}">
+			<svg class="block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true" focusable="false">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
 			</svg>
 		</button>
 	</div>
 
 	{%- comment -%} Scrollable body — data-lenis-prevent keeps native scroll here (Lenis ignores it) {%- endcomment -%}
-	<div class="flex-1 overflow-y-auto px-6 py-5" data-cart-body data-lenis-prevent>
+	<div class="flex-1 overflow-y-auto px-6 py-4" data-cart-body data-lenis-prevent>
+
+		{%- comment -%}
+			Review strip: the rating the kit page states (Theme settings > Reviews)
+			beside up to three reviewer photos. The script shows it only while the
+			cart has items; with no rating set it is left out.
+		{%- endcomment -%}
+		{%- if settings.reviews_rating_value != blank and settings.reviews_rating_count != blank -%}
+			{%- capture reviewer_photos -%}
+				{%- for i in (1..3) -%}
+					{%- assign photo_key = 'reviews_photo_' | append: i -%}
+					{%- assign photo = settings[photo_key] -%}
+					{%- if photo != blank -%}
+						{{ photo | image_url: width: 84, height: 84, crop: 'center' | image_tag:
+							width: 28,
+							height: 28,
+							widths: '56, 84',
+							sizes: '28px',
+							alt: '',
+							loading: 'lazy',
+							class: 'size-7 rounded-full object-cover ring-2 ring-bg -ms-2 first:ms-0'
+						}}
+					{%- endif -%}
+				{%- endfor -%}
+			{%- endcapture -%}
+			<div data-cart-reviews class="hidden items-center gap-3 px-4 py-2.5 rounded-xl bg-cream-light">
+				{%- if reviewer_photos != blank -%}
+					<div class="flex shrink-0">{{ reviewer_photos }}</div>
+				{%- endif -%}
+				{%- render 'rating-summary', rating: settings.reviews_rating_value, count: settings.reviews_rating_count -%}
+			</div>
+		{%- endif -%}
 
 		{%- comment -%} Empty state {%- endcomment -%}
 		<div data-cart-empty class="hidden flex-col items-center justify-center text-center py-16 gap-4">
@@ -85,8 +126,11 @@
 			-%}
 		</div>
 
-		{%- comment -%} Line items (rendered by JS) {%- endcomment -%}
-		<div data-cart-items class="flex flex-col gap-4"></div>
+		{%- comment -%}
+			Line items, one row per variant (rendered by JS). The list runs edge
+			to edge so the hairlines between rows span the drawer.
+		{%- endcomment -%}
+		<div data-cart-items class="-mx-6 flex flex-col divide-y divide-bg-muted"></div>
 
 		{%- comment -%}
 			Status line: "Updating your cart" while a call is in flight, or the
@@ -122,31 +166,33 @@
 			</div>
 		{%- endif -%}
 
-		{%- comment -%} Trust badge {%- endcomment -%}
-		<div class="mt-8 text-center text-copy/30 text-xs">
-			<p class="flex items-center justify-center gap-2">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-					<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-					<path d="M7 11V7a5 5 0 0110 0v4"></path>
-				</svg>
-				{{ 'snippets.cart_drawer.secure_checkout' | t }}
-			</p>
-		</div>
-
 	</div>
 
-	{%- comment -%} Footer — subtotal + checkout {%- endcomment -%}
-	<div data-cart-footer class="hidden border-t border-border px-6 py-5 flex-col gap-4">
-		{%- comment -%} Applied discounts, one line per title, filled by JS from the cart's discount applications {%- endcomment -%}
-		<div data-cart-discounts class="hidden flex-col gap-1 transition-opacity group-aria-busy:opacity-40"></div>
-		<div class="flex items-center justify-between">
-			<span class="font-heading font-semibold text-title text-lg">{{ 'snippets.cart_drawer.subtotal' | t }}</span>
-			<span class="font-heading font-bold text-title text-xl transition-opacity group-aria-busy:opacity-40" data-cart-subtotal></span>
+	{%- comment -%} Footer, pinned under the scrolling body: codes, subtotal and saving, checkout, trust row {%- endcomment -%}
+	<div data-cart-footer class="hidden border-t border-bg-muted px-6 pt-4 pb-5 flex-col gap-3">
+		{%- comment -%}
+			One row per code on the cart, filled by JS from the cart's order-level
+			discount applications. Line discounts (the free pouch, pack prices)
+			show on their rows and in "You save", never here.
+		{%- endcomment -%}
+		<div data-cart-codes class="hidden flex-col gap-2"></div>
+		<div class="flex items-center justify-between gap-3">
+			<div class="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0">
+				<span class="font-heading font-semibold text-title text-base">{{ 'snippets.cart_drawer.subtotal' | t }}</span>
+				<span data-cart-savings class="hidden rounded-md bg-highlight px-2 py-0.5 text-xs font-bold text-white transition-opacity group-aria-busy:opacity-40"></span>
+			</div>
+			<span class="shrink-0 font-heading font-bold text-title text-2xl transition-opacity group-aria-busy:opacity-40" data-cart-subtotal></span>
 		</div>
-		<p class="text-center text-highlight text-sm font-semibold">{{ 'general.free_shipping' | t }}</p>
-		{%- comment -%} Shown by the script only while the signup code is remembered (localStorage aira_popup_code). {%- endcomment -%}
+		{%- comment -%}
+			Shown by the script only while the signup code is remembered
+			(localStorage aira_popup_code) and no code row is on screen: the
+			fallback for a code that did not reach the cart.
+		{%- endcomment -%}
 		<p class="text-center text-highlight-green text-sm font-semibold" data-cart-offer-note hidden>{{ 'snippets.cart_drawer.discount_applied' | t }}</p>
-		{%- assign checkout_label = 'cart.checkout' | t -%}
+		{%- capture checkout_label -%}
+			<svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+			{{- 'cart.checkout' | t -}}
+		{%- endcapture -%}
 		{%- comment -%} Built from the locale root, so Arabic visitors reach /ar/checkout and an Arabic checkout. {%- endcomment -%}
 		{%- assign checkout_url = routes.root_url | append: '/checkout' | replace: '//', '/' -%}
 		{%- render 'cta-button',
@@ -156,19 +202,30 @@
 			size: 'lg',
 			full_width: true,
 			attributes: 'data-cart-checkout',
-			extra_classes: '!px-6 !font-bold aria-busy:opacity-60 aria-busy:pointer-events-none'
+			extra_classes: '!px-6 !text-base !font-bold aria-busy:opacity-60 aria-busy:pointer-events-none'
 		-%}
-		<button type="button" data-cart-close class="w-full text-center text-copy text-sm font-semibold hover:text-title transition-colors cursor-pointer">
-			{{ 'snippets.cart_drawer.continue_shopping' | t }}
-		</button>
+		<ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-copy" role="list">
+			<li class="flex items-center gap-1.5">
+				<svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+				{{- 'snippets.cart_drawer.guarantee' | t -}}
+			</li>
+			<li class="flex items-center gap-1.5">
+				<svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+				{{- 'general.free_shipping_short' | t -}}
+			</li>
+		</ul>
 	</div>
 </aside>
 
 {%- comment -%}
 	What a form can add, keyed by variant id (the id the form sends), so the
 	drawer can draw a row the moment a form is submitted instead of after
-	Shopify answers. Images are sized to match the rows drawn from the cart
-	JSON. A variant missing here still adds; its row waits for the reply.
+	Shopify answers. The rows also read here a product's short name and cart
+	thumbnail (product fields custom.short_name and custom.cart_thumbnail;
+	blank falls back to the title and the cart's own image) and whether it
+	has more than one variant worth naming under the title. Images are sized
+	to match the rows drawn from the cart JSON. A variant missing here still
+	adds; its row waits for the reply.
 {%- endcomment -%}
 {%- liquid
 	assign catalogue_variants = '' | split: ','
@@ -182,8 +239,25 @@
 <script type="application/json" data-cart-catalogue>
 {
 	{%- for v in catalogue_variants -%}
-		{%- assign v_image = v.featured_image | default: v.product.featured_image -%}
-		"{{ v.id }}": {"title": {{ v.product.title | json }}, "url": {{ v.product.url | json }}, "image": {% if v_image %}{{ v_image | image_url: width: 160 | json }}{% else %}""{% endif %}, "alt": {{ v_image.alt | default: '' | json }}}{% unless forloop.last %},{% endunless %}
+		{%- liquid
+			assign v_image = v.featured_image | default: v.product.featured_image
+			assign v_thumb = v.product.metafields.custom.cart_thumbnail.value
+		-%}
+		"{{ v.id }}": {"title": {{ v.product.title | json }}, "name": {{ v.product.metafields.custom.short_name.value | default: '' | json }}, "handle": {{ v.product.handle | json }}, "single": {% if v.product.variants.size == 1 %}true{% else %}false{% endif %}, "url": {{ v.product.url | json }}, "image": {% if v_image %}{{ v_image | image_url: width: 160 | json }}{% else %}""{% endif %}, "alt": {{ v_image.alt | default: '' | json }}, "thumb": {% if v_thumb %}{{ v_thumb | image_url: width: 160 | json }}{% else %}""{% endif %}, "thumbAlt": {{ v_thumb.alt | default: '' | json }}}{% unless forloop.last %},{% endunless %}
+	{%- endfor -%}
+}
+</script>
+
+{%- comment -%}
+	The gift chip's "1 free gift", "2 free gifts"… worked out here, where `t`
+	knows the page language's plural forms (Arabic has five), for 1 to 11.
+	Above 11 the script reuses the 11 entry with the number swapped: in Arabic
+	that is the form for 11 to 99.
+{%- endcomment -%}
+<script type="application/json" data-cart-free-gifts>
+{
+	{%- for n in (1..11) -%}
+		"{{ n }}": {{ 'snippets.cart_drawer.free_gifts' | t: count: n | json }}{% unless forloop.last %},{% endunless %}
 	{%- endfor -%}
 }
 </script>
@@ -199,18 +273,20 @@
 	var currency = drawer.getAttribute('data-currency');
 	/* UI strings from the locale files, so the drawer speaks the page's language */
 	var i18n     = drawer.dataset;
+	var closeBtn = drawer.querySelector('[data-cart-close]');
+	var reviewsEl = document.querySelector('[data-cart-reviews]');
 	var itemsEl  = document.querySelector('[data-cart-items]');
 	var emptyEl  = document.querySelector('[data-cart-empty]');
 	var upsellEl = document.querySelector('[data-cart-upsell]');
 	var footerEl = document.querySelector('[data-cart-footer]');
+	var codesEl = document.querySelector('[data-cart-codes]');
+	var savingsEl = document.querySelector('[data-cart-savings]');
 	var subtotalEl = document.querySelector('[data-cart-subtotal]');
-	var discountsEl = document.querySelector('[data-cart-discounts]');
 	var statusEl = document.querySelector('[data-cart-status]');
 	var checkoutEl = document.querySelector('[data-cart-checkout]');
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
-	var catalogueEl = document.querySelector('[data-cart-catalogue]');
-	var catalogue = {};
-	try { catalogue = JSON.parse(catalogueEl.textContent) || {}; } catch (e) {}
+	var catalogue = readJson('[data-cart-catalogue]');
+	var freeGifts = readJson('[data-cart-free-gifts]');
 
 	var REFILL_HANDLE = 'aira-refill-tabs';
 	var KIT_HANDLE = drawer.getAttribute('data-kit-handle');
@@ -224,16 +300,25 @@
 	   rewritten attribute is enough for both paths. */
 	var CHECKOUT_BASE = checkoutEl ? checkoutEl.getAttribute('href') : '';
 	var offerNoteEl = document.querySelector('[data-cart-offer-note]');
+	var offerCode = '';
+	var codeRowsShown = false;
 	function tagCheckout() {
 		var code = '';
 		try { code = localStorage.getItem('aira_popup_code') || ''; } catch (e) {}
+		offerCode = code;
 		if (checkoutEl) {
 			checkoutEl.setAttribute('href', code
 				? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(code)
 				: CHECKOUT_BASE);
 		}
-		/* The "10% off applied at checkout." line above the button, only while the code is held. */
-		if (offerNoteEl) { offerNoteEl.hidden = !code; }
+		refreshOfferNote();
+	}
+
+	/* The "10% off applied at checkout." line above the button: only while
+	   the code is held and the cart shows no code row of its own, so it is
+	   the fallback for a code that did not reach the cart. */
+	function refreshOfferNote() {
+		if (offerNoteEl) { offerNoteEl.hidden = !offerCode || codeRowsShown; }
 	}
 	tagCheckout();
 	/* Taps within this many ms of each other travel in one update call. */
@@ -247,11 +332,10 @@
 	   Checkout link can wait for the lot. Taps park in `pending` until the
 	   flush timer sends them; `inflight` holds the batch on its way to Shopify
 	   so the numbers on screen keep showing where the cart is heading. Each
-	   op is { index, variantId, delta, remove }: `index` is the 1-based line
-	   position when it was tapped, `variantId` finds the line again if the
-	   positions have moved by the time it is sent. `pendingAdds` holds the
-	   { id, quantity } lines of adds on their way, drawn as rows until the
-	   reply has been read. */
+	   op is { variantId, delta, remove }: a row stands for a variant, which
+	   can sit on several lines, and the op is spread over that variant's
+	   lines when the call is planned. `pendingAdds` holds the { id, quantity }
+	   lines of adds on their way, drawn as rows until the reply has been read. */
 	var currentCart = null;
 	var queue = Promise.resolve();
 	var pending = [];
@@ -513,35 +597,34 @@
 		}, 0);
 	}
 
-	/* Moves the pouch lines in `qty` (quantities in cart order) so the
-	   variant totals `want`: raised on the zeroed line, lowered from the paid
-	   lines first so the free one goes last. */
-	function applyGiftWant(cart, qty, gift, want) {
-		var giftIndex = cart.items.indexOf(gift);
+	/* Moves the lines of the anchor's variant in `qty` (quantities in cart
+	   order) so they total `want`: raised on the anchor, lowered from the
+	   other lines first so the anchor goes last. With the free pouch as the
+	   anchor, paid pouches go before the free one. */
+	function applyVariantWant(cart, qty, anchor, want) {
+		var anchorIndex = cart.items.indexOf(anchor);
 		var indexes = [];
 		cart.items.forEach(function (item, i) {
-			if (item.variant_id === gift.variant_id) indexes.push(i);
+			if (item.variant_id === anchor.variant_id) indexes.push(i);
 		});
 		var total = indexes.reduce(function (n, i) { return n + qty[i]; }, 0);
 		if (want > total) {
-			qty[giftIndex] += want - total;
+			qty[anchorIndex] += want - total;
 			return;
 		}
 		var surplus = total - want;
-		indexes.filter(function (i) { return i !== giftIndex; }).concat([giftIndex]).forEach(function (i) {
+		indexes.filter(function (i) { return i !== anchorIndex; }).concat([anchorIndex]).forEach(function (i) {
 			var take = Math.min(qty[i], surplus);
 			qty[i] -= take;
 			surplus -= take;
 		});
 	}
 
-	/* The line an op means in `cart`: the position it was tapped at if the
-	   same variant still sits there, otherwise the first line of that variant
-	   (a cart change can split or merge lines and shift the rest). */
-	function resolveIndex(cart, op) {
-		var at = cart.items[op.index - 1];
-		if (at && at.variant_id === op.variantId) return op.index - 1;
-		return firstIndexOfVariant(cart, op.variantId);
+	/* The line a variant's taps land on: its free line when it has one, so
+	   a minus takes a paid pouch first, otherwise its first line. */
+	function anchorLine(cart, variantId) {
+		var lines = cart.items.filter(function (item) { return item.variant_id === variantId; });
+		return lines.filter(isFreeGift)[0] || lines[0];
 	}
 
 	function firstIndexOfVariant(cart, variantId) {
@@ -565,28 +648,34 @@
 	}
 
 	/* Applies ops to a cart snapshot and returns the quantity every line
-	   should have, in cart order. The free pouch follows the kit one for
-	   one, with a floor of one so removing the kit leaves a single pouch
-	   behind to reprice rather than emptying the cart. */
+	   should have, in cart order. Each op sets its variant's total and
+	   spreads it over that variant's lines. The free pouch follows the kit
+	   one for one, with a floor of one so removing the kit leaves a single
+	   pouch behind to reprice rather than emptying the cart, unless the
+	   same batch binned the pouches too. */
 	function planQuantities(cart, ops) {
 		var qty = cart.items.map(function (item) { return item.quantity; });
 		var kitDelta = 0;
 		var changed = false;
 		ops.forEach(function (op) {
-			var i = resolveIndex(cart, op);
-			if (i < 0) return;
-			var next = op.remove ? 0 : Math.max(0, qty[i] + op.delta);
-			if (next === qty[i]) return;
-			if (KIT_HANDLE && cart.items[i].handle === KIT_HANDLE) kitDelta += next - qty[i];
-			qty[i] = next;
+			var anchor = anchorLine(cart, op.variantId);
+			if (!anchor) return;
+			var have = cart.items.reduce(function (n, item, i) {
+				return item.variant_id === op.variantId ? n + qty[i] : n;
+			}, 0);
+			var want = op.remove ? 0 : Math.max(0, have + op.delta);
+			if (want === have) return;
+			if (KIT_HANDLE && anchor.handle === KIT_HANDLE) kitDelta += want - have;
+			applyVariantWant(cart, qty, anchor, want);
 			changed = true;
 		});
 		var gift = giftLine(cart);
-		if (kitDelta && gift) {
+		var giftBinned = gift && ops.some(function (op) { return op.remove && op.variantId === gift.variant_id; });
+		if (kitDelta && gift && !giftBinned) {
 			var pouches = cart.items.reduce(function (n, item, i) {
 				return item.variant_id === gift.variant_id ? n + qty[i] : n;
 			}, 0);
-			applyGiftWant(cart, qty, gift, Math.max(1, pouches + kitDelta));
+			applyVariantWant(cart, qty, gift, Math.max(1, pouches + kitDelta));
 		}
 		return { qty: qty, changed: changed };
 	}
@@ -664,7 +753,7 @@
 			var want = Math.max(have, kitQty(cart));
 			if (want > have) {
 				var qty = cart.items.map(function (item) { return item.quantity; });
-				applyGiftWant(cart, qty, gift, want);
+				applyVariantWant(cart, qty, gift, want);
 				return updateLines(qty)
 					.then(function (res) { return res.ok && res.body && res.body.items ? res.body : fetchCart(); })
 					.then(render);
@@ -674,34 +763,75 @@
 	}
 
 	/* ── Row markup ──
-	   One template for every row: the lines Shopify sent and the provisional
-	   rows an add draws while it is on its way. */
+	   One template for every row: the variants Shopify sent and the
+	   provisional rows an add draws while it is on its way. */
+	var SVG_OPEN = '<svg class="shrink-0 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"';
+	var ICON_MINUS = SVG_OPEN + ' width="14" height="14"><path d="M5 12h14"/></svg>';
+	var ICON_PLUS = SVG_OPEN + ' width="14" height="14"><path d="M12 5v14M5 12h14"/></svg>';
+	var ICON_BIN = SVG_OPEN + ' width="16" height="16"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg>';
+	var ICON_GIFT = SVG_OPEN + ' width="12" height="12"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>';
+	var ICON_TAG = SVG_OPEN + ' width="12" height="12"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>';
+	/* The light blue pill the gift chip and the code row share, and the
+	   square controls, whose ::before widens the tap target to 44px on
+	   touch screens without moving anything. */
+	var CHIP = 'inline-flex items-center gap-1 rounded-md bg-tertiary-light/15 px-2 py-0.5 text-xs font-semibold text-main';
+	var CONTROL = 'relative flex size-8 shrink-0 items-center justify-center rounded-md cursor-pointer pointer-coarse:before:absolute pointer-coarse:before:-inset-1.5';
+	var STEP = CONTROL + ' border border-border text-title disabled:cursor-not-allowed disabled:opacity-40';
+
 	function imgTag(src, alt) {
-		return '<img src="' + escAttr(src) + '" alt="' + escAttr(alt) + '" class="w-full h-full object-cover" loading="lazy">';
+		return '<img src="' + escAttr(src) + '" alt="' + escAttr(alt) + '" class="w-full h-full object-contain" loading="lazy">';
 	}
 
-	function qtyMarkup(quantity, stepper) {
-		var span = '<span data-line-qty class="w-8 h-8 flex items-center justify-center text-base font-semibold text-title">' + quantity + '</span>';
-		if (!stepper) return '<div class="flex items-center border border-bg-muted rounded-lg">' + span + '</div>';
-		return '<div class="flex items-center border border-bg-muted rounded-lg">'
-			+ '<button type="button" data-qty-change="-1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="' + escAttr(i18n.i18nDecrease) + '">−</button>'
+	function qtyMarkup(quantity, stepper, minusOff) {
+		var span = '<span data-line-qty class="min-w-4 text-center text-base font-semibold text-title">' + quantity + '</span>';
+		if (!stepper) return '<div class="flex items-center gap-1.5">' + span + '</div>';
+		return '<div class="flex items-center gap-1.5">'
+			+ '<button type="button" data-qty-change="-1" class="' + STEP + '" aria-label="' + escAttr(i18n.i18nDecrease) + '"' + (minusOff ? ' disabled' : '') + '>' + ICON_MINUS + '</button>'
 			+ span
-			+ '<button type="button" data-qty-change="1" class="w-8 h-8 flex items-center justify-center text-copy hover:text-title transition-colors text-base cursor-pointer" aria-label="' + escAttr(i18n.i18nIncrease) + '">+</button>'
+			+ '<button type="button" data-qty-change="1" class="' + STEP + '" aria-label="' + escAttr(i18n.i18nIncrease) + '">' + ICON_PLUS + '</button>'
 			+ '</div>';
 	}
 
+	function removeMarkup() {
+		return '<button type="button" data-line-remove class="' + CONTROL + ' text-copy" aria-label="' + escAttr(i18n.i18nRemove) + '">' + ICON_BIN + '</button>';
+	}
+
+	/* The price block, Shopify's figures only: the original struck through
+	   when the row came down, then "Free" when it came to nothing or the
+	   amount it costs. */
+	function priceBlock(original, final) {
+		var struck = original > final ? '<s class="block text-xs text-copy"><bdi>' + formatMoney(original) + '</bdi></s>' : '';
+		return struck + (final === 0
+			? '<span class="block font-heading font-bold text-base text-highlight">' + escHtml(i18n.i18nFree) + '</span>'
+			: '<span class="block font-heading font-bold text-base text-title"><bdi>' + formatMoney(final) + '</bdi></span>');
+	}
+
+	/* "Free gift" when the row's one pouch is free, "2 free gifts" or
+	   "1 free gift" beside paid ones, nothing when no pouch is free. */
+	function giftChip(free, final) {
+		if (free < 1) return '';
+		var label = free === 1 && final === 0 ? i18n.i18nFreeGift : freeGiftsLabel(free);
+		return '<p class="mt-1"><span class="' + CHIP + '">' + ICON_GIFT + '<span>' + escHtml(label) + '</span></span></p>';
+	}
+
+	function freeGiftsLabel(n) {
+		if (freeGifts[n]) return freeGifts[n];
+		return String(freeGifts[11] || '').replace('11', String(n));
+	}
+
 	function lineRow(o) {
-		return '<div class="flex gap-4 items-start" ' + o.attrs + '>'
-			+ '<a href="' + escAttr(o.url) + '" class="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-bg-muted">' + o.img + '</a>'
+		return '<div class="flex items-start gap-3 px-6 py-4" ' + o.attrs + '>'
+			+ '<a href="' + escAttr(o.url) + '" aria-label="' + escAttr(o.name) + '" class="shrink-0 size-16 overflow-hidden rounded-xl border border-bg-muted bg-bg p-1">' + o.img + '</a>'
 			+ '<div class="flex-1 min-w-0">'
-				+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + o.title + '</p>'
-				+ (o.props || '')
-				+ (o.discounts || '')
-				+ '<div class="flex items-center gap-3 mt-2">'
-					+ o.controls
-					+ '<span data-line-price class="shrink-0 font-heading font-bold text-title text-base transition-opacity group-aria-busy:opacity-40">' + o.price + '</span>'
+				+ '<div class="flex items-start justify-between gap-3">'
+					+ '<div class="min-w-0">'
+						+ '<p class="font-heading font-semibold text-title text-base leading-snug">' + escHtml(o.name) + '</p>'
+						+ (o.props || '')
+						+ (o.chip || '')
+					+ '</div>'
+					+ '<div data-line-price class="shrink-0 text-end leading-snug transition-opacity group-aria-busy:opacity-40">' + o.price + '</div>'
 				+ '</div>'
-				+ (o.removable ? '<button type="button" data-line-remove class="text-copy/40 hover:text-highlight transition-colors mt-1 cursor-pointer" aria-label="' + escAttr(i18n.i18nRemove) + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path></svg></button>' : '')
+				+ '<div class="mt-2 flex items-center gap-3">' + o.controls + '</div>'
 			+ '</div>'
 		+ '</div>';
 	}
@@ -712,15 +842,88 @@
 	function pendingRow(add) {
 		var known = catalogue[add.id];
 		if (!known) return '';
+		var src = known.thumb || known.image;
 		return lineRow({
-			attrs: 'data-line-pending',
+			attrs: 'data-line-pending data-rank="' + rank(known.handle) + '"',
 			url: known.url,
-			img: known.image ? imgTag(known.image, known.alt || '') : '',
-			title: brandTitle(known.title),
+			img: src ? imgTag(src, (known.thumb ? known.thumbAlt : known.alt) || '') : '',
+			name: known.name || brandTitle(known.title),
 			controls: qtyMarkup(add.quantity, false),
-			price: '',
-			removable: false
+			price: ''
 		});
+	}
+
+	/* Kit first, then refills, then anything else. */
+	function rank(handle) {
+		if (KIT_HANDLE && handle === KIT_HANDLE) return 0;
+		return handle === REFILL_HANDLE ? 1 : 2;
+	}
+
+	/* The cart as one entry per variant, its lines summed, in rank order
+	   (cart order within a rank). */
+	function variantRows(cart) {
+		var rows = [];
+		var byId = {};
+		cart.items.forEach(function (item) {
+			var row = byId[item.variant_id];
+			if (!row) {
+				row = byId[item.variant_id] = { item: item, quantity: 0, original: 0, final: 0, discount: 0, hasFree: false };
+				rows.push(row);
+			}
+			row.quantity += item.quantity;
+			row.original += item.original_line_price;
+			row.final += item.final_line_price;
+			row.discount += item.line_level_total_discount;
+			if (isFreeGift(item)) row.hasFree = true;
+		});
+		return rows.sort(function (a, b) { return rank(a.item.handle) - rank(b.item.handle); });
+	}
+
+	/* Free pouches on the refill row, from Shopify's numbers only: the
+	   discount on its lines over one pouch's price, rounded down (a pack
+	   price takes off less than a pouch). Never more than the kits in the
+	   cart, as a guard: the offer is one free pouch per kit. */
+	function freePouches(row) {
+		if (!row.item.original_price) return 0;
+		return Math.min(Math.floor(row.discount / row.item.original_price), kitQty(currentCart));
+	}
+
+	/* One row per variant. The refill row carries the gift chip and holds
+	   its free count, which − stops at: the kit sync would put those
+	   pouches straight back. The thumbnail sits beside the name, so the
+	   image only speaks when the merchant has written an alt on it. */
+	function rowMarkup(row) {
+		var item = row.item;
+		var known = catalogue[item.variant_id] || {};
+		var isRefill = item.handle === REFILL_HANDLE;
+		var free = isRefill ? freePouches(row) : 0;
+		var single = typeof known.single === 'boolean' ? known.single : item.product_has_only_default_variant;
+		var cartImg = item.featured_image && item.featured_image.url ? item.featured_image : null;
+		var src = known.thumb || (cartImg ? sizedImg(cartImg.url, '160x') : '');
+		var alt = known.thumb ? known.thumbAlt : (cartImg && cartImg.alt);
+		return lineRow({
+			attrs: 'data-variant="' + item.variant_id + '" data-rank="' + rank(item.handle) + '"' + (isRefill ? ' data-free="' + free + '"' : '') + (row.hasFree ? ' data-has-free' : ''),
+			url: item.url,
+			img: src ? imgTag(src, alt || '') : '',
+			name: known.name || brandTitle(item.product_title),
+			props: !single && item.variant_title ? '<p class="text-copy text-sm mt-0.5">' + escHtml(item.variant_title) + '</p>' : '',
+			chip: isRefill ? giftChip(free, row.final) : '',
+			controls: qtyMarkup(row.quantity, true, isRefill && row.quantity <= free) + removeMarkup(),
+			price: priceBlock(row.original, row.final)
+		});
+	}
+
+	/* A code on the cart: "AIRA10 · 10% off" for a percentage, its title
+	   otherwise, and what it took off the order. */
+	function codeRow(app) {
+		var code = '<bdi>' + escHtml(app.title) + '</bdi>';
+		var label = app.value_type === 'percentage'
+			? escHtml(i18n.i18nCodePercent).replace('__CODE__', code).replace('__PERCENT__', escHtml(String(parseFloat(app.value))))
+			: code;
+		return '<div class="flex items-center justify-between gap-3">'
+			+ '<span class="' + CHIP + '">' + ICON_TAG + '<span>' + label + '</span></span>'
+			+ '<span class="shrink-0 font-heading font-semibold text-base text-title transition-opacity group-aria-busy:opacity-40"><bdi>−' + formatMoney(app.total_allocated_amount) + '</bdi></span>'
+			+ '</div>';
 	}
 
 	function render(cart) {
@@ -743,45 +946,23 @@
 			el.closest('[data-cart-count-bubble]').classList.toggle('hidden', cart.item_count === 0);
 		});
 
-		/* Applied discounts, one line per title above the subtotal, so a total
-		   that came down reads as a named saving rather than a phantom. Titles
-		   come off the cart's own discount applications, never static copy: a
-		   cart-level application (an order-level code) carries its own total and
-		   is listed once from that; a line-level one is summed across the lines
-		   it touched, keyed by the application so one offer spread over several
-		   lines still lists once. */
-		if (discountsEl) {
-			var applied = {};
-			var order = [];
-			var noteDiscount = function (app, amount, fixed) {
-				var key = app && (app.key || app.title);
-				if (!key || !app.title) return;
-				if (!applied[key]) {
-					applied[key] = { title: app.title, amount: 0, fixed: false };
-					order.push(key);
-				}
-				if (applied[key].fixed) return;
-				if (fixed) { applied[key].amount = amount; applied[key].fixed = true; }
-				else if (amount > 0) { applied[key].amount += amount; }
-			};
-			(cart.cart_level_discount_applications || []).forEach(function (app) {
-				noteDiscount(app, app.total_allocated_amount, true);
-			});
-			cart.items.forEach(function (item) {
-				(item.line_level_discount_allocations || []).forEach(function (alloc) {
-					noteDiscount(alloc.discount_application, alloc.amount, false);
-				});
-			});
-			var shown = order.filter(function (key) { return applied[key].amount > 0; });
-			discountsEl.innerHTML = shown.map(function (key) {
-				return '<p class="flex items-center justify-between gap-4 text-copy text-sm"><span>' + escHtml(applied[key].title) + '</span><span class="shrink-0">−' + formatMoney(applied[key].amount) + '</span></p>';
-			}).join('');
-			discountsEl.classList.toggle('hidden', shown.length === 0);
-			discountsEl.classList.toggle('flex', shown.length > 0);
-		}
+		/* Codes, one row per order-level discount the cart carries. */
+		var codes = (cart.cart_level_discount_applications || []).filter(function (app) {
+			return app.total_allocated_amount > 0;
+		});
+		codesEl.innerHTML = codes.map(codeRow).join('');
+		codesEl.classList.toggle('hidden', codes.length === 0);
+		codesEl.classList.toggle('flex', codes.length > 0);
+		codeRowsShown = codes.length > 0;
+		refreshOfferNote();
 
-		/* Subtotal */
-		if (subtotalEl) subtotalEl.textContent = formatMoney(cart.total_price);
+		/* "You save": Shopify's own total of every discount on the cart. */
+		var saved = cart.total_discount > 0;
+		savingsEl.innerHTML = saved ? escHtml(i18n.i18nYouSave).replace('__AMOUNT__', '<bdi>' + formatMoney(cart.total_discount) + '</bdi>') : '';
+		savingsEl.classList.toggle('hidden', !saved);
+
+		/* Total, after every discount */
+		subtotalEl.innerHTML = '<bdi>' + formatMoney(cart.total_price) + '</bdi>';
 
 		/* Check if refills already in cart */
 		var hasRefills = cart.items.some(function (item) {
@@ -791,128 +972,127 @@
 			upsellEl.classList.toggle('hidden', !hasItems || hasRefills);
 		}
 
-		/* Build line items. Rows carry their 1-based cart position, which is
-		   what a tap is resolved against and what the update call is keyed by. */
-		itemsEl.innerHTML = cart.items.map(function (item, i) {
-			/* The product title sits beside the thumbnail, so the image only
-			   speaks when the merchant has written an alt on it. Otherwise it
-			   stays empty and screen readers skip past it to the title. */
-			var img = item.featured_image && item.featured_image.url
-				? imgTag(sizedImg(item.featured_image.url, '160x'), item.featured_image.alt || '')
-				: '';
-			var props = '';
-			if (item.variant_title) {
-				props = '<p class="text-copy text-sm mt-0.5">' + escHtml(item.variant_title) + '</p>';
-			}
-			/* Discount labels, always read off the line's allocations, never static
-			   copy. Only allocations that actually discount this line: the Buy X
-			   Get Y discount also attaches a zero-amount allocation to the kit line.
-			   A zeroed gift line reads as the one offer that freed it (title only,
-			   largest allocation, so a stray allocation can never relabel the gift).
-			   A paid line shows each discount with the amount it took off, e.g.
-			   "Refill pack saving −$3.99", summed per title in case Shopify ever
-			   spreads one discount over several allocations of the line. */
-			var allocs = (item.line_level_discount_allocations || []).filter(function (alloc) {
-				return alloc.amount > 0;
-			});
-			var discounts = '';
-			if (isFreeGift(item)) {
-				var top = allocs.sort(function (a, b) { return b.amount - a.amount; })[0];
-				var giftTitle = top && (top.discount_application ? top.discount_application.title : top.title);
-				discounts = giftTitle ? '<p class="text-highlight text-sm font-semibold mt-0.5">' + escHtml(giftTitle) + '</p>' : '';
-			} else {
-				var byTitle = {};
-				allocs.forEach(function (alloc) {
-					var title = alloc.discount_application ? alloc.discount_application.title : alloc.title;
-					if (!title) return;
-					byTitle[title] = (byTitle[title] || 0) + alloc.amount;
-				});
-				discounts = Object.keys(byTitle).map(function (title) {
-					return '<p class="text-highlight text-sm font-semibold mt-0.5 transition-opacity group-aria-busy:opacity-40">' + escHtml(title) + ' −' + formatMoney(byTitle[title]) + '</p>';
-				}).join('');
-			}
-			/* A fully free gift line has no stepper: its quantity follows the kit,
-			   and remove stays. Paying for more refills happens on the product page,
-			   and a paid line reprices above zero, so the stepper returns there. */
-			return lineRow({
-				attrs: 'data-line="' + (i + 1) + '"',
-				url: item.url,
-				img: img,
-				title: brandTitle(item.product_title),
-				props: props,
-				discounts: discounts,
-				controls: qtyMarkup(item.quantity, !isFreeGift(item)),
-				price: formatMoney(item.final_line_price),
-				removable: true
-			});
-		}).join('');
+		/* Build the rows. Rows carry their variant id, which is what a tap is
+		   resolved against; the update call still goes by line position. A
+		   control that had focus gets it back on the new row. */
+		var focused = focusedControl();
+		itemsEl.innerHTML = variantRows(cart).map(rowMarkup).join('');
 
 		paintPending();
+		restoreFocus(focused);
 		refreshStatus();
 	}
 
 	/* Paints what the parked taps and the adds on their way will produce, so
 	   a tap or an add shows at once. Only quantities and rows move: prices
-	   and the subtotal keep their last known values, dimmed by aria-busy,
+	   and the totals keep their last known values, dimmed by aria-busy,
 	   until Shopify answers. An empty cart with an add on its way shows the
-	   rows in place of the empty state, and no subtotal, as none is known. */
+	   rows in place of the empty state, and no total, as none is known. */
 	function paintPending() {
 		if (!currentCart) return;
 		var ops = inflight.concat(pending);
 		var qty = ops.length ? planQuantities(currentCart, ops).qty : currentCart.items.map(function (item) { return item.quantity; });
+		/* What each variant's row will hold: its lines as planned, plus adds on their way */
+		var want = {};
+		currentCart.items.forEach(function (item, i) {
+			want[item.variant_id] = (want[item.variant_id] || 0) + qty[i];
+		});
 		var fresh = [];
 		pendingAdds.forEach(function (add) {
-			var i = firstIndexOfVariant(currentCart, add.id);
-			if (i >= 0) { qty[i] += add.quantity; return; }
+			if (want[add.id] !== undefined) { want[add.id] += add.quantity; return; }
 			var same = fresh.filter(function (f) { return f.id === add.id; })[0];
 			if (same) same.quantity += add.quantity;
 			else fresh.push({ id: add.id, quantity: add.quantity });
 		});
-		itemsEl.querySelectorAll('[data-line]').forEach(function (row) {
-			var i = parseInt(row.getAttribute('data-line'), 10) - 1;
-			row.querySelector('[data-line-qty]').textContent = qty[i];
-			row.classList.toggle('hidden', qty[i] === 0);
+		itemsEl.querySelectorAll('[data-variant]').forEach(function (row) {
+			var n = want[row.getAttribute('data-variant')] || 0;
+			row.querySelector('[data-line-qty]').textContent = n;
+			row.classList.toggle('hidden', n === 0);
+			/* − stops at the free pouches, here as the row will be once Shopify answers */
+			var free = row.getAttribute('data-free');
+			var minus = row.querySelector('[data-qty-change="-1"]');
+			if (minus && free !== null) {
+				var off = n <= parseInt(free, 10);
+				if (off && document.activeElement === minus) row.querySelector('[data-qty-change="1"]').focus();
+				minus.disabled = off;
+			}
 		});
 		itemsEl.querySelectorAll('[data-line-pending]').forEach(function (row) { row.remove(); });
-		/* Shopify lists the newest line first, so the provisional rows go on
-		   top in that order and stay put when the real ones arrive. */
+		/* Provisional rows slot in by rank, so the rows already drawn (and the
+		   control that has focus) never move. */
 		var drawn = fresh.filter(function (add) { return catalogue[add.id]; });
-		itemsEl.insertAdjacentHTML('afterbegin', drawn.slice().reverse().map(pendingRow).join(''));
+		drawn.forEach(function (add) {
+			var r = rank(catalogue[add.id].handle);
+			var before = Array.prototype.filter.call(itemsEl.children, function (el) {
+				return parseInt(el.getAttribute('data-rank'), 10) > r;
+			})[0];
+			if (before) before.insertAdjacentHTML('beforebegin', pendingRow(add));
+			else itemsEl.insertAdjacentHTML('beforeend', pendingRow(add));
+		});
 		var showRows = currentCart.item_count > 0 || drawn.length > 0;
 		emptyEl.classList.toggle('hidden', showRows);
 		emptyEl.classList.toggle('flex', !showRows);
 		itemsEl.classList.toggle('hidden', !showRows);
 		footerEl.classList.toggle('hidden', !showRows);
 		footerEl.classList.toggle('flex', showRows);
-		if (subtotalEl && currentCart.item_count === 0) subtotalEl.textContent = drawn.length ? '' : formatMoney(currentCart.total_price);
+		if (reviewsEl) {
+			reviewsEl.classList.toggle('hidden', !showRows);
+			reviewsEl.classList.toggle('flex', showRows);
+		}
+		if (currentCart.item_count === 0) subtotalEl.innerHTML = drawn.length ? '' : '<bdi>' + formatMoney(currentCart.total_price) + '</bdi>';
+	}
+
+	/* ── Focus across a re-render ──
+	   A render rebuilds the rows, which would drop keyboard focus. The
+	   control that had it is noted first and focused again on its variant's
+	   new row (+ when − has just been switched off); a binned row hands
+	   focus to the close button. */
+	function focusedControl() {
+		var el = document.activeElement;
+		var row = el && itemsEl.contains(el) ? el.closest('[data-variant]') : null;
+		if (!row) return null;
+		return {
+			variant: row.getAttribute('data-variant'),
+			selector: el.hasAttribute('data-line-remove') ? '[data-line-remove]' : '[data-qty-change="' + el.getAttribute('data-qty-change') + '"]'
+		};
+	}
+
+	function restoreFocus(focused) {
+		if (!focused) return;
+		var row = itemsEl.querySelector('[data-variant="' + focused.variant + '"]:not(.hidden)');
+		var el = row && row.querySelector(focused.selector);
+		if (el && el.disabled) el = row.querySelector('[data-qty-change="1"]');
+		(el || closeBtn).focus({ preventScroll: true });
 	}
 
 	/* ── Quantity change / remove (event delegation) ──
 	   A tap is parked, painted, and sent with any others that follow within
-	   FLUSH_DELAY as one update call. */
+	   FLUSH_DELAY as one update call. It acts on the row's variant: + adds
+	   one, − takes one off (a paid pouch first), the bin clears every line
+	   of the variant. */
 	itemsEl.addEventListener('click', function (e) {
 		var qtyBtn = e.target.closest('[data-qty-change]');
 		var removeBtn = e.target.closest('[data-line-remove]');
-		var row = e.target.closest('[data-line]');
+		var row = e.target.closest('[data-variant]');
 		if (!row || (!qtyBtn && !removeBtn) || !currentCart) return;
+		if (qtyBtn && qtyBtn.disabled) return;
 
-		var index = parseInt(row.getAttribute('data-line'), 10);
-		var line = currentCart.items[index - 1];
-		if (!line) return;
+		var variantId = parseInt(row.getAttribute('data-variant'), 10);
+		if (firstIndexOfVariant(currentCart, variantId) < 0) return;
 		errorMsg = '';
 
 		if (removeBtn) {
-			/* Removing the free pouch is a choice, remembered for this session
-			   so the next add-to-cart does not put it straight back. */
-			if (isFreeGift(line)) markGiftRemoved();
-			addOp({ index: index, variantId: line.variant_id, delta: 0, remove: true });
+			/* Binning free pouches is a choice, remembered for this session
+			   so the next add-to-cart does not put them straight back. */
+			if (row.hasAttribute('data-has-free') || parseInt(row.getAttribute('data-free'), 10) > 0) markGiftRemoved();
+			addOp({ variantId: variantId, delta: 0, remove: true });
 		} else {
-			addOp({ index: index, variantId: line.variant_id, delta: parseInt(qtyBtn.getAttribute('data-qty-change'), 10), remove: false });
+			addOp({ variantId: variantId, delta: parseInt(qtyBtn.getAttribute('data-qty-change'), 10), remove: false });
 		}
 	});
 
 	function addOp(op) {
-		var same = pending.filter(function (p) { return p.index === op.index; })[0];
+		var same = pending.filter(function (p) { return p.variantId === op.variantId; })[0];
 		if (same) {
 			same.delta += op.delta;
 			same.remove = same.remove || op.remove;
@@ -924,8 +1104,16 @@
 	}
 
 	/* ── Helpers ── */
+	function readJson(selector) {
+		var el = document.querySelector(selector);
+		try { return JSON.parse(el.textContent) || {}; } catch (e) { return {}; }
+	}
+
+	/* Always the store's "$49.99", with Western digits, whatever language
+	   the browser runs in: a browser locale gave Arabic phones "٤٩٫٩٩ US$"
+	   and UK ones "US$49.99". */
 	function formatMoney(cents) {
-		return (cents / 100).toLocaleString(undefined, { style: 'currency', currency: currency });
+		return (cents / 100).toLocaleString('en-US', { style: 'currency', currency: currency });
 	}
 
 	function sizedImg(url, size) {
@@ -947,9 +1135,10 @@
 
 	/* The Ajax cart returns raw admin product titles ("Aira Kit"), so the
 	   brand is lowercased here to match the product-title snippet used
-	   everywhere the titles are rendered in Liquid. */
+	   everywhere the titles are rendered in Liquid. Plain text: escape it
+	   where it lands. */
 	function brandTitle(str) {
-		return escHtml(str).replace(/\bAIRA\b/g, 'aira').replace(/\bAira\b/g, 'aira');
+		return String(str).replace(/\bAIRA\b/g, 'aira').replace(/\bAira\b/g, 'aira');
 	}
 
 	/* ── Init: pre-load cart state, first in the queue so an early tap or

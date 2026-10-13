@@ -262,18 +262,25 @@
       "add_failed": "That could not be added to your cart",
       "adding": "Adding...",
       "close_cart": "Close cart",
+      "code_percent_off": "{{ code }} · {{ percent }}% off",
       "complete_your_kit": "Complete your kit",
-      "continue_shopping": "Continue shopping",
       "decrease_quantity": "Decrease quantity",
       "discount_applied": "10% off applied at checkout.",
       "empty": "Your cart is empty",
       "empty_cta": "Get my kit",
+      "free": "Free",
+      "free_gift": "Free gift",
+      "free_gifts": {
+        "one": "{{ count }} free gift",
+        "other": "{{ count }} free gifts"
+      },
+      "guarantee": "30-night guarantee",
       "increase_quantity": "Increase quantity",
-      "secure_checkout": "Secure checkout",
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",
       "update_failed": "Your cart could not be updated",
       "updating": "Updating your cart",
+      "you_save": "You save {{ amount }}",
       "your_cart": "Your cart"
     },
     "meta_tags": {
