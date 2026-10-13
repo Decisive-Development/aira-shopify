@@ -31,10 +31,14 @@
 
   Strip tiles (video[data-lazy-video="tile"], from lazy-video.liquid's tile
   mode; UGC tiles brief v2, 13 Oct 2026) take their own path. Nothing is
-  attached before window load. After it, a tile gets one mp4 as its src
-  with preload="metadata" while its track ([data-tile-track]) is within a
-  screen of the viewport and the tile is visible in the track or is the
-  next card along. At the end of the row the first screenful counts as
+  attached before window load and the visitor's first interaction (scroll,
+  wheel, touchstart, pointerdown or keydown), with no timer fallback.
+  PageSpeed never interacts, but its full-page screenshot puts every tile on
+  screen, so starting at window load had it download all five files (about
+  46 MB a run; v1.15 follow-up, 13 Oct 2026). Once started, a tile gets one
+  mp4 as its src with preload="metadata" while its track ([data-tile-track])
+  is within a screen of the viewport and the tile is visible in the track or
+  is the next card along. At the end of the row the first screenful counts as
   next, because the auto-scroll goes back to the start. A tile plays while
   at least half of it is on screen and pauses below that. Out of range it
   pauses and drops its src, so it stops downloading. The track is the
@@ -334,10 +338,34 @@
     init();
   }
 
-  /* Strip tiles wait for window load, so they never compete with the page. */
+  /* Strip tiles wait for window load, so they never compete with the page,
+     and for the visitor's first interaction, so a page nobody touches (a
+     PageSpeed run) never fetches a tile. Element scrolls, such as the
+     strip's own auto-scroll, do not reach window and do not count. */
+  var WAKE_EVENTS = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'];
+  var pageLoaded = false;
+  var visitorActive = false;
+
+  function maybeStartTiles() {
+    if (pageLoaded && visitorActive) startTiles();
+  }
+
+  function onFirstInteraction() {
+    visitorActive = true;
+    WAKE_EVENTS.forEach(function (type) { window.removeEventListener(type, onFirstInteraction); });
+    maybeStartTiles();
+  }
+
+  WAKE_EVENTS.forEach(function (type) {
+    window.addEventListener(type, onFirstInteraction, { passive: true });
+  });
+
   if (document.readyState === 'complete') {
-    startTiles();
+    pageLoaded = true;
   } else {
-    window.addEventListener('load', startTiles);
+    window.addEventListener('load', function () {
+      pageLoaded = true;
+      maybeStartTiles();
+    });
   }
 })();
