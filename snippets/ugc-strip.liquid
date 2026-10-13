@@ -142,14 +142,15 @@
 		return card.getBoundingClientRect().width + 12; /* 12 = gap-3 */
 	}
 
+	/* A step that would pass the end stops at the end, and the tick after
+	   that goes back to the start, so the last card comes fully into view. */
 	function autoScroll() {
 		if (userTouching || isDown || document.hidden || modalOpen) return;
 		var max = track.scrollWidth - track.clientWidth;
-		var next = track.scrollLeft + getCardStep();
-		if (next >= max - 2) {
+		if (track.scrollLeft >= max - 2) {
 			track.scrollTo({ left: 0, behavior: 'smooth' });
 		} else {
-			track.scrollTo({ left: next, behavior: 'smooth' });
+			track.scrollTo({ left: Math.min(track.scrollLeft + getCardStep(), max), behavior: 'smooth' });
 		}
 	}
 
