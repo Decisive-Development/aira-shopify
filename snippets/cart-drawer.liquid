@@ -104,11 +104,11 @@
 					{%- endif -%}
 				{%- endfor -%}
 			{%- endcapture -%}
-			<div data-cart-reviews class="hidden items-center gap-3 px-4 py-2.5 rounded-xl bg-cream-light">
+			<div data-cart-reviews class="hidden items-center gap-2.5 px-3 py-2.5 rounded-xl bg-cream-light">
 				{%- if reviewer_photos != blank -%}
 					<div class="flex shrink-0">{{ reviewer_photos }}</div>
 				{%- endif -%}
-				{%- render 'rating-summary', rating: settings.reviews_rating_value, count: settings.reviews_rating_count -%}
+				{%- render 'rating-summary', rating: settings.reviews_rating_value, count: settings.reviews_rating_count, star_size: 12 -%}
 			</div>
 		{%- endif -%}
 

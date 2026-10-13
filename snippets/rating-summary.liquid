@@ -10,6 +10,8 @@
 		url    — optional. Makes the line a link, e.g. "#reviews" to jump to the
 		         reviews section. The ::before halo widens the tap target to 44px
 		         on coarse pointers without changing the line box.
+		star_size — optional. Star glyph size in px, default 16 (the cart's
+		         review strip uses 12 to keep the line on one row on phones).
 {%- endcomment -%}
 {%- if rating != blank and count != blank -%}
 	{%- liquid
@@ -17,7 +19,7 @@
 		assign rating_display = rating_number | round: 1
 	-%}
 	{%- capture rating_inner -%}
-		{%- render 'rating-stars', rating: rating_number -%}
+		{%- render 'rating-stars', rating: rating_number, size: star_size -%}
 		<span>{{ 'sections.custom_reviews.summary' | t: count: count, rating: rating_display }}</span>
 	{%- endcapture -%}
 	{%- if url != blank -%}
