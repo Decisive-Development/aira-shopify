@@ -258,13 +258,36 @@
         "id": "reviews_rating_value",
         "label": "Rating",
         "default": "4.9",
-        "info": "Every Reviews section shows this rating and the review count below under its heading, instead of the Judge.me figures. Clear both to go back to the Judge.me figures. A section can still set its own."
+        "info": "Shown with the review count below above the title on the kit page, at the top of the cart, and under the heading of every Reviews section instead of the Judge.me figures. Clear both to hide the kit page line and the cart strip and to go back to the Judge.me figures. A Reviews section can still set its own."
       },
       {
         "type": "number",
         "id": "reviews_rating_count",
         "label": "Review count",
         "default": 82
+      },
+      {
+        "type": "header",
+        "content": "Reviewer photos in the cart"
+      },
+      {
+        "type": "paragraph",
+        "content": "Up to three customer photos, shown as small overlapping circles beside the rating at the top of the cart. Square photos of faces work best. Leave them blank to show the stars and the rating alone."
+      },
+      {
+        "type": "image_picker",
+        "id": "reviews_photo_1",
+        "label": "Photo 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "reviews_photo_2",
+        "label": "Photo 2"
+      },
+      {
+        "type": "image_picker",
+        "id": "reviews_photo_3",
+        "label": "Photo 3"
       }
     ]
   },

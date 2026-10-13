@@ -102,16 +102,17 @@
 			<div class="flex flex-col gap-5 min-w-0">
 
 				{%- comment -%}
-					Rating line when a rating and a review count are set, otherwise the
-					guarantee badge. The line links to the reviews section on the page
-					(sections/custom-reviews carries id="reviews"). Under it, the
+					Rating line when Theme settings > Reviews holds a rating and a review
+					count (the cart drawer reads the same two, so they always match),
+					otherwise the guarantee badge. The line links to the reviews section
+					on the page (sections/custom-reviews carries id="reviews"). Under it, the
 					featured review card (Tom, 2026-10-11): one real review with the
 					reviewer's photo, linking to the same place; hidden until a quote
 					and a name are set.
 				{%- endcomment -%}
 				<div class="flex flex-col gap-3">
-					{%- if section.settings.rating_value != blank and section.settings.rating_count != blank -%}
-						{%- render 'rating-summary', rating: section.settings.rating_value, count: section.settings.rating_count, url: '#reviews' -%}
+					{%- if settings.reviews_rating_value != blank and settings.reviews_rating_count != blank -%}
+						{%- render 'rating-summary', rating: settings.reviews_rating_value, count: settings.reviews_rating_count, url: '#reviews' -%}
 					{%- else -%}
 						{%- render 'pretitle-badge', text: section.settings.pretitle_badge -%}
 					{%- endif -%}
@@ -720,15 +721,8 @@
 			"content": "Rating above title"
 		},
 		{
-			"type": "text",
-			"id": "rating_value",
-			"label": "Rating",
-			"info": "For example 4.9. Fill in the rating and the review count to show stars and the rating line above the title, in place of the badge below."
-		},
-		{
-			"type": "number",
-			"id": "rating_count",
-			"label": "Review count"
+			"type": "paragraph",
+			"content": "The stars and the rating line above the title come from Theme settings > Reviews, which the cart reads too. Clear the rating there to show the badge below instead."
 		},
 		{
 			"type": "header",
@@ -777,7 +771,7 @@
 			"id": "pretitle_badge",
 			"label": "Badge text",
 			"default": "30-night guarantee",
-			"info": "Small pill above the product title. Leave blank to hide. Not shown while a rating and review count are set above."
+			"info": "Small pill above the product title. Leave blank to hide. Not shown while Theme settings > Reviews holds a rating and a review count."
 		},
 		{
 			"type": "header",
