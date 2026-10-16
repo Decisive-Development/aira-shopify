@@ -19,3 +19,6 @@ release
 .shopify-cli
 node_modules
 dist
+
+# Scratch copy of the current brief; the brief itself lives in Tom's Aira folder
+/Brief.txt
