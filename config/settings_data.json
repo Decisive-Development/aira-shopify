@@ -12,6 +12,9 @@
     "color_accent": "#ff4000",
     "support_whatsapp_number": "971561828772",
     "whatsapp_bubble": true,
+    "reviews_photo_1": "shopify://shop_images/reviewer-david.jpg",
+    "reviews_photo_2": "shopify://shop_images/reviewer-matt.jpg",
+    "reviews_photo_3": "shopify://shop_images/reviewer-gala.jpg",
     "sections": {
       "scratch-offer-popup": {
         "type": "scratch-offer-popup",
@@ -35,7 +38,7 @@
           "popup_enabled": true,
           "popup_enable_on_ar": false,
           "popup_home_delay_seconds": 10,
-          "popup_pdp_delay_seconds": 30,
+          "popup_pdp_delay_seconds": 15,
           "popup_pdp_scroll_percent": 50,
           "popup_dismiss_days": 7,
           "popup_signup_days": 30,

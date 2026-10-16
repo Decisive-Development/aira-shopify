@@ -353,5 +353,23 @@
     "newsletter_form": {
       "success_default": "تحقق من بريدك. كودك في الطريق."
     }
+  },
+  "shopify": {
+    "checkout": {
+      "contact": {
+        "address2_label": "العنوان الوطني للسعودية (مثل ABCD1234) أو رقم الشقة",
+        "optional_address2_label": "العنوان الوطني للسعودية (مثل ABCD1234) أو رقم الشقة"
+      },
+      "field_errors": {
+        "address_address2_blank": "أدخل العنوان الوطني (للسعودية) أو رقم الشقة/الفيلا"
+      },
+      "wallets": {
+        "errors": {
+          "missing": {
+            "address2": "أدخل العنوان الوطني (للسعودية) أو رقم الشقة/الفيلا"
+          }
+        }
+      }
+    }
   }
 }
