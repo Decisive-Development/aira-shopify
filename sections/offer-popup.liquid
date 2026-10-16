@@ -37,6 +37,12 @@
 	the homepage a hidden form rendered below the dialog. Both carry the free
 	pouch's variant id, which is what makes the drawer send the pouch along.
 
+	Never opens with the kit in the cart. Liquid checks the cart at render
+	(data-popup-kit-in-cart: in the cart, nothing arms), and attempt() reads
+	cart.js once more right before opening, for a kit added on this page
+	through the drawer (micro-brief of 16 Oct 2026). Kit found: no show, no
+	storage, Clarity popup = skipped-cart. ?popup=now skips both checks.
+
 	Storage (all reads and writes wrapped in try/catch):
 	  localStorage.aira_popup_until        do not arm before this time
 	  localStorage.aira_popup_code         the code earned (drawer Checkout link)
@@ -51,10 +57,13 @@
 {%- endcomment -%}
 
 {%- liquid
+	# One source for the kit's handle: the page check, the cart check below and
+	# the script's live cart check all read it, so they cannot drift apart.
+	assign kit_handle = 'aira-kit'
 	assign popup_page = ''
 	if template.name == 'index'
 		assign popup_page = 'index'
-	elsif template.name == 'product' and product.handle == 'aira-kit'
+	elsif template.name == 'product' and product.handle == kit_handle
 		assign popup_page = 'product'
 	endif
 
@@ -75,10 +84,10 @@
 
 {%- if popup_on -%}
 	{%- liquid
-		assign kit_product = all_products['aira-kit']
+		assign kit_product = all_products[kit_handle]
 		assign kit_in_cart = false
 		for item in cart.items
-			if item.product.handle == 'aira-kit'
+			if item.product.handle == kit_handle
 				assign kit_in_cart = true
 				break
 			endif
@@ -328,6 +337,7 @@
 		data-popup
 		data-popup-page="{{ popup_page }}"
 		data-popup-kit-in-cart="{{ kit_in_cart }}"
+		data-popup-kit-handle="{{ kit_handle }}"
 		data-popup-home-delay="{{ section.settings.popup_home_delay_seconds }}"
 		data-popup-pdp-delay="{{ section.settings.popup_pdp_delay_seconds }}"
 		data-popup-pdp-scroll="{{ section.settings.popup_pdp_scroll_percent }}"
@@ -377,6 +387,8 @@
 
 	var cfg = modal.dataset;
 	var page = cfg.popupPage;
+	var kitHandle = cfg.popupKitHandle;
+	var cartRead = null;           /* the live cart read in flight, so retries never stack requests */
 	var designMode = !!(window.Shopify && window.Shopify.designMode);
 	var screens = {
 		1: card.querySelector('[data-popup-step="1"]'),
@@ -595,6 +607,27 @@
 		clarity('shown');
 	}
 
+	/* The page-load check (data-popup-kit-in-cart) cannot see a kit added on
+	   this page, because the drawer adds it without a reload. So the cart is
+	   read from Shopify right before the popup opens: Shopify's answer, not
+	   drawer events, so any drawer works. A failed read counts as no kit. */
+	function kitInCart() {
+		if (cartRead) return cartRead;
+		var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+		cartRead = fetch(root + 'cart.js', {
+			credentials: 'same-origin',
+			headers: { Accept: 'application/json' },
+			cache: 'no-store'
+		})
+			.then(function (r) { return r.ok ? r.json() : null; })
+			.then(function (cart) {
+				return !!(cart && cart.items && cart.items.some(function (item) { return item.handle === kitHandle; }));
+			})
+			.catch(function () { return false; })
+			.then(function (inCart) { cartRead = null; return inCart; });
+		return cartRead;
+	}
+
 	function attempt(how, tries) {
 		if (document.hidden) {
 			/* Background tab: wait until it is looked at, then show. */
@@ -605,16 +638,26 @@
 			});
 			return;
 		}
+		/* Never over the drawer, a lightbox, the menu or another dialog.
+		   Try again shortly rather than losing the show. */
+		function later() {
+			if (tries < MAX_RETRIES) { window.setTimeout(function () { attempt(how, tries + 1); }, RETRY_MS); }
+		}
 		/* Re-checked at fire time: a second tab or the exit overlay may have
 		   spent the gate since the timer was armed. */
 		if (blocked()) return;
-		if (window.airaModal.isAnyOpen()) {
-			/* Never over the drawer, a lightbox, the menu or another dialog.
-			   Try again shortly rather than losing the show. */
-			if (tries < MAX_RETRIES) { window.setTimeout(function () { attempt(how, tries + 1); }, RETRY_MS); }
-			return;
-		}
-		show(how);
+		if (window.airaModal.isAnyOpen()) { later(); return; }
+		/* Only read the cart once nothing else is open, so a drawer held open
+		   costs no requests. */
+		kitInCart().then(function (inCart) {
+			/* Kit in the cart: stand down for this page view. Nothing is
+			   stored, so if the cart is emptied a later page load arms again. */
+			if (inCart) { clarity('skipped-cart'); return; }
+			/* The read is async: something may have opened meanwhile. */
+			if (blocked()) return;
+			if (window.airaModal.isAnyOpen()) { later(); return; }
+			show(how);
+		});
 	}
 
 	function arm() {
