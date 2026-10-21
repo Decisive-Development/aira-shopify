@@ -1310,18 +1310,25 @@
 		});
 	}
 
-	/* A code on the cart: "AIRA10 · 10% off" for a percentage, its title
-	   otherwise, an × that takes it off, and what it took off the order. The
-	   × only on a discount code: an automatic order discount also arrives as
-	   a cart-level application, and update.js has nothing to take off it. */
+	/* One order-level discount on the cart as a row: an automatic discount
+	   ("2 kits for $69.99", the title Shopify sends, no suffix, no ×: an
+	   automatic application is nothing update.js can take off) or a code
+	   ("AIRA10 · 10% off" for a percentage, its title otherwise, with the ×
+	   that takes it off), and what it took off the order. cart.js sends an
+	   automatic application with an empty type and update.js with
+	   "automatic", so a code is recognised by its type, nothing else. */
+	function isCodeApp(app) {
+		return app.type === 'discount_code';
+	}
+
 	function codeRow(app) {
-		var code = '<bdi>' + escHtml(app.title) + '</bdi>';
-		var label = app.value_type === 'percentage'
+		var code = '<bdi>' + escHtml(String(app.title || '').trim()) + '</bdi>';
+		var label = isCodeApp(app) && app.value_type === 'percentage'
 			? escHtml(i18n.i18nCodePercent).replace('__CODE__', code).replace('__PERCENT__', escHtml(String(parseFloat(app.value))))
 			: code;
 		return '<div class="flex items-center justify-between gap-3">'
 			+ '<span class="' + CHIP + '">' + ICON_TAG + '<span>' + label + '</span>'
-			+ (app.type === 'discount_code'
+			+ (isCodeApp(app)
 				? '<button type="button" data-code-remove="' + escAttr(app.title) + '" class="' + CODE_REMOVE + '" aria-label="' + escAttr(i18n.i18nRemoveCode.replace('__CODE__', app.title)) + '">' + ICON_X + '</button>'
 				: '')
 			+ '</span>'
@@ -1349,17 +1356,20 @@
 			el.closest('[data-cart-count-bubble]').classList.toggle('hidden', cart.item_count === 0);
 		});
 
-		/* Codes, one row per order-level discount the cart carries. */
-		var codes = cartCodes(cart).filter(function (app) {
+		/* One row per order-level discount the cart carries: automatic
+		   discounts first, then codes, each in Shopify's order. */
+		var apps = cartCodes(cart).filter(function (app) {
 			return app.total_allocated_amount > 0;
 		});
+		var codes = apps.filter(function (app) { return !isCodeApp(app); }).concat(apps.filter(isCodeApp));
 		codesEl.innerHTML = codes.map(codeRow).join('');
 		codesEl.classList.toggle('hidden', codes.length === 0);
 		codesEl.classList.toggle('flex', codes.length > 0);
-		codeRowsShown = codes.length > 0;
+		codeRowsShown = apps.some(isCodeApp);
 		refreshOfferNote();
 
-		/* "You save": Shopify's own total of every discount on the cart. */
+		/* "You save": Shopify's own total of every discount on the cart, the
+		   line discounts (free pouches) and the order-level ones together. */
 		var saved = cart.total_discount > 0;
 		savingsEl.innerHTML = saved ? escHtml(i18n.i18nYouSave).replace('__AMOUNT__', '<bdi>' + formatMoney(cart.total_discount) + '</bdi>') : '';
 		savingsEl.classList.toggle('hidden', !saved);
