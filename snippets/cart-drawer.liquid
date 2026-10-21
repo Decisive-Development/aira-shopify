@@ -68,6 +68,7 @@
 	data-i18n-free-gift="{{ 'snippets.cart_drawer.free_gift' | t | escape_once }}"
 	data-i18n-you-save="{{ 'snippets.cart_drawer.you_save' | t: amount: '__AMOUNT__' | escape_once }}"
 	data-i18n-code-percent="{{ 'snippets.cart_drawer.code_percent_off' | t: code: '__CODE__', percent: '__PERCENT__' | escape_once }}"
+	data-i18n-remove-code="{{ 'snippets.cart_drawer.remove_code' | t: code: '__CODE__' | escape_once }}"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
@@ -406,6 +407,45 @@
 		if (offerNoteEl) { offerNoteEl.hidden = !offerCode || codeRowsShown; }
 	}
 	tagCheckout();
+
+	/* A code the visitor took off is forgotten: the Checkout link and the
+	   express pay step would otherwise put it straight back. */
+	function forgetOfferCode() {
+		try { localStorage.removeItem('aira_popup_code'); } catch (e) {}
+		tagCheckout();
+	}
+
+	/* ── Removing a code ──
+	   The × on a code row takes that code off the cart. Shopify replaces the
+	   cart's whole code list on each update, so the other codes are sent
+	   again, and the cookie its /discount/ links leave for the checkout is
+	   brought into line too (dropped, or re-set to the codes that stay), or
+	   the checkout would put the code straight back. The reply is rendered
+	   like any other cart answer. */
+	codesEl.addEventListener('click', function (e) {
+		var btn = e.target.closest('[data-code-remove]');
+		if (!btn || !currentCart) return;
+		var code = btn.getAttribute('data-code-remove') || '';
+		var keep = (currentCart.discount_codes || []).map(function (c) { return c.code; }).filter(function (c) {
+			return String(c).toUpperCase() !== code.toUpperCase();
+		});
+		errorMsg = '';
+		if (offerCode && offerCode.toUpperCase() === code.toUpperCase()) forgetOfferCode();
+		codeTried = code;
+		pendingDiscount = '';
+		enqueue(function () {
+			return postJson(ROOT + 'cart/update.js', { discount: keep.join(',') })
+				.then(function (res) {
+					if (keep.length) {
+						fetch(ROOT + 'discount/' + encodeURIComponent(keep.join(',')), { redirect: 'manual' }).catch(function () {});
+					} else {
+						document.cookie = 'discount_code=; Max-Age=0; path=/';
+					}
+					return res.ok && res.body && res.body.items ? res.body : fetchCart();
+				})
+				.then(render);
+		});
+	});
 	/* Taps within this many ms of each other travel in one update call. */
 	var FLUSH_DELAY = 200;
 	var isOpen = false;
@@ -1127,6 +1167,9 @@
 	   ::before widens the tap target to 44px on touch screens without
 	   moving anything. */
 	var CHIP = 'inline-flex items-center gap-1 rounded-md bg-tertiary-light/15 px-2 py-0.5 text-xs font-semibold text-main';
+	var ICON_X = SVG_OPEN + ' width="12" height="12"><path d="M6 18L18 6M6 6l12 12"/></svg>';
+	/* The × on a code chip: a small round target, widened to 44px on touch screens by its ::before. */
+	var CODE_REMOVE = 'relative -me-1 ms-0.5 flex size-5 shrink-0 items-center justify-center rounded-full cursor-pointer transition-colors hover:bg-tertiary-light/30 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-main pointer-coarse:before:absolute pointer-coarse:before:-inset-3';
 	var CONTROL = 'relative flex size-8 shrink-0 items-center justify-center rounded-md cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main pointer-coarse:before:absolute pointer-coarse:before:-inset-1.5';
 	var STEP = CONTROL + ' border border-border text-title enabled:hover:border-main disabled:cursor-not-allowed disabled:opacity-40';
 
@@ -1277,14 +1320,16 @@
 	}
 
 	/* A code on the cart: "AIRA10 · 10% off" for a percentage, its title
-	   otherwise, and what it took off the order. */
+	   otherwise, an × that takes it off, and what it took off the order. */
 	function codeRow(app) {
 		var code = '<bdi>' + escHtml(app.title) + '</bdi>';
 		var label = app.value_type === 'percentage'
 			? escHtml(i18n.i18nCodePercent).replace('__CODE__', code).replace('__PERCENT__', escHtml(String(parseFloat(app.value))))
 			: code;
 		return '<div class="flex items-center justify-between gap-3">'
-			+ '<span class="' + CHIP + '">' + ICON_TAG + '<span>' + label + '</span></span>'
+			+ '<span class="' + CHIP + '">' + ICON_TAG + '<span>' + label + '</span>'
+			+ '<button type="button" data-code-remove="' + escAttr(app.title) + '" class="' + CODE_REMOVE + '" aria-label="' + escAttr(i18n.i18nRemoveCode.replace('__CODE__', app.title)) + '">' + ICON_X + '</button>'
+			+ '</span>'
 			+ '<span class="shrink-0 font-heading font-semibold text-base text-title transition-opacity group-aria-busy:opacity-40"><bdi>−' + formatMoney(app.total_allocated_amount) + '</bdi></span>'
 			+ '</div>';
 	}
