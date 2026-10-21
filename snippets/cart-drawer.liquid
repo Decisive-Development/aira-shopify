@@ -69,6 +69,8 @@
 	data-i18n-you-save="{{ 'snippets.cart_drawer.you_save' | t: amount: '__AMOUNT__' | escape_once }}"
 	data-i18n-code-percent="{{ 'snippets.cart_drawer.code_percent_off' | t: code: '__CODE__', percent: '__PERCENT__' | escape_once }}"
 	data-i18n-remove-code="{{ 'snippets.cart_drawer.remove_code' | t: code: '__CODE__' | escape_once }}"
+	data-i18n-code-refused="{{ 'snippets.cart_drawer.code_refused' | t | escape_once }}"
+	data-i18n-code-two-kits="{{ 'snippets.cart_drawer.code_two_kits' | t | escape_once }}"
 >
 	{%- comment -%} Header {%- endcomment -%}
 	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
@@ -238,6 +240,27 @@
 			fallback for a code that did not reach the cart.
 		{%- endcomment -%}
 		<p class="text-center text-highlight-green text-sm font-semibold" data-cart-offer-note hidden>{{ 'snippets.cart_drawer.discount_applied' | t }}</p>
+		{%- comment -%}
+			"Got a code?" (brief of 21 Oct, part B): a muted link that opens a
+			code input with Apply, above the Checkout button, because the wallet
+			sheets have no code box of their own. The script hides the whole field
+			while a code row is on screen (an automatic discount's row leaves it)
+			and writes the typed code onto the cart as _aira_code_entered whether
+			or not Shopify applies it, so an affiliate's code that does not
+			combine with the 2-kit offer still reaches the order. The × on a code
+			row clears that note again. Codes are Latin: the input uppercases
+			only a to z, so an Arabic keyboard is left alone.
+		{%- endcomment -%}
+		<div data-cart-code-field class="flex flex-col items-start gap-2" hidden>
+			<button type="button" data-code-toggle class="inline-flex min-h-11 items-center text-sm text-copy underline underline-offset-2 cursor-pointer transition-colors hover:text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">{{ 'snippets.cart_drawer.code_link' | t }}</button>
+			<form data-code-form class="flex w-full items-center gap-2" novalidate hidden>
+				<label for="cart-code-input" class="sr-only">{{ 'snippets.cart_drawer.code_placeholder' | t }}</label>
+				<input id="cart-code-input" type="text" name="discount" data-code-input dir="auto" placeholder="{{ 'snippets.cart_drawer.code_placeholder' | t | escape }}" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" class="min-w-0 flex-1 h-11 rounded-xl border border-main/20 bg-bg px-4 text-sm text-main uppercase placeholder:normal-case focus:outline-none focus:border-main">
+				{%- assign code_apply_label = 'snippets.cart_drawer.code_apply' | t -%}
+				{%- render 'cta-button', label: code_apply_label, variant: 'outline', size: 'sm', element: 'button', button_type: 'submit', attributes: 'data-code-apply', extra_classes: 'shrink-0' -%}
+			</form>
+			<p data-code-error class="text-sm text-highlight" role="alert" hidden></p>
+		</div>
 		{%- capture checkout_label -%}
 			<svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
 			{{- 'cart.checkout' | t -}}
@@ -378,14 +401,18 @@
 	var CHECKOUT_BASE = checkoutEl ? checkoutEl.getAttribute('href') : '';
 	var offerNoteEl = document.querySelector('[data-cart-offer-note]');
 	var offerCode = '';
+	/* A code typed into the drawer that Shopify applied: the Checkout link
+	   carries it in place of the signup code. */
+	var appliedCode = '';
 	var codeRowsShown = false;
 	function tagCheckout() {
 		var code = '';
 		try { code = localStorage.getItem('aira_popup_code') || ''; } catch (e) {}
 		offerCode = code;
+		var link = appliedCode || code;
 		if (checkoutEl) {
-			checkoutEl.setAttribute('href', code
-				? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(code)
+			checkoutEl.setAttribute('href', link
+				? CHECKOUT_BASE + (CHECKOUT_BASE.indexOf('?') > -1 ? '&' : '?') + 'discount=' + encodeURIComponent(link)
 				: CHECKOUT_BASE);
 		}
 		refreshOfferNote();
@@ -424,8 +451,9 @@
 		if (offerCode && offerCode.toUpperCase() === code.toUpperCase()) forgetOfferCode();
 		codeTried = code;
 		pendingDiscount = '';
+		if (appliedCode.toUpperCase() === code.toUpperCase()) { appliedCode = ''; tagCheckout(); }
 		enqueue(function () {
-			return postJson(ROOT + 'cart/update.js', { discount: keep.join(',') })
+			return postJson(ROOT + 'cart/update.js', { discount: keep.join(','), attributes: { _aira_code_entered: '' } })
 				.then(function (res) {
 					if (keep.length) {
 						fetch(ROOT + 'discount/' + encodeURIComponent(keep.join(',')), { redirect: 'manual' }).catch(function () {});
@@ -437,6 +465,87 @@
 				.then(render);
 		});
 	});
+	/* ── "Got a code?" ──
+	   The link opens the input; Apply (or Enter) sends the code and the
+	   note _aira_code_entered in one update call, so the note lands on the
+	   cart whether Shopify applies the code or not (an affiliate's code that
+	   does not combine with the 2-kit offer still earns its credit from the
+	   order). Applied: the code row takes over and the field goes with it.
+	   Refused (no applicable entry): the field stays open with the typed
+	   value and one line explains, two when the cart holds two or more kits
+	   (the offer already gives more). The queue keeps Checkout and the
+	   wallet buttons waiting for Shopify's answer, as for every write. */
+	var codeFieldEl = document.querySelector('[data-cart-code-field]');
+	var codeToggle = codeFieldEl ? codeFieldEl.querySelector('[data-code-toggle]') : null;
+	var codeForm = codeFieldEl ? codeFieldEl.querySelector('[data-code-form]') : null;
+	var codeInput = codeFieldEl ? codeFieldEl.querySelector('[data-code-input]') : null;
+	var codeErrorEl = codeFieldEl ? codeFieldEl.querySelector('[data-code-error]') : null;
+
+	/* Shown whenever no code row is on screen; collapsed back to the link
+	   each time a code row appears. */
+	function refreshCodeField() {
+		if (!codeFieldEl) return;
+		codeFieldEl.hidden = codeRowsShown;
+		if (codeRowsShown) {
+			codeForm.hidden = true;
+			codeToggle.hidden = false;
+			codeErrorEl.hidden = true;
+			codeInput.value = '';
+		}
+	}
+
+	function showCodeError(cart) {
+		var lines = [i18n.i18nCodeRefused];
+		if (cart && kitQty(cart) >= 2) lines.push(i18n.i18nCodeTwoKits);
+		codeErrorEl.innerHTML = lines.map(function (line) { return '<span class="block">' + escHtml(line) + '</span>'; }).join('');
+		codeErrorEl.hidden = false;
+	}
+
+	if (codeFieldEl) {
+		codeToggle.addEventListener('click', function () {
+			codeToggle.hidden = true;
+			codeForm.hidden = false;
+			codeInput.focus();
+		});
+		/* Latin letters to upper case as they are typed, the caret kept;
+		   anything else (an Arabic keyboard) passes untouched. */
+		codeInput.addEventListener('input', function () {
+			var v = codeInput.value;
+			var up = v.replace(/[a-z]+/g, function (m) { return m.toUpperCase(); });
+			if (up !== v) {
+				var pos = codeInput.selectionStart;
+				codeInput.value = up;
+				try { codeInput.setSelectionRange(pos, pos); } catch (e) {}
+			}
+			codeErrorEl.hidden = true;
+		});
+		codeForm.addEventListener('submit', function (e) {
+			e.preventDefault();
+			var code = (codeInput.value || '').trim().toUpperCase();
+			if (!code || !currentCart) return;
+			errorMsg = '';
+			codeTried = code;
+			pendingDiscount = '';
+			codeErrorEl.hidden = true;
+			enqueue(function () {
+				return postJson(ROOT + 'cart/update.js', { attributes: { _aira_code_entered: code }, discount: code })
+					.then(function (res) { return res.ok && res.body && res.body.items ? res.body : fetchCart(); })
+					.then(function (cart) {
+						var applied = (cart.discount_codes || []).some(function (c) {
+							return String(c.code).toUpperCase() === code && c.applicable;
+						});
+						if (applied) {
+							appliedCode = code;
+							tagCheckout();
+						} else {
+							showCodeError(cart);
+						}
+						clarity('drawer_code', applied ? 'applied' : 'refused');
+						render(cart);
+					});
+			});
+		});
+	}
 	/* Taps within this many ms of each other travel in one update call. */
 	var FLUSH_DELAY = 200;
 	var isOpen = false;
@@ -1367,6 +1476,7 @@
 		codesEl.classList.toggle('flex', codes.length > 0);
 		codeRowsShown = apps.some(isCodeApp);
 		refreshOfferNote();
+		refreshCodeField();
 
 		/* "You save": Shopify's own total of every discount on the cart, the
 		   line discounts (free pouches) and the order-level ones together. */
