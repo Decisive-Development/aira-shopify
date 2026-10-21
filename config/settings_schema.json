@@ -384,14 +384,14 @@
         "id": "delivery_days_ae",
         "label": "Delivery days UAE",
         "default": 2,
-        "info": "Working days after dispatch."
+        "info": "Calendar days after the order day: today in Rolling hour mode, the dispatch day in Daily cut-off mode."
       },
       {
         "type": "number",
         "id": "delivery_days_sa",
         "label": "Delivery days KSA",
         "default": 3,
-        "info": "Working days after dispatch."
+        "info": "Calendar days after the order day: today in Rolling hour mode, the dispatch day in Daily cut-off mode."
       },
       {
         "type": "text",

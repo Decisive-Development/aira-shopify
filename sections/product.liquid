@@ -500,22 +500,13 @@
 								endfor
 							endif
 
-							# Delivery: the dispatch day plus the country's working days.
-							assign cd_left = cd_days
-							assign cd_delivery = cd_dispatch
-							for cd_i in (1..60)
-								if cd_left <= 0
-									break
-								endif
-								assign cd_d = cd_dispatch | plus: cd_i
-								assign cd_t = cd_d | times: 86400 | plus: cd_now
-								assign cd_wd = cd_t | date: '%w' | plus: 0
-								assign cd_name = cd_day_names[cd_wd]
-								if cd_work_list contains cd_name
-									assign cd_left = cd_left | minus: 1
-									assign cd_delivery = cd_d
-								endif
-							endfor
+							# Delivery: the order day (today in rolling mode, the dispatch day in daily
+							# cut-off mode) plus the country's delivery days, as calendar days (Tom, 2026-10-21).
+							if cd_mode == 'rolling'
+								assign cd_delivery = cd_days
+							else
+								assign cd_delivery = cd_dispatch | plus: cd_days
+							endif
 							assign cd_delivery_t = cd_delivery | times: 86400 | plus: cd_now
 							assign cd_delivery_wd = cd_delivery_t | date: '%a'
 							assign cd_delivery_day = cd_delivery_t | date: '%d' | plus: 0
@@ -1070,8 +1061,7 @@
 		}
 
 		/* Dispatch day: today before the cut-off on a working day, else the
-		   next working day. Delivery: the dispatch day plus the country's
-		   working days. Then what the line says for this moment. */
+		   next working day. Then what the line says for this moment. */
 		function state() {
 			var p = clock();
 			var today = Date.UTC(p.year, p.month - 1, p.day);
@@ -1081,12 +1071,10 @@
 				dispatch = 1;
 				while (!isWorkDay(today + dispatch * DAY_MS) && dispatch < 14) dispatch += 1;
 			}
-			var delivery = dispatch;
-			var left = days;
-			while (left > 0 && delivery - dispatch < 90) {
-				delivery += 1;
-				if (isWorkDay(today + delivery * DAY_MS)) left -= 1;
-			}
+			/* Delivery: the order day (today in rolling mode, the dispatch day
+			   in daily cut-off mode) plus the country's delivery days, as
+			   calendar days (Tom, 2026-10-21). */
+			var delivery = (mode === 'rolling' ? 0 : dispatch) + days;
 			var s = { date: dateFmt.format(new Date(today + delivery * DAY_MS + DAY_MS / 2)) };
 			if (mode === 'rolling') {
 				/* To the top of the clock hour: 60:00 on the hour, 00:01 just before it. */
