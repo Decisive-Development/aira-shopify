@@ -1,0 +1,12 @@
+{%- comment -%}
+	pill-badge — the small navy pill that straddles a card's edge: the kit
+	page's "Free shipping" and "Best value · Free shipping". Renders nothing
+	when the label is blank.
+	Params:
+	  label    — the text (required)
+	  classes  — where it sits, e.g. '-bottom-3 left-1/2 -translate-x-1/2'
+	             (symmetric centring, so the physical utilities are allowed)
+{%- endcomment -%}
+{%- if label != blank -%}
+<span class="absolute {{ classes }} whitespace-nowrap px-3 py-1 rounded-full bg-main text-white text-xs font-bold">{{ label }}</span>
+{%- endif -%}
