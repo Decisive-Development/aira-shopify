@@ -1,0 +1,19 @@
+{%- comment -%}
+	express-buttons — Shopify's own Apple Pay and Google Pay buttons for the
+	whole cart, in one row under the drawer's Checkout button (Theme settings
+	> Cart drawer). Rendered in two places, one markup: by
+	snippets/cart-drawer.liquid at page load when the cart already has items,
+	and by sections/cart-express.liquid, which the drawer fetches through the
+	Section Rendering API when a page that loaded with an empty cart gets its
+	first add (Shopify fills the wallet configuration only when it renders for
+	a cart with items). The buttons draw inside a closed shadow DOM, styled
+	through .drawer-express in critical.source.css; the group-aria-busy
+	utilities read the drawer's aria-busy, so the buttons dim and refuse taps
+	while a cart call is in flight, as the Checkout link does. No vertical
+	class: Shopify lays the wallets side by side when there is room.
+{%- endcomment -%}
+{%- if settings.drawer_express_enabled and additional_checkout_buttons -%}
+	<div class="drawer-express transition-opacity group-aria-busy:opacity-40 group-aria-busy:pointer-events-none" data-drawer-express>
+		{{ content_for_additional_checkout_buttons }}
+	</div>
+{%- endif -%}

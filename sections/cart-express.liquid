@@ -1,0 +1,22 @@
+{%- comment -%}
+	sections/cart-express.liquid
+	The cart drawer's express pay buttons (snippets/express-buttons.liquid)
+	as a section, so the drawer can fetch them through the Section Rendering
+	API (?section_id=cart-express) once a cart that was empty at page load
+	has its first item: Shopify fills the wallet configuration only when it
+	renders the buttons for a cart with items. Not placed in any template;
+	nothing to set here.
+{%- endcomment -%}
+{%- render 'express-buttons' -%}
+
+{% schema %}
+{
+	"name": "Cart express pay",
+	"settings": [
+		{
+			"type": "paragraph",
+			"content": "Rendered inside the cart drawer, under the Checkout button, while \"Show express pay buttons\" is on in Theme settings > Cart drawer. Nothing to set here."
+		}
+	]
+}
+{% endschema %}

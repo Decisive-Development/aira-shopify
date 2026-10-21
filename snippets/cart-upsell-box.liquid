@@ -1,0 +1,27 @@
+{%- comment -%}
+	cart-upsell-box — the rounded soft box the cart drawer's offers share:
+	the refill upsell and the second kit offer. Hidden until the drawer
+	script shows it; one box shows at a time.
+	Params:
+	  attrs         the data attribute the script finds the box by (required)
+	  eyebrow       small highlighted line above the row (optional)
+	  body          captured markup for the row: the thumbnail link and the text
+	  button_label  the Add button's label
+	  button_attrs  raw attributes for the button (data-*)
+{%- endcomment -%}
+<div {{ attrs }} class="hidden mt-6 p-5 rounded-2xl border border-border bg-bg-soft">
+	{%- if eyebrow != blank -%}
+		<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ eyebrow }}</p>
+	{%- endif -%}
+	<div class="flex items-center gap-4">
+		{{ body }}
+		{%- render 'cta-button',
+			label: button_label,
+			variant: 'outline',
+			size: 'sm',
+			element: 'button',
+			attributes: button_attrs,
+			extra_classes: 'shrink-0'
+		-%}
+	</div>
+</div>

@@ -30,6 +30,7 @@
 	sync stays out of the way, leaving quantities to Shopify.
 {%- endcomment -%}
 {%- assign kit_product = all_products['aira-kit'] -%}
+{%- assign kit_variant = kit_product.selected_or_first_available_variant | default: kit_product.variants.first -%}
 
 <style>
 	.cart-drawer-closed { transform: translateX(calc(100% + 0.75rem)); }
@@ -112,17 +113,29 @@
 			</div>
 		{%- endif -%}
 
-		{%- comment -%} Empty state {%- endcomment -%}
+		{%- comment -%}
+			Empty state. "Get my kit" adds the kit (and, under the launch offer,
+			its free pouch) through the drawer's own add path, so the drawer
+			fills without closing; it stays a link to the kit page, which is
+			where the script sends the visitor if the add is refused. The pouch
+			variant mirrors the buy box's "Launch offer" defaults, which this
+			snippet cannot read (sections/product.liquid, as the offer popup's
+			hidden form does): when the launch offer ends, untick it there and
+			take data-gift-variant-id off here.
+		{%- endcomment -%}
 		<div data-cart-empty class="hidden flex-col items-center justify-center text-center py-16 gap-4">
 			<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" class="text-copy opacity-25">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
 			</svg>
 			<p class="text-copy text-base">{{ 'snippets.cart_drawer.empty' | t }}</p>
 			{%- assign empty_cta_label = 'snippets.cart_drawer.empty_cta' | t -%}
+			{%- capture empty_cta_attrs -%}data-cart-empty-add data-variant-id="{{ kit_variant.id }}"{% if refill_variant %} data-gift-variant-id="{{ refill_variant.id }}"{% endif %}{%- endcapture -%}
 			{%- render 'cta-button',
 				label: empty_cta_label,
 				url: kit_product.url,
-				variant: 'solid'
+				variant: 'solid',
+				attributes: empty_cta_attrs,
+				extra_classes: 'aria-busy:opacity-60 aria-busy:pointer-events-none'
 			-%}
 		</div>
 
@@ -138,38 +151,82 @@
 		{%- endcomment -%}
 		<p data-cart-status role="status" aria-live="polite" class="hidden text-copy text-sm text-center mt-4"></p>
 
-		{%- comment -%} Upsell — refill tabs {%- endcomment -%}
-		{%- if refill_product != blank and refill_variant != blank -%}
-			<div data-cart-upsell class="hidden mt-6 p-5 rounded-2xl border border-border bg-bg-soft">
-				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ 'snippets.cart_drawer.complete_your_kit' | t }}</p>
-				<div class="flex items-center gap-4">
-					{%- if refill_product.featured_image -%}
-						<a href="{{ refill_product.url }}" class="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-bg-muted">
-							{{ refill_product.featured_image | image_url: width: 128 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover' }}
+		{%- comment -%}
+			Second kit offer (Theme settings > Offers). The script shows it
+			while the cart holds exactly one kit, in place of the refill upsell.
+			The prices are the kit's price and the saving setting, the one sum
+			the kit page's picker shows too, never typed. Add is the kit row's
+			+ in another place: one more kit, and the free pouch that comes
+			with it. Amounts sit in <bdi> for Arabic.
+		{%- endcomment -%}
+		{%- if settings.second_kit_row_enabled and kit_product != blank -%}
+			{%- liquid
+				assign second_saving = settings.bundle_saving | times: 100 | round
+				assign second_price = kit_variant.price | minus: second_saving
+				assign second_bundle_price = kit_variant.price | times: 2 | minus: second_saving
+				assign kit_thumb = kit_product.metafields.custom.cart_thumbnail.value | default: kit_product.featured_image
+				assign kit_name = kit_product.metafields.custom.short_name.value | default: kit_product.title
+			-%}
+			{%- if second_saving > 0 -%}
+				{%- capture second_price_html -%}<bdi>{{ second_price | money }}</bdi>{%- endcapture -%}
+				{%- capture second_bundle_html -%}<bdi>{{ second_bundle_price | money }}</bdi>{%- endcapture -%}
+				{%- capture second_saving_html -%}<bdi>{{ second_saving | money }}</bdi>{%- endcapture -%}
+				{%- comment -%} `t` escapes what it interpolates, so the <bdi> amounts go in after it. {%- endcomment -%}
+				{%- capture second_kit_body -%}
+					{%- if kit_thumb -%}
+						<a href="{{ kit_product.url }}" aria-label="{{ kit_name | escape }}" class="shrink-0 size-12 md:size-14 overflow-hidden rounded-xl border border-bg-muted bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">
+							{{ kit_thumb | image_url: width: 112 | image_tag: width: 56, height: 56, loading: 'lazy', alt: '', class: 'w-full h-full object-contain' }}
 						</a>
 					{%- endif -%}
 					<div class="flex-1 min-w-0">
-						<p class="font-heading font-semibold text-title text-base leading-snug truncate">{%- render 'product-title', title: refill_product.title -%}</p>
-						<p class="text-copy text-base mt-0.5">{{ refill_variant.price | money }}</p>
+						<p class="font-heading font-semibold text-title text-base leading-snug">{{ 'snippets.cart_drawer.second_kit_title' | t: price: '__PRICE__' | replace: '__PRICE__', second_price_html }}</p>
+						<p class="text-copy text-sm mt-0.5">{{ 'snippets.cart_drawer.second_kit_line' | t: bundle_price: '__BUNDLE_PRICE__', amount: '__AMOUNT__' | replace: '__BUNDLE_PRICE__', second_bundle_html | replace: '__AMOUNT__', second_saving_html }}</p>
 					</div>
-					{%- capture upsell_attrs -%}data-upsell-add data-upsell-variant-id="{{ refill_variant.id }}"{%- endcapture -%}
-					{%- assign upsell_label = 'general.add' | t -%}
-					{%- render 'cta-button',
-						label: upsell_label,
-						variant: 'outline',
-						size: 'sm',
-						element: 'button',
-						attributes: upsell_attrs,
-						extra_classes: 'shrink-0'
-					-%}
+				{%- endcapture -%}
+				{%- assign second_kit_label = 'snippets.cart_drawer.second_kit_add' | t -%}
+				{%- render 'cart-upsell-box',
+					attrs: 'data-cart-second-kit',
+					body: second_kit_body,
+					button_label: second_kit_label,
+					button_attrs: 'data-second-kit-add'
+				-%}
+			{%- endif -%}
+		{%- endif -%}
+
+		{%- comment -%} Upsell — refill tabs {%- endcomment -%}
+		{%- if refill_product != blank and refill_variant != blank -%}
+			{%- capture upsell_body -%}
+				{%- if refill_product.featured_image -%}
+					<a href="{{ refill_product.url }}" class="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-bg-muted">
+						{{ refill_product.featured_image | image_url: width: 128 | image_tag: loading: 'lazy', class: 'w-full h-full object-cover' }}
+					</a>
+				{%- endif -%}
+				<div class="flex-1 min-w-0">
+					<p class="font-heading font-semibold text-title text-base leading-snug truncate">{%- render 'product-title', title: refill_product.title -%}</p>
+					<p class="text-copy text-base mt-0.5">{{ refill_variant.price | money }}</p>
 				</div>
-			</div>
+			{%- endcapture -%}
+			{%- capture upsell_attrs -%}data-upsell-add data-upsell-variant-id="{{ refill_variant.id }}"{%- endcapture -%}
+			{%- assign upsell_label = 'general.add' | t -%}
+			{%- assign upsell_eyebrow = 'snippets.cart_drawer.complete_your_kit' | t -%}
+			{%- render 'cart-upsell-box',
+				attrs: 'data-cart-upsell',
+				eyebrow: upsell_eyebrow,
+				body: upsell_body,
+				button_label: upsell_label,
+				button_attrs: upsell_attrs
+			-%}
 		{%- endif -%}
 
 	</div>
 
 	{%- comment -%} Footer, pinned under the scrolling body: codes, subtotal and saving, checkout, trust row {%- endcomment -%}
-	<div data-cart-footer class="hidden border-t border-bg-muted px-6 pt-4 pb-5 flex-col gap-3">
+	{%- comment -%}
+		The footer starts in the state Liquid knows (shown with items, hidden
+		without), so a drawer that loads with a filled cart has its express
+		buttons laid out before it ever opens; the script keeps it right.
+	{%- endcomment -%}
+	<div data-cart-footer class="{% if cart.item_count > 0 %}flex{% else %}hidden{% endif %} border-t border-bg-muted px-6 pt-4 pb-5 flex-col gap-3">
 		{%- comment -%}
 			One row per code on the cart, filled by JS from the cart's order-level
 			discount applications. Line discounts (the free pouch, pack prices)
@@ -204,6 +261,27 @@
 			attributes: 'data-cart-checkout',
 			extra_classes: '!px-6 !text-base !font-bold aria-busy:opacity-60 aria-busy:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main'
 		-%}
+		{%- comment -%}
+			Express pay (Theme settings > Cart drawer): Shopify's own Apple Pay
+			and Google Pay buttons for the whole cart, so the free pouch rides
+			along (snippets/express-buttons.liquid). Shopify fills their wallet
+			configuration only when it renders for a cart with items, so with
+			items at page load they render here, laid out before the drawer
+			opens; with an empty cart a placeholder of the row's height waits
+			instead, and the script fetches sections/cart-express.liquid the
+			moment the first add has landed and mounts the buttons into that
+			space. From then on the markup stays and the script only toggles
+			classes, so Shopify's component keeps its state and always reads
+			the current cart. The footer hides with the empty state and takes
+			the buttons with it.
+		{%- endcomment -%}
+		{%- if settings.drawer_express_enabled and additional_checkout_buttons -%}
+			{%- if cart.item_count > 0 -%}
+				{%- render 'express-buttons' -%}
+			{%- else -%}
+				<div class="min-h-12 rounded-xl bg-cream-light" data-drawer-express-slot></div>
+			{%- endif -%}
+		{%- endif -%}
 		<ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-copy" role="list">
 			<li class="flex items-center gap-1.5">
 				<svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -285,6 +363,13 @@
 	var statusEl = document.querySelector('[data-cart-status]');
 	var checkoutEl = document.querySelector('[data-cart-checkout]');
 	var upsellBtn  = document.querySelector('[data-upsell-add]');
+	var secondKitEl = document.querySelector('[data-cart-second-kit]');
+	var secondKitBtn = document.querySelector('[data-second-kit-add]');
+	/* The express pay buttons: the placeholder they mount into when the cart
+	   was empty at page load, and whether the feature is on at all. */
+	var expressSlot = document.querySelector('[data-drawer-express-slot]');
+	var expressOn = !!(expressSlot || document.querySelector('[data-drawer-express]'));
+	var expressFetched = false;
 	var catalogue = readJson('[data-cart-catalogue]');
 	var freeGifts = readJson('[data-cart-free-gifts]');
 
@@ -344,6 +429,66 @@
 	var flushTimer = null;
 	var queued = 0;
 	var errorMsg = '';
+	/* The signup code already sent to the cart for the express buttons (see render). */
+	var codeTried = '';
+	/* Whether the second-kit offer has been noted as shown during this open. */
+	var secondKitNoted = false;
+	/* The signup code booked onto the next write (express pay, see planCodeApply). */
+	var pendingDiscount = '';
+	/* The express pay wrapper, once mounted. */
+	var expressEl = null;
+	/* render()'s verdict on the refill upsell, from the cart Shopify sent. */
+	var upsellWanted = false;
+
+	/* ── Cart attributes ──
+	   Notes the drawer leaves on the cart: `_aira_bundle` when the kit
+	   page's 2-kit option was added, `_aira_second_kit_offer` when the
+	   drawer's second-kit row was used. They travel with a call the drawer
+	   makes anyway: the update that moves the quantities, or, after an add,
+	   the read that follows it, which becomes an update carrying only the
+	   notes and answers with the same cart JSON. `_aira_bundle` is cleared
+	   again (an empty value removes it) once the cart is planned to hold
+	   fewer than two kits. */
+	var pendingAttrs = {};
+
+	function hasAttrs(attrs) {
+		for (var key in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, key)) return true; }
+		return false;
+	}
+
+	/* Reads a form's data-cart-attributes (a JSON object) into the notes. */
+	function noteAttrs(json) {
+		if (!json) return;
+		try {
+			var attrs = JSON.parse(json);
+			for (var key in attrs) { if (Object.prototype.hasOwnProperty.call(attrs, key)) pendingAttrs[key] = String(attrs[key]); }
+		} catch (e) {}
+	}
+
+	/* The notes to send with an update that leaves the cart's lines at `qty`
+	   (quantities in cart order), or null when there is nothing to say. */
+	function attrsFor(cart, qty) {
+		var attrs = {};
+		for (var key in pendingAttrs) { if (Object.prototype.hasOwnProperty.call(pendingAttrs, key)) attrs[key] = pendingAttrs[key]; }
+		if (cart && cart.attributes && cart.attributes._aira_bundle && plannedKits(cart, qty) < 2) attrs._aira_bundle = '';
+		return hasAttrs(attrs) ? attrs : null;
+	}
+
+	function clearSentAttrs(attrs) {
+		for (var key in attrs) { if (pendingAttrs[key] === attrs[key]) delete pendingAttrs[key]; }
+	}
+
+	function plannedKits(cart, qty) {
+		if (!KIT_HANDLE) return 0;
+		return cart.items.reduce(function (total, item, i) {
+			return item.handle === KIT_HANDLE ? total + (qty ? qty[i] : item.quantity) : total;
+		}, 0);
+	}
+
+	/* Microsoft Clarity tags, when its script is on the page. */
+	function clarity(key, value) {
+		if (typeof window.clarity === 'function') window.clarity('set', key, value);
+	}
 
 	/* ── Gift opt-out ──
 	   A visitor who removes the free pouch has said no to it, so it stays out
@@ -373,6 +518,7 @@
 		drawer.classList.remove('cart-drawer-closed');
 		drawer.classList.add('cart-drawer-open');
 		document.body.style.overflow = 'hidden';
+		secondKitNoted = false;
 		tagCheckout();
 	}
 
@@ -416,6 +562,10 @@
 		var busy = isBusy();
 		drawer.setAttribute('aria-busy', busy ? 'true' : 'false');
 		if (checkoutEl && !busy) checkoutEl.removeAttribute('aria-busy');
+		/* The wallet buttons wait for the cart as the Checkout link does:
+		   inert for the keyboard here, dimmed and untappable through the
+		   group-aria-busy utilities on the wrapper. */
+		if (expressEl) expressEl.inert = busy;
 		statusEl.textContent = errorMsg || (busy ? i18n.i18nUpdating : '');
 		statusEl.classList.toggle('hidden', statusEl.textContent === '');
 	}
@@ -452,33 +602,81 @@
 		return request(ROOT + 'cart.js').then(function (res) { return res.body; });
 	}
 
+	/* The read after an add: cart.js, or, with notes or a code waiting to go
+	   on the cart, an update carrying only those, which answers with the
+	   same cart JSON in place of the read it replaces. */
+	function readCart() {
+		if (!hasAttrs(pendingAttrs) && !pendingDiscount) return fetchCart();
+		var attrs = attrsFor(null, null);
+		var code = pendingDiscount;
+		var body = {};
+		if (attrs) body.attributes = attrs;
+		if (code) body.discount = code;
+		return postJson(ROOT + 'cart/update.js', body).then(function (res) {
+			if (res.ok && res.body && res.body.items) { clearSentAttrs(attrs); noteCodeSent(code); return res.body; }
+			return fetchCart();
+		});
+	}
+
 	/* One update call for the whole cart. `quantities` is the full list in
 	   cart order, so lines are addressed by position, never by line key
 	   (keys change as the discount moves between lines). Shopify answers
 	   422 "Cart changed" when the line count moved under us, and the caller
-	   re-reads and plans again. */
-	function updateLines(quantities, keepalive) {
-		return postJson(ROOT + 'cart/update.js', { updates: quantities }, keepalive);
+	   re-reads and plans again. `attrs`, when given, and a booked code ride
+	   along. */
+	function updateLines(quantities, keepalive, attrs) {
+		var body = { updates: quantities };
+		var code = pendingDiscount;
+		if (attrs) body.attributes = attrs;
+		if (code) body.discount = code;
+		return postJson(ROOT + 'cart/update.js', body, keepalive).then(function (res) {
+			if (res.ok && res.body && res.body.items) { clearSentAttrs(attrs); noteCodeSent(code); }
+			return res;
+		});
 	}
 
-	/* ── Intercept all add-to-cart forms ── */
-	document.addEventListener('submit', function (e) {
-		var form = e.target;
-		if (!form.matches('form[action*="/cart/add"]')) return;
-		e.preventDefault();
+	/* ── Express pay and the signup code ──
+	   The wallet buttons read the cart as it stands, not the Checkout link's
+	   ?discount= tag, so a remembered signup code goes on the cart before a
+	   wallet can be tapped: once per code per page view, only while express
+	   pay is on and the cart carries no code of its own (applicable or not:
+	   a code already there is never replaced). planCodeApply books it onto
+	   the next write the drawer makes anyway (an add's follow-up, a tap's
+	   update); render() sends a write of its own only when none is coming. */
+	function planCodeApply(cart) {
+		if (!expressOn || !offerCode || codeTried === offerCode || pendingDiscount) return;
+		if (!cart || (cart.discount_codes || []).length) return;
+		pendingDiscount = offerCode;
+	}
 
-		var btn = form.querySelector('[data-add-to-cart]');
+	function noteCodeSent(code) {
+		if (!code) return;
+		codeTried = code;
+		if (pendingDiscount === code) pendingDiscount = '';
+	}
+
+	/* ── Adds ──
+	   One path for every add: the forms intercepted below and the empty
+	   state's "Get my kit". `item` is the Ajax line, `giftId` the free pouch
+	   to send along, `btn` the control that shows "Adding..." until the
+	   drawer shows Shopify's answer, `attrsJson` notes the form wants on the
+	   cart once the add has gone through (the kit page's 2-kit cards write
+	   `_aira_bundle`), and `onRefused` runs when Shopify refused the add or
+	   the request dropped. */
+	function addToCart(item, giftId, btn, attrsJson, onRefused) {
 		/* Keep the markup: the label can be two lines, so restore rather than retype */
 		var btnMarkup = btn ? btn.innerHTML : '';
 		function resetBtn() {
 			if (!btn) return;
-			btn.disabled = false;
+			btn.removeAttribute('aria-busy');
+			if ('disabled' in btn) btn.disabled = false;
 			btn.innerHTML = btnMarkup;
 		}
-		if (btn) { btn.disabled = true; btn.textContent = i18n.i18nAdding; }
-
-		var item = formItem(form);
-		var giftId = parseInt(form.getAttribute('data-gift-variant-id'), 10) || 0;
+		if (btn) {
+			btn.setAttribute('aria-busy', 'true');
+			if ('disabled' in btn) btn.disabled = true;
+			btn.textContent = i18n.i18nAdding;
+		}
 		errorMsg = '';
 		/* Open at once and draw the rows this add will make, worked out from
 		   the cart the drawer holds; the same maths runs again in the queue
@@ -486,16 +684,66 @@
 		   tapped goes first so the order holds. */
 		open();
 		flushNow();
+		/* With express pay on, the remembered code rides this add's follow-up,
+		   and Shopify's wallet script starts loading now, during the add,
+		   rather than once the buttons mount (its bootstrap exposes init for
+		   exactly this; it is a no-op after the first call). */
+		planCodeApply(currentCart);
+		warmExpress();
 		var done = noteAdds(addItems(currentCart, item, giftId));
+		var refused = false;
 		enqueue(function () {
-			return postJson(ROOT + 'cart/add.js', { items: addItems(currentCart, item, giftId) })
+			var body = { items: addItems(currentCart, item, giftId) };
+			/* The express buttons still to mount: Shopify renders their section
+			   inside this very call, after the add, so they arrive with the
+			   reply instead of after a second round trip. */
+			if (expressSlot && !expressEl) body.sections = 'cart-express';
+			return postJson(ROOT + 'cart/add.js', body)
 				.then(function (res) {
-					if (!res.ok) errorMsg = (res.body && res.body.description) || i18n.i18nAddFailed;
-					return fetchCart();
+					if (!res.ok) {
+						refused = true;
+						errorMsg = (res.body && res.body.description) || i18n.i18nAddFailed;
+					} else {
+						noteAttrs(attrsJson);
+						mountExpress(res.body && res.body.sections && res.body.sections['cart-express']);
+					}
+					return readCart();
 				})
-				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
-		}).then(resetBtn, resetBtn);
+				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); refused = true; throw err; });
+		}).then(function () {
+			resetBtn();
+			if (refused && onRefused) onRefused();
+		});
+	}
+
+	/* ── Intercept all add-to-cart forms ── */
+	document.addEventListener('submit', function (e) {
+		var form = e.target;
+		if (!form.matches('form[action*="/cart/add"]')) return;
+		e.preventDefault();
+		var giftId = parseInt(form.getAttribute('data-gift-variant-id'), 10) || 0;
+		addToCart(formItem(form), giftId, form.querySelector('[data-add-to-cart]'), form.getAttribute('data-cart-attributes'));
 	});
+
+	/* ── Empty state: "Get my kit" adds the kit ──
+	   The same add as the kit page's form, so the free pouch comes along and
+	   the drawer fills without closing. Without a variant to add, or when
+	   Shopify refuses the add, the link does what it always did and goes to
+	   the kit page. */
+	var emptyAdd = document.querySelector('[data-cart-empty-add]');
+	if (emptyAdd) {
+		emptyAdd.addEventListener('click', function (e) {
+			var id = parseInt(emptyAdd.getAttribute('data-variant-id'), 10);
+			if (!id) return;
+			e.preventDefault();
+			if (emptyAdd.getAttribute('aria-busy') === 'true') return;
+			clarity('drawer_empty_get_kit', 'add');
+			var giftId = parseInt(emptyAdd.getAttribute('data-gift-variant-id'), 10) || 0;
+			addToCart({ id: id, quantity: 1 }, giftId, emptyAdd, null, function () {
+				window.location.href = emptyAdd.getAttribute('href');
+			});
+		});
+	}
 
 	/* The lines one add call carries: the form's item, then the free pouch
 	   when the offer calls for it. */
@@ -563,11 +811,84 @@
 				return postJson(ROOT + 'cart/add.js', { items: [entry] })
 					.then(function (res) {
 						if (!res.ok) errorMsg = (res.body && res.body.description) || i18n.i18nAddFailed;
-						return fetchCart();
+						return readCart();
 					})
 					.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
 			}).then(resetUpsell, resetUpsell);
 		});
+	}
+
+	/* ── Second kit offer ──
+	   The row's Add is the kit row's + in another place: a parked tap on the
+	   kit's variant, so the free pouch follows through planQuantities (and
+	   stays away for a visitor who binned it). The note goes with that
+	   update. The row only shows while the kit is in the cart Shopify sent
+	   (never for a kit still on its way), so the line is always there. */
+	if (secondKitBtn) {
+		secondKitBtn.addEventListener('click', function () {
+			if (!currentCart || !KIT_HANDLE) return;
+			var kit = currentCart.items.filter(function (item) { return item.handle === KIT_HANDLE; })[0];
+			if (!kit) return;
+			errorMsg = '';
+			pendingAttrs._aira_second_kit_offer = 'added';
+			addOp({ variantId: kit.variant_id, delta: 1, remove: false });
+			clarity('second_kit_offer', 'added');
+		});
+	}
+
+	/* ── Express pay ──
+	   Mounted once, the first time the drawer shows a cart with items, from
+	   a fetch of sections/cart-express.liquid (see the slot's comment in the
+	   markup). Shopify's own bootstrap watches the page for the component
+	   and loads its script when it appears, so nothing wallet-related loads
+	   on a page whose drawer never shows items. Shopify draws the buttons
+	   inside the component; a browser with no wallet to offer, or an empty
+	   cart, draws nothing, and the wrapper's class then cancels the
+	   footer's gap above it (the markup is never hidden, so the component
+	   keeps its state). A tap on a wallet is a composed click, so it reaches
+	   the wrapper. A failed fetch is tried again on the next render. */
+	function wireExpress(block) {
+		expressEl = block;
+		refreshStatus();
+		if (typeof ResizeObserver === 'function') {
+			var watch = new ResizeObserver(function () {
+				block.classList.toggle('drawer-express-empty', block.getBoundingClientRect().height === 0);
+			});
+			watch.observe(block);
+			Array.prototype.forEach.call(block.children, function (child) { watch.observe(child); });
+		}
+		block.addEventListener('click', function () { clarity('drawer_express', 'tap'); });
+	}
+
+	/* Rendered by Liquid when the cart had items at page load; otherwise
+	   fetched into the placeholder the first time the cart has items. */
+	if (document.querySelector('[data-drawer-express]')) wireExpress(document.querySelector('[data-drawer-express]'));
+
+	/* Loads Shopify's wallet script ahead of the buttons: the bootstrap in
+	   content_for_header leaves Shopify.PaymentButton.init for the page to
+	   call, and only the placeholder case needs it (with the buttons in the
+	   markup at load the bootstrap has called it already). */
+	function warmExpress() {
+		if (!expressSlot || expressEl) return;
+		var pb = window.Shopify && window.Shopify.PaymentButton;
+		if (pb && typeof pb.init === 'function') { try { pb.init(); } catch (e) {} }
+	}
+
+	/* Mounts the buttons into the placeholder from `html` (the section as an
+	   add call rendered it) or, without it, from a fetch of the section. */
+	function mountExpress(html) {
+		if (!expressSlot || expressEl || expressFetched) return;
+		expressFetched = true;
+		var source = html ? Promise.resolve(html) : fetch(ROOT + '?section_id=cart-express').then(function (r) { return r.ok ? r.text() : ''; });
+		source
+			.then(function (markup) {
+				var block = new DOMParser().parseFromString(markup, 'text/html').querySelector('[data-drawer-express]');
+				if (!expressSlot.parentNode) return;
+				if (!block) { expressSlot.hidden = true; return; }
+				expressSlot.parentNode.replaceChild(block, expressSlot);
+				wireExpress(block);
+			})
+			.catch(function () { expressFetched = false; });
 	}
 
 	/* ── Free gift quantity ──
@@ -707,7 +1028,7 @@
 	function sendOps(cart, ops, tries, keepalive) {
 		var plan = planQuantities(cart, ops);
 		if (!plan.changed) return Promise.resolve(cart);
-		return updateLines(plan.qty, keepalive).then(function (res) {
+		return updateLines(plan.qty, keepalive, attrsFor(cart, plan.qty)).then(function (res) {
 			if (res.ok && res.body && res.body.items) return res.body;
 			return fetchCart().then(function (fresh) {
 				if (tries < 1) return sendOps(fresh, ops, tries + 1, keepalive);
@@ -754,7 +1075,7 @@
 			if (want > have) {
 				var qty = cart.items.map(function (item) { return item.quantity; });
 				applyVariantWant(cart, qty, gift, want);
-				return updateLines(qty)
+				return updateLines(qty, false, attrsFor(cart, qty))
 					.then(function (res) { return res.ok && res.body && res.body.items ? res.body : fetchCart(); })
 					.then(render);
 			}
@@ -976,13 +1297,29 @@
 		/* Total, after every discount */
 		subtotalEl.innerHTML = '<bdi>' + formatMoney(cart.total_price) + '</bdi>';
 
-		/* Check if refills already in cart */
+		/* The refill upsell: with items and no refill among them. The
+		   second-kit offer may stand in front of it (refreshUpsells). */
 		var hasRefills = cart.items.some(function (item) {
 			return item.handle === REFILL_HANDLE;
 		});
+		upsellWanted = hasItems && !hasRefills;
 		if (upsellEl) {
-			upsellEl.classList.toggle('hidden', !hasItems || hasRefills);
+			upsellEl.classList.toggle('hidden', !upsellWanted);
 		}
+
+		/* The signup code for express pay (see planCodeApply) when no write
+		   is coming to carry it: the drawer opened on a cart that already
+		   had items. Runs in the queue, so Checkout waits for it. */
+		if (expressOn && isOpen && hasItems && offerCode && codeTried !== offerCode && !pendingDiscount && !(cart.discount_codes || []).length) {
+			var code = offerCode;
+			codeTried = code;
+			enqueue(function () {
+				return postJson(ROOT + 'cart/update.js', { discount: code })
+					.then(function (res) { return res.ok && res.body && res.body.items ? res.body : fetchCart(); })
+					.then(render);
+			});
+		}
+		if (isOpen && hasItems) mountExpress();
 
 		/* Build the rows. Rows carry their variant id, which is what a tap is
 		   resolved against; the update call still goes by line position. A
@@ -1052,6 +1389,52 @@
 			reviewsEl.classList.toggle('flex', showRows);
 		}
 		if (currentCart.item_count === 0) subtotalEl.innerHTML = drawn.length ? '' : '<bdi>' + formatMoney(currentCart.total_price) + '</bdi>';
+		refreshUpsells(want, fresh, showRows);
+	}
+
+	/* The second-kit offer, from the planned quantities so it follows a tap
+	   at once: shown while exactly one kit is in the cart and none is on
+	   its way. While it shows the refill upsell stands aside; otherwise the
+	   refill upsell keeps render()'s verdict. Nothing here runs without the
+	   row, so the refill upsell behaves as it always has. */
+	function refreshUpsells(want, fresh, showRows) {
+		if (!secondKitEl) return;
+		var kits = 0;
+		var kitPending = false;
+		Object.keys(want).forEach(function (id) {
+			if (variantHandle(id) === KIT_HANDLE) kits += want[id];
+		});
+		fresh.forEach(function (add) {
+			if (variantHandle(add.id) === KIT_HANDLE) { kits += add.quantity; kitPending = true; }
+		});
+		var secondShown = showRows && kits === 1 && !kitPending;
+		if (!secondShown) handOffFocus(secondKitEl);
+		secondKitEl.classList.toggle('hidden', !secondShown);
+		if (secondShown && isOpen && !secondKitNoted) {
+			secondKitNoted = true;
+			clarity('second_kit_offer', 'shown');
+		}
+		if (upsellEl) {
+			var upsellShown = upsellWanted && !secondShown;
+			if (!upsellShown) handOffFocus(upsellEl);
+			upsellEl.classList.toggle('hidden', !upsellShown);
+		}
+	}
+
+	/* A box about to hide while one of its controls has focus hands it on,
+	   as a binned row does: to a kit row's +, else the close button. */
+	function handOffFocus(box) {
+		if (box.classList.contains('hidden') || !box.contains(document.activeElement)) return;
+		var plus = itemsEl.querySelector('[data-variant]:not(.hidden) [data-qty-change="1"]');
+		(plus || closeBtn).focus({ preventScroll: true });
+	}
+
+	/* A variant's product handle, from the catalogue or the cart line. */
+	function variantHandle(id) {
+		var known = catalogue[id];
+		if (known) return known.handle;
+		var line = currentCart ? currentCart.items.filter(function (item) { return String(item.variant_id) === String(id); })[0] : null;
+		return line ? line.handle : '';
 	}
 
 	/* ── Focus across a re-render ──
