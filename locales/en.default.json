@@ -296,7 +296,7 @@
       "increase_quantity": "Increase quantity",
       "remove_code": "Remove code {{ code }}",
       "second_kit_add": "Add",
-      "second_kit_line": "2 kits for {{ bundle_price }}. Save {{ amount }}. It comes with its own free refill pouch.",
+      "second_kit_line": "It comes with its own free refill pouch.",
       "second_kit_title": "Add a second kit for {{ price }}",
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",

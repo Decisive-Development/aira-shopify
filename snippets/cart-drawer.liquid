@@ -155,33 +155,24 @@
 		{%- comment -%}
 			Second kit offer (Theme settings > Offers). The script shows it
 			while the cart holds exactly one kit, in place of the refill upsell.
-			The prices are the kit's price and the saving setting, the one sum
-			the kit page's picker shows too, never typed. Add is the kit row's
-			+ in another place: one more kit, and the free pouch that comes
-			with it. Amounts sit in <bdi> for Arabic.
+			The price is the kit's price less the saving setting, the one sum
+			the kit page's picker shows too, never typed; under it only the
+			pouch sentence, and no thumbnail (Tom, 21 Oct 2026). Add is the kit
+			row's + in another place: one more kit, and the free pouch that
+			comes with it. The amount sits in <bdi> for Arabic.
 		{%- endcomment -%}
 		{%- if settings.second_kit_row_enabled and kit_product != blank -%}
 			{%- liquid
 				assign second_saving = settings.bundle_saving | times: 100 | round
 				assign second_price = kit_variant.price | minus: second_saving
-				assign second_bundle_price = kit_variant.price | times: 2 | minus: second_saving
-				assign kit_thumb = kit_product.metafields.custom.cart_thumbnail.value | default: kit_product.featured_image
-				assign kit_name = kit_product.metafields.custom.short_name.value | default: kit_product.title
 			-%}
 			{%- if second_saving > 0 -%}
 				{%- capture second_price_html -%}<bdi>{{ second_price | money }}</bdi>{%- endcapture -%}
-				{%- capture second_bundle_html -%}<bdi>{{ second_bundle_price | money }}</bdi>{%- endcapture -%}
-				{%- capture second_saving_html -%}<bdi>{{ second_saving | money }}</bdi>{%- endcapture -%}
-				{%- comment -%} `t` escapes what it interpolates, so the <bdi> amounts go in after it. {%- endcomment -%}
+				{%- comment -%} `t` escapes what it interpolates, so the <bdi> amount goes in after it. {%- endcomment -%}
 				{%- capture second_kit_body -%}
-					{%- if kit_thumb -%}
-						<a href="{{ kit_product.url }}" aria-label="{{ kit_name | escape }}" class="shrink-0 size-12 md:size-14 overflow-hidden rounded-xl border border-bg-muted bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">
-							{{ kit_thumb | image_url: width: 112 | image_tag: width: 56, height: 56, loading: 'lazy', alt: '', class: 'w-full h-full object-contain' }}
-						</a>
-					{%- endif -%}
 					<div class="flex-1 min-w-0">
 						<p class="font-heading font-semibold text-title text-base leading-snug">{{ 'snippets.cart_drawer.second_kit_title' | t: price: '__PRICE__' | replace: '__PRICE__', second_price_html }}</p>
-						<p class="text-copy text-sm mt-0.5">{{ 'snippets.cart_drawer.second_kit_line' | t: bundle_price: '__BUNDLE_PRICE__', amount: '__AMOUNT__' | replace: '__BUNDLE_PRICE__', second_bundle_html | replace: '__AMOUNT__', second_saving_html }}</p>
+						<p class="text-copy text-sm mt-0.5">{{ 'snippets.cart_drawer.second_kit_line' | t }}</p>
 					</div>
 				{%- endcapture -%}
 				{%- assign second_kit_label = 'snippets.cart_drawer.second_kit_add' | t -%}

@@ -298,7 +298,7 @@
       "increase_quantity": "زيادة الكمية",
       "remove_code": "إزالة الكود {{ code }}",
       "second_kit_add": "أضف",
-      "second_kit_line": "طقمان بسعر {{ bundle_price }}. وفّر {{ amount }}. يأتي مع كيس لاصقات بديلة مجاني خاص به.",
+      "second_kit_line": "يأتي مع كيس لاصقات بديلة مجاني خاص به.",
       "second_kit_title": "أضف طقمًا ثانيًا بسعر {{ price }}",
       "shopping_cart": "سلة التسوق",
       "subtotal": "المجموع الفرعي",
