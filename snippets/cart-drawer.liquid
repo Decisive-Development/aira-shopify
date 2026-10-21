@@ -1311,7 +1311,9 @@
 	}
 
 	/* A code on the cart: "AIRA10 · 10% off" for a percentage, its title
-	   otherwise, an × that takes it off, and what it took off the order. */
+	   otherwise, an × that takes it off, and what it took off the order. The
+	   × only on a discount code: an automatic order discount also arrives as
+	   a cart-level application, and update.js has nothing to take off it. */
 	function codeRow(app) {
 		var code = '<bdi>' + escHtml(app.title) + '</bdi>';
 		var label = app.value_type === 'percentage'
@@ -1319,7 +1321,9 @@
 			: code;
 		return '<div class="flex items-center justify-between gap-3">'
 			+ '<span class="' + CHIP + '">' + ICON_TAG + '<span>' + label + '</span>'
-			+ '<button type="button" data-code-remove="' + escAttr(app.title) + '" class="' + CODE_REMOVE + '" aria-label="' + escAttr(i18n.i18nRemoveCode.replace('__CODE__', app.title)) + '">' + ICON_X + '</button>'
+			+ (app.type === 'discount_code'
+				? '<button type="button" data-code-remove="' + escAttr(app.title) + '" class="' + CODE_REMOVE + '" aria-label="' + escAttr(i18n.i18nRemoveCode.replace('__CODE__', app.title)) + '">' + ICON_X + '</button>'
+				: '')
 			+ '</span>'
 			+ '<span class="shrink-0 font-heading font-semibold text-base text-title transition-opacity group-aria-busy:opacity-40"><bdi>−' + formatMoney(app.total_allocated_amount) + '</bdi></span>'
 			+ '</div>';
