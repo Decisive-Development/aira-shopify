@@ -914,6 +914,17 @@
 		});
 	}
 
+	/* The order-level discount applications on a cart. /cart.js lists them
+	   flat; /cart/update.js and /cart/change.js answer with each one wrapped
+	   as { amount, discount_application } (seen 2026-10-21), which used to
+	   drop the code row after a tap while the code was still on the cart.
+	   Both shapes are read. */
+	function cartCodes(cart) {
+		return (cart.cart_level_discount_applications || []).map(function (app) {
+			return app.discount_application || app;
+		});
+	}
+
 	/* A code on the cart: "AIRA10 · 10% off" for a percentage, its title
 	   otherwise, and what it took off the order. */
 	function codeRow(app) {
@@ -948,7 +959,7 @@
 		});
 
 		/* Codes, one row per order-level discount the cart carries. */
-		var codes = (cart.cart_level_discount_applications || []).filter(function (app) {
+		var codes = cartCodes(cart).filter(function (app) {
 			return app.total_allocated_amount > 0;
 		});
 		codesEl.innerHTML = codes.map(codeRow).join('');
