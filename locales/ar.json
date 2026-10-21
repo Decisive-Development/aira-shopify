@@ -82,6 +82,24 @@
     "password": "كلمة المرور",
     "enter": "دخول"
   },
+  "products": {
+    "kit_page": {
+      "add_to_cart_price": "أضف إلى السلة · {{ price }}",
+      "add_two_to_cart": "أضف طقمين إلى السلة · {{ price }}",
+      "countdown_by": "اطلب قبل {{ time }} {{ day }} ليصلك طلبك بحلول {{ date }}",
+      "countdown_delivery": "التوصيل بحلول {{ date }}",
+      "countdown_timer": "اطلب خلال {{ timer }}",
+      "countdown_within": "اطلب خلال {{ timer }} ليصلك طلبك بحلول {{ date }}",
+      "day_on": "يوم {{ weekday }}",
+      "day_today": "اليوم",
+      "day_tomorrow": "غدًا",
+      "picker_group_label": "اختر طقمك",
+      "pill_best_value": "الأفضل قيمة · شحن مجاني",
+      "sticky_two_kits": "طقمان",
+      "two_kits_line": "+ كيسان من اللاصقات البديلة مجانًا، بقيمة {{ amount }}",
+      "two_kits_title": "طقمان من aira"
+    }
+  },
   "search": {
     "title": "البحث",
     "placeholder": "ابحث في المقالات والصفحات والمنتجات",
@@ -278,6 +296,9 @@
       },
       "guarantee": "ضمان 30 ليلة",
       "increase_quantity": "زيادة الكمية",
+      "second_kit_add": "أضف",
+      "second_kit_line": "طقمان بسعر {{ bundle_price }}. وفّر {{ amount }}. يأتي مع كيس لاصقات بديلة مجاني خاص به.",
+      "second_kit_title": "أضف طقمًا ثانيًا بسعر {{ price }}",
       "shopping_cart": "سلة التسوق",
       "subtotal": "المجموع الفرعي",
       "update_failed": "تعذّر تحديث سلتك",

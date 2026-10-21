@@ -305,5 +305,108 @@
         "default": "AIRA10"
       }
     ]
+  },
+  {
+    "name": "Cart drawer",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "drawer_express_enabled",
+        "label": "Show express pay buttons",
+        "default": false,
+        "info": "Shopify's Apple Pay and Google Pay buttons under the Checkout button in the cart drawer. They check out the whole cart, free pouch included."
+      }
+    ]
+  },
+  {
+    "name": "Offers",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "bundle_picker_enabled",
+        "label": "Show 2-kit picker on the kit page",
+        "default": false,
+        "info": "A 1 kit / 2 kits choice above the Add to cart button. Needs the automatic discount \"2 kits for $69.99\" to be active."
+      },
+      {
+        "type": "checkbox",
+        "id": "second_kit_row_enabled",
+        "label": "Show second kit row in the drawer",
+        "default": false,
+        "info": "Shown while the cart holds exactly one kit. Needs the same automatic discount."
+      },
+      {
+        "type": "text",
+        "id": "bundle_saving",
+        "label": "2-kit saving ($, must match the admin discount)",
+        "default": "29.99",
+        "info": "Dollars, digits and a point only, for example 29.99. The picker and the drawer row show the kit price x 2 minus this. Change it only together with the discount in Discounts."
+      }
+    ]
+  },
+  {
+    "name": "Delivery countdown",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "countdown_enabled",
+        "label": "Show delivery countdown",
+        "default": false,
+        "info": "One line under the Add to cart button on the kit page with the delivery date. Kit page only."
+      },
+      {
+        "type": "select",
+        "id": "countdown_mode",
+        "label": "Mode",
+        "options": [
+          { "value": "rolling", "label": "Rolling hour" },
+          { "value": "cutoff", "label": "Daily cut-off" }
+        ],
+        "default": "rolling",
+        "info": "Rolling hour counts down to the top of the clock hour. Daily cut-off counts down to the time below and says \"Order by 2pm today\" when more than an hour is left. The delivery date is worked out the same way in both."
+      },
+      {
+        "type": "text",
+        "id": "countdown_cutoff",
+        "label": "Daily cut-off (24 h)",
+        "default": "14:00",
+        "info": "Orders before this time go out the same working day. HH:MM in the time zone below."
+      },
+      {
+        "type": "text",
+        "id": "countdown_timezone",
+        "label": "Time zone",
+        "default": "Asia/Dubai",
+        "info": "An IANA time zone name, for example Asia/Dubai or Asia/Riyadh."
+      },
+      {
+        "type": "number",
+        "id": "delivery_days_ae",
+        "label": "Delivery days UAE",
+        "default": 2,
+        "info": "Working days after dispatch."
+      },
+      {
+        "type": "number",
+        "id": "delivery_days_sa",
+        "label": "Delivery days KSA",
+        "default": 3,
+        "info": "Working days after dispatch."
+      },
+      {
+        "type": "text",
+        "id": "working_days_ae",
+        "label": "Working days UAE",
+        "default": "Mon,Tue,Wed,Thu,Fri,Sat",
+        "info": "Comma-separated three-letter days (Sun, Mon, Tue, Wed, Thu, Fri, Sat)."
+      },
+      {
+        "type": "text",
+        "id": "working_days_sa",
+        "label": "Working days KSA",
+        "default": "Sun,Mon,Tue,Wed,Thu",
+        "info": "Comma-separated three-letter days (Sun, Mon, Tue, Wed, Thu, Fri, Sat)."
+      }
+    ]
   }
 ]

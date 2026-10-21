@@ -82,6 +82,24 @@
     "password": "Password",
     "enter": "Enter"
   },
+  "products": {
+    "kit_page": {
+      "add_to_cart_price": "Add to cart · {{ price }}",
+      "add_two_to_cart": "Add 2 kits to cart · {{ price }}",
+      "countdown_by": "Order by {{ time }} {{ day }} for delivery by {{ date }}",
+      "countdown_delivery": "Delivery by {{ date }}",
+      "countdown_timer": "Order in the next {{ timer }}",
+      "countdown_within": "Order in the next {{ timer }} for delivery by {{ date }}",
+      "day_on": "on {{ weekday }}",
+      "day_today": "today",
+      "day_tomorrow": "tomorrow",
+      "picker_group_label": "Choose your kit",
+      "pill_best_value": "Best value · Free shipping",
+      "sticky_two_kits": "2 kits",
+      "two_kits_line": "+ 2 free refill pouches, worth {{ amount }}",
+      "two_kits_title": "2 aira kits"
+    }
+  },
   "search": {
     "title": "Search",
     "placeholder": "Search articles, pages, or products",
@@ -276,6 +294,9 @@
       },
       "guarantee": "30-night guarantee",
       "increase_quantity": "Increase quantity",
+      "second_kit_add": "Add",
+      "second_kit_line": "2 kits for {{ bundle_price }}. Save {{ amount }}. It comes with its own free refill pouch.",
+      "second_kit_title": "Add a second kit for {{ price }}",
       "shopping_cart": "Shopping cart",
       "subtotal": "Subtotal",
       "update_failed": "Your cart could not be updated",
