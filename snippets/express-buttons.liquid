@@ -9,11 +9,13 @@
 	a cart with items). The buttons draw inside a closed shadow DOM, styled
 	through .drawer-express in critical.source.css; the group-aria-busy
 	utilities read the drawer's aria-busy, so the buttons dim and refuse taps
-	while a cart call is in flight, as the Checkout link does. No vertical
-	class: Shopify lays the wallets side by side when there is room.
+	while a cart call is in flight, as the Checkout link does. Shopify's own
+	horizontal modifier keeps the wallets side by side at every width (its
+	default layout stacks a lone button under an 8px margin until the
+	component upgrades, which moved the row by 8px on the first add).
 {%- endcomment -%}
 {%- if settings.drawer_express_enabled and additional_checkout_buttons -%}
-	<div class="drawer-express transition-opacity group-aria-busy:opacity-40 group-aria-busy:pointer-events-none" data-drawer-express>
+	<div class="drawer-express additional-checkout-buttons--horizontal transition-opacity group-aria-busy:opacity-40 group-aria-busy:pointer-events-none" data-drawer-express>
 		{{ content_for_additional_checkout_buttons }}
 	</div>
 {%- endif -%}

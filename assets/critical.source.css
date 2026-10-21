@@ -623,6 +623,15 @@
   .drawer-express-empty {
     margin-top: calc(var(--spacing) * -3);
   }
+  /* Before Shopify's module upgrades the component, its compatibility
+     stylesheet lays the server-rendered skeleton out as a column with an
+     8px top margin on the first button, 8px taller than the row the buttons
+     draw at once upgraded, so the footer moved twice on the first add.
+     The override is !important because that rule is unlayered and nine
+     classes deep; important wins over it whatever the layer. */
+  .drawer-express .wallet-cart-grid .wallet-cart-button-container:first-child {
+    margin-top: 0 !important;
+  }
 
   /* Reveal-on-scroll */
   .reveal {

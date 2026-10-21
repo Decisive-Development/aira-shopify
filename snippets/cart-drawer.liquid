@@ -510,9 +510,15 @@
 	}
 
 	/* ── Open / close ── */
+	/* Off-canvas is not out of reach: the closed drawer is inert, so its
+	   Checkout link and wallet buttons are neither tabbable nor exposed to
+	   assistive tech until it opens. */
+	drawer.inert = true;
+
 	function open() {
 		if (isOpen) return;
 		isOpen = true;
+		drawer.inert = false;
 		backdrop.classList.remove('opacity-0', 'pointer-events-none');
 		backdrop.classList.add('opacity-100', 'pointer-events-auto');
 		drawer.classList.remove('cart-drawer-closed');
@@ -525,6 +531,7 @@
 	function close() {
 		if (!isOpen) return;
 		isOpen = false;
+		drawer.inert = true;
 		backdrop.classList.add('opacity-0', 'pointer-events-none');
 		backdrop.classList.remove('opacity-100', 'pointer-events-auto');
 		drawer.classList.remove('cart-drawer-open');
@@ -698,7 +705,10 @@
 			   inside this very call, after the add, so they arrive with the
 			   reply instead of after a second round trip. */
 			if (expressSlot && !expressEl) body.sections = 'cart-express';
+			/* Only the add call itself can refuse: a dropped follow-up read
+			   falls back to a re-read, with the items already in the cart. */
 			return postJson(ROOT + 'cart/add.js', body)
+				.then(null, function (err) { refused = true; throw err; })
 				.then(function (res) {
 					if (!res.ok) {
 						refused = true;
@@ -709,10 +719,13 @@
 					}
 					return readCart();
 				})
-				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); refused = true; throw err; });
+				.then(function (cart) { done(); return settle(cart); }, function (err) { done(); throw err; });
 		}).then(function () {
 			resetBtn();
 			if (refused && onRefused) onRefused();
+			/* The page's own scripts may want to re-sync a label they own
+			   (the kit page's cards) now that the control is back. */
+			if (btn) btn.dispatchEvent(new CustomEvent('aira:add-settled', { bubbles: true }));
 		});
 	}
 
@@ -857,7 +870,15 @@
 			watch.observe(block);
 			Array.prototype.forEach.call(block.children, function (child) { watch.observe(child); });
 		}
-		block.addEventListener('click', function () { clarity('drawer_express', 'tap'); });
+		/* A tap on a wallet button, not on the row's empty space: the click
+		   is composed, so its path crosses the component's shadow boundary. */
+		block.addEventListener('click', function (e) {
+			var path = typeof e.composedPath === 'function' ? e.composedPath() : [e.target];
+			var onWallet = path.some(function (node) {
+				return node && node.tagName && /(-pay-button|wallet-button)$/i.test(node.tagName);
+			});
+			if (onWallet) clarity('drawer_express', 'tap');
+		});
 	}
 
 	/* Rendered by Liquid when the cart had items at page load; otherwise
@@ -884,7 +905,9 @@
 			.then(function (markup) {
 				var block = new DOMParser().parseFromString(markup, 'text/html').querySelector('[data-drawer-express]');
 				if (!expressSlot.parentNode) return;
-				if (!block) { expressSlot.hidden = true; return; }
+				/* No block in the answer (an error page, a half-deployed theme):
+				   try again on the next render, as after a failed fetch. */
+				if (!block) { expressFetched = false; return; }
 				expressSlot.parentNode.replaceChild(block, expressSlot);
 				wireExpress(block);
 			})
@@ -1044,6 +1067,13 @@
 	   renders whatever Shopify has. */
 	window.addEventListener('pagehide', function () {
 		if (pending.length && queued === 0) flushNow(true);
+	});
+
+	/* Back from the checkout through the back-forward cache: the page comes
+	   back as it was, cart and all, so the cart is read again (the drawer,
+	   wallet buttons included, is busy until the answer is on screen). */
+	window.addEventListener('pageshow', function (e) {
+		if (e.persisted) enqueue(function () { return fetchCart().then(settle); });
 	});
 
 	/* ── Checkout waits for the cart ──
