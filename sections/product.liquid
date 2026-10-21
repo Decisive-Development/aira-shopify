@@ -314,6 +314,9 @@
 								labels and notes the choice on the form for the cart drawer.
 								Nothing reaches the cart until the button is pressed. One value
 								message per card, the strike-through; amounts sit in <bdi>.
+								The cards sit 16px apart (the frame says 12): the pill hangs 11px
+								past card 1's edge and the checked card draws a 1px ring, so 12px
+								would leave the pill touching card 2; 16px clears it by 4px.
 							{%- endcomment -%}
 							{%- liquid
 								assign kit_price_money = current_variant.price | money
@@ -572,7 +575,7 @@
 							{%- assign cd_text_second = '' -%}
 						{%- endif -%}
 						<div
-							class="invisible -mt-2 flex flex-col items-center gap-2 text-main text-sm md:text-base"
+							class="invisible -mt-2 flex flex-col items-center gap-2 text-main text-sm md:text-[15px]"
 							data-delivery-countdown
 							data-mode="{{ cd_mode }}"
 							data-cutoff="{{ cd_cutoff | escape }}"
@@ -991,8 +994,11 @@
 
 		picker.addEventListener('change', applyPick);
 		/* Also after a return from the back-forward cache or a reload, where a
-		   browser can restore the checked radio without firing change. */
+		   browser can restore the checked radio without firing change, and
+		   once the drawer hands the button back after an add (a card changed
+		   during the add would otherwise leave the old label). */
 		window.addEventListener('pageshow', applyPick);
+		form.addEventListener('aira:add-settled', applyPick);
 		applyPick();
 		/* Before the drawer's own submit handler (it listens on the document). */
 		form.addEventListener('submit', function () { clarity('bundle_picker', String(pickedQty())); });
