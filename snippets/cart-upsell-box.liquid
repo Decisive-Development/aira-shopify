@@ -1,7 +1,8 @@
 {%- comment -%}
 	cart-upsell-box — the rounded soft box the cart drawer's offers share:
 	the refill upsell and the second kit offer. Hidden until the drawer
-	script shows it; one box shows at a time.
+	script shows it; one box shows at a time. The eyebrow keeps its
+	letter-spacing for Latin text only (hard rule 10: none on Arabic).
 	Params:
 	  attrs         the data attribute the script finds the box by (required)
 	  eyebrow       small highlighted line above the row (optional)
@@ -11,7 +12,7 @@
 {%- endcomment -%}
 <div {{ attrs }} class="hidden mt-6 p-5 rounded-2xl border border-border bg-bg-soft">
 	{%- if eyebrow != blank -%}
-		<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-3">{{ eyebrow }}</p>
+		<p class="text-xs font-bold uppercase tracking-widest rtl:tracking-normal text-highlight mb-3">{{ eyebrow }}</p>
 	{%- endif -%}
 	<div class="flex items-center gap-4">
 		{{ body }}
