@@ -633,6 +633,49 @@
     margin-top: 0 !important;
   }
 
+  /* The kit page's delivery countdown (sections/product.liquid): each
+     digit sits in a slot one figure wide. On a change the script puts the
+     new digit in above and lets the old one drop out below, clipped by the
+     slot, so the number rolls like a clock timer. clip-path rather than
+     overflow, which would move an inline-block's baseline to its bottom
+     edge and unseat the digits from the "min" and "sec" beside them. */
+  .countdown-slot {
+    position: relative;
+    display: inline-block;
+    width: 1ch;
+    line-height: 1;
+    text-align: center;
+    clip-path: inset(0);
+  }
+  .countdown-digit {
+    display: inline-block;
+  }
+  .countdown-digit-in {
+    animation: countdown-in 0.45s var(--ease-out) both;
+  }
+  .countdown-digit-out {
+    position: absolute;
+    inset: 0;
+    animation: countdown-out 0.45s var(--ease-out) both;
+  }
+  @keyframes countdown-in {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0); }
+  }
+  @keyframes countdown-out {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(100%); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .countdown-digit-in,
+    .countdown-digit-out {
+      animation: none;
+    }
+    .countdown-digit-out {
+      display: none;
+    }
+  }
+
   /* Reveal-on-scroll */
   .reveal {
     opacity: 0;

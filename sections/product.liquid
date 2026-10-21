@@ -535,15 +535,15 @@
 								assign cd_time_text = cd_time_text | append: 'pm'
 							endif
 
-							# The sentence the script will refine: the rolling hour, the last hour before the cut-off, or "by 2pm today / tomorrow / on Sunday".
+							# What shows: the timer (the rolling hour, or the last hour before the cut-off) or "by 2pm today / tomorrow / on Sunday".
 							assign cd_until = cd_cutoff_min | minus: cd_now_min
 							if cd_mode == 'rolling'
-								assign cd_kind = 'within'
+								assign cd_kind = 'timer'
 							elsif cd_dispatch == 0 and cd_until > 60
 								assign cd_kind = 'by'
 								assign cd_day_text = 'products.kit_page.day_today' | t
 							elsif cd_dispatch == 0
-								assign cd_kind = 'within'
+								assign cd_kind = 'timer'
 							elsif cd_dispatch == 1
 								assign cd_kind = 'by'
 								assign cd_day_text = 'products.kit_page.day_tomorrow' | t
@@ -555,24 +555,21 @@
 							endif
 						-%}
 						{%- comment -%}
-							The sentence in its three shapes: one line (desktop), and on
-							phones the timer line with the delivery line under it. `t`
-							escapes what it interpolates, so the bold spans go in after it.
+							The sentence: the line under the timer, or the whole "Order by"
+							sentence when the timer is not running (daily cut-off mode outside
+							its last hour). `t` escapes what it interpolates, so the bold
+							spans go in after it.
 						{%- endcomment -%}
-						{%- capture cd_timer_html -%}<span class="font-bold tabular-nums" role="timer">60:00</span>{%- endcapture -%}
 						{%- capture cd_date_html -%}<span class="font-bold">{{ cd_date_text }}</span>{%- endcapture -%}
 						{%- capture cd_time_html -%}<span class="font-bold">{{ cd_time_text }}</span>{%- endcapture -%}
-						{%- if cd_kind == 'within' -%}
-							{%- capture cd_text_wide -%}{{ 'products.kit_page.countdown_within' | t: timer: '__TIMER__', date: '__DATE__' | replace: '__TIMER__', cd_timer_html | replace: '__DATE__', cd_date_html }}{%- endcapture -%}
-							{%- capture cd_text_narrow -%}{{ 'products.kit_page.countdown_timer' | t: timer: '__TIMER__' | replace: '__TIMER__', cd_timer_html }}{%- endcapture -%}
-							{%- capture cd_text_second -%}{{ 'products.kit_page.countdown_delivery' | t: date: '__DATE__' | replace: '__DATE__', cd_date_html }}{%- endcapture -%}
+						{%- if cd_kind == 'timer' -%}
+							{%- capture cd_text_html -%}{{ 'products.kit_page.countdown_left' | t: date: '__DATE__' | replace: '__DATE__', cd_date_html }}{%- endcapture -%}
 						{%- else -%}
-							{%- capture cd_text_wide -%}{{ 'products.kit_page.countdown_by' | t: time: '__TIME__', day: cd_day_text, date: '__DATE__' | replace: '__TIME__', cd_time_html | replace: '__DATE__', cd_date_html }}{%- endcapture -%}
-							{%- assign cd_text_narrow = cd_text_wide -%}
-							{%- assign cd_text_second = '' -%}
+							{%- capture cd_text_html -%}{{ 'products.kit_page.countdown_by' | t: time: '__TIME__', day: cd_day_text, date: '__DATE__' | replace: '__TIME__', cd_time_html | replace: '__DATE__', cd_date_html }}{%- endcapture -%}
 						{%- endif -%}
+						{%- capture cd_digit_html -%}<span class="countdown-slot"><span class="countdown-digit">0</span></span>{%- endcapture -%}
 						<div
-							class="invisible -mt-2 flex flex-col items-center gap-2 text-main text-sm md:text-[15px]"
+							class="invisible -mt-2 flex flex-col items-center gap-2 text-center text-main"
 							data-delivery-countdown
 							data-mode="{{ cd_mode }}"
 							data-cutoff="{{ cd_cutoff | escape }}"
@@ -583,33 +580,38 @@
 							data-work-ae="{{ cd_work_ae | escape }}"
 							data-work-sa="{{ cd_work_sa | escape }}"
 							data-i18n-by="{{ 'products.kit_page.countdown_by' | t: time: '__TIME__', day: '__DAY__', date: '__DATE__' | escape_once }}"
-							data-i18n-within="{{ 'products.kit_page.countdown_within' | t: timer: '__TIMER__', date: '__DATE__' | escape_once }}"
+							data-i18n-left="{{ 'products.kit_page.countdown_left' | t: date: '__DATE__' | escape_once }}"
 							data-i18n-today="{{ 'products.kit_page.day_today' | t | escape_once }}"
 							data-i18n-tomorrow="{{ 'products.kit_page.day_tomorrow' | t | escape_once }}"
 							data-i18n-on="{{ 'products.kit_page.day_on' | t: weekday: '__WEEKDAY__' | escape_once }}"
-							data-i18n-timer="{{ 'products.kit_page.countdown_timer' | t: timer: '__TIMER__' | escape_once }}"
-							data-i18n-delivery="{{ 'products.kit_page.countdown_delivery' | t: date: '__DATE__' | escape_once }}"
 						>
 							{%- comment -%}
-								One line on desktop; on phones the second span wraps onto its
-								own line (basis-full) under the clock and the timer. The clock is
-								the filled glyph from the approved frame; nothing in the line is
-								red or an alert.
+								The timer row: the stopwatch, then minutes and seconds as digit
+								slots the script rolls like a clock (each new digit slides in
+								from above, the old one drops out below; see .countdown-slot in
+								critical.source.css), with the sentence under it. The number
+								spans are dir="ltr" so the slots keep their order in Arabic.
+								When the timer is not running the row is hidden and the sentence
+								carries the small stopwatch instead, inline so a long sentence
+								wraps after it. Nothing in it is red.
 							{%- endcomment -%}
-							<p class="flex flex-wrap items-center justify-center gap-x-1.5 text-center">
-								<svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" fill-rule="evenodd" aria-hidden="true" focusable="false"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/></svg>
-								<span class="hidden md:inline" data-countdown-wide>{{ cd_text_wide }}</span>
-								<span class="md:hidden" data-countdown-narrow>{{ cd_text_narrow }}</span>
-								<span class="basis-full md:hidden{% if cd_text_second == blank %} hidden{% endif %}" data-countdown-second>{{ cd_text_second }}</span>
+							<p class="flex items-center justify-center gap-x-3 font-heading leading-none"{% if cd_kind != 'timer' %} hidden{% endif %} data-countdown-clock>
+								{%- render 'icon-stopwatch', classes: 'size-7 shrink-0' -%}
+								<span class="flex items-baseline gap-x-3" role="timer">
+									<span class="flex items-baseline gap-x-1.5">
+										<span class="text-4xl font-bold tabular-nums" dir="ltr" data-countdown-minutes>{{ cd_digit_html }}{{ cd_digit_html }}</span>
+										<span class="text-xl font-medium">{{ 'products.kit_page.countdown_min' | t }}</span>
+									</span>
+									<span class="flex items-baseline gap-x-1.5">
+										<span class="text-4xl font-bold tabular-nums" dir="ltr" data-countdown-seconds>{{ cd_digit_html }}{{ cd_digit_html }}</span>
+										<span class="text-xl font-medium">{{ 'products.kit_page.countdown_sec' | t }}</span>
+									</span>
+								</span>
 							</p>
-							{%- comment -%}
-								The draining bar: the orange fill is anchored at the end and
-								scaled to the fraction of the hour left (full until the last
-								hour in daily cut-off mode), so it empties towards the start.
-							{%- endcomment -%}
-							<div class="h-0.75 w-full overflow-hidden rounded-full bg-border" aria-hidden="true">
-								<div class="h-full w-full rounded-full bg-highlight origin-right rtl:origin-left transition-transform duration-1000 ease-linear motion-reduce:transition-none" data-countdown-bar></div>
-							</div>
+							<p class="text-sm md:text-[15px]" data-countdown-line>
+								<span class="inline-flex align-middle me-1.5"{% if cd_kind == 'timer' %} hidden{% endif %} data-countdown-line-icon>{%- render 'icon-stopwatch', classes: 'size-4' -%}</span>
+								<span data-countdown-text>{{ cd_text_html }}</span>
+							</p>
 						</div>
 					{%- endif -%}
 
@@ -1042,12 +1044,16 @@
 		var timeText = arabic
 			? new Intl.DateTimeFormat('ar-AE-u-nu-latn', cutM ? { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' } : { hour: 'numeric', hour12: true, timeZone: 'UTC' }).format(new Date(Date.UTC(2000, 0, 1, cutH, cutM)))
 			: (cutH % 12 || 12) + (cutM ? ':' + pad(cutM) : '') + (cutH < 12 ? 'am' : 'pm');
-		var wideEl = el.querySelector('[data-countdown-wide]');
-		var narrowEl = el.querySelector('[data-countdown-narrow]');
-		var secondEl = el.querySelector('[data-countdown-second]');
-		var barEl = el.querySelector('[data-countdown-bar]');
+		var clockEl = el.querySelector('[data-countdown-clock]');
+		var lineIcon = el.querySelector('[data-countdown-line-icon]');
+		var textEl = el.querySelector('[data-countdown-text]');
+		var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+		/* The four digit slots: minutes tens and units, then seconds. */
+		var slots = Array.prototype.slice.call(el.querySelectorAll('.countdown-slot')).map(function (slot) {
+			return { el: slot, cur: slot.querySelector('.countdown-digit'), value: '' };
+		});
+		if (slots.length !== 4 || !clockEl || !lineIcon || !textEl) throw new Error('markup');
 		var last = '';
-		var lastFraction = 1;
 
 		function pad(n) {
 			return (n < 10 ? '0' : '') + n;
@@ -1097,17 +1103,15 @@
 			return s;
 		}
 
-		/* A sentence from its template: the timer in bold tabular figures
-		   (role timer, so screen readers never read every tick), the time
-		   and the date in bold, everything else as text nodes. */
+		/* A sentence from its template: the time and the date in bold,
+		   everything else as text nodes. */
 		function sentence(template, values) {
 			var frag = document.createDocumentFragment();
-			String(template).split(/(__TIMER__|__TIME__|__DAY__|__DATE__)/).forEach(function (part) {
+			String(template).split(/(__TIME__|__DAY__|__DATE__)/).forEach(function (part) {
 				if (!part) return;
-				if (part === '__TIMER__' || part === '__TIME__' || part === '__DATE__') {
+				if (part === '__TIME__' || part === '__DATE__') {
 					var span = document.createElement('span');
-					span.className = part === '__TIMER__' ? 'font-bold tabular-nums' : 'font-bold';
-					if (part === '__TIMER__') span.setAttribute('role', 'timer');
+					span.className = 'font-bold';
 					span.textContent = values[part];
 					frag.appendChild(span);
 				} else {
@@ -1117,59 +1121,62 @@
 			return frag;
 		}
 
-		/* The second line's span is the only one that can be empty (the "by"
-		   sentence has no second line); the other two keep their own
-		   responsive classes untouched. */
-		function fill(target, template, values, mayBeEmpty) {
-			target.textContent = '';
-			if (template) target.appendChild(sentence(template, values));
-			if (mayBeEmpty) target.classList.toggle('hidden', !template);
-		}
-
-		/* The bar's fill is the fraction of the hour left; it drains over
-		   each second and snaps back without a transition at the reset. */
-		function setBar(fraction) {
-			if (!barEl) return;
-			if (fraction > lastFraction) {
-				barEl.style.transition = 'none';
-				barEl.style.transform = 'scaleX(' + fraction + ')';
-				void barEl.offsetWidth;
-				barEl.style.transition = '';
-			} else {
-				barEl.style.transform = 'scaleX(' + fraction + ')';
+		/* One digit slot. The new digit slides in from above while the old
+		   one drops out below, clipped by the slot (the clock-timer roll); a
+		   plain swap when the visitor prefers reduced motion or the whole
+		   number resets (the first draw, a change of sentence). A catch-up
+		   after the tab was hidden rolls once. The leaving digit goes at the
+		   end of its animation, or after it should the event never come; the
+		   arriving digit sheds its animation class then too, so no finished
+		   animation lingers on it. */
+		function roll(slot, digit, instant) {
+			if (slot.value === digit) return;
+			slot.value = digit;
+			if (instant || reduceMotion) {
+				slot.cur.textContent = digit;
+				return;
 			}
-			lastFraction = fraction;
+			var stale = slot.el.querySelector('.countdown-digit-out');
+			if (stale) stale.parentNode.removeChild(stale);
+			var old = slot.cur;
+			var next = document.createElement('span');
+			next.className = 'countdown-digit countdown-digit-in';
+			next.textContent = digit;
+			old.className = 'countdown-digit countdown-digit-out';
+			old.setAttribute('aria-hidden', 'true');
+			slot.el.insertBefore(next, old);
+			slot.cur = next;
+			next.addEventListener('animationend', function () { next.classList.remove('countdown-digit-in'); });
+			var gone = false;
+			function remove() {
+				if (gone) return;
+				gone = true;
+				if (old.parentNode) old.parentNode.removeChild(old);
+			}
+			old.addEventListener('animationend', remove);
+			window.setTimeout(remove, 800);
 		}
 
-		/* Writes the three shapes of the sentence (one line for wide screens,
-		   on phones the timer line and the delivery line under it; the "by"
-		   sentence stays one sentence) only when the words change; between
-		   those, each tick only rewrites the digits inside the timer spans. */
-		var timerSpans = [];
-		var lastTimerText = '';
+		/* Writes the sentence, and shows or hides the timer row, only when
+		   the words change; between those, each tick only moves the digits
+		   that changed. */
 		function draw() {
 			var s = state();
-			var timerText = s.timer != null ? pad(Math.floor(s.timer / 60)) + ':' + pad(s.timer % 60) : '';
-			var key = (s.timer != null ? 'w' : 'b' + s.day) + '|' + s.date;
-			if (key !== last) {
+			var timer = s.timer != null;
+			var key = (timer ? 't' : 'b' + s.day) + '|' + s.date;
+			var changed = key !== last;
+			if (changed) {
 				last = key;
-				var values = { __TIMER__: timerText, __TIME__: timeText, __DAY__: s.day || '', __DATE__: s.date };
-				if (s.timer != null) {
-					fill(wideEl, d.i18nWithin, values);
-					fill(narrowEl, d.i18nTimer, values);
-					fill(secondEl, d.i18nDelivery, values, true);
-				} else {
-					fill(wideEl, d.i18nBy, values);
-					fill(narrowEl, d.i18nBy, values);
-					fill(secondEl, '', values, true);
-				}
-				timerSpans = Array.prototype.slice.call(el.querySelectorAll('[role="timer"]'));
-				lastTimerText = timerText;
-			} else if (timerText !== lastTimerText) {
-				lastTimerText = timerText;
-				timerSpans.forEach(function (span) { span.textContent = timerText; });
+				var values = { __TIME__: timeText, __DAY__: s.day || '', __DATE__: s.date };
+				textEl.textContent = '';
+				textEl.appendChild(sentence(timer ? d.i18nLeft : d.i18nBy, values));
+				clockEl.hidden = !timer;
+				lineIcon.hidden = timer;
 			}
-			setBar(s.timer != null ? Math.max(0, Math.min(1, s.timer / 3600)) : 1);
+			if (timer) {
+				var digits = pad(Math.floor(s.timer / 60)) + pad(s.timer % 60);
+				for (var i = 0; i < 4; i += 1) roll(slots[i], digits.charAt(i), changed);
+			}
 		}
 
 		draw();
