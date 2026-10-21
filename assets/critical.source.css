@@ -604,6 +604,26 @@
     }
   }
 
+  /* Express pay buttons in the cart drawer (snippets/express-buttons.liquid).
+     Shopify draws Apple Pay and Google Pay inside a closed shadow DOM, so
+     its custom properties are the only styling hook: one row, each button
+     the Checkout button's height (spacing 12 = 48px) and radius, the
+     footer's gap should they ever stack, and the loading skeleton in the
+     cream well colour. The drawer script sets drawer-express-empty while
+     the component has no height (a browser with no wallet to offer, or an
+     empty cart), which cancels the footer's gap above it; the markup
+     itself is never hidden, so the component keeps its state. */
+  .drawer-express shopify-accelerated-checkout-cart {
+    --shopify-accelerated-checkout-button-inline-size: calc(var(--spacing) * 12);
+    --shopify-accelerated-checkout-button-block-size: calc(var(--spacing) * 12);
+    --shopify-accelerated-checkout-button-border-radius: var(--radius-xl);
+    --shopify-accelerated-checkout-row-gap: calc(var(--spacing) * 3);
+    --shopify-accelerated-checkout-skeleton-background-color: var(--color-cream-light);
+  }
+  .drawer-express-empty {
+    margin-top: calc(var(--spacing) * -3);
+  }
+
   /* Reveal-on-scroll */
   .reveal {
     opacity: 0;
