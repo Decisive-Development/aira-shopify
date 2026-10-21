@@ -161,15 +161,21 @@
 				<div>
 					{%- assign product_name = section.settings.hero_heading | default: product.title -%}
 					{%- if section.settings.headline != blank -%}
-						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ section.settings.headline }}</h1>
+						{%- comment -%}
+							On desktop (lg and up) the headline is 2rem on a 2.25rem line, which
+							puts "Experience life changing breathing," on the first line and the
+							rest on the second in the 564px column, and the subtitle drops its
+							width cap so it stays on one line there (Tom, 2026-10-21).
+						{%- endcomment -%}
+						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl lg:text-[2rem] text-title leading-tight lg:leading-9">{{ section.settings.headline }}</h1>
 						<p class="sr-only">{{ product_name }}</p>
 					{%- else -%}
-						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl text-title leading-tight">{{ product_name }}</h1>
+						<h1 class="font-heading font-semibold text-[2rem] md:text-5xl lg:text-[2rem] text-title leading-tight lg:leading-9">{{ product_name }}</h1>
 					{%- endif -%}
 					{%- if section.settings.product_subtitle != blank -%}
-						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ section.settings.product_subtitle }}</p>
+						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg lg:max-w-none">{{ section.settings.product_subtitle }}</p>
 					{%- elsif product.description != blank -%}
-						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg">{{ product.description }}</p>
+						<p class="text-copy text-base leading-relaxed mt-3 max-w-lg lg:max-w-none">{{ product.description }}</p>
 					{%- endif -%}
 
 					{%- comment -%}
