@@ -108,7 +108,8 @@
 </style>
 
 
-<section class="bg-bg pt-17.5 md:pt-24 pb-8 md:pb-12" data-product-section>
+{%- comment -%} Top padding clears the nav plus the free shipping tab (28px, phones) or strip (36px, desktop) from the header. {%- endcomment -%}
+<section class="bg-bg pt-24.5 md:pt-33 pb-8 md:pb-12" data-product-section>
 	<div class="container-contained">
 
 		{%- comment -%} ══════ Buy box ══════ {%- endcomment -%}
@@ -272,9 +273,7 @@
 							radio's label: they give the radio a short name (name and price) and
 							a description (the gift line) instead of the whole card.
 						{%- endcomment -%}
-						{%- assign free_shipping_pill = 'general.free_shipping_short' | t -%}
 						{%- capture onetime_card -%}
-							{%- render 'pill-badge', label: free_shipping_pill, classes: '-bottom-3 left-1/2 -translate-x-1/2' -%}
 							<div class="flex items-start justify-between gap-4">
 								<div>
 									<span class="font-heading font-bold text-title text-lg leading-tight block"{% if bundle_picker %} id="kit-card-one-title"{% endif %}>{{ product_name }}</span>
@@ -292,14 +291,37 @@
 								</div>
 							</div>
 							<div class="h-px bg-border"></div>
-							<ul class="list-disc ps-5 flex flex-col gap-2 text-sm text-copy">
-								<li>{{ 'sections.product.contents_strips' | t }}</li>
-								<li>{{ 'sections.product.contents_tabs' | t }}</li>
-								{%- if gift_variant -%}
-									<li class="marker:text-highlight font-bold text-title">{{ 'sections.product.contents_pouch' | t }}</li>
-								{%- endif -%}
-								<li>{{ 'sections.product.contents_tool' | t }}</li>
-							</ul>
+							{%- comment -%}
+								What is in the box as one row (PDP clean brief, 22 Oct): the two
+								items spread across the card with a hairline between them, 13px
+								on screens under 380px. A container query stacks them, centred
+								and without the divider, where even that will not fit, so the
+								row never runs outside the card. A query cannot measure text, so
+								the width it stacks below comes from the two lines' length: a
+								short pair like the English (42 characters, 255px at 13px and
+								281px at 14.5px) stacks below 16rem; a longer pair, like the
+								Arabic as it reads today (63 characters, 439px at 14.5px), below
+								28rem. Both class sets are written out whole for Tailwind.
+							{%- endcomment -%}
+							{%- liquid
+								assign contents_strips = 'sections.product.contents_strips' | t
+								assign contents_tabs = 'sections.product.contents_tabs' | t
+								assign contents_chars = contents_strips.size | plus: contents_tabs.size
+								if contents_chars > 46
+									assign contents_stack = '@max-[28rem]:flex-col @max-[28rem]:gap-y-1'
+									assign contents_divider = '@max-[28rem]:hidden'
+								else
+									assign contents_stack = '@max-[16rem]:flex-col @max-[16rem]:gap-y-1'
+									assign contents_divider = '@max-[16rem]:hidden'
+								endif
+							-%}
+							<div class="@container">
+								<div class="flex items-center justify-around gap-x-3 font-body text-[14.5px] max-[380px]:text-[13px] leading-snug text-main/72 {{ contents_stack }}">
+									<span class="whitespace-nowrap">{{ contents_strips }}</span>
+									<span class="w-px h-4 shrink-0 bg-border {{ contents_divider }}" aria-hidden="true"></span>
+									<span class="whitespace-nowrap">{{ contents_tabs }}</span>
+								</div>
+							</div>
 						{%- endcapture -%}
 						{%- if has_selling_plans -%}
 							<button
@@ -320,9 +342,9 @@
 								labels and notes the choice on the form for the cart drawer.
 								Nothing reaches the cart until the button is pressed. One value
 								message per card, the strike-through; amounts sit in <bdi>.
-								The cards sit 16px apart (the frame says 12): the pill hangs 11px
-								past card 1's edge and the checked card draws a 1px ring, so 12px
-								would leave the pill touching card 2; 16px clears it by 4px.
+								PDP clean brief (22 Oct): 2 kits is checked on load, the cards
+								sit 32px apart and card 2 sits 32px above the button (its 12px
+								margin plus the form's 20px gap); only card 2 carries a pill.
 							{%- endcomment -%}
 							{%- liquid
 								assign kit_price_money = current_variant.price | money
@@ -332,7 +354,7 @@
 							<div
 								role="radiogroup"
 								aria-label="{{ 'products.kit_page.picker_group_label' | t | escape }}"
-								class="flex flex-col gap-4"
+								class="flex flex-col gap-8"
 								data-bundle-picker
 								data-price-one="{{ kit_price_money }}"
 								data-price-two="{{ bundle_price_money }}"
@@ -343,17 +365,18 @@
 							>
 								{%- comment -%}
 									The checked card's edge: the navy border plus a 1px ring, so the
-									box never moves; keyboard focus on the input draws the focus ring
-									on the card. Utilities, because the card's own border and shadow
+									box never moves, on a white ground; the other card keeps its
+									hairline. Keyboard focus on the input draws the focus ring on the
+									card. Utilities, because the card's own border and shadow
 									utilities would outrank a component rule.
 								{%- endcomment -%}
-								{%- assign kit_card_classes = 'relative flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg-soft shadow-sm cursor-pointer transition-[border-color,box-shadow] duration-200 motion-reduce:transition-none has-checked:border-main has-checked:ring-1 has-checked:ring-main has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-main' -%}
+								{%- assign kit_card_classes = 'relative flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg-soft shadow-sm cursor-pointer transition-[border-color,box-shadow,background-color] duration-200 motion-reduce:transition-none has-checked:border-main has-checked:ring-1 has-checked:ring-main has-checked:bg-bg has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-main' -%}
 								<label class="{{ kit_card_classes }}" data-kit-card>
-									<input type="radio" name="quantity" value="1" class="sr-only" checked data-bundle-option aria-labelledby="kit-card-one-title kit-card-one-price"{% if gift_variant %} aria-describedby="kit-card-one-line"{% endif %}>
+									<input type="radio" name="quantity" value="1" class="sr-only" data-bundle-option aria-labelledby="kit-card-one-title kit-card-one-price"{% if gift_variant %} aria-describedby="kit-card-one-line"{% endif %}>
 									{{ onetime_card }}
 								</label>
-								<label class="{{ kit_card_classes }} mb-1.5" data-kit-card>
-									<input type="radio" name="quantity" value="2" class="sr-only" data-bundle-option aria-labelledby="kit-card-two-title kit-card-two-price"{% if gift_variant %} aria-describedby="kit-card-two-line"{% endif %}>
+								<label class="{{ kit_card_classes }} mb-3" data-kit-card>
+									<input type="radio" name="quantity" value="2" class="sr-only" checked data-bundle-option aria-labelledby="kit-card-two-title kit-card-two-price"{% if gift_variant %} aria-describedby="kit-card-two-line"{% endif %}>
 									{%- assign best_value_pill = 'products.kit_page.pill_best_value' | t -%}
 									{%- render 'pill-badge', label: best_value_pill, classes: '-bottom-3 left-1/2 -translate-x-1/2' -%}
 									<div class="flex items-start justify-between gap-4">
@@ -426,9 +449,10 @@
 						if current_variant.available
 							assign atc_label = 'general.add_to_cart' | t
 							assign atc_disabled = false
-							# With the 1 kit / 2 kits cards the label carries the price of the choice.
+							# With the 1 kit / 2 kits cards the label carries the price of the
+							# choice, and 2 kits is the choice on load.
 							if bundle_picker
-								assign atc_label = 'products.kit_page.add_to_cart_price' | t: price: kit_price_money
+								assign atc_label = 'products.kit_page.add_two_to_cart' | t: price: bundle_price_money
 							endif
 						endif
 					-%}
@@ -569,7 +593,7 @@
 						{%- endif -%}
 						{%- capture cd_digit_html -%}<span class="countdown-slot"><span class="countdown-digit">0</span></span>{%- endcapture -%}
 						<div
-							class="invisible -mt-2 flex flex-col items-center gap-2 text-center text-main"
+							class="invisible -mt-0.5 flex flex-col items-center gap-1 text-center text-main"
 							data-delivery-countdown
 							data-mode="{{ cd_mode }}"
 							data-cutoff="{{ cd_cutoff | escape }}"
@@ -593,22 +617,25 @@
 								spans are dir="ltr" so the slots keep their order in Arabic.
 								When the timer is not running the row is hidden and the sentence
 								carries the small stopwatch instead, inline so a long sentence
-								wraps after it. Nothing in it is red.
+								wraps after it. Nothing in it is red. Half its first size since the
+								PDP clean brief (22 Oct): 17px stopwatch whose hand ticks once a
+								second, 17px digits (18px on desktop), "min" and "sec" in the body
+								face; the form's 20px gap less 2px leaves 18px under the button.
 							{%- endcomment -%}
-							<p class="flex items-center justify-center gap-x-3 font-heading leading-none"{% if cd_kind != 'timer' %} hidden{% endif %} data-countdown-clock>
-								{%- render 'icon-stopwatch', classes: 'size-7 shrink-0' -%}
-								<span class="flex items-baseline gap-x-3" role="timer">
-									<span class="flex items-baseline gap-x-1.5">
-										<span class="text-4xl font-bold tabular-nums" dir="ltr" data-countdown-minutes>{{ cd_digit_html }}{{ cd_digit_html }}</span>
-										<span class="text-xl font-medium">{{ 'products.kit_page.countdown_min' | t }}</span>
+							<p class="flex items-center justify-center gap-x-1.5 font-heading leading-none"{% if cd_kind != 'timer' %} hidden{% endif %} data-countdown-clock>
+								{%- render 'icon-stopwatch', classes: 'size-4.25 shrink-0', ticking: true -%}
+								<span class="flex items-baseline gap-x-2" role="timer">
+									<span class="flex items-baseline gap-x-1">
+										<span class="text-[17px] lg:text-lg font-bold tabular-nums" dir="ltr" data-countdown-minutes>{{ cd_digit_html }}{{ cd_digit_html }}</span>
+										<span class="font-body text-[13px] font-medium">{{ 'products.kit_page.countdown_min' | t }}</span>
 									</span>
-									<span class="flex items-baseline gap-x-1.5">
-										<span class="text-4xl font-bold tabular-nums" dir="ltr" data-countdown-seconds>{{ cd_digit_html }}{{ cd_digit_html }}</span>
-										<span class="text-xl font-medium">{{ 'products.kit_page.countdown_sec' | t }}</span>
+									<span class="flex items-baseline gap-x-1">
+										<span class="text-[17px] lg:text-lg font-bold tabular-nums" dir="ltr" data-countdown-seconds>{{ cd_digit_html }}{{ cd_digit_html }}</span>
+										<span class="font-body text-[13px] font-medium">{{ 'products.kit_page.countdown_sec' | t }}</span>
 									</span>
 								</span>
 							</p>
-							<p class="text-sm md:text-[15px]" data-countdown-line>
+							<p class="text-sm lg:text-[14.5px]" data-countdown-line>
 								<span class="inline-flex align-middle me-1.5"{% if cd_kind == 'timer' %} hidden{% endif %} data-countdown-line-icon>{%- render 'icon-stopwatch', classes: 'size-4' -%}</span>
 								<span data-countdown-text>{{ cd_text_html }}</span>
 							</p>

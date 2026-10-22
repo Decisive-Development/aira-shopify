@@ -676,6 +676,23 @@
     }
   }
 
+  /* The countdown stopwatch's hand (snippets/icon-stopwatch.liquid with
+     ticking): one 6deg step a second round the dial's centre, a full turn
+     a minute, like a second hand. Still under reduced motion. */
+  .stopwatch-hand {
+    transform-box: view-box;
+    transform-origin: 12px 13.5px;
+    animation: stopwatch-tick 60s steps(60, end) infinite;
+  }
+  @keyframes stopwatch-tick {
+    to { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stopwatch-hand {
+      animation: none;
+    }
+  }
+
   /* Reveal-on-scroll */
   .reveal {
     opacity: 0;

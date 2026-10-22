@@ -2,8 +2,16 @@
   icon-stopwatch — the filled stopwatch of the delivery countdown (the kit
   page's buy box): top button, side button, dial and a hand at twelve, in
   the highlight colour. Output stays on one line. Size via `classes`.
+  With `ticking` the hand is its own shape, in the page colour, and turns
+  one step a second (.stopwatch-hand in critical.source.css; still under
+  reduced motion); without it the hand is cut out of the dial.
   Params:
     classes — sizing/layout classes. Default 'size-4 shrink-0'.
+    ticking — true for the countdown's timer row. Default false.
 {%- endcomment -%}
 {%- assign stopwatch_classes = classes | default: 'size-4 shrink-0' -%}
+{%- if ticking -%}
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-highlight {{ stopwatch_classes }}" aria-hidden="true" focusable="false"><path d="M9 1h6v2H9zM11 3h2v2h-2zM18.3 5.2l1.4 1.4-1.4 1.4-1.4-1.4zM12 5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 1 1 0-17z"/><rect class="stopwatch-hand fill-bg" x="11" y="8.5" width="2" height="6"/></svg>
+{%- else -%}
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-highlight {{ stopwatch_classes }}" aria-hidden="true" focusable="false"><path d="M9 1h6v2H9zM11 3h2v2h-2zM18.3 5.2l1.4 1.4-1.4 1.4-1.4-1.4zM12 5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 1 1 0-17zM11 8.5v6h2v-6z"/></svg>
+{%- endif -%}

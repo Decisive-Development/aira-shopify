@@ -26,6 +26,91 @@
 		transition: none !important;
 	}
 
+	.nav-solid-bar {
+		box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.4);
+	}
+
+	/* Free shipping tab (phones; PDP clean brief, 22 Oct). It hangs under
+	   the logo from whichever nav row is showing. The clip hides everything
+	   above the nav's bottom edge, so the tab drops out from behind the nav;
+	   the tab reaches 8px up under that edge, so its slight overshoot never
+	   opens a gap. Concave fillets join a navy nav to the tab; on a page
+	   whose top nav is see-through there is nothing to join, so they go.
+	   The clip and the fillets start 1px up inside the nav: where the nav's
+	   edge falls between device pixels (125% display scaling) the nav and
+	   the tab would each half-cover that row and leave a light seam. */
+	.header-tab-clip {
+		clip-path: inset(-1px -2rem -2rem -2rem);
+	}
+	.header-tab {
+		transform: translateY(calc(-100% - 1px));
+		transition: transform 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s;
+	}
+	[data-header]:not(.scrolled) .nav-transparent .header-tab,
+	[data-header].scrolled .nav-solid .header-tab {
+		transform: translateY(0);
+	}
+	.header-tab::before,
+	.header-tab::after {
+		content: '';
+		position: absolute;
+		top: calc(0.5rem - 1px);
+		width: 0.75rem;
+		height: calc(0.75rem + 1px);
+	}
+	.header-tab::before {
+		right: 100%;
+		background: radial-gradient(circle at 0 100%, transparent 0.72rem, var(--color-main) 0.75rem);
+	}
+	.header-tab::after {
+		left: 100%;
+		background: radial-gradient(circle at 100% 100%, transparent 0.72rem, var(--color-main) 0.75rem);
+	}
+	.header-tab--flat::before,
+	.header-tab--flat::after {
+		content: none;
+	}
+	/* One soft shadow under the navy nav and its tab together. */
+	.header-shadow,
+	.header-tab--flat {
+		filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--color-main) 16%, transparent));
+	}
+	@media (max-width: 767.98px) {
+		/* Page load: the top nav slides down, the tab drops 300ms later. */
+		.nav-transparent {
+			animation: header-drop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+		}
+		.nav-transparent .header-tab {
+			animation: header-tab-drop 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s backwards;
+		}
+		.nav-solid {
+			transition-duration: 0.5s, 0.3s;
+		}
+		.nav-solid-bar {
+			box-shadow: none;
+		}
+	}
+	@media (min-width: 768px) {
+		.header-shadow {
+			filter: none;
+		}
+	}
+	@keyframes header-drop {
+		from { transform: translateY(-100%); }
+	}
+	/* 1px past the clip's own 1px reach into the nav, so none of it shows. */
+	@keyframes header-tab-drop {
+		from { transform: translateY(calc(-100% - 1px)); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.nav-transparent,
+		.nav-transparent .header-tab,
+		.header-tab {
+			animation: none;
+			transition: none;
+		}
+	}
+
 	/* Mobile menu animation */
 	[data-mobile-menu] {
 		transition: opacity 0.25s ease, transform 0.25s ease;
@@ -42,10 +127,26 @@
 	}
 </style>
 
+{%- comment -%}
+	Free shipping tab, phones only, hung under the logo of both nav rows (the
+	styles above). __TAB_MOD__ takes header-tab--flat where the row behind it
+	is see-through.
+{%- endcomment -%}
+{%- capture shipping_tab -%}
+	<div class="header-tab-clip md:hidden absolute top-full left-1/2 -translate-x-1/2">
+		<p class="header-tab __TAB_MOD__ relative -mt-2 flex items-center gap-1.5 whitespace-nowrap rounded-b-xl bg-main px-3.5 pt-2.75 pb-1.75 font-body text-xs font-bold leading-4 text-white">
+			{%- render 'icon-truck', classes: 'size-3.5 shrink-0' -%}
+			{{- 'general.free_shipping_short' | t -}}
+		</p>
+	</div>
+{%- endcapture -%}
+{%- assign navy_top = false -%}
+{%- if request.page_type == 'product' -%}{%- assign navy_top = true -%}{%- endif -%}
+
 <header data-header class="fixed top-0 inset-x-0 z-50">
 
 	{%- comment -%} ── Transparent nav — visible at page top ── {%- endcomment -%}
-	<div class="nav-transparent {% if request.page_type == 'product' %}bg-main{% else %}pt-2{% endif %}">
+	<div class="nav-transparent {% if navy_top %}bg-main header-shadow{% else %}pt-2{% endif %}">
 		<div class="container-contained relative flex items-center gap-4 md:gap-10 py-3" data-header-row="transparent">
 
 			{%- comment -%} Mobile: hamburger at the start side {%- endcomment -%}
@@ -149,21 +250,46 @@
 				</a>
 
 			</div>
+			{%- if navy_top -%}
+				{{ shipping_tab | replace: '__TAB_MOD__', '' }}
+			{%- else -%}
+				{{ shipping_tab | replace: '__TAB_MOD__', 'header-tab--flat' }}
+			{%- endif -%}
+		</div>
+
+		{%- comment -%}
+			Desktop: free shipping and the guarantee as a cream strip under the
+			nav (PDP clean brief, 22 Oct, option 1). Part of the top row, so it
+			leaves with it once the floating nav takes over on scroll.
+		{%- endcomment -%}
+		<div class="hidden md:flex h-9 items-center justify-center gap-3.5 bg-secondary font-body text-[13.5px] text-main" data-header-notice>
+			<p class="flex items-center gap-1.5">
+				{%- render 'icon-truck', classes: 'size-3.75 shrink-0' -%}
+				<span class="[&_strong]:font-bold">{{ 'general.header_free_shipping_html' | t }}</span>
+			</p>
+			<span class="opacity-45" aria-hidden="true">·</span>
+			<p class="flex items-center gap-1.5">
+				{%- render 'icon-shield', classes: 'size-3.75 shrink-0' -%}
+				<strong class="font-bold">{{ 'snippets.cart_drawer.guarantee' | t }}</strong>
+			</p>
 		</div>
 	</div>
 
-	{%- comment -%} ── Solid nav — slides in on scroll ── {%- endcomment -%}
+	{%- comment -%}
+		── Solid nav — slides in on scroll ──
+		Cream on desktop. On phones it turns navy, with the white logo and
+		icons, so the free shipping tab hangs from it as from the top nav.
+	{%- endcomment -%}
 	<div class="nav-solid absolute top-0 inset-x-0 pt-2">
 		<div class="container-contained">
 		<div
-			class="relative w-full bg-secondary rounded-2xl flex items-center gap-4 md:gap-10 px-6 py-3"
+			class="nav-solid-bar header-shadow relative w-full bg-main md:bg-secondary rounded-2xl flex items-center gap-4 md:gap-10 px-6 py-3"
 			data-header-row="solid"
-			style="box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.4);"
 		>
 
 			{%- comment -%} Mobile: hamburger at the start side {%- endcomment -%}
 			<button
-				class="md:hidden flex items-center text-main transition-opacity hover:opacity-60"
+				class="md:hidden flex items-center text-white transition-opacity hover:opacity-60"
 				aria-label="{{ 'general.open_menu' | t }}"
 				data-mobile-toggle
 			>
@@ -175,7 +301,7 @@
 			{%- comment -%} Logo — centred on mobile, left on desktop {%- endcomment -%}
 			<a href="{{ routes.root_url }}" class="flex items-center shrink-0 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
 				<img
-					src="{{ 'aira-logo-only-dark.svg' | asset_url }}"
+					src="{{ 'aira-logo-only-white.svg' | asset_url }}"
 					alt="aira"
 					class="h-7 w-auto md:hidden"
 					width="28"
@@ -251,7 +377,7 @@
 				<a
 					href="{{ routes.cart_url }}"
 					data-cart-toggle
-					class="relative flex items-center text-main transition-opacity hover:opacity-60"
+					class="relative flex items-center text-white md:text-main transition-opacity hover:opacity-60"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
@@ -262,6 +388,7 @@
 				</a>
 
 			</div>
+			{{ shipping_tab | replace: '__TAB_MOD__', '' }}
 		</div>
 		</div>
 	</div>
