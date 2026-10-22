@@ -46,6 +46,9 @@
 	# decorative and keeps its empty alt.
 	assign ba_before_alt = ba_before_image.alt | default: section.settings.before_label | default: 'Without aira'
 	assign ba_after_alt = ba_after_image.alt | default: section.settings.after_label | default: 'With aira'
+
+	# Render arguments take no filters, so the CTA's fallback anchor is resolved here.
+	assign ba_cta_url = section.settings.cta_url | default: '#buy'
 -%}
 
 <section
@@ -198,7 +201,7 @@
 			<div class="mt-8 md:mt-10 flex justify-center">
 				{%- render 'cta-button',
 					label: section.settings.cta_label,
-					url: section.settings.cta_url | default: '#buy',
+					url: ba_cta_url,
 					variant: 'outline',
 					surface: 'light',
 					size: 'lg',
