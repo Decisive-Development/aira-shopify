@@ -15,6 +15,18 @@
     "reviews_photo_1": "shopify://shop_images/reviewer-david.jpg",
     "reviews_photo_2": "shopify://shop_images/reviewer-matt.jpg",
     "reviews_photo_3": "shopify://shop_images/reviewer-gala.jpg",
+    "drawer_express_enabled": false,
+    "bundle_picker_enabled": true,
+    "second_kit_row_enabled": true,
+    "bundle_saving": "29.99",
+    "countdown_enabled": true,
+    "countdown_mode": "rolling",
+    "countdown_cutoff": "14:00",
+    "countdown_timezone": "Asia/Dubai",
+    "delivery_days_ae": 2,
+    "delivery_days_sa": 3,
+    "working_days_ae": "Mon,Tue,Wed,Thu,Fri,Sat",
+    "working_days_sa": "Sun,Mon,Tue,Wed,Thu",
     "sections": {
       "scratch-offer-popup": {
         "type": "scratch-offer-popup",
@@ -89,18 +101,6 @@
         "disabled": false,
         "settings": {}
       }
-    },
-    "drawer_express_enabled": true,
-    "bundle_picker_enabled": true,
-    "second_kit_row_enabled": true,
-    "countdown_enabled": true,
-    "bundle_saving": "29.99",
-    "countdown_mode": "rolling",
-    "countdown_cutoff": "14:00",
-    "countdown_timezone": "Asia/Dubai",
-    "delivery_days_ae": 2,
-    "delivery_days_sa": 3,
-    "working_days_ae": "Mon,Tue,Wed,Thu,Fri,Sat",
-    "working_days_sa": "Sun,Mon,Tue,Wed,Thu"
+    }
   }
 }

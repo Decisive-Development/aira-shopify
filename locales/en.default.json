@@ -380,5 +380,18 @@
     "ugc_card": {
       "play_video": "Play video"
     }
+  },
+  "shopify": {
+    "checkout": {
+      "stock": {
+        "items_unavailable_notice": "Some items can't be delivered to the address entered. We only deliver to the UAE and Saudi Arabia.",
+        "out_of_stock": {
+          "description": "We can't deliver these items to the address entered. We only deliver to the UAE and Saudi Arabia, so please check your delivery country and add them to your cart again.",
+          "items_unavailable": "We can't deliver some items to the address entered. We only deliver to the UAE and Saudi Arabia, so please check your delivery country."
+        },
+        "title": "Check your delivery address",
+        "sold_out_label": "Can't deliver here"
+      }
+    }
   }
 }
