@@ -9,11 +9,10 @@
 	list, never a link or a button, with no hover state, and the wallets
 	themselves are met at checkout. Each SVG keeps the title Shopify gives it;
 	the title's id carries `id_scope`, so the buy box and the drawer can both
-	sit on the kit page without repeating an id.
+	sit on the kit page without repeating an id. Marks only: the line that
+	once ran under them went with the spacing brief of 22 Oct.
 	Params:
 		classes    — wrapper classes (spacing, alignment). Optional.
-		show_line  — true prints "Pay with Apple Pay, Google Pay or card at
-		             checkout." under the marks. Default false.
 		id_scope   — word that keeps the SVG title ids unique per placement.
 {%- endcomment -%}
 {%- liquid
@@ -30,7 +29,4 @@
 			{%- endif -%}
 		{%- endfor -%}
 	</ul>
-	{%- if show_line -%}
-		<p class="mt-1 text-center text-xs text-copy">{{ 'general.payment_marks_line' | t }}</p>
-	{%- endif -%}
 </div>

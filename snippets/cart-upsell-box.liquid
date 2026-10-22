@@ -1,7 +1,9 @@
 {%- comment -%}
-	cart-upsell-box — the rounded soft box the cart drawer's offers share:
-	the refill upsell and the second kit offer. Hidden until the drawer
-	script shows it; one box shows at a time. The eyebrow keeps its
+	cart-upsell-box — the row the cart drawer's offers share: the refill
+	upsell and the second kit offer. No box since the spacing brief of
+	22 Oct: it sits like another line row, edge to edge with the same
+	hairline above it as between the kit and the pouch. Hidden until the
+	drawer script shows it; one offer shows at a time. The eyebrow keeps its
 	letter-spacing for Latin text only (hard rule 10: none on Arabic).
 	Params:
 	  attrs         the data attribute the script finds the box by (required)
@@ -10,9 +12,9 @@
 	  button_label  the Add button's label
 	  button_attrs  raw attributes for the button (data-*)
 {%- endcomment -%}
-<div {{ attrs }} class="hidden mt-6 p-5 rounded-2xl border border-border bg-bg-soft">
+<div {{ attrs }} class="hidden -mx-6 px-6 py-3 md:py-4 border-t border-bg-muted">
 	{%- if eyebrow != blank -%}
-		<p class="text-xs font-bold uppercase tracking-widest rtl:tracking-normal text-highlight mb-3">{{ eyebrow }}</p>
+		<p class="text-xs font-bold uppercase tracking-widest rtl:tracking-normal text-highlight">{{ eyebrow }}</p>
 	{%- endif -%}
 	<div class="flex items-center gap-4">
 		{{ body }}
