@@ -300,6 +300,13 @@
 				<div class="min-h-12 rounded-xl bg-cream-light" data-drawer-express-slot></div>
 			{%- endif -%}
 		{%- endif -%}
+		{%- comment -%}
+			Accepted payment marks and their line (brief of 22 Oct): customers
+			learn Apple Pay and Google Pay are taken, then meet them at checkout,
+			where the delivery country shows. Under the express block, so with
+			express pay off they sit straight under Checkout; never a link.
+		{%- endcomment -%}
+		{%- render 'payment-marks', show_line: true, id_scope: 'drawer' -%}
 		<ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-copy" role="list">
 			<li class="flex items-center gap-1.5">
 				<svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>

@@ -1,0 +1,36 @@
+{%- comment -%}
+	payment-marks — the accepted payment marks (brief of 22 Oct): Apple Pay,
+	Google Pay, Visa, Mastercard and American Express, in that order, each
+	shown only while checkout accepts it (shop.enabled_payment_types). Checkout
+	also takes Diners Club, Discover and JCB; Tom kept the row to these five
+	so it stays one line in the drawer on a 375 px phone. The artwork is
+	Shopify's own (payment_type_svg_tag) at its native 38 x 24 and is never
+	recoloured, cropped or stretched. Acceptance only: the row is a plain
+	list, never a link or a button, with no hover state, and the wallets
+	themselves are met at checkout. Each SVG keeps the title Shopify gives it;
+	the title's id carries `id_scope`, so the buy box and the drawer can both
+	sit on the kit page without repeating an id.
+	Params:
+		classes    — wrapper classes (spacing, alignment). Optional.
+		show_line  — true prints "Pay with Apple Pay, Google Pay or card at
+		             checkout." under the marks. Default false.
+		id_scope   — word that keeps the SVG title ids unique per placement.
+{%- endcomment -%}
+{%- liquid
+	assign pm_scope = id_scope | default: 'marks'
+	assign pm_id_prefix = '"pi-' | append: pm_scope | append: '-'
+	assign pm_types = 'apple_pay,google_pay,visa,master,american_express' | split: ','
+	assign pm_enabled = shop.enabled_payment_types
+-%}
+<div class="{{ classes }}">
+	<ul role="list" class="flex flex-wrap items-center justify-center gap-1.5" aria-label="{{ 'general.payment_marks_label' | t | escape }}">
+		{%- for pm_type in pm_types -%}
+			{%- if pm_enabled contains pm_type -%}
+				<li class="shrink-0">{{ pm_type | payment_type_svg_tag: class: 'block h-6 w-9.5' | replace: '"pi-', pm_id_prefix }}</li>
+			{%- endif -%}
+		{%- endfor -%}
+	</ul>
+	{%- if show_line -%}
+		<p class="mt-1 text-center text-xs text-copy">{{ 'general.payment_marks_line' | t }}</p>
+	{%- endif -%}
+</div>

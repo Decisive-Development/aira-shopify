@@ -615,6 +615,14 @@
 						</div>
 					{%- endif -%}
 
+					{%- comment -%}
+						Accepted payment marks, marks only (brief of 22 Oct). The form's
+						gap is 20px; the negative margin leaves 12px above the row on
+						phones and 16px on desktop, under the countdown or, with that
+						off, under Add to cart. Not in the sticky bar.
+					{%- endcomment -%}
+					{%- render 'payment-marks', classes: '-mt-2 lg:-mt-1', id_scope: 'buybox' -%}
+
 				</form>
 
 				{%- comment -%}
