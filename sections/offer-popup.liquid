@@ -230,7 +230,7 @@
 	{%- capture popup_step_two -%}
 		{%- if ask_rows -%}
 			<div data-popup-step="2" hidden>
-				<h2 id="offer-popup-heading-2" class="sr-only">{{ section.settings.for_label }} {{ section.settings.who_label }}</h2>
+				<h2 id="offer-popup-heading-2" class="sr-only" tabindex="-1">{{ section.settings.for_label }} {{ section.settings.who_label }}</h2>
 				<div class="flex flex-col gap-5">
 					{{ popup_chip_rows }}
 				</div>
@@ -515,8 +515,11 @@
 			if (screens[2]) {
 				showScreen(2);
 				if (closeBtn) { closeBtn.hidden = false; }
-				var first = screens[2].querySelector('[data-popup-chip]');
-				if (first) { first.focus(); }
+				/* Focus goes to the screen's heading, not the first chip: phones
+				   treat a scripted focus as keyboard focus and drew the chip's
+				   focus ring before anything was picked. Tab reaches the chips. */
+				var heading = screens[2].querySelector('#offer-popup-heading-2');
+				if (heading) { heading.focus({ preventScroll: true }); }
 			} else {
 				goEmail();
 			}
