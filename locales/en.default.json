@@ -281,6 +281,7 @@
       "adding": "Adding...",
       "close_cart": "Close cart",
       "code_apply": "Apply",
+      "code_invalid": "That code isn't valid.",
       "code_link": "Got a code?",
       "code_percent_off": "{{ code }} · {{ percent }}% off",
       "code_placeholder": "Enter code",

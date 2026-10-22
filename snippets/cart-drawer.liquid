@@ -69,6 +69,7 @@
 	data-i18n-you-save="{{ 'snippets.cart_drawer.you_save' | t: amount: '__AMOUNT__' | escape_once }}"
 	data-i18n-code-percent="{{ 'snippets.cart_drawer.code_percent_off' | t: code: '__CODE__', percent: '__PERCENT__' | escape_once }}"
 	data-i18n-remove-code="{{ 'snippets.cart_drawer.remove_code' | t: code: '__CODE__' | escape_once }}"
+	data-i18n-code-invalid="{{ 'snippets.cart_drawer.code_invalid' | t | escape_once }}"
 	data-i18n-code-refused="{{ 'snippets.cart_drawer.code_refused' | t | escape_once }}"
 	data-i18n-code-two-kits="{{ 'snippets.cart_drawer.code_two_kits' | t | escape_once }}"
 >
@@ -248,7 +249,9 @@
 			and writes the typed code onto the cart as _aira_code_entered whether
 			or not Shopify applies it, so an affiliate's code that does not
 			combine with the 2-kit offer still reaches the order. The × on a code
-			row clears that note again. Codes are Latin: the input uppercases
+			row clears that note again. A refused code gets "isn't valid" when
+			the store does not have it (checked through the Storefront API),
+			"can't be used" otherwise. Codes are Latin: the input uppercases
 			only a to z, so an Arabic keyboard is left alone.
 		{%- endcomment -%}
 		<div data-cart-code-field class="flex flex-col items-start gap-2" hidden>
@@ -472,9 +475,12 @@
 	   does not combine with the 2-kit offer still earns its credit from the
 	   order). Applied: the code row takes over and the field goes with it.
 	   Refused (no applicable entry): the field stays open with the typed
-	   value and one line explains, two when the cart holds two or more kits
-	   (the offer already gives more). The queue keeps Checkout and the
-	   wallet buttons waiting for Shopify's answer, as for every write. */
+	   value and one line explains: "isn't valid" for a code the store does
+	   not have, otherwise "can't be used", plus the 2-kit line when the cart
+	   holds two or more kits (the offer already gives more). The queue keeps
+	   Checkout and the wallet buttons waiting for Shopify's answer, as for
+	   every write; the validity check after a refusal is not a cart write
+	   and runs outside it. */
 	var codeFieldEl = document.querySelector('[data-cart-code-field]');
 	var codeToggle = codeFieldEl ? codeFieldEl.querySelector('[data-code-toggle]') : null;
 	var codeForm = codeFieldEl ? codeFieldEl.querySelector('[data-code-form]') : null;
@@ -494,9 +500,29 @@
 		}
 	}
 
-	function showCodeError(cart) {
-		var lines = [i18n.i18nCodeRefused];
-		if (cart && kitQty(cart) >= 2) lines.push(i18n.i18nCodeTwoKits);
+	/* /cart.js answers applicable: false alike for a code the store does not
+	   have and for a real one this cart refuses (one that does not combine
+	   with the 2-kit offer). A throwaway Storefront API cart with no lines
+	   tells them apart: an unknown code comes back with the warning
+	   DISCOUNT_NOT_FOUND, a real one without it. Cart calls need no token
+	   there, and the visitor's own cart and cookie are left alone. Resolves
+	   true only for an unknown code; any failure resolves false, so the
+	   "can't be used" message stands. */
+	var CODE_CHECK_QUERY = 'mutation ($input: CartInput!) { cartCreate(input: $input) { warnings { code } } }';
+	function codeUnknown(code) {
+		var input = { discountCodes: [code] };
+		if (window.Shopify && window.Shopify.country) input.buyerIdentity = { countryCode: window.Shopify.country };
+		return postJson(ROOT + 'api/2026-07/graphql.json', { query: CODE_CHECK_QUERY, variables: { input: input } })
+			.then(function (res) {
+				var payload = res.ok && res.body && res.body.data && res.body.data.cartCreate;
+				return !!payload && (payload.warnings || []).some(function (w) { return w.code === 'DISCOUNT_NOT_FOUND'; });
+			})
+			.catch(function () { return false; });
+	}
+
+	function showCodeError(cart, unknown) {
+		var lines = [unknown ? i18n.i18nCodeInvalid : i18n.i18nCodeRefused];
+		if (!unknown && cart && kitQty(cart) >= 2) lines.push(i18n.i18nCodeTwoKits);
 		codeErrorEl.innerHTML = lines.map(function (line) { return '<span class="block">' + escHtml(line) + '</span>'; }).join('');
 		codeErrorEl.hidden = false;
 	}
@@ -538,7 +564,12 @@
 							appliedCode = code;
 							tagCheckout();
 						} else {
-							showCodeError(cart);
+							/* Shown once the check answers, and only while the
+							   field still holds this code. */
+							codeUnknown(code).then(function (unknown) {
+								if (codeForm.hidden || (codeInput.value || '').trim().toUpperCase() !== code) return;
+								showCodeError(currentCart || cart, unknown);
+							});
 						}
 						clarity('drawer_code', applied ? 'applied' : 'refused');
 						render(cart);

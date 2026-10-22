@@ -281,6 +281,7 @@
       "adding": "جارٍ الإضافة...",
       "close_cart": "إغلاق السلة",
       "code_apply": "تطبيق",
+      "code_invalid": "هذا الكود غير صالح.",
       "code_link": "هل لديك كود خصم؟",
       "code_percent_off": "{{ code }} · خصم {{ percent }}%",
       "code_placeholder": "أدخل الكود",
