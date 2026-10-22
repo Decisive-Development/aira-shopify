@@ -30,31 +30,17 @@
 		box-shadow: 0 12px 40px rgba(10,26,52,0.25), 0 8px 16px rgba(255,255,255,0.4);
 	}
 
-	/* Free shipping tab (phones; PDP clean brief, 22 Oct). It hangs under
-	   the logo from whichever nav row is showing. The clip hides everything
-	   above the nav's bottom edge, so the tab drops out from behind the nav;
-	   the tab reaches 8px up under that edge, so its slight overshoot never
-	   opens a gap. Concave fillets join a navy nav to the tab; on a page
-	   whose top nav is see-through there is nothing to join, so they go.
-	   The clip and the fillets start 1px up inside the nav: where the nav's
-	   edge falls between device pixels (125% display scaling) the nav and
-	   the tab would each half-cover that row and leave a light seam. */
-	.header-tab-clip {
-		clip-path: inset(-1px -2rem -2rem -2rem);
-	}
-	.header-tab {
-		transform: translateY(calc(-100% - 1px));
-		transition: transform 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s;
-	}
-	[data-header]:not(.scrolled) .nav-transparent .header-tab,
-	[data-header].scrolled .nav-solid .header-tab {
-		transform: translateY(0);
-	}
+	/* Free shipping tab (phones; PDP clean brief, 22 Oct). Part of the navy
+	   nav it hangs from, under the logo: it moves with the nav and has no
+	   motion of its own (Tom, 22 Oct). Concave fillets join the nav to the
+	   tab. Tab and fillets start 1px up inside the nav: where the nav's edge
+	   falls between device pixels (125% display scaling) the nav and the
+	   tab would each half-cover that row and leave a light seam. */
 	.header-tab::before,
 	.header-tab::after {
 		content: '';
 		position: absolute;
-		top: calc(0.5rem - 1px);
+		top: 0;
 		width: 0.75rem;
 		height: calc(0.75rem + 1px);
 	}
@@ -66,22 +52,14 @@
 		left: 100%;
 		background: radial-gradient(circle at 100% 100%, transparent 0.72rem, var(--color-main) 0.75rem);
 	}
-	.header-tab--flat::before,
-	.header-tab--flat::after {
-		content: none;
-	}
 	/* One soft shadow under the navy nav and its tab together. */
-	.header-shadow,
-	.header-tab--flat {
+	.header-shadow {
 		filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--color-main) 16%, transparent));
 	}
 	@media (max-width: 767.98px) {
-		/* Page load: the top nav slides down, the tab drops 300ms later. */
+		/* Page load: the top nav, and the tab with it, slides down. */
 		.nav-transparent {
 			animation: header-drop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-		}
-		.nav-transparent .header-tab {
-			animation: header-tab-drop 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s backwards;
 		}
 		.nav-solid {
 			transition-duration: 0.5s, 0.3s;
@@ -98,14 +76,8 @@
 	@keyframes header-drop {
 		from { transform: translateY(-100%); }
 	}
-	/* 1px past the clip's own 1px reach into the nav, so none of it shows. */
-	@keyframes header-tab-drop {
-		from { transform: translateY(calc(-100% - 1px)); }
-	}
 	@media (prefers-reduced-motion: reduce) {
-		.nav-transparent,
-		.nav-transparent .header-tab,
-		.header-tab {
+		.nav-transparent {
 			animation: none;
 			transition: none;
 		}
@@ -128,13 +100,14 @@
 </style>
 
 {%- comment -%}
-	Free shipping tab, phones only, hung under the logo of both nav rows (the
-	styles above). __TAB_MOD__ takes header-tab--flat where the row behind it
-	is see-through.
+	Free shipping tab, phones only, hung under the logo of a navy nav row (the
+	styles above): the floating nav on every page, and the top nav where that
+	is navy (product pages). A see-through top nav has no edge to hang it from,
+	so there it first shows when the floating nav slides in.
 {%- endcomment -%}
 {%- capture shipping_tab -%}
-	<div class="header-tab-clip md:hidden absolute top-full left-1/2 -translate-x-1/2">
-		<p class="header-tab __TAB_MOD__ relative -mt-2 flex items-center gap-1.5 whitespace-nowrap rounded-b-xl bg-main px-3.5 pt-2.75 pb-1.75 font-body text-xs font-bold leading-4 text-white">
+	<div class="md:hidden absolute top-full left-1/2 -translate-x-1/2">
+		<p class="header-tab relative -mt-px flex items-center gap-1.5 whitespace-nowrap rounded-b-xl bg-main px-3.5 pt-1 pb-1.75 font-body text-xs font-bold leading-4 text-white">
 			{%- render 'icon-truck', classes: 'size-3.5 shrink-0' -%}
 			{{- 'general.free_shipping_short' | t -}}
 		</p>
@@ -251,28 +224,30 @@
 
 			</div>
 			{%- if navy_top -%}
-				{{ shipping_tab | replace: '__TAB_MOD__', '' }}
-			{%- else -%}
-				{{ shipping_tab | replace: '__TAB_MOD__', 'header-tab--flat' }}
+				{{ shipping_tab }}
 			{%- endif -%}
 		</div>
 
 		{%- comment -%}
 			Desktop: free shipping and the guarantee as a cream strip under the
 			nav (PDP clean brief, 22 Oct, option 1). Part of the top row, so it
-			leaves with it once the floating nav takes over on scroll.
+			leaves with it once the floating nav takes over on scroll. Only under
+			a navy top nav (product pages): over a see-through nav and the hero
+			behind it, it goes (Tom, 22 Oct), like the phone tab.
 		{%- endcomment -%}
-		<div class="hidden md:flex h-9 items-center justify-center gap-3.5 bg-secondary font-body text-[13.5px] text-main" data-header-notice>
-			<p class="flex items-center gap-1.5">
-				{%- render 'icon-truck', classes: 'size-3.75 shrink-0' -%}
-				<span class="[&_strong]:font-bold">{{ 'general.header_free_shipping_html' | t }}</span>
-			</p>
-			<span class="opacity-45" aria-hidden="true">·</span>
-			<p class="flex items-center gap-1.5">
-				{%- render 'icon-shield', classes: 'size-3.75 shrink-0' -%}
-				<strong class="font-bold">{{ 'snippets.cart_drawer.guarantee' | t }}</strong>
-			</p>
-		</div>
+		{%- if navy_top -%}
+			<div class="hidden md:flex h-9 items-center justify-center gap-3.5 bg-secondary font-body text-[13.5px] text-main" data-header-notice>
+				<p class="flex items-center gap-1.5">
+					{%- render 'icon-truck', classes: 'size-3.75 shrink-0' -%}
+					<span class="[&_strong]:font-bold">{{ 'general.header_free_shipping_html' | t }}</span>
+				</p>
+				<span class="opacity-45" aria-hidden="true">·</span>
+				<p class="flex items-center gap-1.5">
+					{%- render 'icon-shield', classes: 'size-3.75 shrink-0' -%}
+					<strong class="font-bold">{{ 'snippets.cart_drawer.guarantee' | t }}</strong>
+				</p>
+			</div>
+		{%- endif -%}
 	</div>
 
 	{%- comment -%}
@@ -388,7 +363,7 @@
 				</a>
 
 			</div>
-			{{ shipping_tab | replace: '__TAB_MOD__', '' }}
+			{{ shipping_tab }}
 		</div>
 		</div>
 	</div>
