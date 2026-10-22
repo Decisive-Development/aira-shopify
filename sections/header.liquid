@@ -35,12 +35,15 @@
 	   above the nav's bottom edge, so the tab drops out from behind the nav;
 	   the tab reaches 8px up under that edge, so its slight overshoot never
 	   opens a gap. Concave fillets join a navy nav to the tab; on a page
-	   whose top nav is see-through there is nothing to join, so they go. */
+	   whose top nav is see-through there is nothing to join, so they go.
+	   The clip and the fillets start 1px up inside the nav: where the nav's
+	   edge falls between device pixels (125% display scaling) the nav and
+	   the tab would each half-cover that row and leave a light seam. */
 	.header-tab-clip {
-		clip-path: inset(0 -2rem -2rem -2rem);
+		clip-path: inset(-1px -2rem -2rem -2rem);
 	}
 	.header-tab {
-		transform: translateY(-100%);
+		transform: translateY(calc(-100% - 1px));
 		transition: transform 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s;
 	}
 	[data-header]:not(.scrolled) .nav-transparent .header-tab,
@@ -51,9 +54,9 @@
 	.header-tab::after {
 		content: '';
 		position: absolute;
-		top: 0.5rem;
+		top: calc(0.5rem - 1px);
 		width: 0.75rem;
-		height: 0.75rem;
+		height: calc(0.75rem + 1px);
 	}
 	.header-tab::before {
 		right: 100%;
@@ -78,7 +81,7 @@
 			animation: header-drop 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 		}
 		.nav-transparent .header-tab {
-			animation: header-drop 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s backwards;
+			animation: header-tab-drop 0.5s cubic-bezier(0.3, 1.25, 0.6, 1) 0.3s backwards;
 		}
 		.nav-solid {
 			transition-duration: 0.5s, 0.3s;
@@ -94,6 +97,10 @@
 	}
 	@keyframes header-drop {
 		from { transform: translateY(-100%); }
+	}
+	/* 1px past the clip's own 1px reach into the nav, so none of it shows. */
+	@keyframes header-tab-drop {
+		from { transform: translateY(calc(-100% - 1px)); }
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.nav-transparent,
