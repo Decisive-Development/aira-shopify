@@ -53,7 +53,7 @@
 	data-currency="{{ cart.currency.iso_code | default: shop.currency }}"
 	data-kit-handle="{{ kit_product.handle }}"
 	style="max-width: min(32rem, calc(100vw - 1.5rem));"
-	class="group fixed top-3 right-3 bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
+	class="group fixed top-2 md:top-3 right-3 bottom-2 md:bottom-3 z-61 w-full bg-bg shadow-2xl rounded-2xl transition-transform duration-300 ease-out flex flex-col overflow-hidden cart-drawer-closed"
 	aria-label="{{ 'snippets.cart_drawer.shopping_cart' | t }}"
 	aria-busy="false"
 	data-i18n-updating="{{ 'snippets.cart_drawer.updating' | t | escape_once }}"
@@ -73,8 +73,13 @@
 	data-i18n-code-refused="{{ 'snippets.cart_drawer.code_refused' | t | escape_once }}"
 	data-i18n-code-two-kits="{{ 'snippets.cart_drawer.code_two_kits' | t | escape_once }}"
 >
-	{%- comment -%} Header {%- endcomment -%}
-	<div class="flex items-center justify-between px-6 py-5 border-b border-bg-muted">
+	{%- comment -%}
+		Header. Phones run tighter (spacing brief, 22 Oct: the second-kit offer
+		and Checkout both fit a 375 x 667 screen): less padding here and no rule
+		under it, since the review strip already separates it; desktop keeps
+		its spacing.
+	{%- endcomment -%}
+	<div class="flex items-center justify-between px-6 py-3 md:py-5 md:border-b border-bg-muted">
 		<h2 class="font-heading font-semibold text-title text-xl">{{ 'snippets.cart_drawer.your_cart' | t }}</h2>
 		<button type="button" data-cart-close class="relative rounded-md text-copy hover:text-title transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main pointer-coarse:before:absolute pointer-coarse:before:-inset-2.5" aria-label="{{ 'snippets.cart_drawer.close_cart' | t }}">
 			<svg class="block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true" focusable="false">
@@ -84,7 +89,7 @@
 	</div>
 
 	{%- comment -%} Scrollable body — data-lenis-prevent keeps native scroll here (Lenis ignores it) {%- endcomment -%}
-	<div class="flex-1 overflow-y-auto px-6 py-4" data-cart-body data-lenis-prevent>
+	<div class="flex-1 overflow-y-auto px-6 pt-2 pb-3 md:py-4" data-cart-body data-lenis-prevent>
 
 		{%- comment -%}
 			Review strip: the rating the kit page states (Theme settings > Reviews)
@@ -109,7 +114,8 @@
 					{%- endif -%}
 				{%- endfor -%}
 			{%- endcapture -%}
-			<div data-cart-reviews class="hidden items-center gap-2.5 px-3 py-2.5 rounded-xl bg-cream-light">
+			{%- comment -%} gap-2 on phones keeps the English line on one row at 375px; Arabic still wraps. {%- endcomment -%}
+			<div data-cart-reviews class="hidden items-center gap-2 md:gap-2.5 px-3 py-2 md:py-2.5 rounded-xl bg-cream-light">
 				{%- if reviewer_photos != blank -%}
 					<div class="flex shrink-0">{{ reviewer_photos }}</div>
 				{%- endif -%}
@@ -221,7 +227,7 @@
 		without), so a drawer that loads with a filled cart has its express
 		buttons laid out before it ever opens; the script keeps it right.
 	{%- endcomment -%}
-	<div data-cart-footer class="{% if cart.item_count > 0 %}flex{% else %}hidden{% endif %} border-t border-bg-muted px-6 pt-4 pb-5 flex-col gap-3">
+	<div data-cart-footer class="{% if cart.item_count > 0 %}flex{% else %}hidden{% endif %} border-t border-bg-muted px-6 pt-3 pb-3 md:pt-4 md:pb-5 flex-col gap-2 md:gap-3">
 		{%- comment -%}
 			One row per code on the cart, filled by JS from the cart's order-level
 			discount applications. Line discounts (the free pouch, pack prices)
@@ -255,7 +261,12 @@
 			only a to z, so an Arabic keyboard is left alone.
 		{%- endcomment -%}
 		<div data-cart-code-field class="flex flex-col items-start gap-2" hidden>
-			<button type="button" data-code-toggle class="inline-flex min-h-11 items-center text-sm text-copy underline underline-offset-2 cursor-pointer transition-colors hover:text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">{{ 'snippets.cart_drawer.code_link' | t }}</button>
+			{%- comment -%}
+				The link keeps a 44px tap box, but on phones its -my-2 hands 16px of
+				that back to the footer's 8px gaps, so the line takes 28px and the
+				tap area reaches exactly to its neighbours without covering them.
+			{%- endcomment -%}
+			<button type="button" data-code-toggle class="inline-flex min-h-11 -my-2 md:my-0 items-center text-sm text-copy underline underline-offset-2 cursor-pointer transition-colors hover:text-main focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">{{ 'snippets.cart_drawer.code_link' | t }}</button>
 			<form data-code-form class="flex w-full items-center gap-2" novalidate hidden>
 				<label for="cart-code-input" class="sr-only">{{ 'snippets.cart_drawer.code_placeholder' | t }}</label>
 				<input id="cart-code-input" type="text" name="discount" data-code-input dir="auto" placeholder="{{ 'snippets.cart_drawer.code_placeholder' | t | escape }}" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done" class="min-w-0 flex-1 h-11 rounded-xl border border-main/20 bg-bg px-4 text-sm text-main uppercase placeholder:normal-case focus:outline-none focus:border-main">
@@ -301,12 +312,12 @@
 			{%- endif -%}
 		{%- endif -%}
 		{%- comment -%}
-			Accepted payment marks and their line (brief of 22 Oct): customers
-			learn Apple Pay and Google Pay are taken, then meet them at checkout,
-			where the delivery country shows. Under the express block, so with
-			express pay off they sit straight under Checkout; never a link.
+			Accepted payment marks (brief of 22 Oct): customers learn Apple Pay
+			and Google Pay are taken, then meet them at checkout, where the
+			delivery country shows. Under the express block, so with express pay
+			off they sit straight under Checkout; never a link.
 		{%- endcomment -%}
-		{%- render 'payment-marks', show_line: true, id_scope: 'drawer' -%}
+		{%- render 'payment-marks', id_scope: 'drawer' -%}
 		<ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-copy" role="list">
 			<li class="flex items-center gap-1.5">
 				<svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -1353,8 +1364,8 @@
 	}
 
 	function lineRow(o) {
-		return '<div class="flex items-start gap-3 md:gap-4 px-6 py-4" ' + o.attrs + '>'
-			+ '<a href="' + escAttr(o.url) + '" aria-label="' + escAttr(o.name) + '" class="shrink-0 size-20 md:size-24 overflow-hidden rounded-xl border border-bg-muted bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">' + o.img + '</a>'
+		return '<div class="flex items-start gap-3 md:gap-4 px-6 py-3 md:py-4" ' + o.attrs + '>'
+			+ '<a href="' + escAttr(o.url) + '" aria-label="' + escAttr(o.name) + '" class="shrink-0 size-16 md:size-24 overflow-hidden rounded-xl border border-bg-muted bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main">' + o.img + '</a>'
 			+ '<div class="flex-1 min-w-0">'
 				+ '<div class="flex items-start justify-between gap-3">'
 					+ '<div class="min-w-0">'
