@@ -253,6 +253,16 @@
   content="{{ og_image_url }}"
 >
 
+{%- comment -%}
+  Meta Business domain verification for shop-aira.com. Meta reads it from the
+  server-rendered homepage <head> and expects it to stay there, so keep it in
+  this snippet (not in a script) for as long as the domain stays verified.
+{%- endcomment -%}
+<meta
+  name="facebook-domain-verification"
+  content="3zrc5xbta76hc7n3qkpuo7fwt92332"
+>
+
 <title>
   {{ seo_title }}
   {%- if current_tags %}{%- assign tag_list = current_tags | join: ', ' -%} {{ 'snippets.meta_tags.tagged_html' | t: tags: tag_list }}{% endif -%}
