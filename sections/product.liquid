@@ -224,7 +224,8 @@
 									{%- if has_selling_plans and sp_allocation -%}
 										{%- assign save_amount = current_variant.price | minus: sp_allocation.per_delivery_price -%}
 										{%- if save_amount > 0 -%}
-											{%- assign save_money = save_amount | money -%}<p class="text-highlight text-sm font-bold mt-0.5">{{ 'sections.product.save_on_refills' | t: amount: save_money }}</p>
+											{%- comment -%} `t` escapes what it interpolates, so the <bdi> amount goes in after it. {%- endcomment -%}
+											{%- capture save_money_html -%}<bdi>{{ save_amount | money }}</bdi>{%- endcapture -%}<p class="text-highlight text-sm font-bold mt-0.5">{{ 'sections.product.save_on_refills' | t: amount: '__AMOUNT__' | replace: '__AMOUNT__', save_money_html }}</p>
 										{%- endif -%}
 									{%- elsif section.settings.plan_save_text != blank -%}
 										<p class="text-highlight text-sm font-bold mt-0.5">{{ section.settings.plan_save_text }}</p>
@@ -278,8 +279,9 @@
 								<div>
 									<span class="font-heading font-bold text-title text-lg leading-tight block"{% if bundle_picker %} id="kit-card-one-title"{% endif %}>{{ product_name }}</span>
 									{%- if gift_variant -%}
-										{%- assign gift_price = gift_variant.price | money -%}
-										<span class="text-highlight text-sm font-bold block mt-0.5"{% if bundle_picker %} id="kit-card-one-line"{% endif %}>{{ 'sections.product.onetime_gift_line' | t: amount: gift_price }}</span>
+										{%- comment -%} `t` escapes what it interpolates, so the <bdi> amount goes in after it. {%- endcomment -%}
+										{%- capture gift_price_html -%}<bdi>{{ gift_variant.price | money }}</bdi>{%- endcapture -%}
+										<span class="text-highlight text-sm font-bold block mt-0.5"{% if bundle_picker %} id="kit-card-one-line"{% endif %}>{{ 'sections.product.onetime_gift_line' | t: amount: '__AMOUNT__' | replace: '__AMOUNT__', gift_price_html }}</span>
 									{%- endif -%}
 								</div>
 								<div class="text-end shrink-0">
@@ -338,28 +340,25 @@
 								a visually hidden native radio that IS the form's quantity field:
 								the checked one is what Add to cart submits, arrow keys move the
 								choice, and the card's has-checked utilities draw the navy edge on
-								the checked card. The script swaps the button and sticky bar
-								labels and notes the choice on the form for the cart drawer.
+								the checked card. The script shows the button label and the sticky
+								bar price of the choice (the markup holds one per quantity, so a
+								currency app finds every amount on load), swaps the sticky bar's
+								name and notes the choice on the form for the cart drawer.
 								Nothing reaches the cart until the button is pressed. One value
-								message per card, the strike-through; amounts sit in <bdi>.
+								message per card, the strike-through; amounts sit in <bdi>, and
+								`t` escapes what it interpolates, so they go in after it.
 								PDP clean brief (22 Oct): 2 kits is checked on load, the cards
 								sit 32px apart and card 2 sits 32px above the button (its 12px
 								margin plus the form's 20px gap); only card 2 carries a pill.
 							{%- endcomment -%}
-							{%- liquid
-								assign kit_price_money = current_variant.price | money
-								assign bundle_price_money = bundle_price | money
-							-%}
+							{%- capture kit_price_html -%}<bdi>{{ current_variant.price | money }}</bdi>{%- endcapture -%}
+							{%- capture bundle_price_html -%}<bdi>{{ bundle_price | money }}</bdi>{%- endcapture -%}
 							{%- capture bundle_gift_html -%}<bdi>{{ bundle_gift_value | money }}</bdi>{%- endcapture -%}
 							<div
 								role="radiogroup"
 								aria-label="{{ 'products.kit_page.picker_group_label' | t | escape }}"
 								class="flex flex-col gap-8"
 								data-bundle-picker
-								data-price-one="{{ kit_price_money }}"
-								data-price-two="{{ bundle_price_money }}"
-								data-i18n-add-one="{{ 'products.kit_page.add_to_cart_price' | t: price: kit_price_money | escape_once }}"
-								data-i18n-add-two="{{ 'products.kit_page.add_two_to_cart' | t: price: bundle_price_money | escape_once }}"
 								data-i18n-sticky-one="{{ product_name | escape_once }}"
 								data-i18n-sticky-two="{{ 'products.kit_page.sticky_two_kits' | t | escape_once }}"
 							>
@@ -391,7 +390,7 @@
 											{%- if gift_variant -%}
 												<span class="text-highlight text-sm font-semibold line-through block"><bdi>{{ bundle_full_value | money }}</bdi></span>
 											{%- endif -%}
-											<span class="font-heading font-bold text-title text-xl md:text-2xl block" id="kit-card-two-price"><bdi>{{ bundle_price_money }}</bdi></span>
+											<span class="font-heading font-bold text-title text-xl md:text-2xl block" id="kit-card-two-price">{{ bundle_price_html }}</span>
 										</div>
 									</div>
 								</label>
@@ -449,13 +448,20 @@
 						if current_variant.available
 							assign atc_label = 'general.add_to_cart' | t
 							assign atc_disabled = false
-							# With the 1 kit / 2 kits cards the label carries the price of the
-							# choice, and 2 kits is the choice on load.
-							if bundle_picker
-								assign atc_label = 'products.kit_page.add_two_to_cart' | t: price: bundle_price_money
-							endif
 						endif
 					-%}
+					{%- comment -%}
+						With the 1 kit / 2 kits cards the label carries the price of the
+						choice: one label per quantity inside the button, and the script
+						shows the picked one (2 kits on load). The prices are never retyped,
+						so a currency app converts them where they are.
+					{%- endcomment -%}
+					{%- if bundle_picker and atc_disabled == false -%}
+						{%- capture atc_label -%}
+							<span data-pick-qty="1" hidden>{{ 'products.kit_page.add_to_cart_price' | t: price: '__PRICE__' | replace: '__PRICE__', kit_price_html }}</span>
+							<span data-pick-qty="2">{{ 'products.kit_page.add_two_to_cart' | t: price: '__PRICE__' | replace: '__PRICE__', bundle_price_html }}</span>
+						{%- endcapture -%}
+					{%- endif -%}
 					{%- render 'cta-button',
 						label: atc_label,
 						variant: 'shop',
@@ -747,7 +753,13 @@
 				{%- assign sticky_bundle_value = current_variant.price | plus: gift_variant.price -%}
 				<span class="text-base font-semibold text-highlight line-through"{% if bundle_picker %} data-sticky-struck{% endif %}>{{ sticky_bundle_value | money }}</span>
 			{%- endif -%}
-			<span class="font-heading font-bold text-main text-lg"{% if bundle_picker %} data-sticky-price{% endif %}>{{ current_variant.price | money }}</span>
+			{%- if bundle_picker -%}
+				{%- comment -%} One price per quantity, the script shows the picked one (2 kits on load): never retyped, so a currency app converts them where they are. {%- endcomment -%}
+				<span class="font-heading font-bold text-main text-lg" data-pick-qty="1" hidden>{{ current_variant.price | money }}</span>
+				<span class="font-heading font-bold text-main text-lg" data-pick-qty="2">{{ bundle_price | money }}</span>
+			{%- else -%}
+				<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
+			{%- endif -%}
 		</p>
 	</div>
 	{%- liquid
@@ -993,17 +1005,18 @@
 	/* ── 1 kit / 2 kits cards ──
 	   The radios are the form's quantity field, so the choice reaches the
 	   cart without this script, and the checked card's edge is CSS. What
-	   the script adds: the Add to cart label with its price, the sticky
-	   bar's name and price, and a note on the form that the cart drawer
-	   turns into the cart attribute `_aira_bundle` once a 2-kit add has gone
-	   through. The drawer restores the button's label from the markup it
-	   finds at submit, so the swapped label survives an add. */
+	   the script adds: it shows the Add to cart label and the sticky bar
+	   price of the choice (the markup holds one per quantity, so no price
+	   is ever retyped and a currency app can convert them where they are),
+	   swaps the sticky bar's name, and notes on the form what the cart
+	   drawer turns into the cart attribute `_aira_bundle` once a 2-kit add
+	   has gone through. The drawer restores the button's markup from what
+	   it finds at submit, so the labels survive an add. */
 	var picker = section.querySelector('[data-bundle-picker]');
 	var form = addBtn ? addBtn.closest('form') : null;
 	if (picker && form) {
 		var pickerI18n = picker.dataset;
 		var stickyName = stickyBar ? stickyBar.querySelector('[data-sticky-name]') : null;
-		var stickyPrice = stickyBar ? stickyBar.querySelector('[data-sticky-price]') : null;
 		var stickyStruck = stickyBar ? stickyBar.querySelector('[data-sticky-struck]') : null;
 		var stickyOffer = stickyBar ? stickyBar.querySelector('[data-sticky-offer]') : null;
 
@@ -1014,9 +1027,13 @@
 
 		function applyPick() {
 			var two = pickedQty() === 2;
-			if (addBtn && !addBtn.disabled) addBtn.textContent = two ? pickerI18n.i18nAddTwo : pickerI18n.i18nAddOne;
+			var qty = two ? '2' : '1';
+			/* The button's labels are read each time: the drawer rebuilds the
+			   button's markup after an add, and "Sold out" has none. */
+			function showPicked(el) { el.hidden = el.getAttribute('data-pick-qty') !== qty; }
+			if (addBtn) addBtn.querySelectorAll('[data-pick-qty]').forEach(showPicked);
+			if (stickyBar) stickyBar.querySelectorAll('[data-pick-qty]').forEach(showPicked);
 			if (stickyName) stickyName.textContent = two ? pickerI18n.i18nStickyTwo : pickerI18n.i18nStickyOne;
-			if (stickyPrice) stickyPrice.textContent = picker.getAttribute(two ? 'data-price-two' : 'data-price-one');
 			/* For 2 kits the bar reads "2 kits $69.99" alone: no second
 			   strike-through (the card's own strike-through is the value
 			   message) and no singular "+ free refill pouch". */
