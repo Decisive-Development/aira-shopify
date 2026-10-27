@@ -13,6 +13,22 @@
 		assign sp_first = sp_group.selling_plans.first
 		assign sp_allocation = pouch_variant.selling_plan_allocations | where: "selling_plan_id", sp_first.id | first
 	endif
+	# The plan's price per delivery, on its card and in the sticky bar.
+	capture plan_price_money
+		if sp_allocation
+			echo sp_allocation.per_delivery_price | money
+		else
+			echo section.settings.plan_price | default: pouch_variant.price | money
+		endif
+	endcapture
+
+	# Pack size chips (one-time): every chip is a QUANTITY of the one 30-pair
+	# pouch variant, never a variant switch. Tier prices are hardcoded from the
+	# launch tier table (Brief 2026-09-02): the matching cart totals come from
+	# the "Refill pack saving" automatic discount, so the two must change
+	# together. Fields per tier: qty | pairs | price¢ | strike¢. The chips and
+	# the sticky bar's prices both come from it.
+	assign pack_tiers = '1|30|1999|0,2|60|3599|3998,3|90|5099|5997' | split: ','
 -%}
 
 <style>
@@ -106,7 +122,6 @@
 							class="plan-card relative flex flex-col gap-3 p-4 rounded-2xl border text-left"
 							data-plan-btn="subscribe"
 							data-selling-plan="{% if sp_allocation %}{{ sp_first.id }}{% endif %}"
-							data-pack-price="{%- if sp_allocation -%}{{ sp_allocation.per_delivery_price | money }}{%- else -%}{{ section.settings.plan_price | default: pouch_variant.price | money }}{%- endif -%}"
 						>
 							{%- if section.settings.plan_badge != blank -%}
 								<span class="absolute -top-3 left-4 px-3 py-1 rounded-full bg-main text-white text-xs font-bold">
@@ -120,13 +135,7 @@
 										<span class="text-highlight text-sm font-bold">· {{ section.settings.plan_save_text }}</span>
 									{%- endif -%}
 								</div>
-								<span class="font-heading font-bold text-title text-lg shrink-0" data-subscribe-price>
-									{%- if has_selling_plans and sp_allocation -%}
-										{{ sp_allocation.per_delivery_price | money }}
-									{%- else -%}
-										{{ section.settings.plan_price | default: pouch_variant.price | money }}
-									{%- endif -%}
-								</span>
+								<span class="font-heading font-bold text-title text-lg shrink-0" data-subscribe-price>{{ plan_price_money }}</span>
 							</div>
 							{%- assign perk_blocks = section.blocks | where: "type", "refill_perk" -%}
 							{%- if perk_blocks.size > 0 -%}
@@ -144,13 +153,9 @@
 
 						{%- comment -%}
 							── Pack size chips (one-time) ──
-							Every chip is a QUANTITY of the one 30-pair pouch variant, never
-							a variant switch. Tier prices are hardcoded from the launch tier
-							table (Brief 2026-09-02): the matching cart totals come from the
-							"Refill pack saving" automatic discount, so the two must change
-							together. Fields per tier: qty | pairs | price¢ | strike¢.
+							Quantities of the one pouch variant, from the tier table at the
+							top of the file; the first is selected on load.
 						{%- endcomment -%}
-						{%- assign pack_tiers = '1|30|1999|0,2|60|3599|3998,3|90|5099|5997' | split: ',' -%}
 						{%- for tier in pack_tiers -%}
 							{%- assign t = tier | split: '|' -%}
 							<button
@@ -158,7 +163,6 @@
 								class="plan-card flex items-center justify-between gap-4 p-4 rounded-2xl border text-left {% if forloop.first %}is-selected{% endif %}"
 								data-plan-btn="onetime"
 								data-pack-qty="{{ t[0] }}"
-								data-pack-price="{{ t[2] | plus: 0 | money }}"
 							>
 								<div class="flex items-baseline gap-2 flex-wrap">
 									{%- assign pair_count = t[1] -%}<span class="font-heading font-bold text-title text-base">{{ 'sections.product_refill.pairs' | t: pairs: pair_count }}</span>
@@ -267,7 +271,18 @@
 >
 	<div class="flex flex-col min-w-0">
 		<p class="font-heading font-semibold text-main text-sm truncate">{%- render 'product-title', title: product.title -%}</p>
-		<span class="font-heading font-bold text-main text-lg" data-sticky-price>{{ pouch_variant.price | money }}</span>
+		{%- comment -%}
+			One price per choice (the plan, then each pack size) and the script
+			shows the chosen one (the 30-pair chip on load): no price is ever
+			retyped, so a currency app converts them where they are.
+		{%- endcomment -%}
+		{%- if has_selling_plans -%}
+			<span class="font-heading font-bold text-main text-lg" data-sticky-price="subscribe" hidden>{{ plan_price_money }}</span>
+		{%- endif -%}
+		{%- for tier in pack_tiers -%}
+			{%- assign t = tier | split: '|' -%}
+			<span class="font-heading font-bold text-main text-lg" data-sticky-price="{{ t[0] }}"{% unless forloop.first %} hidden{% endunless %}>{{ t[2] | plus: 0 | money }}</span>
+		{%- endfor -%}
 	</div>
 	{%- liquid
 		assign sticky_disabled = true
@@ -299,15 +314,18 @@
 
 	/* ── Card selection — only one active at a time ──
 	   A chip is a quantity of the single pouch variant (data-pack-qty), so
-	   selecting one moves the hidden quantity input and the sticky-bar price.
+	   selecting one moves the hidden quantity input and shows that choice's
+	   price in the sticky bar (the markup holds one per choice, so no price
+	   is ever retyped and a currency app can convert them where they are).
 	   The variant id input never changes. */
-	var stickyPriceEl = document.querySelector('[data-sticky-price]');
+	var stickyPrices = document.querySelectorAll('[data-sticky-price]');
 
 	function selectCard(activeBtn) {
 		planBtns.forEach(function (b) { b.classList.remove('is-selected'); });
 		activeBtn.classList.add('is-selected');
 
 		var type = activeBtn.getAttribute('data-plan-btn');
+		var choice = type === 'subscribe' ? 'subscribe' : (activeBtn.getAttribute('data-pack-qty') || '1');
 
 		if (type === 'subscribe') {
 			if (sellingPlanInput) sellingPlanInput.value = activeBtn.getAttribute('data-selling-plan') || '';
@@ -317,8 +335,7 @@
 			if (qtyInput) qtyInput.value = activeBtn.getAttribute('data-pack-qty') || 1;
 		}
 
-		var price = activeBtn.getAttribute('data-pack-price');
-		if (stickyPriceEl && price) stickyPriceEl.textContent = price;
+		stickyPrices.forEach(function (el) { el.hidden = el.getAttribute('data-sticky-price') !== choice; });
 	}
 
 	planBtns.forEach(function (btn) {
