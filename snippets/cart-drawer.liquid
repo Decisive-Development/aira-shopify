@@ -1745,9 +1745,12 @@
 
 	/* Always the store's "$49.99", with Western digits, whatever language
 	   the browser runs in: a browser locale gave Arabic phones "٤٩٫٩٩ US$"
-	   and UK ones "US$49.99". */
+	   and UK ones "US$49.99". Wrapped in the span the store's money format
+	   gives Liquid prices, so a currency app converts the drawer's figures
+	   too. Only ever placed into innerHTML: an attribute or a textContent
+	   write would need the amount alone. */
 	function formatMoney(cents) {
-		return (cents / 100).toLocaleString('en-US', { style: 'currency', currency: currency });
+		return '<span class="money">' + (cents / 100).toLocaleString('en-US', { style: 'currency', currency: currency }) + '</span>';
 	}
 
 	function sizedImg(url, size) {
