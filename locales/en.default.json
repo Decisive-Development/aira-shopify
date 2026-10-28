@@ -288,6 +288,8 @@
       "code_refused": "That code can't be used on this order.",
       "code_two_kits": "The 2-kit offer already gives a bigger saving.",
       "complete_your_kit": "Complete your kit",
+      "currency_note_aed": "Prices are shown in dirhams. Cards are charged in US dollars at checkout; Tabby charges in dirhams.",
+      "currency_note_sar": "Prices are shown in riyals. Cards are charged in US dollars at checkout; Tabby charges in riyals.",
       "decrease_quantity": "Decrease quantity",
       "discount_applied": "10% off applied at checkout.",
       "empty": "Your cart is empty",

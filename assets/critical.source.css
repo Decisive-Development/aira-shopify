@@ -848,3 +848,25 @@ html:not([lang="ar"]) button[lang="ar"] { font-family: system-ui, sans-serif; }
     }
   }
 }
+
+/* Currency converter (the BUCKS app embed, snippets/currency-default.liquid).
+   Prices stay out of view until the converter has switched them, so the
+   USD figures never paint; the hook lifts the class when the switch lands
+   or after its HOLD_MS cap. The drawer's note (snippets/cart-drawer.liquid) shows
+   for the active currency only, and never while the app's own cart banner
+   is on (data-currency-banner). Without the embed neither is ever set. */
+html.currency-pending .money { visibility: hidden; }
+[data-currency-note] { display: none; }
+html[data-currency="AED"]:not([data-currency-banner]) [data-currency-note="AED"],
+html[data-currency="SAR"]:not([data-currency-banner]) [data-currency-note="SAR"] { display: block; }
+/* The app's own cart banner (its "Cart notification" setting), when on, lands in
+   the drawer's slot as a padded, centred 16px block; this sets it like the note
+   above. Its colours come from the app's settings (inline styles). */
+[data-cart-drawer] .buckscc-cart-banner .ess-cart-banner {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  text-align: start;
+}

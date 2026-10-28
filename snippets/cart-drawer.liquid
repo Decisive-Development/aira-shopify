@@ -275,6 +275,16 @@
 			</form>
 			<p data-code-error class="text-sm text-highlight" role="alert" hidden></p>
 		</div>
+		{%- comment -%}
+			Currency note (currency converter brief, phase 2, item 8): one line per
+			converter currency, shown by critical.source.css from the html element's
+			data-currency (set by snippets/currency-default.liquid) and only while
+			the app's own cart banner is off. The div is that banner's placement
+			slot (the app's "Cart notification" setting), which the app fills itself.
+		{%- endcomment -%}
+		<div class="buckscc-cart-banner"></div>
+		<p data-currency-note="AED" dir="auto" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_aed' | t }}</p>
+		<p data-currency-note="SAR" dir="auto" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_sar' | t }}</p>
 		{%- capture checkout_label -%}
 			<svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
 			{{- 'cart.checkout' | t -}}
@@ -1629,6 +1639,7 @@
 		}
 		if (currentCart.item_count === 0) subtotalEl.innerHTML = drawn.length ? '' : '<bdi>' + formatMoney(currentCart.total_price) + '</bdi>';
 		refreshUpsells(want, fresh, showRows);
+		reconvertPrices();
 	}
 
 	/* The second-kit offer, from the planned quantities so it follows a tap
@@ -1745,9 +1756,20 @@
 
 	/* Always the store's "$49.99", with Western digits, whatever language
 	   the browser runs in: a browser locale gave Arabic phones "٤٩٫٩٩ US$"
-	   and UK ones "US$49.99". */
+	   and UK ones "US$49.99". Wrapped in the span the store's money format
+	   gives Liquid prices, so a currency app converts the drawer's figures
+	   too. Only ever placed into innerHTML: an attribute or a textContent
+	   write would need the amount alone. */
 	function formatMoney(cents) {
-		return (cents / 100).toLocaleString('en-US', { style: 'currency', currency: currency });
+		return '<span class="money">' + (cents / 100).toLocaleString('en-US', { style: 'currency', currency: currency }) + '</span>';
+	}
+
+	/* The currency converter (the BUCKS app embed) converts the money spans
+	   it finds at load, and again a second after the cart calls it watches;
+	   the rows paint in between, so every paint asks it at once. Converted
+	   spans are left as they are. Nothing happens without the embed. */
+	function reconvertPrices() {
+		if (window.bucksCC && typeof window.bucksCC.reConvert === 'function') window.bucksCC.reConvert();
 	}
 
 	function sizedImg(url, size) {
