@@ -1,0 +1,92 @@
+{%- comment -%}
+  Currency default (currency converter brief, phase 2, item 11).
+
+  The BUCKS Currency Converter app embed turns every <span class="money">
+  into the visitor's currency, but only when that currency is on its list
+  (AED and SAR); every other visitor would keep USD, as the app has no
+  default-currency setting. This hook makes AED the default for everyone
+  and leaves the app's own switch to SAR to visitors in Saudi Arabia.
+
+  - The app resolves the currency itself (its session store, else the
+    visitor's location) and announces it with a BUCKS_SELECTED_CURRENCY
+    event on document once the prices are converted. AED or SAR: done.
+    Anything else: the hook picks AED the way the app's own widget does, a
+    click on its AED list item (the app exposes no set-currency method and
+    the list is in the DOM whether the widget shows or not), with the app's
+    session store plus reConvert() as the fallback.
+  - A new tab or browser session starts the app from the visitor's location
+    again, so the pick it recorded (buckscc_last_manual, or
+    buckscc_auto_currency for an automatic SAR switch) seeds its session
+    store before it boots: the currency sticks across reloads, navigation,
+    the back-forward cache and /ar.
+  - Until the switch lands the html element carries currency-pending, which
+    critical.source.css turns into visibility:hidden on the money spans, so
+    USD never paints; after 800 ms whatever is there shows.
+  - data-currency on the html element names the active currency for the
+    drawer's note; data-currency-banner marks the app's own cart banner as
+    on, which hides that note.
+
+  Without the embed (metaConfig.active is false, as on the live theme until
+  go-live) nothing runs; without JS the USD prices stay visible.
+{%- endcomment -%}
+<script>
+  (function () {
+    var cfg = window.bucksCC && window.bucksCC.metaConfig;
+    if (!cfg || !cfg.active) return;
+    var html = document.documentElement;
+    var WANTED = { AED: true, SAR: true };
+    var HOLD_MS = 800;
+    var shown = false;
+    var picked = false;
+
+    function read(store, key) {
+      try { return JSON.parse(store.getItem(key)); } catch (e) { return null; }
+    }
+    function remembered() {
+      var manual = read(localStorage, 'buckscc_last_manual');
+      var auto = read(localStorage, 'buckscc_auto_currency');
+      var code = (manual && manual.currency) || (auto && auto.currency);
+      return WANTED[code] ? code : null;
+    }
+    function show() {
+      if (shown) return;
+      shown = true;
+      html.classList.remove('currency-pending');
+    }
+    function converted(code) {
+      var el = document.querySelector('.money');
+      return !el || el.getAttribute('bucks-currency') === code;
+    }
+    function settle(code) {
+      html.setAttribute('data-currency', code);
+      if (window.bucksCC.metaConfig.cartNotificationStatus) html.setAttribute('data-currency-banner', 'app');
+      show();
+    }
+    function pick(code, tries) {
+      var item = document.querySelector('.buckscc-select-options li#' + code);
+      if (item) { item.click(); return; }
+      if (tries > 0) { setTimeout(function () { pick(code, tries - 1); }, 100); return; }
+      try { sessionStorage.setItem('buckscc_customer_currency', JSON.stringify(code)); } catch (e) {}
+      if (typeof window.bucksCC.reConvert === 'function') window.bucksCC.reConvert();
+      if (converted(code)) settle(code);
+    }
+    function onSelected(e) {
+      var code = e && e.detail;
+      if (code && typeof code === 'object') code = code.currency;
+      if (WANTED[code] && converted(code)) { settle(code); return; }
+      if (picked) return;
+      picked = true;
+      pick(WANTED[code] ? code : 'AED', 10);
+    }
+
+    try {
+      var code = remembered();
+      if (code && !sessionStorage.getItem('buckscc_customer_currency')) sessionStorage.setItem('buckscc_customer_currency', JSON.stringify(code));
+    } catch (e) {}
+
+    html.classList.add('currency-pending');
+    setTimeout(show, HOLD_MS);
+    document.addEventListener('BUCKS_SELECTED_CURRENCY', onSelected);
+    window.addEventListener('pageshow', show);
+  })();
+</script>

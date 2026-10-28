@@ -173,6 +173,12 @@
     </script>
 
     {{ content_for_header }}
+    {% comment %}
+      The currency default hook reads the BUCKS app embed's config, which
+      content_for_header has just written, and must run before the body
+      paints, so it sits here.
+    {% endcomment %}
+    {% render 'currency-default' %}
   </head>
 
   <body>
