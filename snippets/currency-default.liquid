@@ -107,6 +107,6 @@
     html.classList.add('currency-pending');
     setTimeout(show, HOLD_MS);
     document.addEventListener('BUCKS_SELECTED_CURRENCY', onSelected);
-    window.addEventListener('pageshow', show);
+    window.addEventListener('pageshow', function (e) { if (e.persisted) show(); });
   })();
 </script>
