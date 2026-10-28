@@ -173,15 +173,15 @@
     </script>
 
     {{ content_for_header }}
-    {% comment %}
-      The currency default hook reads the BUCKS app embed's config, which
-      content_for_header has just written, and must run before the body
-      paints, so it sits here.
-    {% endcomment %}
-    {% render 'currency-default' %}
   </head>
 
   <body>
+    {% comment %}
+      The currency default hook reads the BUCKS app embed's config, which
+      Shopify writes at the end of the head (after content_for_header), and
+      must run before any price is painted, so it opens the body.
+    {% endcomment %}
+    {% render 'currency-default' %}
     {% sections 'header-group' %}
 
     {{ content_for_layout }}

@@ -5,23 +5,25 @@
   into the visitor's currency, but only when that currency is on its list
   (AED and SAR); every other visitor would keep USD, as the app has no
   default-currency setting. This hook makes AED the default for everyone
-  and leaves the app's own switch to SAR to visitors in Saudi Arabia.
+  and leaves the switch to SAR to visitors in Saudi Arabia.
 
-  - The app resolves the currency itself (its session store, else the
-    visitor's location) and announces it with a BUCKS_SELECTED_CURRENCY
-    event on document once the prices are converted. AED or SAR: done.
-    Anything else: the hook picks AED the way the app's own widget does, a
-    click on its AED list item (the app exposes no set-currency method and
-    the list is in the DOM whether the widget shows or not), with the app's
-    session store plus reConvert() as the fallback.
-  - A new tab or browser session starts the app from the visitor's location
-    again, so the pick it recorded (buckscc_last_manual, or
-    buckscc_auto_currency for an automatic SAR switch) seeds its session
-    store before it boots: the currency sticks across reloads, navigation,
-    the back-forward cache and /ar.
+  - The app boots from its session store when that names a currency, else
+    from the visitor's location, and announces the result with a
+    BUCKS_SELECTED_CURRENCY event on document once the prices are
+    converted. So the hook seeds that store before the app boots: from the
+    app's own record of an earlier visit (buckscc_last_manual, or
+    buckscc_auto_currency after its automatic SAR switch), else from
+    Shopify's country detection, the same lookup the app makes later,
+    started now so the app does not wait for it. Saudi Arabia seeds SAR,
+    anywhere else AED.
+  - If the app still announces anything but AED or SAR, the hook picks AED
+    the way the app's own widget does, a click on its AED list item (the
+    app exposes no set-currency method); with the widget hidden the list
+    does not exist, so the app's session store plus reConvert() stand in.
   - Until the switch lands the html element carries currency-pending, which
     critical.source.css turns into visibility:hidden on the money spans, so
-    USD never paints; after 800 ms whatever is there shows.
+    USD never paints; after HOLD_MS whatever is there shows. The app loads
+    its script only after DOMContentLoaded, so a preload starts it now.
   - data-currency on the html element names the active currency for the
     drawer's note; data-currency-banner marks the app's own cart banner as
     on, which hides that note.
@@ -36,6 +38,7 @@
     var html = document.documentElement;
     var WANTED = { AED: true, SAR: true };
     var HOLD_MS = 800;
+    var SESSION_KEY = 'buckscc_customer_currency';
     var shown = false;
     var picked = false;
 
@@ -47,6 +50,9 @@
       var auto = read(localStorage, 'buckscc_auto_currency');
       var code = (manual && manual.currency) || (auto && auto.currency);
       return WANTED[code] ? code : null;
+    }
+    function seed(code) {
+      try { if (!sessionStorage.getItem(SESSION_KEY)) sessionStorage.setItem(SESSION_KEY, JSON.stringify(code)); } catch (e) {}
     }
     function show() {
       if (shown) return;
@@ -66,7 +72,7 @@
       var item = document.querySelector('.buckscc-select-options li#' + code);
       if (item) { item.click(); return; }
       if (tries > 0) { setTimeout(function () { pick(code, tries - 1); }, 100); return; }
-      try { sessionStorage.setItem('buckscc_customer_currency', JSON.stringify(code)); } catch (e) {}
+      try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(code)); } catch (e) {}
       if (typeof window.bucksCC.reConvert === 'function') window.bucksCC.reConvert();
       if (converted(code)) settle(code);
     }
@@ -76,13 +82,27 @@
       if (WANTED[code] && converted(code)) { settle(code); return; }
       if (picked) return;
       picked = true;
-      pick(WANTED[code] ? code : 'AED', 10);
+      pick(WANTED[code] ? code : 'AED', 2);
     }
 
-    try {
-      var code = remembered();
-      if (code && !sessionStorage.getItem('buckscc_customer_currency')) sessionStorage.setItem('buckscc_customer_currency', JSON.stringify(code));
-    } catch (e) {}
+    var known = remembered();
+    if (known) {
+      seed(known);
+    } else if (window.fetch) {
+      fetch('/browsing_context_suggestions.json', { credentials: 'same-origin' })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+          var country = json && json.detected_values && json.detected_values.country && json.detected_values.country.handle;
+          seed(country === 'SA' ? 'SAR' : 'AED');
+        })
+        .catch(function () {});
+    }
+
+    var preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'script';
+    preload.href = '/apps/buckscc/sdk.min.js';
+    document.head.appendChild(preload);
 
     html.classList.add('currency-pending');
     setTimeout(show, HOLD_MS);
