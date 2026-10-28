@@ -852,7 +852,7 @@ html:not([lang="ar"]) button[lang="ar"] { font-family: system-ui, sans-serif; }
 /* Currency converter (the BUCKS app embed, snippets/currency-default.liquid).
    Prices stay out of view until the converter has switched them, so the
    USD figures never paint; the hook lifts the class when the switch lands
-   or after 800 ms. The drawer's note (snippets/cart-drawer.liquid) shows
+   or after its HOLD_MS cap. The drawer's note (snippets/cart-drawer.liquid) shows
    for the active currency only, and never while the app's own cart banner
    is on (data-currency-banner). Without the embed neither is ever set. */
 html.currency-pending .money { visibility: hidden; }
