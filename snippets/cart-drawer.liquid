@@ -283,8 +283,8 @@
 			slot (the app's "Cart notification" setting), which the app fills itself.
 		{%- endcomment -%}
 		<div class="buckscc-cart-banner"></div>
-		<p data-currency-note="AED" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_aed' | t }}</p>
-		<p data-currency-note="SAR" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_sar' | t }}</p>
+		<p data-currency-note="AED" dir="auto" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_aed' | t }}</p>
+		<p data-currency-note="SAR" dir="auto" class="text-sm text-copy">{{ 'snippets.cart_drawer.currency_note_sar' | t }}</p>
 		{%- capture checkout_label -%}
 			<svg class="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
 			{{- 'cart.checkout' | t -}}
