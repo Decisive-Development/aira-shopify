@@ -383,6 +383,20 @@
   },
   "shopify": {
     "checkout": {
+      "contact": {
+        "address2_label": "Apt/villa (KSA: National Address e.g. ABCD1234)",
+        "optional_address2_label": "Apt/villa (KSA: National Address e.g. ABCD1234)"
+      },
+      "field_errors": {
+        "address_address2_blank": "Enter your apartment/villa (KSA: your National Address code)"
+      },
+      "wallets": {
+        "errors": {
+          "missing": {
+            "address2": "Enter your apartment/villa (KSA: your National Address code)"
+          }
+        }
+      },
       "stock": {
         "items_unavailable_notice": "Some items can't be delivered to the address entered. We only deliver to the UAE and Saudi Arabia.",
         "out_of_stock": {
