@@ -565,6 +565,9 @@
 	.research-book .rb-fig-xlab text { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.65; }
 	.research-book .rb-fig-ylab { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.55; }
 	.research-book .rb-fig-rowlab text { font-family: var(--font-heading); font-size: 12px; font-weight: 600; fill: var(--rb-ink); opacity: 0.7; }
+	/* SVG text anchors flip under RTL; keep chart labels growing the way they do in English so none clip or swap ends. */
+	[dir='rtl'] .research-book .rb-fig text:not([text-anchor]) { text-anchor: end; }
+	[dir='rtl'] .research-book .rb-fig text[text-anchor='end'] { text-anchor: start; }
 
 	.research-book .rb-figtable { width: min(100%, 320px); border-collapse: collapse; }
 	.research-book .rb-figtable th {
