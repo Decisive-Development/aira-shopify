@@ -92,7 +92,7 @@
       "settings": {
         "eyebrow": "The basics",
         "heading": "A two-part system. No drugs, nothing inside your nose.",
-        "body": "<p>The reusable magnetic <strong>aira strip</strong> sits over the bridge of your nose. This connects to two small <strong>adhesive tabs</strong> placed either side on your nostrils. Gently widening your airway from the outside.</p><p>Take the strip off and your nose is exactly as it was.</p>",
+        "body": "<p>The reusable magnetic <strong>aira strip</strong> sits across your nose. This connects to two small <strong>adhesive tabs</strong> placed either side on your nostrils. Gently widening your airway from the outside.</p><p>Take the strip off and your nose is exactly as it was.</p>",
         "card1_label": "The strip",
         "card1_title": "Reusable. Comfortable.",
         "card1_body": "Built to last. Fits any shape or size.",
@@ -109,7 +109,7 @@
           "settings": {
             "code": "L1",
             "tier": "Small",
-            "description": "For narrower nose bridges. Lower-impact wear and sleep."
+            "description": "For narrower noses. Lower-impact wear and sleep."
           }
         },
         "size-2": {
@@ -178,7 +178,7 @@
           "type": "prep",
           "settings": {
             "image": "shopify://shop_images/clean-nose.png",
-            "image_label": "Clean: soap and water on the bridge",
+            "image_label": "Clean: soap and water on both sides of the nose",
             "title": "Clean",
             "body": "Use a gentle cleanser to remove makeup, oils, and dirt from your nose."
           }
@@ -196,7 +196,7 @@
           "type": "prep",
           "settings": {
             "image": "shopify://shop_images/drop-the-skincare.png",
-            "image_label": "Skip moisturiser & oils on the bridge",
+            "image_label": "Skip moisturiser & oils on the sides of the nose",
             "title": "Skip the lotion",
             "body": "Moisturisers, serums, and oils are the #1 reason tabs lift early. Apply aira first, skincare around it."
           }
@@ -325,7 +325,7 @@
           "type": "question",
           "settings": {
             "question": "Is there anything I shouldn't do before applying?",
-            "answer": "<p>Skip moisturisers, oils, and serums on the bridge of the nose for at least 5 minutes before. Apply aira first, then your skincare around it.</p>"
+            "answer": "<p>Skip moisturisers, oils, and serums on the sides of your nose, where the tabs go, for at least 5 minutes before. Apply aira first, then your skincare around it.</p>"
           }
         }
       },
