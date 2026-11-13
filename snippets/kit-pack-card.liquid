@@ -1,0 +1,40 @@
+{%- comment -%}
+	kit-pack-card — a multi-kit card of the kit page's picker
+	(sections/product.liquid): "2 aira kits" and the family pack. A <label>
+	around a visually hidden radio that is the form's quantity field, so the
+	checked card is what Add to cart submits. The section works out every
+	amount and passes it in as markup (money in <bdi>); nothing is priced or
+	typed here. Renders the same markup the 2-kit card always had.
+	Params:
+	  key       — id stem: 'two', 'family' (kit-card-<key>-title, -line, -price)
+	  quantity  — the radio's value: how many kits the card adds
+	  checked   — true on the card that is picked on load
+	  classes   — the card's classes (the section's kit_card_classes, plus the
+	              margin the last card keeps above the button)
+	  title     — the card's name
+	  balance   — true evens out a name that wraps onto two lines (the family
+	              pack's on a narrow phone), so no word is left on its own
+	  line      — the orange line under the name (the free pouches and what
+	              they are worth), markup; blank leaves it out
+	  struck    — the full value, struck through, markup; blank leaves it out
+	  price     — the price, markup
+	  pill      — label of the pill on the card's bottom edge; blank for none
+{%- endcomment -%}
+<label class="{{ classes }}" data-kit-card>
+	<input type="radio" name="quantity" value="{{ quantity }}" class="sr-only"{% if checked %} checked{% endif %} data-bundle-option aria-labelledby="kit-card-{{ key }}-title kit-card-{{ key }}-price"{% if line != blank %} aria-describedby="kit-card-{{ key }}-line"{% endif %}>
+	{%- render 'pill-badge', label: pill, classes: '-bottom-3 left-1/2 -translate-x-1/2' -%}
+	<div class="flex items-start justify-between gap-4">
+		<div>
+			<span class="font-heading font-bold text-title text-lg leading-tight block{% if balance %} text-balance{% endif %}" id="kit-card-{{ key }}-title">{{ title }}</span>
+			{%- if line != blank -%}
+				<span class="text-highlight text-sm font-bold block mt-0.5" id="kit-card-{{ key }}-line">{{ line }}</span>
+			{%- endif -%}
+		</div>
+		<div class="text-end shrink-0">
+			{%- if struck != blank -%}
+				<span class="text-highlight text-sm font-semibold line-through block">{{ struck }}</span>
+			{%- endif -%}
+			<span class="font-heading font-bold text-title text-xl md:text-2xl block" id="kit-card-{{ key }}-price">{{ price }}</span>
+		</div>
+	</div>
+</label>

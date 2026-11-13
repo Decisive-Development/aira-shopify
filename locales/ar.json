@@ -86,6 +86,7 @@
   },
   "products": {
     "kit_page": {
+      "add_four_to_cart": "أضف 4 مجموعات · {{ price }}",
       "add_to_cart_price": "أضف إلى السلة · {{ price }}",
       "add_two_to_cart": "أضف مجموعتين · {{ price }}",
       "countdown_by": "اطلب قبل {{ time }} {{ day }} ليصلك في {{ date }}",
@@ -95,8 +96,11 @@
       "day_on": "يوم {{ weekday }}",
       "day_today": "اليوم",
       "day_tomorrow": "غدًا",
+      "family_line": "+ 4 عبوات لاصقات إضافية مجانًا، بقيمة {{ amount }}",
+      "family_title": "باقة العائلة · 4 مجموعات من aira",
       "picker_group_label": "اختر مجموعتك",
       "pill_best_value": "الأوفر",
+      "sticky_four_kits": "4 مجموعات",
       "sticky_two_kits": "مجموعتان",
       "two_kits_line": "+ عبوتا لاصقات إضافية مجانًا، بقيمة {{ amount }}",
       "two_kits_title": "مجموعتان من aira"

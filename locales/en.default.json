@@ -86,6 +86,7 @@
   },
   "products": {
     "kit_page": {
+      "add_four_to_cart": "Add 4 kits to cart · {{ price }}",
       "add_to_cart_price": "Add to cart · {{ price }}",
       "add_two_to_cart": "Add 2 kits to cart · {{ price }}",
       "countdown_by": "Order by {{ time }} {{ day }} for delivery by {{ date }}",
@@ -95,8 +96,11 @@
       "day_on": "on {{ weekday }}",
       "day_today": "today",
       "day_tomorrow": "tomorrow",
+      "family_line": "+ 4 free refill pouches, worth {{ amount }}",
+      "family_title": "Family pack · 4 aira kits",
       "picker_group_label": "Choose your kit",
       "pill_best_value": "Best value",
+      "sticky_four_kits": "4 kits",
       "sticky_two_kits": "2 kits",
       "two_kits_line": "+ 2 free refill pouches, worth {{ amount }}",
       "two_kits_title": "2 aira kits"

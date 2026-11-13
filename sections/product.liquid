@@ -57,6 +57,28 @@
 			endif
 		endif
 	endif
+
+	comment
+		Family pack (Theme settings > Offers): a third card on the same picker,
+		4 kits, so it needs the picker. Its price is the kit's price times four
+		less the saving setting, which holds everything 4 kits save: the 2-kit
+		discount and the family pack discount together. A blank or 0 saving
+		hides the card, as does one that leaves nothing to pay.
+	endcomment
+	assign family_pack = false
+	if bundle_picker and settings.family_pack_enabled
+		assign family_saving_cents = settings.family_saving | times: 100 | round
+		assign family_price = current_variant.price | times: 4 | minus: family_saving_cents
+		if family_saving_cents > 0 and family_price > 0
+			assign family_pack = true
+			# The third card's full value, struck through: four kits and their four free pouches.
+			assign family_full_value = current_variant.price | times: 4
+			if gift_variant
+				assign family_gift_value = gift_variant.price | times: 4
+				assign family_full_value = family_full_value | plus: family_gift_value
+			endif
+		endif
+	endif
 -%}
 
 <style>
@@ -348,8 +370,13 @@
 								message per card, the strike-through; amounts sit in <bdi>, and
 								`t` escapes what it interpolates, so they go in after it.
 								PDP clean brief (22 Oct): 2 kits is checked on load, the cards
-								sit 32px apart and card 2 sits 32px above the button (its 12px
-								margin plus the form's 20px gap); only card 2 carries a pill.
+								sit 32px apart and the last card sits 32px above the button (its
+								12px margin plus the form's 20px gap); only one card carries a
+								pill, "Best value".
+								Family pack (13 Nov): with it on, a third card follows, 4 kits,
+								from the same snippet as card 2 (snippets/kit-pack-card). It is
+								then the last card and takes the pill, so card 2 goes without,
+								like card 1. 2 kits stays checked on load.
 							{%- endcomment -%}
 							{%- capture kit_price_html -%}<bdi>{{ current_variant.price | money }}</bdi>{%- endcapture -%}
 							{%- capture bundle_price_html -%}<bdi>{{ bundle_price | money }}</bdi>{%- endcapture -%}
@@ -361,6 +388,9 @@
 								data-bundle-picker
 								data-i18n-sticky-one="{{ product_name | escape_once }}"
 								data-i18n-sticky-two="{{ 'products.kit_page.sticky_two_kits' | t | escape_once }}"
+								{%- if family_pack %}
+								data-i18n-sticky-four="{{ 'products.kit_page.sticky_four_kits' | t | escape_once }}"
+								{%- endif %}
 							>
 								{%- comment -%}
 									The checked card's edge: the navy border plus a 1px ring, so the
@@ -374,26 +404,37 @@
 									<input type="radio" name="quantity" value="1" class="sr-only" data-bundle-option aria-labelledby="kit-card-one-title kit-card-one-price"{% if gift_variant %} aria-describedby="kit-card-one-line"{% endif %}>
 									{{ onetime_card }}
 								</label>
-								<label class="{{ kit_card_classes }} mb-3" data-kit-card>
-									<input type="radio" name="quantity" value="2" class="sr-only" checked data-bundle-option aria-labelledby="kit-card-two-title kit-card-two-price"{% if gift_variant %} aria-describedby="kit-card-two-line"{% endif %}>
-									{%- assign best_value_pill = 'products.kit_page.pill_best_value' | t -%}
-									{%- render 'pill-badge', label: best_value_pill, classes: '-bottom-3 left-1/2 -translate-x-1/2' -%}
-									<div class="flex items-start justify-between gap-4">
-										<div>
-											<span class="font-heading font-bold text-title text-lg leading-tight block" id="kit-card-two-title">{{ 'products.kit_page.two_kits_title' | t }}</span>
-											{%- if gift_variant -%}
-												{%- comment -%} `t` escapes what it interpolates, so the <bdi> goes in after it. {%- endcomment -%}
-												<span class="text-highlight text-sm font-bold block mt-0.5" id="kit-card-two-line">{{ 'products.kit_page.two_kits_line' | t: amount: '__AMOUNT__' | replace: '__AMOUNT__', bundle_gift_html }}</span>
-											{%- endif -%}
-										</div>
-										<div class="text-end shrink-0">
-											{%- if gift_variant -%}
-												<span class="text-highlight text-sm font-semibold line-through block"><bdi>{{ bundle_full_value | money }}</bdi></span>
-											{%- endif -%}
-											<span class="font-heading font-bold text-title text-xl md:text-2xl block" id="kit-card-two-price">{{ bundle_price_html }}</span>
-										</div>
-									</div>
-								</label>
+								{%- comment -%}
+									The pack cards, each rendered by snippets/kit-pack-card from
+									amounts worked out here. The last card keeps 12px under it and
+									carries the pill: card 2 on its own, the family pack when it
+									is on. `t` escapes what it interpolates, so each <bdi> amount
+									goes into its line after it; without the launch offer's gift
+									the line and the struck value stay blank and are left out.
+								{%- endcomment -%}
+								{%- liquid
+									assign best_value_pill = 'products.kit_page.pill_best_value' | t
+									assign last_card_classes = kit_card_classes | append: ' mb-3'
+									assign two_kits_title = 'products.kit_page.two_kits_title' | t
+									assign two_card_classes = last_card_classes
+									assign two_card_pill = best_value_pill
+									if family_pack
+										assign two_card_classes = kit_card_classes
+										assign two_card_pill = ''
+									endif
+								-%}
+								{%- capture two_kits_line_html -%}{%- if gift_variant -%}{{ 'products.kit_page.two_kits_line' | t: amount: '__AMOUNT__' | replace: '__AMOUNT__', bundle_gift_html }}{%- endif -%}{%- endcapture -%}
+								{%- capture bundle_full_html -%}{%- if gift_variant -%}<bdi>{{ bundle_full_value | money }}</bdi>{%- endif -%}{%- endcapture %}
+								{% render 'kit-pack-card', key: 'two', quantity: 2, checked: true, classes: two_card_classes, title: two_kits_title, line: two_kits_line_html, struck: bundle_full_html, price: bundle_price_html, pill: two_card_pill %}
+								{%- if family_pack -%}
+									{%- comment -%} On a narrow phone the name wraps: a no-break space keeps its dot with the words before it, and the card evens out the two lines. {%- endcomment -%}
+									{%- assign family_title = 'products.kit_page.family_title' | t | replace: ' · ', '&nbsp;· ' -%}
+									{%- capture family_price_html -%}<bdi>{{ family_price | money }}</bdi>{%- endcapture -%}
+									{%- capture family_gift_html -%}<bdi>{{ family_gift_value | money }}</bdi>{%- endcapture -%}
+									{%- capture family_line_html -%}{%- if gift_variant -%}{{ 'products.kit_page.family_line' | t: amount: '__AMOUNT__' | replace: '__AMOUNT__', family_gift_html }}{%- endif -%}{%- endcapture -%}
+									{%- capture family_full_html -%}{%- if gift_variant -%}<bdi>{{ family_full_value | money }}</bdi>{%- endif -%}{%- endcapture %}
+									{% render 'kit-pack-card', key: 'family', quantity: 4, checked: false, classes: last_card_classes, title: family_title, balance: true, line: family_line_html, struck: family_full_html, price: family_price_html, pill: best_value_pill %}
+								{%- endif %}
 							</div>
 						{%- else -%}
 							<div class="relative mb-1.5 flex flex-col gap-3 p-5 rounded-2xl border border-border bg-bg-soft shadow-sm">
@@ -452,14 +493,18 @@
 					-%}
 					{%- comment -%}
 						With the 1 kit / 2 kits cards the label carries the price of the
-						choice: one label per quantity inside the button, and the script
-						shows the picked one (2 kits on load). The prices are never retyped,
-						so a currency app converts them where they are.
+						choice: one label per quantity inside the button (a third for the
+						family pack while its card shows), and the script shows the picked
+						one (2 kits on load). The prices are never retyped, so a currency
+						app converts them where they are.
 					{%- endcomment -%}
 					{%- if bundle_picker and atc_disabled == false -%}
 						{%- capture atc_label -%}
 							<span data-pick-qty="1" hidden>{{ 'products.kit_page.add_to_cart_price' | t: price: '__PRICE__' | replace: '__PRICE__', kit_price_html }}</span>
 							<span data-pick-qty="2">{{ 'products.kit_page.add_two_to_cart' | t: price: '__PRICE__' | replace: '__PRICE__', bundle_price_html }}</span>
+							{%- if family_pack %}
+							<span data-pick-qty="4" hidden>{{ 'products.kit_page.add_four_to_cart' | t: price: '__PRICE__' | replace: '__PRICE__', family_price_html }}</span>
+							{%- endif -%}
 						{%- endcapture -%}
 					{%- endif -%}
 					{%- render 'cta-button',
@@ -754,9 +799,12 @@
 				<span class="text-base font-semibold text-highlight line-through"{% if bundle_picker %} data-sticky-struck{% endif %}>{{ sticky_bundle_value | money }}</span>
 			{%- endif -%}
 			{%- if bundle_picker -%}
-				{%- comment -%} One price per quantity, the script shows the picked one (2 kits on load): never retyped, so a currency app converts them where they are. {%- endcomment -%}
+				{%- comment -%} One price per quantity (the family pack's too while its card shows), the script shows the picked one (2 kits on load): never retyped, so a currency app converts them where they are. {%- endcomment -%}
 				<span class="font-heading font-bold text-main text-lg" data-pick-qty="1" hidden>{{ current_variant.price | money }}</span>
 				<span class="font-heading font-bold text-main text-lg" data-pick-qty="2">{{ bundle_price | money }}</span>
+				{%- if family_pack %}
+				<span class="font-heading font-bold text-main text-lg" data-pick-qty="4" hidden>{{ family_price | money }}</span>
+				{%- endif -%}
 			{%- else -%}
 				<span class="font-heading font-bold text-main text-lg">{{ current_variant.price | money }}</span>
 			{%- endif -%}
@@ -1002,44 +1050,48 @@
 		if (typeof window.clarity === 'function') window.clarity('set', key, value);
 	}
 
-	/* ── 1 kit / 2 kits cards ──
-	   The radios are the form's quantity field, so the choice reaches the
-	   cart without this script, and the checked card's edge is CSS. What
-	   the script adds: it shows the Add to cart label and the sticky bar
-	   price of the choice (the markup holds one per quantity, so no price
-	   is ever retyped and a currency app can convert them where they are),
-	   swaps the sticky bar's name, and notes on the form what the cart
-	   drawer turns into the cart attribute `_aira_bundle` once a 2-kit add
-	   has gone through. The drawer restores the button's markup from what
-	   it finds at submit, so the labels survive an add. */
+	/* ── 1 kit / 2 kits / family pack cards ──
+	   The radios are the form's quantity field (1, 2, and 4 while the
+	   family pack card shows), so the choice reaches the cart without this
+	   script, and the checked card's edge is CSS. What the script adds: it
+	   shows the Add to cart label and the sticky bar price of the choice
+	   (the markup holds one per quantity, so no price is ever retyped and a
+	   currency app can convert them where they are), swaps the sticky bar's
+	   name, and notes on the form what the cart drawer turns into the cart
+	   attribute `_aira_bundle` (2 or 4, the kits the card adds) once a pack
+	   add has gone through. The drawer restores the button's markup from
+	   what it finds at submit, so the labels survive an add. */
 	var picker = section.querySelector('[data-bundle-picker]');
 	var form = addBtn ? addBtn.closest('form') : null;
 	if (picker && form) {
 		var pickerI18n = picker.dataset;
+		var stickyNames = { 1: pickerI18n.i18nStickyOne, 2: pickerI18n.i18nStickyTwo, 4: pickerI18n.i18nStickyFour };
 		var stickyName = stickyBar ? stickyBar.querySelector('[data-sticky-name]') : null;
 		var stickyStruck = stickyBar ? stickyBar.querySelector('[data-sticky-struck]') : null;
 		var stickyOffer = stickyBar ? stickyBar.querySelector('[data-sticky-offer]') : null;
 
 		function pickedQty() {
 			var on = picker.querySelector('[data-bundle-option]:checked');
-			return on && on.value === '2' ? 2 : 1;
+			var qty = on ? parseInt(on.value, 10) : 1;
+			return stickyNames[qty] ? qty : 1;
 		}
 
 		function applyPick() {
-			var two = pickedQty() === 2;
-			var qty = two ? '2' : '1';
+			var qty = pickedQty();
+			var pack = qty > 1;
+			var key = String(qty);
 			/* The button's labels are read each time: the drawer rebuilds the
 			   button's markup after an add, and "Sold out" has none. */
-			function showPicked(el) { el.hidden = el.getAttribute('data-pick-qty') !== qty; }
+			function showPicked(el) { el.hidden = el.getAttribute('data-pick-qty') !== key; }
 			if (addBtn) addBtn.querySelectorAll('[data-pick-qty]').forEach(showPicked);
 			if (stickyBar) stickyBar.querySelectorAll('[data-pick-qty]').forEach(showPicked);
-			if (stickyName) stickyName.textContent = two ? pickerI18n.i18nStickyTwo : pickerI18n.i18nStickyOne;
-			/* For 2 kits the bar reads "2 kits $69.99" alone: no second
-			   strike-through (the card's own strike-through is the value
-			   message) and no singular "+ free refill pouch". */
-			if (stickyStruck) stickyStruck.hidden = two;
-			if (stickyOffer) stickyOffer.hidden = two;
-			if (two) form.setAttribute('data-cart-attributes', JSON.stringify({ _aira_bundle: '2' }));
+			if (stickyName) stickyName.textContent = stickyNames[qty];
+			/* For a pack the bar reads "2 kits $69.99" or "4 kits $99.99"
+			   alone: no second strike-through (the card's own strike-through
+			   is the value message) and no singular "+ free refill pouch". */
+			if (stickyStruck) stickyStruck.hidden = pack;
+			if (stickyOffer) stickyOffer.hidden = pack;
+			if (pack) form.setAttribute('data-cart-attributes', JSON.stringify({ _aira_bundle: key }));
 			else form.removeAttribute('data-cart-attributes');
 		}
 

@@ -640,14 +640,15 @@
 	var upsellWanted = false;
 
 	/* ── Cart attributes ──
-	   Notes the drawer leaves on the cart: `_aira_bundle` when the kit
-	   page's 2-kit option was added, `_aira_second_kit_offer` when the
-	   drawer's second-kit row was used. They travel with a call the drawer
-	   makes anyway: the update that moves the quantities, or, after an add,
-	   the read that follows it, which becomes an update carrying only the
-	   notes and answers with the same cart JSON. `_aira_bundle` is cleared
-	   again (an empty value removes it) once the cart is planned to hold
-	   fewer than two kits. */
+	   Notes the drawer leaves on the cart: `_aira_bundle` when one of the
+	   kit page's pack cards was added (2 for the 2-kit card, 4 for the
+	   family pack), `_aira_second_kit_offer` when the drawer's second-kit
+	   row was used. They travel with a call the drawer makes anyway: the
+	   update that moves the quantities, or, after an add, the read that
+	   follows it, which becomes an update carrying only the notes and
+	   answers with the same cart JSON. `_aira_bundle` is cleared again (an
+	   empty value removes it) once the cart is planned to hold fewer kits
+	   than the pack it names: under two, or under four for the family pack. */
 	var pendingAttrs = {};
 
 	function hasAttrs(attrs) {
@@ -669,7 +670,8 @@
 	function attrsFor(cart, qty) {
 		var attrs = {};
 		for (var key in pendingAttrs) { if (Object.prototype.hasOwnProperty.call(pendingAttrs, key)) attrs[key] = pendingAttrs[key]; }
-		if (cart && cart.attributes && cart.attributes._aira_bundle && plannedKits(cart, qty) < 2) attrs._aira_bundle = '';
+		var pack = cart && cart.attributes ? cart.attributes._aira_bundle : '';
+		if (pack && plannedKits(cart, qty) < (parseInt(pack, 10) || 2)) attrs._aira_bundle = '';
 		return hasAttrs(attrs) ? attrs : null;
 	}
 
@@ -866,7 +868,7 @@
 	   state's "Get my kit". `item` is the Ajax line, `giftId` the free pouch
 	   to send along, `btn` the control that shows "Adding..." until the
 	   drawer shows Shopify's answer, `attrsJson` notes the form wants on the
-	   cart once the add has gone through (the kit page's 2-kit cards write
+	   cart once the add has gone through (the kit page's pack cards write
 	   `_aira_bundle`), and `onRefused` runs when Shopify refused the add or
 	   the request dropped. */
 	function addToCart(item, giftId, btn, attrsJson, onRefused) {

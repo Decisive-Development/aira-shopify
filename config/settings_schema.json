@@ -341,6 +341,20 @@
         "label": "2-kit saving ($, must match the admin discount)",
         "default": "29.99",
         "info": "Dollars, digits and a point only, for example 29.99. The picker and the drawer row show the kit price x 2 minus this. Change it only together with the discount in Discounts."
+      },
+      {
+        "type": "checkbox",
+        "id": "family_pack_enabled",
+        "label": "Show family pack (4 kits)",
+        "default": false,
+        "info": "A third card, 4 kits, under the 2-kit card on the kit page. Needs the 2-kit picker above, and the automatic discounts \"2 kits offer\" and \"Family pack (4 kits)\" to be active."
+      },
+      {
+        "type": "text",
+        "id": "family_saving",
+        "label": "Family pack saving ($, both discounts together)",
+        "default": "99.97",
+        "info": "Dollars, digits and a point only, for example 99.97: everything 4 kits save, the 2-kit discount and the family pack discount added up. The card shows the kit price x 4 minus this. Blank or 0 hides the card. Change it only together with the discounts in Discounts."
       }
     ]
   },
