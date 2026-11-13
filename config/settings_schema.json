@@ -373,6 +373,13 @@
         "id": "sale_bar_link",
         "label": "Sale bar link",
         "info": "Where a tap on the bar goes. Leave blank for the kit page."
+      },
+      {
+        "type": "checkbox",
+        "id": "sale_offer_line_enabled",
+        "label": "Show White Friday offer line on the kit page",
+        "default": false,
+        "info": "One line above the kit cards with the 4-kit price and the price per kit. It only shows while the family pack card shows."
       }
     ]
   },
