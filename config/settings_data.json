@@ -48,7 +48,7 @@
         "type": "offer-popup",
         "settings": {
           "popup_enabled": true,
-          "popup_enable_on_ar": false,
+          "popup_enable_on_ar": true,
           "popup_home_delay_seconds": 10,
           "popup_pdp_delay_seconds": 15,
           "popup_pdp_scroll_percent": 50,
