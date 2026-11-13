@@ -379,7 +379,7 @@
         "id": "sale_offer_line_enabled",
         "label": "Show White Friday offer line on the kit page",
         "default": false,
-        "info": "One line above the kit cards with the 4-kit price and the price per kit. It only shows while the family pack card shows."
+        "info": "An oxblood block above the first card on the kit page. Its wording is the theme string products.kit_page.sale_offer_block, in English and Arabic."
       }
     ]
   },

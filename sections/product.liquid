@@ -64,12 +64,8 @@
 		less the saving setting, which holds everything 4 kits save: the 2-kit
 		discount and the family pack discount together. A blank or 0 saving
 		hides the card, as does one that leaves nothing to pay.
-		The offer line above the cards (Theme settings > Sale bar) quotes that
-		price and a quarter of it, rounded to the cent, so it only shows while
-		the card does.
 	endcomment
 	assign family_pack = false
-	assign sale_offer_line = false
 	if bundle_picker and settings.family_pack_enabled
 		assign family_saving_cents = settings.family_saving | times: 100 | round
 		assign family_price = current_variant.price | times: 4 | minus: family_saving_cents
@@ -81,11 +77,17 @@
 				assign family_gift_value = gift_variant.price | times: 4
 				assign family_full_value = family_full_value | plus: family_gift_value
 			endif
-			if settings.sale_offer_line_enabled
-				assign sale_offer_line = true
-				assign family_per_kit = family_price | divided_by: 4.0 | round
-			endif
 		endif
+	endif
+
+	comment
+		White Friday block (Theme settings > Sale bar): one oxblood line above
+		the first card on the kit page. It has its own switch and needs neither
+		the picker nor the family pack.
+	endcomment
+	assign sale_offer_block = false
+	if settings.sale_offer_line_enabled and product.handle == 'aira-kit'
+		assign sale_offer_block = true
 	endif
 -%}
 
@@ -234,6 +236,19 @@
 
 						<div class="flex flex-col gap-3">
 
+						{%- if sale_offer_block -%}
+							{%- comment -%}
+								── White Friday block (Theme settings > Sale bar) ──
+								A solid oxblood line above the first card, the width of the
+								buy box and with the cards' corners; the wrapper's gap leaves
+								12px under it. Words and the tag icon only, not a link, and
+								one line down to a 360px phone in both languages.
+							{%- endcomment -%}
+							<p class="flex items-center justify-center gap-2 rounded-2xl bg-oxblood px-4 py-3 font-heading text-[15px] md:text-base leading-normal font-bold whitespace-nowrap text-white" data-sale-offer-block>
+								{%- render 'icon-tag', classes: 'size-4 shrink-0 text-secondary' -%}
+								<span>{{ 'products.kit_page.sale_offer_block' | t }}</span>
+							</p>
+						{%- endif -%}
 						{%- if has_selling_plans -%}
 						{%- comment -%} ── Subscription card ── {%- endcomment -%}
 						<button
@@ -389,22 +404,6 @@
 							{%- capture kit_price_html -%}<bdi>{{ current_variant.price | money }}</bdi>{%- endcapture -%}
 							{%- capture bundle_price_html -%}<bdi>{{ bundle_price | money }}</bdi>{%- endcapture -%}
 							{%- capture bundle_gift_html -%}<bdi>{{ bundle_gift_value | money }}</bdi>{%- endcapture -%}
-							{%- if sale_offer_line -%}
-								{%- comment -%}
-									── Offer line (Theme settings > Sale bar) ──
-									One sentence above the cards: the family pack's price, in bold,
-									and that price per kit, both from the card's own price and both
-									in <bdi> for Arabic (`t` escapes what it interpolates, so they
-									go in after it). It may wrap to two lines on a phone and is
-									never cut. The wrapper's gap leaves 12px above the first card.
-								{%- endcomment -%}
-								{%- capture offer_price_html -%}<strong class="font-bold"><bdi>{{ family_price | money }}</bdi></strong>{%- endcapture -%}
-								{%- capture offer_per_kit_html -%}<bdi>{{ family_per_kit | money }}</bdi>{%- endcapture -%}
-								<p class="flex items-start gap-2 text-base leading-snug text-main" data-sale-offer-line>
-									{%- render 'icon-tag', classes: 'size-4 shrink-0 mt-0.75 text-highlight' -%}
-									<span>{{ 'products.kit_page.sale_offer_line' | t: price: '__PRICE__', per_kit: '__PER_KIT__' | replace: '__PRICE__', offer_price_html | replace: '__PER_KIT__', offer_per_kit_html }}</span>
-								</p>
-							{%- endif -%}
 							<div
 								role="radiogroup"
 								aria-label="{{ 'products.kit_page.picker_group_label' | t | escape }}"

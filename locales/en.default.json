@@ -100,7 +100,7 @@
       "family_title": "Family pack · 4 aira kits",
       "picker_group_label": "Choose your kit",
       "pill_best_value": "Best value",
-      "sale_offer_line": "Early White Friday: 4 kits for {{ price }}, that's {{ per_kit }} a kit",
+      "sale_offer_block": "White Friday limited-time offers",
       "sticky_four_kits": "4 kits",
       "sticky_two_kits": "2 kits",
       "two_kits_line": "+ 2 free refill pouches, worth {{ amount }}",
