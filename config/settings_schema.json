@@ -345,6 +345,24 @@
     ]
   },
   {
+    "name": "Sale bar",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "sale_bar_enabled",
+        "label": "Show sale bar",
+        "default": false,
+        "info": "An orange bar above the header on every page. It scrolls away with the page. Its wording is the theme string sections.header.sale_bar_text, in English and Arabic."
+      },
+      {
+        "type": "url",
+        "id": "sale_bar_link",
+        "label": "Sale bar link",
+        "info": "Where a tap on the bar goes. Leave blank for the kit page."
+      }
+    ]
+  },
+  {
     "name": "Delivery countdown",
     "settings": [
       {

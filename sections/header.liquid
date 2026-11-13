@@ -116,7 +116,52 @@
 {%- assign navy_top = false -%}
 {%- if request.page_type == 'product' -%}{%- assign navy_top = true -%}{%- endif -%}
 
-<header data-header class="fixed top-0 inset-x-0 z-50">
+{%- comment -%}
+	Sale bar (Theme settings > Sale bar): one orange line above the nav on
+	every page, the whole bar a link (to the kit page unless the setting
+	names another). It sits in the page flow, so it scrolls away with the
+	page: no script, no motion, and it is there at first paint, so nothing
+	shifts.
+	The header is fixed to the top of the screen and its section wrapper has
+	no height (.shopify-section-group-header-group in critical.source.css).
+	With the bar on, the wrapper takes the bar's height and sticks exactly
+	that far above the top instead, and the header hangs under it: at the top
+	of the page the nav sits below the bar, and once the bar has scrolled
+	out the nav holds the place the fixed header has. The bar is drawn over
+	the header, so on phones the nav slides down from under it on load.
+{%- endcomment -%}
+{%- liquid
+	assign sale_bar = false
+	if settings.sale_bar_enabled
+		assign sale_bar = true
+		assign sale_bar_kit = all_products['aira-kit']
+		assign sale_bar_url = settings.sale_bar_link | default: sale_bar_kit.url | default: routes.root_url
+	endif
+-%}
+{%- if sale_bar -%}
+	<style>
+		#shopify-section-{{ section.id }} {
+			position: sticky;
+			top: calc(var(--spacing) * -9);
+			z-index: 50;
+			height: auto;
+		}
+		@media (min-width: 768px) {
+			#shopify-section-{{ section.id }} {
+				top: calc(var(--spacing) * -10);
+			}
+		}
+	</style>
+	<a
+		href="{{ sale_bar_url }}"
+		class="relative z-10 flex h-9 md:h-10 items-center justify-center overflow-hidden bg-highlight px-4 font-heading text-[13px] md:text-sm font-semibold whitespace-nowrap text-white hover:underline underline-offset-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
+		data-sale-bar
+	>
+		{{- 'sections.header.sale_bar_text' | t -}}
+	</a>
+{%- endif -%}
+
+<header data-header class="{% if sale_bar %}absolute top-full inset-x-0{% else %}fixed top-0 inset-x-0 z-50{% endif %}">
 
 	{%- comment -%} ── Transparent nav — visible at page top ── {%- endcomment -%}
 	<div class="nav-transparent {% if navy_top %}bg-main header-shadow{% else %}pt-2{% endif %}">
