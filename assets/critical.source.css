@@ -31,6 +31,9 @@
   --color-highlight: #FF4000;
   --color-highlight-green: #28965A;
   --color-highlight-blue: #087CA7;
+  /* Sale accent (Tom, 2026-11-13): sale and highlight moments only, such as
+     the sale bar. Orange stays the button colour. */
+  --color-oxblood: #7A1E2C;
   --color-title: #2A3142;
   --color-copy: #5C6470;
   --color-bg: #FFFFFF;

@@ -366,7 +366,7 @@
         "id": "sale_bar_enabled",
         "label": "Show sale bar",
         "default": false,
-        "info": "An orange bar above the header on every page. It scrolls away with the page. Its wording is the theme string sections.header.sale_bar_text, in English and Arabic."
+        "info": "An oxblood bar above the header on every page: a headline over a cream pill. It scrolls away with the page. Its wording is the theme strings sections.header.sale_bar_title and sections.header.sale_bar_pill, in English and Arabic."
       },
       {
         "type": "url",

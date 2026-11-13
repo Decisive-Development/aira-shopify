@@ -47,6 +47,7 @@ Every colour, space, and type size comes from a token. No raw hex or magic px in
 - CTA / accent `--color-highlight` #FF4000 · navy `--color-main` #0A1A34 · cream `--color-secondary` #F1EBE1
 - support: `--color-tertiary-light` #9BB7D4 · `--color-cream-light` rgb(248,245,240) · `--color-highlight-green` #28965A · `--color-highlight-blue` #087CA7 · `--color-title` #2A3142 · `--color-copy` #5C6470
 - backgrounds: `--color-bg` #FFFFFF · `--color-bg-soft` #FAFAFA · `--color-bg-muted` #F2F2F2
+- sale accent (Tom, 2026-11-13): `--color-oxblood` #7A1E2C, for sale and highlight moments only (sale bar, White Friday block). Orange stays the button colour. Defined once, in `@theme` in `critical.source.css`.
 
 **Type:** Satoshi for headings (class `font-heading`, `--font-heading`), Nunito Sans for body (class `font-body`, `--font-body`), both self-hosted. Tailwind default size scale (`text-xs`–`text-7xl`).
 **Radius:** Tailwind scale; button baseline `rounded-xl` = 0.75rem. Inputs use `settings.input_corner_radius`.
