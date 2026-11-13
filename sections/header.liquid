@@ -124,6 +124,11 @@
 	first paint, so nothing shifts. Neither line ever wraps. The pill's
 	capitals and both lines' letter-spacing are for Latin text only (hard
 	rule 10: none on Arabic), so they hang on the ltr variant.
+	The pill centres its letters, not their line box (a line box sat the
+	capitals 1.5px high on phones): text-box trims the inner span to the
+	capitals in English and to the x-height band in Arabic, which is where
+	the ink of an Arabic line centres. A browser without text-box centres
+	the line box, as before.
 	The header is fixed to the top of the screen and its section wrapper has
 	no height (.shopify-section-group-header-group in critical.source.css).
 	With the bar on, the wrapper takes the bar's height and sticks exactly
@@ -162,8 +167,10 @@
 		<span class="font-heading text-[23px] md:text-[28px] font-black leading-none whitespace-nowrap ltr:tracking-[-0.01em]" data-sale-bar-title>
 			{{- 'sections.header.sale_bar_title' | t -}}
 		</span>
-		<span class="inline-flex h-6 md:h-6.5 items-center rounded-full bg-secondary px-3.25 md:px-4 font-body text-[11px] md:text-xs font-bold whitespace-nowrap text-oxblood ltr:uppercase ltr:tracking-[0.12em] md:ltr:tracking-[0.14em]" data-sale-bar-pill>
-			{{- 'sections.header.sale_bar_pill' | t -}}
+		<span class="inline-flex h-6 md:h-6.5 items-center rounded-full bg-secondary px-3.25 md:px-4 font-body text-xs md:text-[13px] leading-none font-extrabold whitespace-nowrap text-oxblood ltr:uppercase ltr:tracking-[0.12em] md:ltr:tracking-[0.14em]" data-sale-bar-pill>
+			<span class="ltr:[text-box:trim-both_cap_alphabetic] rtl:[text-box:trim-both_ex_alphabetic]">
+				{{- 'sections.header.sale_bar_pill' | t -}}
+			</span>
 		</span>
 	</a>
 {%- endif -%}
