@@ -185,7 +185,9 @@
       "youtube": "YouTube"
     },
     "header": {
-      "sale_bar_pill": "Up to 70% off + free gift",
+      "sale_bar_offer_lead": "Up to",
+      "sale_bar_offer_main": "70% off",
+      "sale_bar_offer_tail": "+ free gift",
       "sale_bar_title": "Early White Friday"
     },
     "hero": {

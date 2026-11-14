@@ -366,13 +366,85 @@
         "id": "sale_bar_enabled",
         "label": "Show sale bar",
         "default": false,
-        "info": "An oxblood bar above the header on every page: a headline over a cream pill. It scrolls away with the page. Its wording is the theme strings sections.header.sale_bar_title and sections.header.sale_bar_pill, in English and Arabic."
+        "info": "An oxblood band above the header on every page: the banner's words drift behind a cream pill with the offer. It scrolls away with the page."
       },
       {
         "type": "url",
         "id": "sale_bar_link",
         "label": "Sale bar link",
         "info": "Where a tap on the bar goes. Leave blank for the kit page."
+      },
+      {
+        "type": "header",
+        "content": "Sale bar words"
+      },
+      {
+        "type": "paragraph",
+        "content": "Leave these blank for the theme wording, which comes in English and Arabic: \"Early White Friday\" behind, \"Up to\", \"70% off\", \"+ free gift\" in the pill. Words typed here show in every language until they are translated in Translate & Adapt."
+      },
+      {
+        "type": "text",
+        "id": "sale_bar_words",
+        "label": "Background text",
+        "info": "Sentence case. The banner sets it in capitals."
+      },
+      {
+        "type": "text",
+        "id": "sale_bar_offer_lead",
+        "label": "Offer, first part"
+      },
+      {
+        "type": "text",
+        "id": "sale_bar_offer_main",
+        "label": "Offer, bold part"
+      },
+      {
+        "type": "text",
+        "id": "sale_bar_offer_tail",
+        "label": "Offer, last part"
+      },
+      {
+        "type": "header",
+        "content": "Sale bar colours"
+      },
+      {
+        "type": "paragraph",
+        "content": "Leave these empty for the brand colours: oxblood, the same red 30% darker for the words, cream for the pill, oxblood for its text."
+      },
+      {
+        "type": "color",
+        "id": "sale_bar_color",
+        "label": "Banner red"
+      },
+      {
+        "type": "color",
+        "id": "sale_bar_color_deep",
+        "label": "Deep red (background words)"
+      },
+      {
+        "type": "color",
+        "id": "sale_bar_color_pill",
+        "label": "Cream (pill)"
+      },
+      {
+        "type": "color",
+        "id": "sale_bar_color_pill_text",
+        "label": "Pill text"
+      },
+      {
+        "type": "range",
+        "id": "sale_bar_duration",
+        "min": 20,
+        "max": 120,
+        "step": 5,
+        "unit": "s",
+        "label": "Scroll duration",
+        "default": 50,
+        "info": "The pace of the background words: the seconds three repeats of the default line take to pass. 50 is the design's pace. Higher is slower."
+      },
+      {
+        "type": "header",
+        "content": "Kit page"
       },
       {
         "type": "checkbox",

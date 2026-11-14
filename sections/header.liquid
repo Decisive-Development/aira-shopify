@@ -117,18 +117,37 @@
 {%- if request.page_type == 'product' -%}{%- assign navy_top = true -%}{%- endif -%}
 
 {%- comment -%}
-	Sale bar (Theme settings > Sale bar): an oxblood bar above the nav on
-	every page, a headline over a cream pill, the whole bar one link (to the
-	kit page unless the setting names another). It sits in the page flow, so
-	it scrolls away with the page: no script, no motion, and it is there at
-	first paint, so nothing shifts. Neither line ever wraps. The pill's
-	capitals and both lines' letter-spacing are for Latin text only (hard
-	rule 10: none on Arabic), so they hang on the ltr variant.
-	The pill centres its letters, not their line box (a line box sat the
-	capitals 1.5px high on phones): text-box trims the inner span to the
-	capitals in English and to the x-height band in Arabic, which is where
-	the ink of an Arabic line centres. A browser without text-box centres
-	the line box, as before.
+	Sale banner (Theme settings > Sale bar; design 2J, 14 Nov): an oxblood
+	band above the nav on every page, the whole band one link (to the kit
+	page unless the setting names another). It sits in the page flow, so it
+	scrolls away with the page, and it is there at first paint, so nothing
+	shifts.
+	Behind: the banner's words, large and a shade darker than the band, with
+	the aira mark between repeats, drifting right to left (left to right in
+	Arabic). CSS only, decorative and hidden from screen readers, which get
+	the words once from the visually hidden line; still under reduced motion.
+	The repeats are drawn by CSS from an attribute, so the page's text holds
+	the words once, not once per repeat, and find-in-page does not land on
+	the moving copies.
+	The track is two identical halves, each wider than any screen, moved by
+	half its own width, so the loop has no seam. The repeats per half follow
+	the words' length, so a short custom line still fills a wide screen, and
+	the loop's seconds follow what it carries, so the pace stays the design's
+	(three repeats of the default line in the setting's seconds). The
+	track is anchored to the physical left because the transform that moves
+	it is physical; Arabic reverses the animation instead.
+	In front: a cream pill with the offer in three parts, sentence case.
+	Capitals and letter-spacing are for Latin text only (hard rule 10: none
+	on Arabic), so they hang on the ltr variant.
+	The words' small upward nudge centres their ink on the mark and the
+	band, measured from the painted pixels with the theme's own font files:
+	the capitals in English, the letters' full height in Arabic (Almarai sits
+	lower on the line and would touch the band's bottom edge). The pill's
+	desktop padding is 7px over 6px for the same reason.
+	Words and colours come from the theme strings and the colour tokens; a
+	setting left blank changes nothing. The deep red is the band's own
+	colour mixed 30% towards black, so it follows the band. The mark is the
+	header's logo file used as a mask, so it takes that colour.
 	The header is fixed to the top of the screen and its section wrapper has
 	no height (.shopify-section-group-header-group in critical.source.css).
 	With the bar on, the wrapper takes the bar's height and sticks exactly
@@ -143,35 +162,136 @@
 		assign sale_bar = true
 		assign sale_bar_kit = all_products['aira-kit']
 		assign sale_bar_url = settings.sale_bar_link | default: sale_bar_kit.url | default: routes.root_url
+
+		# Words: the theme strings, in the visitor's language, unless a setting holds its own.
+		assign sale_bar_words = 'sections.header.sale_bar_title' | t
+		if settings.sale_bar_words != blank
+			assign sale_bar_words = settings.sale_bar_words | escape
+		endif
+		assign sale_bar_lead = 'sections.header.sale_bar_offer_lead' | t
+		if settings.sale_bar_offer_lead != blank
+			assign sale_bar_lead = settings.sale_bar_offer_lead | escape
+		endif
+		assign sale_bar_main = 'sections.header.sale_bar_offer_main' | t
+		if settings.sale_bar_offer_main != blank
+			assign sale_bar_main = settings.sale_bar_offer_main | escape
+		endif
+		assign sale_bar_tail = 'sections.header.sale_bar_offer_tail' | t
+		if settings.sale_bar_offer_tail != blank
+			assign sale_bar_tail = settings.sale_bar_offer_tail | escape
+		endif
+
+		# Colours: the tokens, unless a swatch is set (a cleared swatch is see-through, so it counts as unset).
+		assign sale_bar_color = 'var(--color-oxblood)'
+		if settings.sale_bar_color != blank and settings.sale_bar_color.alpha > 0
+			assign sale_bar_color = settings.sale_bar_color
+		endif
+		assign sale_bar_deep = 'color-mix(in srgb, var(--sale-bar-color) 70%, black)'
+		if settings.sale_bar_color_deep != blank and settings.sale_bar_color_deep.alpha > 0
+			assign sale_bar_deep = settings.sale_bar_color_deep
+		endif
+		assign sale_bar_pill = 'var(--color-secondary)'
+		if settings.sale_bar_color_pill != blank and settings.sale_bar_color_pill.alpha > 0
+			assign sale_bar_pill = settings.sale_bar_color_pill
+		endif
+		assign sale_bar_pill_text = 'var(--sale-bar-color)'
+		if settings.sale_bar_color_pill_text != blank and settings.sale_bar_color_pill_text.alpha > 0
+			assign sale_bar_pill_text = settings.sale_bar_color_pill_text
+		endif
+
+		# Repeats per half. A repeat (the words and a mark) runs about 47px a character at the desktop
+		# size and 31px on phones, less in Arabic. A half has to outrun the widest screen: 5120px from
+		# 768px up, 767px below that, where the design's three repeats do it.
+		assign sale_bar_unit = sale_bar_words.size | plus: 2
+		assign sale_bar_repeats = 139 | plus: sale_bar_unit | divided_by: sale_bar_unit | at_least: 4 | at_most: 24
+		assign sale_bar_repeats_phone = 31 | plus: sale_bar_unit | divided_by: sale_bar_unit | at_least: 3 | at_most: sale_bar_repeats
+		# The setting is the designed pace: its seconds carry three repeats of the default line (60
+		# characters with their marks) across, so a loop that carries more takes longer in proportion.
+		assign sale_bar_seconds = settings.sale_bar_duration | default: 50
+		assign sale_bar_loop = sale_bar_seconds | times: sale_bar_repeats | times: sale_bar_unit | divided_by: 60.0 | round
+		assign sale_bar_loop_phone = sale_bar_seconds | times: sale_bar_repeats_phone | times: sale_bar_unit | divided_by: 60.0 | round
 	endif
 -%}
 {%- if sale_bar -%}
 	<style>
 		#shopify-section-{{ section.id }} {
 			position: sticky;
-			top: calc(var(--spacing) * -20);
+			top: calc(var(--spacing) * -21);
 			z-index: 50;
 			height: auto;
+			--sale-bar-color: {{ sale_bar_color }};
+			--sale-bar-deep: {{ sale_bar_deep }};
+			--sale-bar-pill: {{ sale_bar_pill }};
+			--sale-bar-pill-text: {{ sale_bar_pill_text }};
 		}
 		@media (min-width: 768px) {
 			#shopify-section-{{ section.id }} {
 				top: calc(var(--spacing) * -22);
 			}
 		}
+		#shopify-section-{{ section.id }} .sale-bar {
+			background-color: var(--sale-bar-color);
+		}
+		#shopify-section-{{ section.id }} .sale-bar-track {
+			left: 0;
+			color: var(--sale-bar-deep);
+			animation: sale-bar-scroll {{ sale_bar_loop_phone }}s linear infinite;
+		}
+		@media (min-width: 768px) {
+			#shopify-section-{{ section.id }} .sale-bar-track {
+				animation-duration: {{ sale_bar_loop }}s;
+			}
+		}
+		[dir="rtl"] #shopify-section-{{ section.id }} .sale-bar-track {
+			animation-direction: reverse;
+		}
+		#shopify-section-{{ section.id }} .sale-bar-word::before {
+			content: attr(data-words);
+		}
+		#shopify-section-{{ section.id }} .sale-bar-mark {
+			background-color: currentColor;
+			-webkit-mask: url("{{ 'aira-logo-only-white.svg' | asset_url }}") center / contain no-repeat;
+			mask: url("{{ 'aira-logo-only-white.svg' | asset_url }}") center / contain no-repeat;
+		}
+		#shopify-section-{{ section.id }} .sale-bar-pill {
+			background-color: var(--sale-bar-pill);
+			color: var(--sale-bar-pill-text);
+			box-shadow: 0 6px 18px color-mix(in srgb, color-mix(in srgb, var(--sale-bar-color) 33%, black) 32%, transparent);
+		}
+		@keyframes sale-bar-scroll {
+			to { transform: translateX(-50%); }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			#shopify-section-{{ section.id }} .sale-bar-track {
+				animation: none;
+			}
+		}
 	</style>
+	{%- capture sale_bar_half -%}
+		<span class="flex items-center gap-4.5 pe-4.5 md:gap-6.5 md:pe-6.5">
+			{%- for i in (1..sale_bar_repeats) -%}
+				{%- comment -%} Phones carry only the repeats they need; the rest take no room there. {%- endcomment -%}
+				{%- if i > sale_bar_repeats_phone -%}{%- assign sale_bar_extra = ' max-md:hidden' -%}{%- else -%}{%- assign sale_bar_extra = '' -%}{%- endif -%}
+				<span class="sale-bar-word relative -top-[0.01em] rtl:-top-[0.12em] text-[50px] md:text-[76px] leading-none font-black whitespace-nowrap ltr:uppercase ltr:tracking-[0.02em]{{ sale_bar_extra }}" data-words="{{ sale_bar_words }}"></span>
+				<span class="sale-bar-mark h-5.75 w-7.5 shrink-0 md:h-9 md:w-11.5{{ sale_bar_extra }}"></span>
+			{%- endfor -%}
+		</span>
+	{%- endcapture -%}
 	<a
 		href="{{ sale_bar_url }}"
-		class="relative z-10 flex h-20 md:h-22 flex-col items-center justify-center gap-1.5 md:gap-1.75 overflow-hidden bg-oxblood px-4 text-white focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
+		class="sale-bar relative z-10 flex h-21 md:h-22 items-center justify-center overflow-hidden font-heading focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
 		data-sale-bar
 	>
-		<span class="font-heading text-[23px] md:text-[28px] font-black leading-none whitespace-nowrap ltr:tracking-[-0.01em]" data-sale-bar-title>
-			{{- 'sections.header.sale_bar_title' | t -}}
+		<span class="sr-only">{{ sale_bar_words }}</span>
+		<span class="sale-bar-track pointer-events-none absolute inset-y-0 flex w-max will-change-transform" aria-hidden="true" data-sale-bar-track>
+			{{- sale_bar_half -}}
+			{{- sale_bar_half -}}
 		</span>
-		<span class="inline-flex h-6 md:h-6.5 items-center rounded-full bg-secondary px-3.25 md:px-4 font-body text-xs md:text-[13px] leading-none font-extrabold whitespace-nowrap text-oxblood ltr:uppercase ltr:tracking-[0.12em] md:ltr:tracking-[0.14em]" data-sale-bar-pill>
-			<span class="ltr:[text-box:trim-both_cap_alphabetic] rtl:[text-box:trim-both_ex_alphabetic]">
-				{{- 'sections.header.sale_bar_pill' | t -}}
-			</span>
-		</span>
+		<p class="sale-bar-pill relative z-10 flex items-baseline gap-1.25 rounded-full px-3.5 pt-1.25 pb-1.5 whitespace-nowrap md:gap-1.5 md:px-5 md:pt-1.75 md:pb-1.5" data-sale-bar-pill>
+			<span class="text-[13px] leading-[normal] font-semibold md:text-base">{{ sale_bar_lead }}</span>
+			<span class="text-lg leading-none font-black md:text-[23px] ltr:tracking-[-0.01em]">{{ sale_bar_main }}</span>
+			<span class="text-[13px] leading-[normal] font-semibold md:text-base">{{ sale_bar_tail }}</span>
+		</p>
 	</a>
 {%- endif -%}
 

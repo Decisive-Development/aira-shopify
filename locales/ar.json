@@ -185,7 +185,9 @@
       "youtube": "يوتيوب"
     },
     "header": {
-      "sale_bar_pill": "خصم يصل إلى 70% + هدية مجانية",
+      "sale_bar_offer_lead": "خصم يصل إلى",
+      "sale_bar_offer_main": "70%",
+      "sale_bar_offer_tail": "+ هدية مجانية",
       "sale_bar_title": "عروض الجمعة البيضاء المبكرة"
     },
     "hero": {
