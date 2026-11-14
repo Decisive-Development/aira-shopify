@@ -424,7 +424,8 @@
       {
         "type": "color",
         "id": "sale_bar_color_pill",
-        "label": "Cream (pill)"
+        "label": "Cream (pill)",
+        "info": "Also the offer words beside the pill on phones."
       },
       {
         "type": "color",
