@@ -1192,12 +1192,47 @@
 		};
 	}
 
+	/* The pouch the launch offer gives away, while it runs: the variant the
+	   drawer's own "Get my kit" sends along with a kit. 0 once that button's
+	   data-gift-variant-id is taken off, which is how the offer is ended. */
+	function offerGiftId() {
+		var el = document.querySelector('[data-cart-empty-add]');
+		return el ? parseInt(el.getAttribute('data-gift-variant-id'), 10) || 0 : 0;
+	}
+
+	/* Kits coming down while Shopify is zeroing no pouch. Under the launch
+	   offer that happens when charging the pouches lets a bigger order
+	   discount in: 3 kits with their 3 pouches reach the family pack's
+	   threshold (14 Nov), so no line is a free gift, planQuantities had
+	   nothing to follow, and a pouch stayed behind, charged, for every kit
+	   taken off (2 kits after 3 came to $89.98, not $69.99). The pouches that
+	   came with the kits, one a kit, go down with them here too, to the same
+	   floor of one. Pouches beyond one a kit are the visitor's own and stay,
+	   as do all of them for a visitor who binned the gift this session or
+	   bins the pouches in this same batch. `qty` already holds the batch's
+	   own taps. */
+	function followKitsDown(cart, ops, qty) {
+		var giftId = offerGiftId();
+		if (!giftId || giftRemoved()) return;
+		var anchor = anchorLine(cart, giftId);
+		if (!anchor) return;
+		if (ops.some(function (op) { return op.remove && op.variantId === giftId; })) return;
+		var came = Math.min(variantQty(cart, giftId), kitQty(cart));
+		var leaving = came - Math.min(came, plannedKits(cart, qty));
+		if (leaving <= 0) return;
+		var planned = cart.items.reduce(function (n, item, i) {
+			return item.variant_id === giftId ? n + qty[i] : n;
+		}, 0);
+		applyVariantWant(cart, qty, anchor, Math.max(1, planned - leaving));
+	}
+
 	/* Applies ops to a cart snapshot and returns the quantity every line
 	   should have, in cart order. Each op sets its variant's total and
 	   spreads it over that variant's lines. The free pouch follows the kit
 	   one for one, with a floor of one so removing the kit leaves a single
 	   pouch behind to reprice rather than emptying the cart, unless the
-	   same batch binned the pouches too. */
+	   same batch binned the pouches too. With no free pouch to follow,
+	   followKitsDown takes the kits' own pouches down with them. */
 	function planQuantities(cart, ops) {
 		var qty = cart.items.map(function (item) { return item.quantity; });
 		var kitDelta = 0;
@@ -1221,6 +1256,8 @@
 				return item.variant_id === gift.variant_id ? n + qty[i] : n;
 			}, 0);
 			applyVariantWant(cart, qty, gift, Math.max(1, pouches + kitDelta));
+		} else if (kitDelta < 0 && !gift) {
+			followKitsDown(cart, ops, qty);
 		}
 		return { qty: qty, changed: changed };
 	}
