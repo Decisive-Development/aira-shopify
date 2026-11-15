@@ -16,19 +16,27 @@
 	# The plan's price per delivery, on its card and in the sticky bar.
 	capture plan_price_money
 		if sp_allocation
-			echo sp_allocation.per_delivery_price | money
+			render 'price', cents: sp_allocation.per_delivery_price
 		else
-			echo section.settings.plan_price | default: pouch_variant.price | money
+			assign plan_price_cents = section.settings.plan_price | default: pouch_variant.price
+			render 'price', cents: plan_price_cents
 		endif
 	endcapture
 
 	# Pack size chips (one-time): every chip is a QUANTITY of the one 30-pair
-	# pouch variant, never a variant switch. Tier prices are hardcoded from the
-	# launch tier table (Brief 2026-09-02): the matching cart totals come from
-	# the "Refill pack saving" automatic discount, so the two must change
-	# together. Fields per tier: qty | pairs | price¢ | strike¢. The chips and
-	# the sticky bar's prices both come from it.
-	assign pack_tiers = '1|30|1999|0,2|60|3599|3998,3|90|5099|5997' | split: ','
+	# pouch variant, never a variant switch. Tier prices are the pouch's price
+	# times the quantity less the section's saving percentages, the ones the
+	# "60-pack saving" and "90-pack saving" automatic discounts take off, so
+	# they read right in every currency and match the cart; the discounts and
+	# the settings must change together. Fields per tier: qty | pairs | price¢
+	# | strike¢. The chips and the sticky bar's prices both come from it.
+	assign pack_two_full = pouch_variant.price | times: 2
+	assign pack_two_saving = pack_two_full | times: section.settings.pack_two_saving_percent | divided_by: 100.0 | round
+	assign pack_two_price = pack_two_full | minus: pack_two_saving
+	assign pack_three_full = pouch_variant.price | times: 3
+	assign pack_three_saving = pack_three_full | times: section.settings.pack_three_saving_percent | divided_by: 100.0 | round
+	assign pack_three_price = pack_three_full | minus: pack_three_saving
+	assign pack_tiers = '1|30|' | append: pouch_variant.price | append: '|0,2|60|' | append: pack_two_price | append: '|' | append: pack_two_full | append: ',3|90|' | append: pack_three_price | append: '|' | append: pack_three_full | split: ','
 -%}
 
 <style>
@@ -172,9 +180,9 @@
 								</div>
 								<div class="text-right shrink-0">
 									{%- if t[3] != '0' -%}
-										<span class="block text-copy text-sm line-through">{{ t[3] | plus: 0 | money }}</span>
+										<span class="block text-copy text-sm line-through">{%- assign tier_cents = t[3] | plus: 0 -%}{%- render 'price', cents: tier_cents -%}</span>
 									{%- endif -%}
-									<span class="font-heading font-bold text-title text-lg">{{ t[2] | plus: 0 | money }}</span>
+									<span class="font-heading font-bold text-title text-lg">{%- assign tier_cents = t[2] | plus: 0 -%}{%- render 'price', cents: tier_cents -%}</span>
 								</div>
 							</button>
 						{%- endfor -%}
@@ -281,7 +289,7 @@
 		{%- endif -%}
 		{%- for tier in pack_tiers -%}
 			{%- assign t = tier | split: '|' -%}
-			<span class="font-heading font-bold text-main text-lg" data-sticky-price="{{ t[0] }}"{% unless forloop.first %} hidden{% endunless %}>{{ t[2] | plus: 0 | money }}</span>
+			<span class="font-heading font-bold text-main text-lg" data-sticky-price="{{ t[0] }}"{% unless forloop.first %} hidden{% endunless %}>{%- assign tier_cents = t[2] | plus: 0 -%}{%- render 'price', cents: tier_cents -%}</span>
 		{%- endfor -%}
 	</div>
 	{%- liquid
@@ -414,6 +422,24 @@
 {
 	"name": "Product – Refill",
 	"settings": [
+		{
+			"type": "header",
+			"content": "Pack sizes"
+		},
+		{
+			"type": "text",
+			"id": "pack_two_saving_percent",
+			"label": "60 pairs saving (%)",
+			"default": "10",
+			"info": "The percentage the automatic discount '60-pack saving' takes off 2 pouches, digits and a point only. The 60-pair chip shows 2 pouches less this, in the shopper's currency. Change it only together with the discount in Discounts."
+		},
+		{
+			"type": "text",
+			"id": "pack_three_saving_percent",
+			"label": "90 pairs saving (%)",
+			"default": "15",
+			"info": "The percentage the automatic discount '90-pack saving' takes off 3 pouches, digits and a point only. The 90-pair chip shows 3 pouches less this, in the shopper's currency. Change it only together with the discount in Discounts."
+		},
 		{
 			"type": "header",
 			"content": "Badge above title"

@@ -326,7 +326,7 @@
         "id": "bundle_picker_enabled",
         "label": "Show 2-kit picker on the kit page",
         "default": false,
-        "info": "A 1 kit / 2 kits choice above the Add to cart button. Needs the automatic discount \"2 kits for $69.99\" to be active."
+        "info": "A 1 kit / 2 kits choice above the Add to cart button. Needs the automatic discount \"2 kits offer\" to be active."
       },
       {
         "type": "checkbox",
@@ -337,10 +337,10 @@
       },
       {
         "type": "text",
-        "id": "bundle_saving",
-        "label": "2-kit saving ($, must match the admin discount)",
-        "default": "29.99",
-        "info": "Dollars, digits and a point only, for example 29.99. The picker and the drawer row show the kit price x 2 minus this. Change it only together with the discount in Discounts."
+        "id": "bundle_saving_percent",
+        "label": "2-kit saving (%, must match the admin discount)",
+        "default": "31.25",
+        "info": "The percentage the automatic discount \"2 kits offer\" takes off, digits and a point only, for example 31.25. The picker and the drawer row show 2 kits less this percentage, in the shopper's currency. Change it only together with the discount in Discounts."
       },
       {
         "type": "checkbox",
@@ -351,10 +351,10 @@
       },
       {
         "type": "text",
-        "id": "family_saving",
-        "label": "Family pack saving ($, both discounts together)",
-        "default": "99.97",
-        "info": "Dollars, digits and a point only, for example 99.97: everything 4 kits save, the 2-kit discount and the family pack discount added up. The card shows the kit price x 4 minus this. Blank or 0 hides the card. Change it only together with the discounts in Discounts."
+        "id": "family_saving_percent",
+        "label": "Family pack saving (%, both discounts together)",
+        "default": "50",
+        "info": "Digits and a point only, for example 50: everything 4 kits save as a percentage, the 2-kit discount and the family pack discount added up. The card shows 4 kits less this percentage, in the shopper's currency. Blank or 0 hides the card. Change it only together with the discounts in Discounts."
       }
     ]
   },

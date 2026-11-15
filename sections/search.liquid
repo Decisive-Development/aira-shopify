@@ -38,7 +38,7 @@
                 {%- capture result_title -%}{%- render 'product-title', title: result.title -%}{%- endcapture -%}
                 {{ result_title | link_to: result.url }}
                 {% if result.price %}
-                  {{ result.price | money_with_currency }}
+                  {%- render 'price', cents: result.price -%}
                 {% endif %}
               </p>
             </div>
