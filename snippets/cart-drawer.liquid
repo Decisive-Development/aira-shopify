@@ -1863,7 +1863,7 @@
 		var after = 0;
 		var kits = 0;
 		form.querySelectorAll('[data-cart-page-line]').forEach(function (line) {
-			var input = line.querySelector('input[name="updates[]"]');
+			var input = line.querySelector('input[name^="updates["]');
 			if (!input) return;
 			var was = parseInt(input.defaultValue, 10) || 0;
 			var now = removed ? (line === removed ? 0 : was) : Math.max(0, parseInt(input.value, 10) || 0);
