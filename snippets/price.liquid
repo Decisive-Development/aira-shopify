@@ -1,0 +1,18 @@
+{%- comment -%}
+	price: one amount, the way every price on the site reads: the currency's
+	code, then the amount, and no ".00" on a whole amount ("AED 184",
+	"SAR 192", "AED 133.20"). Western digits in every language (CLAUDE.md
+	rule 10), and a no-break space keeps the code and the amount together.
+	Shopify's own checkout keeps its own format.
+	Params:
+	  cents: the amount in the shopper's currency, in cents (what Liquid
+	         gives prices and money sums in)
+{%- endcomment -%}
+{%- liquid
+	assign price_amount = cents | money_without_currency
+	assign price_tail = price_amount | slice: -3, 3
+	if price_tail == '.00'
+		assign price_amount = price_amount | remove_last: '.00'
+	endif
+	echo cart.currency.iso_code | append: ' ' | append: price_amount
+-%}

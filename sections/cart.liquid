@@ -19,7 +19,7 @@
           {{ 'cart.remove' | t | link_to: item.url_to_remove }}
         </td>
         <td>
-          <p>{{ item.final_line_price | money }}</p>
+          <p>{%- render 'price', cents: item.final_line_price -%}</p>
           {%- comment -%}
             Discount labels come off the line's allocations, mirroring the cart
             drawer: a zeroed gift line shows only the title of the offer that
@@ -33,7 +33,7 @@
           {%- else -%}
             {%- for alloc in item.line_level_discount_allocations -%}
               {%- if alloc.amount > 0 -%}
-                <p>{{ alloc.discount_application.title }} −{{ alloc.amount | money }}</p>
+                <p>{{ alloc.discount_application.title }} −{%- render 'price', cents: alloc.amount -%}</p>
               {%- endif -%}
             {%- endfor -%}
           {%- endif -%}
