@@ -1,0 +1,28 @@
+{%- comment -%}
+  cart-empty-state — the empty cart: a basket icon, "Your cart is empty" and
+  "Get my kit", a link to the kit page. One markup for the cart drawer and
+  the cart page.
+  Params:
+    url     — where "Get my kit" links (the kit page). Required.
+    classes — the wrapper's display classes. Default 'flex' (the drawer
+              passes 'hidden' and its script shows it).
+    attrs   — raw attributes on the wrapper (the drawer's data-cart-empty).
+    cta_attrs — raw attributes on the button (the drawer's add hooks). Never
+              pass data-cart-empty-add outside the drawer: its script reads
+              the first one on the page.
+{%- endcomment -%}
+{%- assign empty_classes = classes | default: 'flex' -%}
+<div {{ attrs }} class="{{ empty_classes }} flex-col items-center justify-center text-center py-16 gap-4">
+	<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1" class="text-copy opacity-25" aria-hidden="true" focusable="false">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
+	</svg>
+	<p class="text-copy text-base">{{ 'snippets.cart_drawer.empty' | t }}</p>
+	{%- assign empty_cta_label = 'snippets.cart_drawer.empty_cta' | t -%}
+	{%- render 'cta-button',
+		label: empty_cta_label,
+		url: url,
+		variant: 'solid',
+		attributes: cta_attrs,
+		extra_classes: 'aria-busy:opacity-60 aria-busy:pointer-events-none'
+	-%}
+</div>

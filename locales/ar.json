@@ -26,7 +26,8 @@
     "checkout": "إتمام الشراء",
     "title": "السلة",
     "update": "تحديث",
-    "remove": "إزالة"
+    "remove": "إزالة",
+    "quantity": "الكمية"
   },
   "customers": {
     "login": {

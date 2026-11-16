@@ -26,7 +26,8 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "quantity": "Quantity"
   },
   "customers": {
     "login": {

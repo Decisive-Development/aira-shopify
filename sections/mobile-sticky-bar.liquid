@@ -1,10 +1,11 @@
 {%- comment -%}
   Mobile sticky bottom bar — shows on non-product pages only.
   Slides in after user scrolls past 80% of the hero.
-  Hidden on desktop (lg:hidden) and on product pages.
+  Hidden on desktop (lg:hidden), on product pages and on the cart page,
+  where it would cover Checkout.
 {%- endcomment -%}
 
-{%- unless request.page_type == 'product' -%}
+{%- unless request.page_type == 'product' or request.page_type == 'cart' -%}
 <div
 	class="fixed bottom-0 inset-x-0 z-40 px-4 pb-[5px] lg:hidden translate-y-full transition-transform duration-300 ease-out"
 	data-mobile-sticky-cta
