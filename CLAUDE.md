@@ -118,23 +118,32 @@ Copy rules live in `.claude/rules/copy.md` (auto-loads when you edit templates) 
 
 **Safety:** never delete customer or store data, change theme or store settings, or alter access. Never invent a product claim, number, review, or design token. When unsure, stop and ask Tom.
 
-## Deploy rules (main = production)
-- Pushing to `main` deploys straight to the LIVE theme. There is no
-  staging. Treat every push as a customer-facing release.
-- Before any push: `shopify theme pull --live` for templates/*.json,
-  sections/*.json, config/settings_data.json, locales/ar.json and
-  locales/en.default.json, and commit the sync. Editor changes live only in
-  that JSON, Translate & Adapt writes reviewer edits into locales/ar.json,
-  and Settings > Languages > Edit default theme content writes the English
-  checkout wording into locales/en.default.json; an unsynced push deletes
-  them. (28 Oct 2026: a push wiped the Saudi National Address checkout
-  label this way.)
+## Deploy rules (main = what is live)
+- A git push to `main` does NOT deploy. Nothing connects GitHub to the
+  store (checked 4 Sep and 16 Nov 2026: live did not change). The live
+  theme is deployed with the Shopify CLI, changed files only:
+  `shopify theme push --store aira-ecom --theme 187924578686 --allow-live --nodelete --only <file> ...`.
+  There is no staging. Treat every live push as a customer-facing release,
+  and push `main` to GitHub with it so `main` always matches live.
+- Before any live push: `shopify theme pull --live` (into a scratch
+  folder) for templates/*.json, sections/*.json, config/settings_data.json,
+  locales/ar.json and locales/en.default.json, and commit the sync. Editor
+  changes live only in that JSON, Translate & Adapt writes reviewer edits
+  into locales/ar.json, and Settings > Languages > Edit default theme
+  content writes the English checkout wording into locales/en.default.json;
+  an unsynced push deletes them. (28 Oct 2026: a push wiped the Saudi
+  National Address checkout label this way.)
+- The CLI uploads in batches, not all at once: push new snippets and
+  sections before the files that render them, then pull the pushed files
+  back and compare them with `main`. `--nodelete` leaves files the repo
+  removed on live; once nothing renders one, delete it with
+  `--only <path>` and no `--nodelete`.
 - One logical change per commit; verify on shop-aira.com after every
-  push; never push with a red CI gate.
+  deploy; never deploy with a red CI gate.
 - Tag every release that a human signed off (`vX.Y-<name>`). Roll back
-  by pushing the tag's commit, not by editing in the theme editor.
+  by CLI-pushing the tag's files, not by editing in the theme editor.
 - Never edit the live theme in the Shopify editor to "hotfix" — fix in
-  the repo and push. If someone did, pull first (rule 2).
+  the repo and deploy. If someone did, pull first (rule 2).
 
 ## 9. Reference
 
