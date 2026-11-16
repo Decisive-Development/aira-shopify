@@ -1,0 +1,9 @@
+{%- comment -%}
+  icon-lock — an outlined padlock in the current text colour, beside the
+  Checkout label in the cart drawer and on the cart page. Decorative: the
+  word beside it says it. Output stays on one line.
+  Params:
+    classes — sizing/layout classes. Default 'shrink-0'.
+{%- endcomment -%}
+{%- assign lock_classes = classes | default: 'shrink-0' -%}
+<svg class="{{ lock_classes }}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
