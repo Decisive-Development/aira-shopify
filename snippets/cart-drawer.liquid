@@ -1596,6 +1596,7 @@
 		paintPending();
 		restoreFocus(focused);
 		refreshStatus();
+		refreshCartPage(cart);
 	}
 
 	/* Paints what the parked taps and the adds on their way will produce, so
@@ -1804,8 +1805,87 @@
 		return String(str).replace(/\bAIRA\b/g, 'aira').replace(/\bAira\b/g, 'aira');
 	}
 
+	/* ── The cart page ──
+	   /cart is where a visitor lands who adds to cart or taps the cart icon
+	   before this script has loaded (slow signal) or without JS: the kit
+	   goes in alone, without the free pouch an add through the drawer sends
+	   along. So on /cart, once on load, the pouches the kits are owed go in,
+	   worked out by the add path's own sum (giftToAdd: one a kit while the
+	   offer runs, none for a visitor who binned the gift this session, paid
+	   pouches left alone), and the cart settles as on any page. The page is
+	   Liquid (sections/cart.liquid); whenever the drawer renders a cart the
+	   page does not show (that top-up, or a change made in the drawer opened
+	   over the page), the page's section is drawn again from Shopify. */
+	var cartPage = document.querySelector('[data-cart-page]');
+	var cartPageFetch = 0;
+
+	function topUpCartPage(cart) {
+		var giftId = offerGiftId();
+		var owed = cart && cart.items && kitQty(cart) > 0 ? giftToAdd(cart, giftId, 0) : 0;
+		if (owed < 1) return settle(cart);
+		return postJson(ROOT + 'cart/add.js', { items: [{ id: giftId, quantity: owed }] })
+			.then(function () { return readCart(); })
+			.then(settle);
+	}
+
+	/* The cart as the page writes it in data-cart-sig: variant, quantity
+	   and price per line, then the total. */
+	function cartSignature(cart) {
+		return cart.items.map(function (item) {
+			return item.variant_id + ':' + item.quantity + ':' + item.final_line_price + ',';
+		}).join('') + cart.total_price;
+	}
+
+	function refreshCartPage(cart) {
+		if (!cartPage || cartPage.getAttribute('data-cart-sig') === cartSignature(cart)) return;
+		var mine = ++cartPageFetch;
+		fetch(cartPage.getAttribute('data-section-url'))
+			.then(function (r) { return r.ok ? r.text() : ''; })
+			.then(function (html) {
+				if (mine !== cartPageFetch) return;
+				var fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-cart-page]');
+				if (!fresh || !cartPage.parentNode) return;
+				cartPage.parentNode.replaceChild(fresh, cartPage);
+				cartPage = fresh;
+			})
+			.catch(function () {});
+	}
+
+	/* Taking the pouches below the kits on the page (its Remove link, or a
+	   lower quantity sent with Update or Checkout) is the visitor saying no
+	   to the gift, as the bin is in the drawer, so the next load does not
+	   put them back. Read from the page's own lines: `removed` is the line
+	   whose Remove link was followed, which sends no other change. */
+	function notePageGiftChoice(form, removed) {
+		var giftId = offerGiftId();
+		if (!giftId || !form) return;
+		var before = 0;
+		var after = 0;
+		var kits = 0;
+		form.querySelectorAll('[data-cart-page-line]').forEach(function (line) {
+			var input = line.querySelector('input[name="updates[]"]');
+			if (!input) return;
+			var was = parseInt(input.defaultValue, 10) || 0;
+			var now = removed ? (line === removed ? 0 : was) : Math.max(0, parseInt(input.value, 10) || 0);
+			if (parseInt(line.getAttribute('data-variant-id'), 10) === giftId) { before += was; after += now; }
+			if (KIT_HANDLE && line.getAttribute('data-handle') === KIT_HANDLE) kits += now;
+		});
+		if (after < before && after < kits) markGiftRemoved();
+	}
+
+	if (cartPage) {
+		document.addEventListener('click', function (e) {
+			var link = e.target.closest && e.target.closest('[data-cart-page-remove]');
+			if (link) notePageGiftChoice(link.closest('[data-cart-page-form]'), link.closest('[data-cart-page-line]'));
+		});
+		document.addEventListener('submit', function (e) {
+			if (e.target.matches && e.target.matches('[data-cart-page-form]')) notePageGiftChoice(e.target, null);
+		});
+	}
+
 	/* ── Init: pre-load cart state, first in the queue so an early tap or
-	   add-to-cart plans against a real cart ── */
-	enqueue(function () { return fetchCart().then(settle); });
+	   add-to-cart plans against a real cart (on /cart, after the pouch
+	   top-up above) ── */
+	enqueue(function () { return fetchCart().then(cartPage ? topUpCartPage : settle); });
 })();
 </script>
