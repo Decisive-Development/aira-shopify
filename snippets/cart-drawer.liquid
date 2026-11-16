@@ -1178,6 +1178,14 @@
 		return el ? parseInt(el.getAttribute('data-gift-variant-id'), 10) || 0 : 0;
 	}
 
+	/* The pouches once the kits move by `kitDelta`: one for one, with a
+	   floor of one, so taking the kits off leaves a single pouch behind to
+	   reprice rather than emptying the cart. The one rule for the drawer's
+	   taps (planQuantities, followKitsDown) and the cart page's form. */
+	function pouchesFollowingKits(pouches, kitDelta) {
+		return Math.max(1, pouches + kitDelta);
+	}
+
 	/* Kits coming down while Shopify is zeroing no pouch. Under the launch
 	   offer that happens when charging the pouches lets a bigger order
 	   discount in: 3 kits with their 3 pouches reach the family pack's
@@ -1201,7 +1209,7 @@
 		var planned = cart.items.reduce(function (n, item, i) {
 			return item.variant_id === giftId ? n + qty[i] : n;
 		}, 0);
-		applyVariantWant(cart, qty, anchor, Math.max(1, planned - leaving));
+		applyVariantWant(cart, qty, anchor, pouchesFollowingKits(planned, -leaving));
 	}
 
 	/* Applies ops to a cart snapshot and returns the quantity every line
@@ -1233,7 +1241,7 @@
 			var pouches = cart.items.reduce(function (n, item, i) {
 				return item.variant_id === gift.variant_id ? n + qty[i] : n;
 			}, 0);
-			applyVariantWant(cart, qty, gift, Math.max(1, pouches + kitDelta));
+			applyVariantWant(cart, qty, gift, pouchesFollowingKits(pouches, kitDelta));
 		} else if (kitDelta < 0 && !gift) {
 			followKitsDown(cart, ops, qty);
 		}
@@ -1873,13 +1881,72 @@
 		if (after < before && after < kits) markGiftRemoved();
 	}
 
+	/* The pouches follow the kits down on the page as they do in the drawer:
+	   kits lowered with Update or Checkout take the pouches with them, by
+	   the drawer's own rule (pouchesFollowingKits), so no pouch is left
+	   behind, charged, once it has no kit to be free with. Not for a
+	   visitor who binned the gift this session, and not when the visitor
+	   changed the pouches themselves: then their number stands. With the
+	   pouches over several lines the page cannot tell the free one, so the
+	   last line gives first; Shopify prices the free ones again either way. */
+	function followKitsOnPage(form) {
+		var giftId = offerGiftId();
+		if (!giftId || !KIT_HANDLE || giftRemoved()) return;
+		var kitDelta = 0;
+		var pouches = 0;
+		var pouchInputs = [];
+		var pouchesEdited = false;
+		form.querySelectorAll('[data-cart-page-line]').forEach(function (line) {
+			var input = line.querySelector('input[name^="updates["]');
+			if (!input) return;
+			var was = parseInt(input.defaultValue, 10) || 0;
+			var now = Math.max(0, parseInt(input.value, 10) || 0);
+			if (line.getAttribute('data-handle') === KIT_HANDLE) kitDelta += now - was;
+			if (parseInt(line.getAttribute('data-variant-id'), 10) === giftId) {
+				pouches += was;
+				pouchInputs.push(input);
+				if (now !== was) pouchesEdited = true;
+			}
+		});
+		if (kitDelta >= 0 || pouchesEdited || !pouchInputs.length) return;
+		var surplus = pouches - pouchesFollowingKits(pouches, kitDelta);
+		pouchInputs.reverse().forEach(function (input) {
+			var take = Math.min(parseInt(input.defaultValue, 10) || 0, surplus);
+			input.value = String((parseInt(input.defaultValue, 10) || 0) - take);
+			surplus -= take;
+		});
+	}
+
 	if (cartPage) {
+		/* Remove on a kit line goes through the form (its quantity to 0), so
+		   the pouches follow it as above; Remove on any other line stays
+		   Shopify's own link. A click that opens a new tab is left alone. */
 		document.addEventListener('click', function (e) {
 			var link = e.target.closest && e.target.closest('[data-cart-page-remove]');
-			if (link) notePageGiftChoice(link.closest('[data-cart-page-form]'), link.closest('[data-cart-page-line]'));
+			if (!link) return;
+			var form = link.closest('[data-cart-page-form]');
+			var line = link.closest('[data-cart-page-line]');
+			var input = line && line.querySelector('input[name^="updates["]');
+			var plain = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+			if (form && input && plain && KIT_HANDLE && line.getAttribute('data-handle') === KIT_HANDLE) {
+				e.preventDefault();
+				input.value = '0';
+				if (typeof form.requestSubmit === 'function') {
+					form.requestSubmit();
+				} else {
+					notePageGiftChoice(form, null);
+					followKitsOnPage(form);
+					form.submit();
+				}
+				return;
+			}
+			notePageGiftChoice(form, line);
 		});
+		/* The visitor's own edits are read first, then the pouches follow. */
 		document.addEventListener('submit', function (e) {
-			if (e.target.matches && e.target.matches('[data-cart-page-form]')) notePageGiftChoice(e.target, null);
+			if (!(e.target.matches && e.target.matches('[data-cart-page-form]'))) return;
+			notePageGiftChoice(e.target, null);
+			followKitsOnPage(e.target);
 		});
 	}
 
