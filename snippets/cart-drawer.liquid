@@ -619,14 +619,14 @@
 
 	/* ── Cart attributes ──
 	   Notes the drawer leaves on the cart: `_aira_bundle` when one of the
-	   kit page's pack cards was added (2 for the 2-kit card, 4 for the
+	   kit page's pack cards was added (3 for the 3-kit card, 4 for the
 	   family pack), `_aira_second_kit_offer` when the drawer's second-kit
 	   row was used. They travel with a call the drawer makes anyway: the
 	   update that moves the quantities, or, after an add, the read that
 	   follows it, which becomes an update carrying only the notes and
 	   answers with the same cart JSON. `_aira_bundle` is cleared again (an
 	   empty value removes it) once the cart is planned to hold fewer kits
-	   than the pack it names: under two, or under four for the family pack. */
+	   than the pack it names: under three, or under four for the family pack. */
 	var pendingAttrs = {};
 
 	function hasAttrs(attrs) {
@@ -649,7 +649,7 @@
 		var attrs = {};
 		for (var key in pendingAttrs) { if (Object.prototype.hasOwnProperty.call(pendingAttrs, key)) attrs[key] = pendingAttrs[key]; }
 		var pack = cart && cart.attributes ? cart.attributes._aira_bundle : '';
-		if (pack && plannedKits(cart, qty) < (parseInt(pack, 10) || 2)) attrs._aira_bundle = '';
+		if (pack && plannedKits(cart, qty) < (parseInt(pack, 10) || 3)) attrs._aira_bundle = '';
 		return hasAttrs(attrs) ? attrs : null;
 	}
 

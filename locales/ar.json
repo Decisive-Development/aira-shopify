@@ -88,8 +88,8 @@
   "products": {
     "kit_page": {
       "add_four_to_cart": "أضف 4 مجموعات · {{ price }}",
+      "add_three_to_cart": "أضف 3 مجموعات · {{ price }}",
       "add_to_cart_price": "أضف إلى السلة · {{ price }}",
-      "add_two_to_cart": "أضف مجموعتين · {{ price }}",
       "countdown_by": "اطلب قبل {{ time }} {{ day }} ليصلك في {{ date }}",
       "countdown_left": "متبقٍ للطلب ليصلك في {{ date }}",
       "countdown_min": "د",
@@ -101,11 +101,12 @@
       "family_title": "باقة عائلية · 4\u00a0مجموعات من aira",
       "picker_group_label": "اختر مجموعتك",
       "pill_best_value": "الأوفر",
+      "pill_three_kits": "اشترِ مجموعتين والثالثة مجانًا",
       "sale_offer_block": "عروض الجمعة البيضاء لفترة محدودة",
       "sticky_four_kits": "4 مجموعات",
-      "sticky_two_kits": "مجموعتان",
-      "two_kits_line": "+ عبوتا لاصقات إضافية مجانًا، بقيمة {{ amount }}",
-      "two_kits_title": "مجموعتان من aira"
+      "sticky_three_kits": "3 مجموعات",
+      "three_kits_line": "+ 3 عبوات لاصقات إضافية مجانًا، بقيمة {{ amount }}",
+      "three_kits_title": "3\u00a0مجموعات من aira"
     }
   },
   "search": {
