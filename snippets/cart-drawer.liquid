@@ -1098,9 +1098,13 @@
 	   it can already see in the cart. While the two counts disagree it splits the
 	   kit across a discounted line and an undiscounted one, which is what showed
 	   up as a duplicate kit row. Keeping the gift line level with the kit both
-	   scales the offer and keeps the kit on one line. */
+	   scales the offer and keeps the kit on one line.
+	   A kit is never the gift: under buy 2, get 1 free (20 Nov 2026) Shopify
+	   can put the free kit on a $0 line of its own, and taken for the pouch
+	   it would move kits where pouches should go and count binning the kit
+	   row as saying no to the gift. */
 	function isFreeGift(item) {
-		return item.final_line_price === 0 && item.line_level_total_discount > 0;
+		return item.final_line_price === 0 && item.line_level_total_discount > 0 && item.handle !== KIT_HANDLE;
 	}
 
 	function giftLine(cart) {
