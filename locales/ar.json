@@ -298,7 +298,6 @@
       "code_percent_off": "{{ code }} · خصم {{ percent }}%",
       "code_placeholder": "أدخل كود الخصم",
       "code_refused": "لا يمكن استخدام هذا الكود مع هذا الطلب.",
-      "code_two_kits": "عرض المجموعتين يوفّر لك خصمًا أكبر.",
       "complete_your_kit": "أكمل مجموعتك",
       "decrease_quantity": "تقليل الكمية",
       "empty": "سلتك فارغة",
