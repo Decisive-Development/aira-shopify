@@ -71,7 +71,6 @@
 	data-i18n-remove-code="{{ 'snippets.cart_drawer.remove_code' | t: code: '__CODE__' | escape_once }}"
 	data-i18n-code-invalid="{{ 'snippets.cart_drawer.code_invalid' | t | escape_once }}"
 	data-i18n-code-refused="{{ 'snippets.cart_drawer.code_refused' | t | escape_once }}"
-	data-i18n-code-two-kits="{{ 'snippets.cart_drawer.code_two_kits' | t | escape_once }}"
 >
 	{%- comment -%}
 		Header. Phones run tighter (spacing brief, 22 Oct: the second-kit offer
@@ -242,7 +241,7 @@
 			while a code row is on screen (an automatic discount's row leaves it)
 			and writes the typed code onto the cart as _aira_code_entered whether
 			or not Shopify applies it, so an affiliate's code that does not
-			combine with the 2-kit offer still reaches the order. The × on a code
+			combine with the kit offer still reaches the order. The × on a code
 			row clears that note again. A refused code gets "isn't valid" when
 			the store does not have it (checked through the Storefront API),
 			"can't be used" otherwise. Codes are Latin: the input uppercases
@@ -478,12 +477,11 @@
 	   The link opens the input; Apply (or Enter) sends the code and the
 	   note _aira_code_entered in one update call, so the note lands on the
 	   cart whether Shopify applies the code or not (an affiliate's code that
-	   does not combine with the 2-kit offer still earns its credit from the
+	   does not combine with the kit offer still earns its credit from the
 	   order). Applied: the code row takes over and the field goes with it.
 	   Refused (no applicable entry): the field stays open with the typed
 	   value and one line explains: "isn't valid" for a code the store does
-	   not have, otherwise "can't be used", plus the 2-kit line when the cart
-	   holds two or more kits (the offer already gives more). The queue keeps
+	   not have, otherwise "can't be used". The queue keeps
 	   Checkout and the wallet buttons waiting for Shopify's answer, as for
 	   every write; the validity check after a refusal is not a cart write
 	   and runs outside it. */
@@ -508,7 +506,7 @@
 
 	/* /cart.js answers applicable: false alike for a code the store does not
 	   have and for a real one this cart refuses (one that does not combine
-	   with the 2-kit offer). A throwaway Storefront API cart with no lines
+	   with the kit offer). A throwaway Storefront API cart with no lines
 	   tells them apart: an unknown code comes back with the warning
 	   DISCOUNT_NOT_FOUND, a real one without it. Cart calls need no token
 	   there, and the visitor's own cart and cookie are left alone. Resolves
@@ -526,10 +524,8 @@
 			.catch(function () { return false; });
 	}
 
-	function showCodeError(cart, unknown) {
-		var lines = [unknown ? i18n.i18nCodeInvalid : i18n.i18nCodeRefused];
-		if (!unknown && cart && kitQty(cart) >= 2) lines.push(i18n.i18nCodeTwoKits);
-		codeErrorEl.innerHTML = lines.map(function (line) { return '<span class="block">' + escHtml(line) + '</span>'; }).join('');
+	function showCodeError(unknown) {
+		codeErrorEl.textContent = unknown ? i18n.i18nCodeInvalid : i18n.i18nCodeRefused;
 		codeErrorEl.hidden = false;
 	}
 
@@ -574,7 +570,7 @@
 							   field still holds this code. */
 							codeUnknown(code).then(function (unknown) {
 								if (codeForm.hidden || (codeInput.value || '').trim().toUpperCase() !== code) return;
-								showCodeError(currentCart || cart, unknown);
+								showCodeError(unknown);
 							});
 						}
 						clarity('drawer_code', applied ? 'applied' : 'refused');
@@ -619,14 +615,14 @@
 
 	/* ── Cart attributes ──
 	   Notes the drawer leaves on the cart: `_aira_bundle` when one of the
-	   kit page's pack cards was added (2 for the 2-kit card, 4 for the
+	   kit page's pack cards was added (3 for the 3-kit card, 4 for the
 	   family pack), `_aira_second_kit_offer` when the drawer's second-kit
 	   row was used. They travel with a call the drawer makes anyway: the
 	   update that moves the quantities, or, after an add, the read that
 	   follows it, which becomes an update carrying only the notes and
 	   answers with the same cart JSON. `_aira_bundle` is cleared again (an
 	   empty value removes it) once the cart is planned to hold fewer kits
-	   than the pack it names: under two, or under four for the family pack. */
+	   than the pack it names: under three, or under four for the family pack. */
 	var pendingAttrs = {};
 
 	function hasAttrs(attrs) {
@@ -649,7 +645,7 @@
 		var attrs = {};
 		for (var key in pendingAttrs) { if (Object.prototype.hasOwnProperty.call(pendingAttrs, key)) attrs[key] = pendingAttrs[key]; }
 		var pack = cart && cart.attributes ? cart.attributes._aira_bundle : '';
-		if (pack && plannedKits(cart, qty) < (parseInt(pack, 10) || 2)) attrs._aira_bundle = '';
+		if (pack && plannedKits(cart, qty) < (parseInt(pack, 10) || 3)) attrs._aira_bundle = '';
 		return hasAttrs(attrs) ? attrs : null;
 	}
 
@@ -1098,9 +1094,13 @@
 	   it can already see in the cart. While the two counts disagree it splits the
 	   kit across a discounted line and an undiscounted one, which is what showed
 	   up as a duplicate kit row. Keeping the gift line level with the kit both
-	   scales the offer and keeps the kit on one line. */
+	   scales the offer and keeps the kit on one line.
+	   A kit is never the gift: under buy 2, get 1 free (20 Nov 2026) Shopify
+	   can put the free kit on a $0 line of its own, and taken for the pouch
+	   it would move kits where pouches should go and count binning the kit
+	   row as saying no to the gift. */
 	function isFreeGift(item) {
-		return item.final_line_price === 0 && item.line_level_total_discount > 0;
+		return item.final_line_price === 0 && item.line_level_total_discount > 0 && item.handle !== KIT_HANDLE;
 	}
 
 	function giftLine(cart) {

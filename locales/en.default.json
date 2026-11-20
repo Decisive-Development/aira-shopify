@@ -88,8 +88,8 @@
   "products": {
     "kit_page": {
       "add_four_to_cart": "Add 4 kits to cart · {{ price }}",
+      "add_three_to_cart": "Add 3 kits to cart · {{ price }}",
       "add_to_cart_price": "Add to cart · {{ price }}",
-      "add_two_to_cart": "Add 2 kits to cart · {{ price }}",
       "countdown_by": "Order by {{ time }} {{ day }} for delivery by {{ date }}",
       "countdown_left": "left to order for delivery by {{ date }}",
       "countdown_min": "min",
@@ -101,11 +101,12 @@
       "family_title": "Family pack · 4 aira kits",
       "picker_group_label": "Choose your kit",
       "pill_best_value": "Best value",
+      "pill_three_kits": "Buy 2, get 1 free",
       "sale_offer_block": "White Friday limited-time offers",
       "sticky_four_kits": "4 kits",
-      "sticky_two_kits": "2 kits",
-      "two_kits_line": "+ 2 free refill pouches, worth {{ amount }}",
-      "two_kits_title": "2 aira kits"
+      "sticky_three_kits": "3 kits",
+      "three_kits_line": "+ 3 free refill pouches, worth {{ amount }}",
+      "three_kits_title": "3 aira kits"
     }
   },
   "search": {
@@ -186,10 +187,9 @@
       "youtube": "YouTube"
     },
     "header": {
-      "sale_bar_offer_lead": "Up to",
-      "sale_bar_offer_main": "70% off",
+      "sale_bar_offer_main": "Buy 2, get 1 free",
       "sale_bar_offer_tail": "+ free gift",
-      "sale_bar_title": "Early White Friday"
+      "sale_bar_title": "White Friday"
     },
     "hero": {
       "placeholder_alt": "Hero placeholder"
@@ -298,7 +298,6 @@
       "code_percent_off": "{{ code }} · {{ percent }}% off",
       "code_placeholder": "Enter code",
       "code_refused": "That code can't be used on this order.",
-      "code_two_kits": "The 2-kit offer already gives a bigger saving.",
       "complete_your_kit": "Complete your kit",
       "decrease_quantity": "Decrease quantity",
       "discount_applied": "10% off applied at checkout.",

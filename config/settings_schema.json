@@ -324,37 +324,37 @@
       {
         "type": "checkbox",
         "id": "bundle_picker_enabled",
-        "label": "Show 2-kit picker on the kit page",
+        "label": "Show 3-kit picker on the kit page",
         "default": false,
-        "info": "A 1 kit / 2 kits choice above the Add to cart button. Needs the automatic discount \"2 kits offer\" to be active."
+        "info": "A 1 kit / 3 kits choice above the Add to cart button. Needs the automatic discount buy 2 kits, get 1 kit free to be active."
       },
       {
         "type": "checkbox",
         "id": "second_kit_row_enabled",
         "label": "Show second kit row in the drawer",
         "default": false,
-        "info": "Shown while the cart holds exactly one kit. Needs the same automatic discount."
+        "info": "Shown while the cart holds exactly one kit. Keep it off: its price still works from the old 2-kit discount, so with the 3-kit saving below it shows the wrong price."
       },
       {
         "type": "text",
         "id": "bundle_saving_percent",
-        "label": "2-kit saving (%, must match the admin discount)",
-        "default": "31.25",
-        "info": "The percentage the automatic discount \"2 kits offer\" takes off, digits and a point only, for example 31.25. The picker and the drawer row show 2 kits less this percentage, in the shopper's currency. Change it only together with the discount in Discounts."
+        "label": "3-kit saving (%, must match the admin discount)",
+        "default": "33.3333",
+        "info": "What 3 kits save, as a percentage of their full price, digits and a point only. Buy 2, get 1 free takes one kit in three: 33.3333, four decimals so the card matches the cart in AED and SAR too. The 3-kit card shows 3 kits less this percentage, in the shopper's currency. Change it only together with the discount in Discounts."
       },
       {
         "type": "checkbox",
         "id": "family_pack_enabled",
         "label": "Show family pack (4 kits)",
         "default": false,
-        "info": "A third card, 4 kits, under the 2-kit card on the kit page. Needs the 2-kit picker above, and the automatic discounts \"2 kits offer\" and \"Family pack (4 kits)\" to be active."
+        "info": "A third card, 4 kits, under the 3-kit card on the kit page. Needs the 3-kit picker above. Off since the 3-kit offer (20 Nov 2026): set a new family pack saving below, to match the discounts on 4 kits, before switching it back on."
       },
       {
         "type": "text",
         "id": "family_saving_percent",
-        "label": "Family pack saving (%, both discounts together)",
+        "label": "Family pack saving (%, every discount on 4 kits together)",
         "default": "50",
-        "info": "Digits and a point only, for example 50: everything 4 kits save as a percentage, the 2-kit discount and the family pack discount added up. The card shows 4 kits less this percentage, in the shopper's currency. Blank or 0 hides the card. Change it only together with the discounts in Discounts."
+        "info": "Digits and a point only, for example 50: everything 4 kits save as a percentage, every discount on them added up. The card shows 4 kits less this percentage, in the shopper's currency. Blank or 0 hides the card. Change it only together with the discounts in Discounts."
       }
     ]
   },
@@ -380,7 +380,7 @@
       },
       {
         "type": "paragraph",
-        "content": "Leave these blank for the theme wording, which comes in English and Arabic: \"Early White Friday\" behind, \"Up to\", \"70% off\", \"+ free gift\" in the pill. Words typed here show in every language until they are translated in Translate & Adapt."
+        "content": "Leave these blank for the theme wording, which comes in English and Arabic: \"White Friday\" behind, \"Buy 2, get 1 free\" and \"+ free gift\" in the pill. The first part has no theme wording and only shows when it is filled in. Words typed here show in every language until they are translated in Translate & Adapt."
       },
       {
         "type": "text",
