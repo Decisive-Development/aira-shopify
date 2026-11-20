@@ -18,7 +18,6 @@
     "drawer_express_enabled": false,
     "bundle_picker_enabled": true,
     "second_kit_row_enabled": false,
-    "bundle_saving": "29.99",
     "family_pack_enabled": false,
     "sale_bar_enabled": true,
     "sale_offer_line_enabled": true,
@@ -30,23 +29,8 @@
     "delivery_days_sa": 3,
     "working_days_ae": "Mon,Tue,Wed,Thu,Fri,Sat",
     "working_days_sa": "Sun,Mon,Tue,Wed,Thu",
+    "bundle_saving": "29.99",
     "sections": {
-      "scratch-offer-popup": {
-        "type": "scratch-offer-popup",
-        "settings": {
-          "eyebrow": "LIMITED TIME OFFER",
-          "heading": "A free gift with every kit",
-          "subheading": "Scratch the card to see what's inside.",
-          "foil_caption": "SCRATCH TO REVEAL YOUR GIFT",
-          "reveal_text": "You won… a free 30-pair refill pouch",
-          "reveal_subline": "Worth $19.99. While stocks last.",
-          "skip_label": "Reveal your gift",
-          "placeholder": "Your email",
-          "button_label": "Claim my gift",
-          "success_message": "Check your inbox. Your gift is on its way.",
-          "trigger_delay": 1
-        }
-      },
       "offer-popup": {
         "type": "offer-popup",
         "settings": {
