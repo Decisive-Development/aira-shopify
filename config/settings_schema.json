@@ -380,7 +380,7 @@
       },
       {
         "type": "paragraph",
-        "content": "Leave these blank for the theme wording, which comes in English and Arabic: \"Early White Friday\" behind, \"Up to\", \"70% off\", \"+ free gift\" in the pill. Words typed here show in every language until they are translated in Translate & Adapt."
+        "content": "Leave these blank for the theme wording, which comes in English and Arabic: \"White Friday\" behind, \"Buy 2, get 1 free\" and \"+ free gift\" in the pill. The first part has no theme wording and only shows when it is filled in. Words typed here show in every language until they are translated in Translate & Adapt."
       },
       {
         "type": "text",

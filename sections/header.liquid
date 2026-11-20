@@ -136,10 +136,12 @@
 	(three repeats of the default line in the setting's seconds). The
 	track is anchored to the physical left because the transform that moves
 	it is physical; Arabic reverses the animation instead.
-	In front: the offer in three parts, sentence case. From 768px the whole
-	line is one cream pill. On phones (Tom, 14 Nov) only the bold part is
-	the pill and the words either side sit on the band in the pill's cream,
-	so the line is lighter over the narrow band; the three share a baseline.
+	In front: the offer in up to three parts, sentence case: "Buy 2, get 1
+	free" and "+ free gift" by default (20 Nov), a first part only when the
+	setting has one. From 768px the whole line is one cream pill. On phones
+	(Tom, 14 Nov) only the bold part is the pill and the words beside it
+	sit on the band in the pill's cream, so the line is lighter over the
+	narrow band; the parts share a baseline.
 	Capitals and letter-spacing are for Latin text only (hard rule 10: none
 	on Arabic), so they hang on the ltr variant.
 	The words' small upward nudge centres their ink on the mark and the
@@ -171,10 +173,8 @@
 		if settings.sale_bar_words != blank
 			assign sale_bar_words = settings.sale_bar_words | escape
 		endif
-		assign sale_bar_lead = 'sections.header.sale_bar_offer_lead' | t
-		if settings.sale_bar_offer_lead != blank
-			assign sale_bar_lead = settings.sale_bar_offer_lead | escape
-		endif
+		# The offer's first part has no theme wording since "Buy 2, get 1 free" (20 Nov 2026): only a setting fills it.
+		assign sale_bar_lead = settings.sale_bar_offer_lead | escape
 		assign sale_bar_main = 'sections.header.sale_bar_offer_main' | t
 		if settings.sale_bar_offer_main != blank
 			assign sale_bar_main = settings.sale_bar_offer_main | escape
@@ -306,7 +306,9 @@
 			{{- sale_bar_half -}}
 		</span>
 		<p class="sale-bar-offer relative z-10 flex items-baseline gap-2 whitespace-nowrap md:gap-1.5 md:rounded-full md:px-5 md:pt-1.75 md:pb-1.5" data-sale-bar-offer>
-			<span class="text-sm leading-[normal] font-bold md:text-base md:font-semibold">{{ sale_bar_lead }}</span>
+			{%- if sale_bar_lead != blank -%}
+				<span class="text-sm leading-[normal] font-bold md:text-base md:font-semibold">{{ sale_bar_lead }}</span>
+			{%- endif -%}
 			<span class="sale-bar-offer-main rounded-full px-3 pt-0.75 pb-1 text-lg leading-none font-black md:p-0 md:text-[23px] ltr:tracking-[-0.01em]">{{ sale_bar_main }}</span>
 			<span class="text-sm leading-[normal] font-bold md:text-base md:font-semibold">{{ sale_bar_tail }}</span>
 		</p>
