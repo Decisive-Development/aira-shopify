@@ -27,7 +27,8 @@
     "title": "السلة",
     "update": "تحديث",
     "remove": "إزالة",
-    "quantity": "الكمية"
+    "quantity": "الكمية",
+    "saudi_address_note": "التوصيل داخل السعودية يتطلّب العنوان الوطني المختصر (مثل ABCD1234). تدفع عبر Apple Pay؟ أضفه إلى عنوان الشحن في Apple Pay."
   },
   "customers": {
     "login": {

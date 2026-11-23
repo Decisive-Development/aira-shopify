@@ -262,6 +262,17 @@
 			</form>
 			<p data-code-error class="text-sm text-highlight" role="alert" hidden></p>
 		</div>
+		{%- comment -%}
+			Saudi National Address note (brief of 23 Nov): Apple Pay fills the
+			address from the phone, so wallet buyers never see checkout's address
+			line 2 label asking for the code. Shown to Saudi visitors and on the
+			Arabic site, decided here in Liquid; the script never redraws the
+			footer, so the note stays through every cart change. Text only: it
+			never blocks or delays Checkout.
+		{%- endcomment -%}
+		{%- if localization.country.iso_code == 'SA' or request.locale.iso_code == 'ar' -%}
+			<p class="text-copy text-sm">{{ 'cart.saudi_address_note' | t }}</p>
+		{%- endif -%}
 		{%- capture checkout_label -%}
 			{%- render 'icon-lock' -%}
 			{{- 'cart.checkout' | t -}}
