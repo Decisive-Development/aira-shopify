@@ -27,7 +27,8 @@
     "title": "Cart",
     "update": "Update",
     "remove": "Remove",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "saudi_address_note": "Delivery in Saudi Arabia needs your National Address code (e.g. ABCD1234). Paying with Apple Pay? Add it to your Apple Pay shipping address."
   },
   "customers": {
     "login": {
