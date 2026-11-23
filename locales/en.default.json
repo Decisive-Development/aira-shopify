@@ -397,12 +397,12 @@
         "optional_address2_label": "Apt/villa (KSA: National Address e.g. ABCD1234)"
       },
       "field_errors": {
-        "address_address2_blank": "Enter your apartment/villa (KSA: your National Address code)"
+        "address_address2_blank": "KSA: enter your National Address code, 4 letters + 4 numbers, e.g. ABCD1234. UAE: apartment or villa number."
       },
       "wallets": {
         "errors": {
           "missing": {
-            "address2": "Enter your apartment/villa (KSA: your National Address code)"
+            "address2": "KSA: enter your National Address code, 4 letters + 4 numbers, e.g. ABCD1234. UAE: apartment or villa number."
           }
         }
       },
