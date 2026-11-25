@@ -1,0 +1,272 @@
+{%- comment -%}
+	Athlete partner signup (brief v2.2, 25 November 2026).
+
+	A creator opens their own invite link, reads the agreement, signs, and sees
+	their discount code. Used by templates/page.athlete-partner.json, under the
+	policy hero. The page is reached by link only (noindex in meta-tags.liquid).
+
+	Two steps on submit, so no personal detail ever reaches the function:
+	  1. assets/athlete-signup.js posts the link's handle, code and signature to
+	     the aira-athletes function (section setting), which issues the code.
+	  2. The same script puts the code and receipt into hidden inputs and lets
+	     the native contact form post, so Shopify emails the creator's details
+	     to the store address and its bot check can run.
+
+	What shows, in this order of priority (the script decides; with JS off the
+	page shows the private-link state, or the plain success line after a post):
+	  - Shopify sent the form back with errors: the form again.
+	  - A saved record in sessionStorage: the success state. It is keyed on
+	    that record, not on form.posted_successfully? or the link, because
+	    Shopify's captcha detour returns to the bare page address.
+	  - A complete invite link (h, c and k): summary, agreement and form.
+	  - The post succeeded but nothing is saved: the plain success line.
+	  - Otherwise: the private-link state.
+
+	The agreement comes from the page's own content when it has any, otherwise
+	from snippets/athlete-agreement-default.liquid, the same fallback as
+	sections/policy-content.liquid. It is English only for now, so the default
+	sits in a dir="ltr" island.
+
+	Submitted values (field names, country values, the email subject) stay
+	English. Codes, handles, links and receipts are Latin: dir="ltr" spans.
+{%- endcomment -%}
+
+{{ 'policy-page.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+	assign label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-title'
+	assign input_class = 'rounded-xl border border-main/20 px-4 py-3 text-base text-main bg-white focus:outline-none focus:border-main aria-invalid:border-highlight'
+	assign error_class = 'text-sm font-semibold text-main'
+	assign card_class = 'rounded-xl border border-main/15 bg-bg p-5'
+	assign card_label_class = 'text-xs font-bold uppercase ltr:tracking-widest text-copy/60 m-0 mb-3'
+
+	comment
+		Each sentence keeps its placeholder in the locale file, so a translator
+		can move it; the markup the script fills goes in after translation.
+	endcomment
+	assign code_slot = '<strong dir="ltr" data-athlete-code></strong>'
+	assign code_line = 'sections.athlete_signup.code_line' | t: code: '%code%' | replace: '%code%', code_slot
+	assign success_code = 'sections.athlete_signup.success_code' | t: code: '%code%' | replace: '%code%', code_slot
+	assign success_heading = 'sections.athlete_signup.success_heading' | t: first_name: '%name%' | replace: '%name%', '<span data-athlete-first-name></span>'
+	assign success_link = 'sections.athlete_signup.success_link' | t: link: '%link%' | replace: '%link%', '<strong dir="ltr" class="break-all" data-athlete-link></strong>'
+	assign success_team = 'sections.athlete_signup.success_team' | t: team_code: '%team%' | replace: '%team%', '<strong dir="ltr" data-athlete-team-code></strong>'
+	assign success_reference = 'sections.athlete_signup.success_reference' | t: receipt: '%receipt%' | replace: '%receipt%', '<span dir="ltr" data-athlete-receipt></span>'
+
+	assign share_base = shop.url | remove: 'https://' | remove: 'http://' | append: '/discount/'
+	assign athlete_posted = false
+-%}
+
+{%- capture form_markup -%}
+	{%- form 'contact', id: 'athlete-signup-form', class: 'flex flex-col gap-5' -%}
+		{%- assign athlete_posted = form.posted_successfully? -%}
+
+		{%- if form.errors -%}
+			<div class="rounded-xl bg-highlight/10 p-5 text-sm font-semibold text-main" data-athlete-server-errors>{{ form.errors | default_errors }}</div>
+		{%- endif -%}
+
+		<input type="hidden" name="contact[subject]" value="Athlete partner signup">
+		<input type="hidden" name="contact[tags]" value="athlete-partner">
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-name" class="{{ label_class }}">{{ 'sections.athlete_signup.full_name' | t }}</label>
+			<input type="text" id="athlete-name" name="contact[name]" required autocomplete="name" aria-describedby="athlete-name-error" class="{{ input_class }}">
+			<span id="athlete-name-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-instagram" class="{{ label_class }}">{{ 'sections.athlete_signup.instagram' | t }}</label>
+			<input type="text" id="athlete-instagram" name="contact[instagram]" readonly dir="ltr" class="{{ input_class }} bg-bg-muted">
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-email" class="{{ label_class }}">{{ 'general.email' | t }}</label>
+			<input type="email" id="athlete-email" name="contact[email]" required autocomplete="email" aria-describedby="athlete-email-error" class="{{ input_class }}">
+			<span id="athlete-email-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-phone" class="{{ label_class }}">{{ 'sections.athlete_signup.mobile' | t }}</label>
+			<input type="tel" id="athlete-phone" name="contact[phone]" required autocomplete="tel" aria-describedby="athlete-phone-error" class="{{ input_class }}">
+			<span id="athlete-phone-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		<div class="grid gap-5 md:grid-cols-2">
+			<div class="flex flex-col gap-1.5">
+				<label for="athlete-country" class="{{ label_class }}">{{ 'sections.athlete_signup.country' | t }}</label>
+				<select id="athlete-country" name="contact[country]" required autocomplete="country-name" aria-describedby="athlete-country-error" class="{{ input_class }}">
+					<option value="">{{ 'sections.athlete_signup.select_country' | t }}</option>
+					<option value="UAE">{{ 'sections.athlete_signup.country_uae' | t }}</option>
+					<option value="Saudi Arabia">{{ 'sections.athlete_signup.country_ksa' | t }}</option>
+				</select>
+				<span id="athlete-country-error" class="{{ error_class }}" hidden></span>
+			</div>
+
+			<div class="flex flex-col gap-1.5">
+				<label for="athlete-city" class="{{ label_class }}">{{ 'sections.athlete_signup.city' | t }}</label>
+				<input type="text" id="athlete-city" name="contact[city]" required autocomplete="address-level2" aria-describedby="athlete-city-error" class="{{ input_class }}">
+				<span id="athlete-city-error" class="{{ error_class }}" hidden></span>
+			</div>
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-address" class="{{ label_class }}">{{ 'sections.athlete_signup.delivery_address' | t }}</label>
+			<textarea id="athlete-address" name="contact[delivery_address]" rows="3" required autocomplete="street-address" aria-describedby="athlete-address-error" class="{{ input_class }} resize-y"></textarea>
+			<span id="athlete-address-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-permit" class="{{ label_class }}">{{ 'sections.athlete_signup.permit' | t }} {{ 'general.optional' | t }}</label>
+			<input type="text" id="athlete-permit" name="contact[permit_number]" autocomplete="off" class="{{ input_class }}">
+		</div>
+
+		<p class="{{ card_class }} text-base text-copy m-0">{{ code_line }}</p>
+
+		<label class="flex items-start gap-3 cursor-pointer">
+			<input type="checkbox" name="contact[coach_clients]" value="Yes" class="mt-1" data-athlete-coach>
+			<span class="text-base text-copy">{{ 'sections.athlete_signup.coach' | t }}</span>
+		</label>
+
+		<div class="flex flex-col gap-1.5">
+			<label class="flex items-start gap-3 cursor-pointer">
+				<input type="checkbox" id="athlete-agreed" name="contact[agreed]" value="Yes" required aria-describedby="athlete-agreed-error" class="mt-1">
+				<span class="text-base text-copy">{{ 'sections.athlete_signup.agree' | t }}</span>
+			</label>
+			<span id="athlete-agreed-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		<div class="flex flex-col gap-1.5">
+			<label for="athlete-signature" class="{{ label_class }}">{{ 'sections.athlete_signup.signature' | t }}</label>
+			<input type="text" id="athlete-signature" name="contact[signature]" required autocomplete="off" aria-describedby="athlete-signature-error" class="{{ input_class }}">
+			<span id="athlete-signature-error" class="{{ error_class }}" hidden></span>
+		</div>
+
+		{%- comment -%} Honeypot: people never see or reach it, so a value means a bot. {%- endcomment -%}
+		<div class="hidden" aria-hidden="true">
+			<input type="text" name="contact[company_website]" tabindex="-1" autocomplete="off" data-athlete-honeypot>
+		</div>
+
+		{%- comment -%} Filled by the script from the function's answer, for the email record. {%- endcomment -%}
+		<input type="hidden" name="contact[code]" value="">
+		<input type="hidden" name="contact[team_code]" value="">
+		<input type="hidden" name="contact[receipt]" value="">
+		<input type="hidden" name="contact[accepted_at]" value="">
+		<input type="hidden" name="contact[agreement_version]" value="{{ section.settings.agreement_version | escape }}">
+
+		<p class="rounded-xl bg-highlight/10 p-5 text-sm font-semibold text-main m-0" role="alert" data-athlete-form-error hidden></p>
+
+		<div class="pt-2 flex justify-end">
+			{%- assign submit_label = 'sections.athlete_signup.submit' | t -%}
+			{%- render 'cta-button',
+				label: submit_label,
+				element: 'button',
+				button_type: 'submit',
+				variant: 'solid',
+				extra_classes: 'w-full md:w-auto text-center'
+			-%}
+		</div>
+	{%- endform -%}
+{%- endcapture -%}
+
+<section
+	class="bg-secondary text-main py-12 md:py-20"
+	data-athlete-signup
+	data-function-url="{{ section.settings.function_url | escape }}"
+	data-agreement-version="{{ section.settings.agreement_version | escape }}"
+	data-share-base="{{ share_base | escape }}"
+	data-error-required="{{ 'sections.athlete_signup.error_required' | t | escape_once }}"
+	data-error-signature="{{ 'sections.athlete_signup.error_signature' | t | escape_once }}"
+	data-error-link="{{ 'sections.athlete_signup.error_link' | t | escape_once }}"
+	data-error-taken="{{ 'sections.athlete_signup.error_taken' | t | escape_once }}"
+	data-error-server="{{ 'sections.athlete_signup.error_server' | t | escape_once }}"
+	{% if athlete_posted %}data-athlete-posted{% endif %}
+>
+	<div class="container mx-auto px-4 max-w-[720px]">
+
+		{%- comment -%} Private-link state: the default, so the page makes sense before the script runs and without it. {%- endcomment -%}
+		<div class="{{ card_class }} md:p-8 text-center" data-athlete-state="private"{% if athlete_posted %} hidden{% endif %}>
+			<h2 class="font-heading heading-weight text-2xl md:text-3xl text-title m-0">{{ 'sections.athlete_signup.private_heading' | t }}</h2>
+			<p class="text-base text-copy m-0 mt-3">{{ 'sections.athlete_signup.private_body' | t }}</p>
+		</div>
+
+		{%- comment -%} Plain success line: the post went through but no saved record is readable. {%- endcomment -%}
+		<div class="{{ card_class }} md:p-8 text-center" data-athlete-state="generic"{% unless athlete_posted %} hidden{% endunless %}>
+			<p class="text-base text-copy m-0">{{ 'sections.athlete_signup.success_generic' | t }}</p>
+		</div>
+
+		<div class="{{ card_class }} md:p-8 mb-10" data-athlete-state="success" tabindex="-1" hidden>
+			<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ success_heading }}</h2>
+			<p class="text-xl md:text-2xl text-title m-0 mt-5">{{ success_code }}</p>
+			<p class="text-base text-copy m-0 mt-3">{{ 'sections.athlete_signup.success_line' | t }}</p>
+			<p class="text-base text-copy m-0 mt-3">{{ success_link }}</p>
+			<p class="text-base text-copy m-0 mt-3" data-athlete-team hidden>{{ success_team }}</p>
+			<ol class="list-decimal ps-5 m-0 mt-6 flex flex-col gap-2 text-base text-copy">
+				<li>{{ 'sections.athlete_signup.success_step_1' | t }}</li>
+				<li>{{ 'sections.athlete_signup.success_step_2' | t }}</li>
+				<li>{{ 'sections.athlete_signup.success_step_3' | t }}</li>
+			</ol>
+			<p class="text-sm text-copy m-0 mt-6">{{ success_reference }}</p>
+		</div>
+
+		<div class="grid gap-4 md:grid-cols-2 mb-10" data-athlete-part="summary" hidden>
+			<div class="{{ card_class }}">
+				<h2 class="{{ card_label_class }}">{{ 'sections.athlete_signup.summary_get_heading' | t }}</h2>
+				<ul class="list-disc ps-5 m-0 flex flex-col gap-2 text-base text-copy">
+					<li>{{ 'sections.athlete_signup.summary_get_1' | t }}</li>
+					<li>{{ 'sections.athlete_signup.summary_get_2' | t }}</li>
+					<li>{{ 'sections.athlete_signup.summary_get_3' | t }}</li>
+				</ul>
+			</div>
+			<div class="{{ card_class }}">
+				<h2 class="{{ card_label_class }}">{{ 'sections.athlete_signup.summary_ask_heading' | t }}</h2>
+				<ul class="list-disc ps-5 m-0 flex flex-col gap-2 text-base text-copy">
+					<li>{{ 'sections.athlete_signup.summary_ask_1' | t }}</li>
+					<li>{{ 'sections.athlete_signup.summary_ask_2' | t }}</li>
+					<li>{{ 'sections.athlete_signup.summary_ask_3' | t }}</li>
+				</ul>
+			</div>
+		</div>
+
+		<article class="policy-prose font-body text-base md:text-[17px] leading-[1.7] text-copy" data-athlete-part="agreement" hidden>
+			{%- if page.content != blank -%}
+				{{ page.content }}
+			{%- else -%}
+				<div dir="ltr" lang="en">
+					{%- render 'athlete-agreement-default' -%}
+				</div>
+			{%- endif -%}
+		</article>
+
+		<div class="mt-12 pt-10 border-t border-main/15" data-athlete-part="form" hidden>
+			{{ form_markup }}
+		</div>
+
+	</div>
+</section>
+
+<script src="{{ 'athlete-signup.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+	"name": "Athlete signup",
+	"tag": "section",
+	"class": "shopify-section",
+	"settings": [
+		{
+			"type": "text",
+			"id": "function_url",
+			"label": "Signup function address",
+			"info": "The address of the aira-athletes function that issues the codes. Leave as set unless the function moves."
+		},
+		{
+			"type": "text",
+			"id": "agreement_version",
+			"label": "Agreement version",
+			"default": "1.1",
+			"info": "Recorded with every signature. Change it whenever the agreement wording changes."
+		}
+	],
+	"presets": [
+		{ "name": "Athlete signup" }
+	]
+}
+{% endschema %}
