@@ -20,6 +20,12 @@
 	The hero shows at once. Nothing shows below it until the state is known.
 	With JavaScript off the page shows the private-link state.
 
+	Previewing the states (never on the live theme: theme.role is "main" only
+	there, the same gate as the preview flags in layout/theme.liquid). On an
+	unpublished theme add ?show=form, ?show=in or ?show=private to the address
+	to open that state without an invite and without placing an order. The
+	theme editor opens the form.
+
 	On submit the script opens a cart permalink: one kit (the product setting),
 	the invite code, and six cart attributes that travel with the order. A
 	Shopify Flow workflow reads them, so the attribute names are a contract:
@@ -161,6 +167,7 @@
 	data-locale="{{ request.locale.iso_code }}"
 	data-agreement-version="{{ section.settings.agreement_version | escape }}"
 	data-share-base="{{ share_base | escape }}"
+	{% if request.design_mode %}data-affiliate-show="editor"{% elsif theme.role != 'main' %}data-affiliate-show="theme"{% endif %}
 	data-msg-required="{{ 'sections.affiliate_signup.error_required' | t | escape_once }}"
 	data-msg-handle="{{ 'sections.affiliate_signup.error_handle' | t | escape_once }}"
 	data-msg-signature="{{ 'sections.affiliate_signup.error_signature' | t | escape_once }}"

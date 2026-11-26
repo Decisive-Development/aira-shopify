@@ -214,6 +214,31 @@
   var linkHandle = String(params.get('h') || '').trim().replace(/^@/, '').toLowerCase();
   if (!HANDLE_RE.test(linkHandle)) linkHandle = '';
 
+  /*
+    Preview only. On an unpublished theme, ?show=form, ?show=in or
+    ?show=private opens that state without asking Shopify, so every state can
+    be looked at without placing an order. The theme editor, which cannot take
+    a link, opens the form. The section only sets data-affiliate-show off the
+    live theme, so none of this reaches a creator.
+  */
+  var showMode = root.getAttribute('data-affiliate-show');
+  var forced = showMode ? params.get('show') || (showMode === 'editor' ? 'form' : '') : '';
+  if (forced === 'private') {
+    show('private');
+    return;
+  }
+  if (forced === 'in') {
+    showInvitation(linkHandle);
+    showSuccess(readRecord(invite) || { code: 'SARA15', team_code: 'TEAMSARA' }); // the brief's own example name
+    return;
+  }
+  if (forced === 'form' && variantId && form) {
+    showInvitation(linkHandle);
+    show('form');
+    startForm();
+    return;
+  }
+
   if (!INVITE_RE.test(invite) || !variantId || !form) {
     show('private');
     return;
@@ -456,6 +481,8 @@
       event.preventDefault();
       if (busy) return;
       if (!validate()) return;
+      // A previewed form with no invite in the link has no checkout to open.
+      if (!INVITE_RE.test(invite)) return;
       var name = codeName.value;
       setBusy(true);
       // Asked again whatever the last answer was: the name may have gone since.
