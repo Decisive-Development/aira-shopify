@@ -4,7 +4,7 @@
       "type": "affiliate-signup",
       "settings": {
         "hero_image": "shopify://shop_images/a6de4de6-b600-4a01-963b-24c4d1fad658.jpg",
-        "script_url": "",
+        "script_url": "https://script.google.com/macros/s/AKfycbx2p7bkwt7Jjc5JdAmQmqqFW21H2xGAZXS0aiiby7-7IIHsulGYhGgPGjAb1hG-0qFfYA/exec",
         "kit": "aira-kit",
         "agreement_version": "2.0"
       }
