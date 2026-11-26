@@ -11,8 +11,9 @@
      PDF, emails it, files it and adds a row to Tom's sheet.
 
   Two outside calls, and no more:
-    - the Apps Script (the section setting script_url): the link check and
-      the signed form. JSON sent as plain text, so there is no preflight.
+    - the Apps Script (the section setting script_url): the link check, the
+      question "is this code name already on the sheet?", and the signed
+      form. JSON sent as plain text, so there is no preflight.
     - Shopify's Storefront API, with no token: a throwaway cart that says
       whether a discount code already exists. It never touches a real cart.
   Nothing is created in Shopify and no personal detail goes into a URL.
@@ -40,6 +41,7 @@
   var STATUS_TIMEOUT_MS = 8000; // the script can be slow to wake
   var SEND_TIMEOUT_MS = 30000; // it makes a PDF and sends two emails
   var CHECK_TIMEOUT_MS = 8000;
+  var SHEET_TIMEOUT_MS = 4000; // the live check does not wait longer than this for the sheet
   var CHECK_DELAY_MS = 400;
   // Isolates keep a Latin code or "+971" the right way round inside Arabic.
   var LTR_START = String.fromCharCode(0x2066);
@@ -152,6 +154,19 @@
         clearTimeout(timer);
         return 'failed';
       });
+  }
+
+  /*
+    Is this code name already on Tom's sheet, in a signup he has not confirmed
+    yet? Shopify cannot know: the code does not exist there until he confirms.
+    Resolves true only when the script says so. No answer in time is no
+    objection here, because the script checks again when the form is sent.
+  */
+  function nameOnSheet(name) {
+    if (!linkOk) return Promise.resolve(false);
+    return callScript({ action: 'name', h: handle, k: signature, code_name: name }, SHEET_TIMEOUT_MS).then(function (answer) {
+      return Boolean(answer && answer.ok === true && answer.valid === true && answer.free === false);
+    });
   }
 
   /* ---- The record this browser keeps of a signature ---- */
@@ -389,9 +404,10 @@
       previewTeam.hidden = !coachInput.checked;
     }
 
-    // A name is free when Shopify knows neither NAME15 nor TEAMNAME. Both are
-    // asked even when the coach box is not ticked, so a client code can be
-    // added later. Resolves with the check once it is settled.
+    // A name is free when Shopify knows neither NAME15 nor TEAMNAME, and it is
+    // not on the sheet either. Both codes are asked even when the coach box is
+    // not ticked, so a client code can be added later. Resolves with the check
+    // once it is settled.
     function runCheck() {
       clearTimeout(checkTimer);
       checkSeq += 1;
@@ -410,12 +426,22 @@
         return Promise.resolve(check);
       }
       setCheck(name, 'checking');
+      // Both questions go out at once. Shopify's "taken" is shown without
+      // waiting for the sheet; "available" waits for the sheet's word too.
+      var sheet = nameOnSheet(name);
       return Promise.all([ask(name + '15'), ask('TEAM' + name)]).then(function (answers) {
         if (seq !== checkSeq) return check; // a newer question is out; ignore this answer
         var taken = answers.some(function (a) { return a === 'applicable' || a === 'exists'; });
         var failed = answers.some(function (a) { return a === 'failed'; });
-        setCheck(name, taken ? 'taken' : failed ? 'unknown' : 'available');
-        return check;
+        if (taken || failed) {
+          setCheck(name, taken ? 'taken' : 'unknown');
+          return check;
+        }
+        return sheet.then(function (onSheet) {
+          if (seq !== checkSeq) return check;
+          setCheck(name, onSheet ? 'taken' : 'available');
+          return check;
+        });
       });
     }
 
@@ -713,6 +739,10 @@
       if (error === 'signed') {
         show('signed');
         bringUp('signed');
+      } else if (error === 'taken') {
+        // Another creator signed with this name a moment ago: the usual message.
+        setCheck(sent.code_name, 'taken');
+        codeName.focus();
       } else if (error === 'link') {
         showFormError(msg('link'));
       } else if (error === 'version') {
