@@ -1,0 +1,33 @@
+{%- comment -%}
+	Numbered steps — a short ordered list for text that tells someone what to
+	do, or what happens next. The numerals match the affiliate agreement's card
+	headings: heading face, highlight colour, "1." The caller sets the text
+	classes, so the list can sit on a white card or on the hero photo.
+
+	Parameters:
+	  steps        {Array}   the step texts, in order (required)
+	  list_class   {String}  layout classes for the list   (default: stacked, 'flex flex-col gap-3')
+	  text_class   {String}  classes for each step's text  (default: 'text-base text-title')
+	  number_class {String}  size classes for the numerals (default: 'text-xl')
+
+	Usage:
+	  {%- assign steps = 'First%%Second' | split: '%%' -%}
+	  {%- render 'numbered-steps', steps: steps -%}
+{%- endcomment -%}
+
+{%- liquid
+	assign steps_list_class = list_class | default: 'flex flex-col gap-3'
+	assign steps_text_class = text_class | default: 'text-base text-title'
+	assign steps_number_class = number_class | default: 'text-xl'
+-%}
+
+{%- comment -%} role="list": Safari drops list semantics from a list with no markers. The numeral is decoration, the position is announced by the list. {%- endcomment -%}
+<ol role="list" class="list-none p-0 m-0 {{ steps_list_class }}">
+	{%- for step in steps -%}
+		<li class="flex items-baseline gap-1.5">
+			{%- comment -%} A fixed width, in the numeral's own size, so every step's text starts on the same line whatever the digit. {%- endcomment -%}
+			<span class="font-heading heading-weight text-highlight shrink-0 w-[1.3em] {{ steps_number_class }}" aria-hidden="true">{{ forloop.index }}.</span>
+			<span class="{{ steps_text_class }}">{{ step }}</span>
+		</li>
+	{%- endfor -%}
+</ol>

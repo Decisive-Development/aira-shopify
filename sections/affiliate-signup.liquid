@@ -33,6 +33,10 @@
 	agreement is English only (snippets/affiliate-agreement), so it sits in
 	dir="ltr" islands. Everything else is translated. Codes, handles and links
 	are Latin: dir="ltr".
+
+	Instructions are easy to see (brief v4.1): three numbered steps in the
+	hero, an intro line in the code card and a "What happens next" list above
+	the button, all body size and dark. Small grey text is for field hints only.
 {%- endcomment -%}
 
 {%- liquid
@@ -41,13 +45,23 @@
 	assign field_class = 'flex flex-col gap-1.5'
 	assign label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-title'
 	assign input_class = 'rounded-xl border border-main/20 px-4 py-3 text-base text-main bg-bg focus:outline-none focus:border-main focus:ring-2 focus:ring-main/20 aria-invalid:border-highlight read-only:bg-bg-muted'
-	assign hint_class = 'text-sm text-copy'
-	assign error_class = 'text-sm font-semibold text-main'
 	assign panel_label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-secondary/70 m-0'
 
 	comment
+		Brief v4.1: anything that tells the creator what to do, or what happens
+		next, is body size or larger and dark (text-title or text-main), never
+		grey. Steps are numbered lists (snippets/numbered-steps). Small grey
+		text is for field hints only.
+	endcomment
+	assign instruction_class = 'text-base text-title'
+	assign subheading_class = 'font-heading heading-weight text-xl md:text-2xl text-title m-0'
+	assign hint_class = 'text-sm text-copy'
+	assign error_class = 'text-base font-semibold text-main'
+
+	comment
 		Hero text: the section settings when filled, otherwise the locale
-		strings, so Arabic works without a per-theme translation.
+		strings, so Arabic works without a per-theme translation. The three
+		steps are locale strings only.
 	endcomment
 	assign hero_eyebrow = section.settings.eyebrow
 	if hero_eyebrow == blank
@@ -57,10 +71,41 @@
 	if hero_heading == blank
 		assign hero_heading = 'sections.affiliate_signup.hero_heading' | t
 	endif
-	assign hero_description = section.settings.description
-	if hero_description == blank
-		assign hero_description = 'sections.affiliate_signup.hero_description' | t
+	assign hero_line = section.settings.description
+	if hero_line == blank
+		assign hero_line = 'sections.affiliate_signup.hero_line' | t
 	endif
+
+	capture hero_steps_joined
+		echo 'sections.affiliate_signup.hero_step_1' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.hero_step_2' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.hero_step_3' | t
+	endcapture
+	assign hero_steps = hero_steps_joined | split: '%%'
+
+	capture next_steps_joined
+		echo 'sections.affiliate_signup.next_1' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.next_2' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.next_3' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.next_4' | t
+	endcapture
+	assign next_steps = next_steps_joined | split: '%%'
+
+	capture success_steps_joined
+		echo 'sections.affiliate_signup.success_step_1' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.success_step_2' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.success_step_3' | t
+		echo '%%'
+		echo 'sections.affiliate_signup.success_step_4' | t
+	endcapture
+	assign success_steps = success_steps_joined | split: '%%'
 
 	comment
 		Each sentence keeps its placeholder in the locale file, so a translator
@@ -82,15 +127,29 @@
 	assign kit_variant = kit.first_available_variant | default: kit.variants.first
 -%}
 
+{%- comment -%}
+	Under the hero heading, where a description would be: the three steps (side
+	by side on desktop, stacked on phones), one short line, and the invitation
+	line the script fills from the link.
+{%- endcomment -%}
 {%- capture hero_footnote -%}
-	<p class="m-0 mt-6" data-affiliate-invitation hidden>
+	<div class="mx-auto mt-6 w-fit max-w-full">
+		{%- render 'numbered-steps',
+			steps: hero_steps,
+			list_class: 'flex flex-col gap-2 text-start md:flex-row md:gap-8',
+			text_class: 'text-base md:text-lg text-secondary',
+			number_class: 'text-xl md:text-2xl'
+		-%}
+	</div>
+	<p class="m-0 mt-4 text-base text-secondary/80">{{ hero_line }}</p>
+	<p class="m-0 mt-5" data-affiliate-invitation hidden>
 		<span class="inline-block rounded-full border border-secondary/30 px-4 py-1.5 text-sm font-semibold text-secondary">{{ invitation }}</span>
 	</p>
 {%- endcapture -%}
 
 {%- capture private_card -%}
 	<h2 class="{{ heading_class }}">{{ 'sections.affiliate_signup.private_heading' | t }}</h2>
-	<p class="text-base text-copy m-0 mt-3">{{ 'sections.affiliate_signup.private_body' | t }}</p>
+	<p class="{{ instruction_class }} m-0 mt-3">{{ 'sections.affiliate_signup.private_body' | t }}</p>
 {%- endcapture -%}
 
 <div
@@ -104,6 +163,7 @@
 	data-share-base="{{ share_base | escape }}"
 	data-msg-required="{{ 'sections.affiliate_signup.error_required' | t | escape_once }}"
 	data-msg-handle="{{ 'sections.affiliate_signup.error_handle' | t | escape_once }}"
+	data-msg-signature="{{ 'sections.affiliate_signup.error_signature' | t | escape_once }}"
 	data-msg-code-checking="{{ 'sections.affiliate_signup.code_checking' | t | escape_once }}"
 	data-msg-code-available="{{ 'sections.affiliate_signup.code_available' | t: code: '%code%' | escape_once }}"
 	data-msg-code-taken="{{ 'sections.affiliate_signup.code_taken' | t: code: '%code%' | escape_once }}"
@@ -114,7 +174,6 @@
 		image: section.settings.hero_image,
 		eyebrow: hero_eyebrow,
 		heading: hero_heading,
-		description: hero_description,
 		height: 'tall',
 		scrim: 'main',
 		footnote: hero_footnote
@@ -149,10 +208,10 @@
 				</div>
 			</div>
 
-			<p class="text-base text-copy m-0 mt-6">{{ 'sections.affiliate_signup.success_line' | t }}</p>
+			<p class="{{ instruction_class }} m-0 mt-6">{{ 'sections.affiliate_signup.success_line' | t }}</p>
 
 			<div class="mt-6 flex flex-col items-start gap-3 rounded-2xl bg-bg-muted p-5">
-				<p class="text-base text-copy m-0">{{ success_link }}</p>
+				<p class="{{ instruction_class }} m-0">{{ success_link }}</p>
 				{%- capture copy_link_label -%}<span aria-live="polite" data-affiliate-copy-label>{{ 'sections.affiliate_signup.copy_link' | t }}</span>{%- endcapture -%}
 				{%- capture copy_attributes -%}data-affiliate-copy="link" data-copied="{{ 'sections.affiliate_signup.copied' | t | escape_once }}"{%- endcapture -%}
 				{%- render 'cta-button',
@@ -164,14 +223,12 @@
 				-%}
 			</div>
 
-			<p class="text-base text-copy m-0 mt-6" data-affiliate-team hidden>{{ success_team }}</p>
+			<p class="{{ instruction_class }} m-0 mt-6" data-affiliate-team hidden>{{ success_team }}</p>
 
-			<ol class="list-decimal ps-5 m-0 mt-8 flex flex-col gap-2 text-base text-copy">
-				<li>{{ 'sections.affiliate_signup.success_step_1' | t }}</li>
-				<li>{{ 'sections.affiliate_signup.success_step_2' | t }}</li>
-				<li>{{ 'sections.affiliate_signup.success_step_3' | t }}</li>
-				<li>{{ 'sections.affiliate_signup.success_step_4' | t }}</li>
-			</ol>
+			<div class="mt-8 flex flex-col gap-4">
+				<h3 class="{{ subheading_class }}">{{ 'sections.affiliate_signup.next_heading' | t }}</h3>
+				{%- render 'numbered-steps', steps: success_steps -%}
+			</div>
 		</div>
 
 		<div class="flex flex-col gap-4 md:gap-6" dir="ltr" lang="en" data-affiliate-part="agreement" hidden>
@@ -191,6 +248,9 @@
 			<div class="{{ card_class }} flex flex-col gap-5" role="group" aria-labelledby="affiliate-card-code">
 				<h2 id="affiliate-card-code" class="{{ heading_class }}">{{ 'sections.affiliate_signup.card_code' | t }}</h2>
 
+				{%- comment -%} What to type and what the code becomes, before the field. {%- endcomment -%}
+				<p class="{{ instruction_class }} m-0">{{ 'sections.affiliate_signup.code_intro' | t }}</p>
+
 				<div class="{{ field_class }}">
 					<label for="affiliate-code-name" class="{{ label_class }}">{{ 'sections.affiliate_signup.code_name' | t }}</label>
 					<input type="text" id="affiliate-code-name" required maxlength="12" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" dir="ltr" aria-describedby="affiliate-code-name-hint affiliate-code-status" class="{{ input_class }} uppercase">
@@ -207,14 +267,14 @@
 					</div>
 				</div>
 
-				<p id="affiliate-code-status" class="m-0 flex items-start gap-2 text-sm font-semibold text-title" aria-live="polite" data-affiliate-code-status hidden>
-					<span data-affiliate-code-ok hidden>{%- render 'icon-tick' -%}</span>
+				<p id="affiliate-code-status" class="m-0 flex items-start gap-2 text-base font-semibold text-title" aria-live="polite" data-affiliate-code-status hidden>
+					<span data-affiliate-code-ok hidden>{%- render 'icon-tick', classes: 'w-4 h-4 shrink-0 mt-1' -%}</span>
 					<span data-affiliate-code-status-text></span>
 				</p>
 
 				<label class="flex items-start gap-3 cursor-pointer">
 					<input type="checkbox" class="mt-1" data-affiliate-coach>
-					<span class="text-base text-copy">{{ 'sections.affiliate_signup.coach' | t }}</span>
+					<span class="{{ instruction_class }}">{{ 'sections.affiliate_signup.coach' | t }}</span>
 				</label>
 			</div>
 
@@ -239,18 +299,26 @@
 				<div class="{{ field_class }}">
 					<label class="flex items-start gap-3 cursor-pointer">
 						<input type="checkbox" id="affiliate-agreed" required aria-describedby="affiliate-agreed-error" class="mt-1">
-						<span class="text-base text-copy">{{ 'sections.affiliate_signup.agree' | t }}</span>
+						<span class="{{ instruction_class }}">{{ 'sections.affiliate_signup.agree' | t }}</span>
 					</label>
 					<span id="affiliate-agreed-error" class="{{ error_class }}" hidden></span>
 				</div>
 
+				{%- comment -%} A typed full name is the signature: a first and a last name, in any script. {%- endcomment -%}
 				<div class="{{ field_class }}">
 					<label for="affiliate-signature" class="{{ label_class }}">{{ 'sections.affiliate_signup.signature' | t }}</label>
-					<input type="text" id="affiliate-signature" required minlength="2" maxlength="80" autocomplete="name" aria-describedby="affiliate-signature-error" class="{{ input_class }}">
+					<input type="text" id="affiliate-signature" required minlength="2" maxlength="80" autocomplete="name" aria-describedby="affiliate-signature-hint affiliate-signature-error" class="{{ input_class }}">
+					<span id="affiliate-signature-hint" class="{{ hint_class }}">{{ 'sections.affiliate_signup.signature_hint' | t }}</span>
 					<span id="affiliate-signature-error" class="{{ error_class }}" hidden></span>
 				</div>
 
-				<div class="pt-1">
+				{%- comment -%} What happens next, directly above the button. {%- endcomment -%}
+				<div class="flex flex-col gap-4 rounded-2xl bg-bg-muted p-5 md:p-6">
+					<h3 class="{{ subheading_class }}">{{ 'sections.affiliate_signup.next_heading' | t }}</h3>
+					{%- render 'numbered-steps', steps: next_steps -%}
+				</div>
+
+				<div>
 					{%- assign submit_label = 'sections.affiliate_signup.submit' | t -%}
 					{%- render 'cta-button',
 						label: submit_label,
@@ -261,7 +329,6 @@
 						extra_classes: 'w-full text-center'
 					-%}
 				</div>
-				<p class="m-0 {{ hint_class }}">{{ 'sections.affiliate_signup.submit_note' | t }}</p>
 			</div>
 		</form>
 
@@ -297,8 +364,8 @@
 		{
 			"type": "text",
 			"id": "description",
-			"label": "Description",
-			"info": "Leave empty to use the built-in wording."
+			"label": "Line under the steps",
+			"info": "The short line under the three hero steps. Leave empty to use the built-in wording. The steps themselves are fixed wording."
 		},
 		{
 			"type": "product",

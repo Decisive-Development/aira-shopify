@@ -361,6 +361,19 @@
 
     /* The other fields. Each rule returns '' or the message to show. */
 
+    // A word of a name has at least one letter, in any alphabet. Built at run
+    // time so a browser without Unicode classes still loads the script; there
+    // any run of characters counts as a word.
+    var letter = null;
+    try {
+      letter = new RegExp('\\p{L}', 'u');
+    } catch (e) {
+      letter = null;
+    }
+    function hasLetter(word) {
+      return letter ? letter.test(word) : word.length > 0;
+    }
+
     function cleanHandle() {
       return handleInput.value.trim().replace(/^@+/, '').toLowerCase();
     }
@@ -377,9 +390,12 @@
         return HANDLE_RE.test(cleanHandle()) ? '' : msg('handle');
       }],
       [agreedInput, function () { return agreedInput.checked ? '' : msg('required'); }],
+      // The typed name is the signature: a first and a last name, in any script.
       [signatureInput, function () {
-        var length = tidy(signatureInput.value).length;
-        return length >= 2 && length <= 80 ? '' : msg('required');
+        var name = tidy(signatureInput.value);
+        if (!name) return msg('required');
+        var words = name.split(' ').filter(hasLetter);
+        return words.length >= 2 && name.length <= 80 ? '' : msg('signature');
       }]
     ];
 
