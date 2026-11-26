@@ -275,6 +275,19 @@
   href="{{ canonical_href }}"
 >
 
+{%- comment -%}
+  The affiliate signup page is reached by invite link only, so it is kept out
+  of search. Nothing else in the theme sets robots. The page also carries the
+  seo.hidden metafield, which keeps it out of the sitemap and the store's own
+  search.
+{%- endcomment -%}
+{%- if request.page_type == 'page' and template.suffix == 'affiliate' %}
+  <meta
+    name="robots"
+    content="noindex, nofollow"
+  >
+{%- endif %}
+
 {% if seo_description != blank %}
   <meta
     name="description"

@@ -6,14 +6,29 @@
     eyebrow     — optional eyebrow text
     heading     — heading text (required)
     description — optional description text below heading
+    height      — optional. 'tall' fills about half of a phone's first screen
+                  (the affiliate page). Default: the short banner.
+    scrim       — optional. 'main' fades the photo into navy instead of black,
+                  for a hero that sits on a navy page.
+    footnote    — optional markup under the description (the affiliate page's
+                  invitation line).
+
+  Letter-spacing is ltr: only, so Arabic headings carry none.
 {%- endcomment -%}
 
-{%- assign has_image = false -%}
-{%- if image != blank -%}
-	{%- assign has_image = true -%}
-{%- endif -%}
+{%- liquid
+	assign has_image = false
+	if image != blank
+		assign has_image = true
+	endif
 
-<div data-hero class="relative overflow-hidden flex items-end min-h-[20vh] md:min-h-[30vh] {% unless has_image %}bg-main{% endunless %}">
+	assign hero_height = 'min-h-[20vh] md:min-h-[30vh]'
+	if height == 'tall'
+		assign hero_height = 'min-h-[52svh] md:min-h-[46vh]'
+	endif
+-%}
+
+<div data-hero class="relative overflow-hidden flex items-end {{ hero_height }} {% unless has_image %}bg-main{% endunless %}">
 	{%- comment -%}
 		The cover photo sits behind two dark scrims with the heading on top, so
 		it is decoration rather than content. The empty alt is deliberate: it
@@ -31,20 +46,28 @@
 					alt: ''
 			}}
 		</div>
-		<div class="absolute inset-0 bg-black/35"></div>
-		<div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);"></div>
+		{%- if scrim == 'main' -%}
+			<div class="absolute inset-0 bg-main/40"></div>
+			<div class="absolute inset-0 bg-linear-to-t from-main via-main/55 to-main/0"></div>
+		{%- else -%}
+			<div class="absolute inset-0 bg-black/35"></div>
+			<div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.05) 100%);"></div>
+		{%- endif -%}
 	{%- endif -%}
 
 	<div class="relative z-10 w-full pt-24 pb-10 md:pt-36 md:pb-14">
 		<div class="container-contained text-center">
 			{%- if eyebrow != blank -%}
-				<p class="text-xs font-bold uppercase tracking-widest text-highlight mb-4">{{ eyebrow }}</p>
+				<p class="text-xs font-bold uppercase ltr:tracking-widest text-highlight mb-4">{{ eyebrow }}</p>
 			{%- endif -%}
-			<h1 class="font-heading heading-weight text-4xl md:text-5xl leading-tight tracking-tight text-secondary">
+			<h1 class="font-heading heading-weight text-4xl md:text-5xl leading-tight ltr:tracking-tight text-secondary">
 				{{ heading }}
 			</h1>
 			{%- if description != blank -%}
 				<p class="text-base md:text-lg leading-relaxed text-secondary opacity-65 max-w-2xl mx-auto mt-4">{{ description }}</p>
+			{%- endif -%}
+			{%- if footnote != blank -%}
+				{{ footnote }}
 			{%- endif -%}
 		</div>
 	</div>

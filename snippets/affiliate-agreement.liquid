@@ -1,0 +1,109 @@
+{%- comment -%}
+	GENERATED FILE. Do not edit by hand.
+
+	Affiliate agreement, version 2.0. Written by scripts/build-agreement.mjs in the
+	affiliate script repo (c:\code\aira-athletes) from agreement/2.0.json. The same
+	file feeds the script that makes the signed PDF, so the page and the PDF
+	always carry the same words. To change the wording: tell Tom first, add a
+	new version file there, run `npm run agreement`, and commit both repos.
+
+	English only (Tom, November 2026), so the caller puts it in a dir="ltr"
+	lang="en" island. That is also why the words are not in the locale files.
+
+	Parameters:
+	  card_class     classes of one white card
+	  heading_class  classes of a card heading
+	  part           'closing' prints only the closing line (top of the Sign card)
+{%- endcomment -%}
+{%- if part == 'closing' -%}
+	<p class="m-0 text-base leading-relaxed text-title">By ticking the box and typing your full name, you sign this agreement electronically. We sign by issuing your code. A signed copy is sent to you by email as a PDF.</p>
+{%- else -%}
+	<div class="{{ card_class }}">
+		<p class="m-0 text-base md:text-lg leading-relaxed text-copy">Between <strong class="font-bold text-title">AIRA WELLNESS ECOM FZCO</strong> (Dubai, United Arab Emirates), called "aira" or "we" below, and you, the creator named in the form on this page, called "you".</p>
+	</div>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">1.</span> What you get</h2>
+		<ul class="list-none p-0 m-0 mt-6 flex flex-col gap-5">
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">A free aira kit,</strong> delivered to your address in the UAE or Saudi Arabia.</p>
+			</li>
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">15% commission</strong> on every kit sold with your code (section 4).</p>
+			</li>
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">Free refill pouches</strong> while you keep posting about aira, up to one pouch a month: just get in touch.</p>
+			</li>
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">Every new product, before launch,</strong> for as long as we are working together.</p>
+			</li>
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">Paid reach.</strong> We may run your Reel as a partnership ad, from your handle and at our cost. The ad puts your name and profile in front of new people, so your following can grow while it sells aira. Reels run as ads only. We never boost them.</p>
+			</li>
+			<li class="flex items-start gap-3">
+				{%- render 'icon-tick', variant: 'circle', classes: 'w-6 h-6 shrink-0 mt-0.5' -%}
+				<p class="m-0 text-base leading-relaxed text-copy"><strong class="font-bold text-title">A partnership that grows.</strong> Once 20 orders have used your code, after refunds, your commission rises to 20% on the orders that follow. We may also commission paid videos from you, at most one a month, for a fee we agree with you first, each delivered with the raw clips and three opening hooks. In the future this can go further, for example sponsorship for your events.</p>
+			</li>
+		</ul>
+	</section>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">2.</span> Your code</h2>
+		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
+			<li>You choose the name of your code when you sign. It gives your audience 15% off their order at shop-aira.com. Each customer can use it once. It cannot be combined with our multi-kit offer or with another code.</li>
+			<li>A link that applies your code automatically, for your bio or link list: shop-aira.com/discount/YOURCODE.</li>
+			<li>If you coach clients, you also get a client code. It gives your clients 20% off their order, for up to 5 orders a month, under the same rules, and your commission stays the same.</li>
+			<li>We ship to the UAE and Saudi Arabia.</li>
+			<li>Please do not post your code on coupon or deal sites. If it appears on one, we may switch it off.</li>
+		</ul>
+	</section>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">3.</span> What we ask from you</h2>
+		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
+			<li><strong class="font-bold text-title">One Reel within 10 days of your kit arriving.</strong> On your own feed, 20 seconds or longer, showing you using aira and mentioning your code, with Instagram's Paid partnership label tagging @airabreathing. Use your own audio or royalty-free music, not a track from Instagram's music library, so the Reel can run as an ad. Keep it up for at least 90 days.</li>
+			<li><strong class="font-bold text-title">More is welcome, never required.</strong> Extra Reels and Stories are up to you. The more you post, the more your code earns.</li>
+			<li><strong class="font-bold text-title">No direct competitors.</strong> While your code is active, please do not promote another nasal strip or nasal dilator.</li>
+			<li><strong class="font-bold text-title">If no Reel is posted.</strong> We send a reminder on day 7. Ask before the deadline and you get 7 more days, once. After that, or if this agreement is not honoured in another way, we invoice you for the kit at its full price plus postage and switch your code off. Posting after that point does not cancel the invoice.</li>
+		</ul>
+	</section>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">4.</span> Commission: how it works</h2>
+		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
+			<li><strong class="font-bold text-title">Rate:</strong> 15% of the full kit price, before any discount, for every kit paid for in an order placed with your code or your client code. Free kits from our offers, shipping, taxes and duties are not counted.</li>
+			<li><strong class="font-bold text-title">Tracking:</strong> through your code in our store. An order that does not use your code cannot be attributed to you.</li>
+			<li><strong class="font-bold text-title">Eligible orders:</strong> paid orders that are not cancelled or refunded. Commission on an order becomes payable 30 days after the order date. If an order is refunded after its commission has been paid, we deduct that commission from your next payout. Orders you place yourself do not earn commission.</li>
+			<li><strong class="font-bold text-title">Reporting:</strong> in the first week of each month we send you a summary of the previous month.</li>
+			<li><strong class="font-bold text-title">Payout:</strong> once a month by bank transfer, in AED or SAR, or in USD if you prefer, when the amount payable reaches AED 200, SAR 200 or USD 50. Smaller amounts roll over to the next month. We ask for your bank details before your first payout.</li>
+		</ul>
+	</section>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">5.</span> Content and usage rights</h2>
+		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
+			<li><strong class="font-bold text-title">Your posts stay yours.</strong></li>
+			<li><strong class="font-bold text-title">The videos you make for this programme</strong> can be used by aira in paid ads and on our own channels for 12 months from the day you post them, across the GCC, and edited for the purpose: cut, captioned, or combined with other footage.</li>
+			<li><strong class="font-bold text-title">On request,</strong> you send us the partnership ad code for a Reel, and the finished video file if we need it. We do not ask for raw footage unless we are paying for the video.</li>
+			<li><strong class="font-bold text-title">Our promise:</strong> we edit for length and format, never to change what you said, and we only use your content to promote aira products.</li>
+		</ul>
+	</section>
+
+	<section class="{{ card_class }}">
+		<h2 class="{{ heading_class }}"><span class="text-highlight">6.</span> Term, ending and the basics</h2>
+		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
+			<li>Starts when you sign and we confirm it by issuing your code. No fixed end date.</li>
+			<li>Either of us can end it at any time by message. Commission on eligible orders placed before then is still paid on the normal schedule, and our 12-month right to use videos you have already posted continues. Ending before your first Reel does not cancel section 3.</li>
+			<li>If a discount or commission rate ever needs to change, we agree it with you first. Changes never apply to orders already placed.</li>
+			<li>This is an independent partnership, not employment or an agency. You are responsible for any tax on what we pay you.</li>
+			<li>You confirm you are 18 or older.</li>
+			<li>Please keep the sales figures and the terms here between us.</li>
+			<li>Governed by the laws of the United Arab Emirates.</li>
+		</ul>
+	</section>
+{%- endif -%}

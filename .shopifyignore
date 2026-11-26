@@ -24,13 +24,11 @@ assets/critical.source.css
 package.json
 package-lock.json
 
-# Two files Shopify refuses, which fails the initial `theme dev` sync outright:
-# theme assets may not sit in a subfolder under assets/, and page.affiliate
-# calls for a section type (affiliate-final-cta) that has no section file.
-# Skipping them keeps them in the repo and leaves the live theme's own copies
-# alone. Remove these two lines once the images move and the section exists.
+# Files Shopify refuses, which fails the initial `theme dev` sync outright:
+# theme assets may not sit in a subfolder under assets/. Skipping them keeps
+# them in the repo and leaves the live theme's own copies alone. Remove this
+# line once the images move.
 assets/images/*
-templates/page.affiliate.json
 
 # Build intermediate: the compiled Tailwind CSS ships inlined through
 # snippets/critical-css.liquid (scripts/build-critical-snippet.js), not as an asset.

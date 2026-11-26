@@ -19,9 +19,7 @@
 
   Coverage notes: /pages/returns (suffix 'returns') and /collections/all
   (collection handle 'all') are mapped below. Any other collection falls back
-  to the admin "Search engine listing" fields on purpose. Pages on the default
-  page template carry no suffix, so they are mapped by page handle after the
-  suffix lookup.
+  to the admin "Search engine listing" fields on purpose.
 {%- endcomment -%}
 {%- liquid
   assign seo_title = ''
@@ -90,19 +88,6 @@
           assign seo_title = 'snippets.seo_meta.returns_title_html' | t
           assign seo_description = 'snippets.seo_meta.returns_description_html' | t
       endcase
-
-      comment
-        Pages that run on the default page template have no suffix to match
-        on, so they are mapped by handle instead. Both affiliate spellings are
-        listed until the admin-side rename and its 301 land.
-      endcomment
-      if seo_title == blank
-        case page.handle
-          when 'affiliate-program' or 'affilliate-program'
-            assign seo_title = 'snippets.seo_meta.affiliate_title_html' | t
-            assign seo_description = 'snippets.seo_meta.affiliate_description_html' | t
-        endcase
-      endif
   endcase
 
   if field == 'title'
