@@ -1,11 +1,11 @@
 {%- comment -%}
-	Affiliate agreement, version 2.0 (brief v4, 25 November 2026).
+	GENERATED FILE. Do not edit by hand.
 
-	This snippet is the only source of the agreement on the page. The same
-	words also exist as a PDF that the order email links to, so the two must
-	match word for word. Any change of wording needs a new version number
-	(the section's "Agreement version" setting) and a new PDF. Tell Tom
-	before changing a word.
+	Affiliate agreement, version 2.0. Written by scripts/build-agreement.mjs in the
+	affiliate script repo (c:\code\aira-athletes) from agreement/2.0.json. The same
+	file feeds the script that makes the signed PDF, so the page and the PDF
+	always carry the same words. To change the wording: tell Tom first, add a
+	new version file there, run `npm run agreement`, and commit both repos.
 
 	English only (Tom, November 2026), so the caller puts it in a dir="ltr"
 	lang="en" island. That is also why the words are not in the locale files.
@@ -16,7 +16,7 @@
 	  part           'closing' prints only the closing line (top of the Sign card)
 {%- endcomment -%}
 {%- if part == 'closing' -%}
-	<p class="m-0 text-base leading-relaxed text-title">By ticking the box and typing your full name, you sign this agreement electronically. We sign by issuing your code. A signed copy is sent to you by email.</p>
+	<p class="m-0 text-base leading-relaxed text-title">By ticking the box and typing your full name, you sign this agreement electronically. We sign by issuing your code. A signed copy is sent to you by email as a PDF.</p>
 {%- else -%}
 	<div class="{{ card_class }}">
 		<p class="m-0 text-base md:text-lg leading-relaxed text-copy">Between <strong class="font-bold text-title">AIRA WELLNESS ECOM FZCO</strong> (Dubai, United Arab Emirates), called "aira" or "we" below, and you, the creator named in the form on this page, called "you".</p>
@@ -97,7 +97,7 @@
 	<section class="{{ card_class }}">
 		<h2 class="{{ heading_class }}"><span class="text-highlight">6.</span> Term, ending and the basics</h2>
 		<ul class="list-disc ps-5 m-0 mt-5 flex flex-col gap-3 text-base leading-relaxed text-copy">
-			<li>Starts when you sign on this page and place your free kit order. No fixed end date.</li>
+			<li>Starts when you sign on this page and we confirm it by issuing your code. No fixed end date.</li>
 			<li>Either of us can end it at any time by message. Commission on eligible orders placed before then is still paid on the normal schedule, and our 12-month right to use videos you have already posted continues. Ending before your first Reel does not cancel section 3.</li>
 			<li>If a discount or commission rate ever needs to change, we agree it with you first. Changes never apply to orders already placed.</li>
 			<li>This is an independent partnership, not employment or an agency. You are responsible for any tax on what we pay you.</li>

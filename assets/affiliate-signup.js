@@ -1,16 +1,24 @@
 /*
-  Affiliate signup (sections/affiliate-signup.liquid). Shopify only.
+  Affiliate signup (sections/affiliate-signup.liquid). No checkout, no order.
 
-  1. Reads the invite from the link (?i=KIT-XXXXXXXX&h=handle) and asks the
-     Storefront API whether that discount code can still be used.
-  2. Shows the private-link state, the agreement and form, or "you're in".
-  3. Runs the code name picker: TOM gives TOM15 (and TEAMTOM for a coach), and
-     Shopify is asked whether those codes exist yet.
-  4. On submit, opens a cart permalink: one kit, the invite code, and the
-     signing details as cart attributes. Shopify checkout does the rest.
+  1. Reads the invite from the link (?h=handle&k=signature) and asks the
+     Apps Script whether it is good and whether this handle has signed.
+  2. Shows the private-link state, the agreement and form, "already signed",
+     or the thank-you state.
+  3. Runs the form: the code name picker with its live check, the phone, the
+     address fields that follow the country.
+  4. On submit, posts the form to the Apps Script, which makes the signed
+     PDF, emails it, files it and adds a row to Tom's sheet.
 
-  Every question to Shopify is a throwaway cart made through the Storefront
-  API, with no token. It never touches the visitor's own cart.
+  Two outside calls, and no more:
+    - the Apps Script (the section setting script_url): the link check and
+      the signed form. JSON sent as plain text, so there is no preflight.
+    - Shopify's Storefront API, with no token: a throwaway cart that says
+      whether a discount code already exists. It never touches a real cart.
+  Nothing is created in Shopify and no personal detail goes into a URL.
+
+  The field rules here are the script's (apps-script/Validate.js in the
+  affiliate script repo). The script's answer is the one that counts.
 */
 (function () {
   var root = document.querySelector('[data-affiliate-signup]');
@@ -21,16 +29,25 @@
   // root in every language, so it takes no routes.root prefix.
   var API_VERSION = '2026-10';
   var API_URL = '/api/' + API_VERSION + '/graphql.json';
-  var INVITE_RE = /^KIT-[A-Z0-9]{8}$/;
   var HANDLE_RE = /^[a-z0-9._]{1,30}$/;
+  var SIGNATURE_RE = /^[A-Za-z0-9_-]{22}$/;
   var NAME_RE = /^[A-Z]{3,12}$/;
-  var PROBE_TIMEOUT_MS = 4000;
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var NATIONAL_ADDRESS_RE = /^[A-Z]{4}[0-9]{4}$/;
+  var POSTAL_CODE_RE = /^[0-9]{5}$/;
+  var GULF_MOBILE_RE = /^5[0-9]{8}$/;
+  var OTHER_PHONE_RE = /^[0-9]{6,12}$/;
+  var STATUS_TIMEOUT_MS = 8000; // the script can be slow to wake
+  var SEND_TIMEOUT_MS = 30000; // it makes a PDF and sends two emails
   var CHECK_TIMEOUT_MS = 8000;
   var CHECK_DELAY_MS = 400;
-  var COPIED_MS = 2000;
-  // Isolates keep a Latin code the right way round inside Arabic.
-  var LTR_START = '⁦';
-  var LTR_END = '⁩';
+  // Isolates keep a Latin code or "+971" the right way round inside Arabic.
+  var LTR_START = String.fromCharCode(0x2066);
+  var LTR_END = String.fromCharCode(0x2069);
+
+  // Calling code per country (ISO 3166 code, then the digits). Country names
+  // come from the browser, in the page's language.
+  var DIAL = 'AC247 AD376 AE971 AF93 AG1 AI1 AL355 AM374 AO244 AR54 AS1 AT43 AU61 AW297 AX358 AZ994 BA387 BB1 BD880 BE32 BF226 BG359 BH973 BI257 BJ229 BL590 BM1 BN673 BO591 BQ599 BR55 BS1 BT975 BW267 BY375 BZ501 CA1 CC61 CD243 CF236 CG242 CH41 CI225 CK682 CL56 CM237 CN86 CO57 CR506 CU53 CV238 CW599 CX61 CY357 CZ420 DE49 DJ253 DK45 DM1 DO1 DZ213 EC593 EE372 EG20 EH212 ER291 ES34 ET251 FI358 FJ679 FK500 FM691 FO298 FR33 GA241 GB44 GD1 GE995 GF594 GG44 GH233 GI350 GL299 GM220 GN224 GP590 GQ240 GR30 GT502 GU1 GW245 GY592 HK852 HN504 HR385 HT509 HU36 ID62 IE353 IL972 IM44 IN91 IO246 IQ964 IR98 IS354 IT39 JE44 JM1 JO962 JP81 KE254 KG996 KH855 KI686 KM269 KN1 KP850 KR82 KW965 KY1 KZ7 LA856 LB961 LC1 LI423 LK94 LR231 LS266 LT370 LU352 LV371 LY218 MA212 MC377 MD373 ME382 MF590 MG261 MH692 MK389 ML223 MM95 MN976 MO853 MP1 MQ596 MR222 MS1 MT356 MU230 MV960 MW265 MX52 MY60 MZ258 NA264 NC687 NE227 NF672 NG234 NI505 NL31 NO47 NP977 NR674 NU683 NZ64 OM968 PA507 PE51 PF689 PG675 PH63 PK92 PL48 PM508 PR1 PS970 PT351 PW680 PY595 QA974 RE262 RO40 RS381 RU7 RW250 SA966 SB677 SC248 SD249 SE46 SG65 SH290 SI386 SJ47 SK421 SL232 SM378 SN221 SO252 SR597 SS211 ST239 SV503 SX1 SY963 SZ268 TA290 TC1 TD235 TG228 TH66 TJ992 TK690 TL670 TM993 TN216 TO676 TR90 TT1 TV688 TW886 TZ255 UA380 UG256 US1 UY598 UZ998 VA39 VC1 VE58 VG1 VI1 VN84 VU678 WF681 WS685 XK383 YE967 YT262 ZA27 ZM260 ZW263';
 
   var PROBE = 'mutation Probe($lines: [CartLineInput!], $codes: [String!], $country: CountryCode) {'
     + ' cartCreate(input: { lines: $lines, discountCodes: $codes, buyerIdentity: { countryCode: $country } }) {'
@@ -39,8 +56,10 @@
     + ' warnings { code }'
     + ' } }';
 
+  var scriptUrl = root.getAttribute('data-script-url') || '';
   var variantId = root.getAttribute('data-variant-id');
   var country = root.getAttribute('data-country') || null;
+  var lang = document.documentElement.lang || 'en';
   var form = root.querySelector('#affiliate-signup-form');
 
   function msg(name) {
@@ -60,24 +79,48 @@
   }
 
   /*
+    Posts one request to the Apps Script and resolves with its JSON answer, or
+    with null when there is none in time. Never rejects.
+
+    No headers of our own and no Content-Type: the browser sends the body as
+    plain text, which needs no preflight request, and follows Google's
+    redirect to the answer.
+  */
+  function callScript(payload, timeoutMs) {
+    if (!scriptUrl) return Promise.resolve(null);
+    var controller = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = setTimeout(function () { if (controller) controller.abort(); }, timeoutMs);
+    return fetch(scriptUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      signal: controller ? controller.signal : undefined
+    })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (body) {
+        clearTimeout(timer);
+        return body && typeof body === 'object' ? body : null;
+      })
+      .catch(function () {
+        clearTimeout(timer);
+        return null;
+      });
+  }
+
+  /*
     Asks Shopify about one discount code, with one kit in a throwaway cart.
     Exactly one code per call: with two order discounts in a cart, only the
     better one is reported as applicable.
 
-    Resolves, never rejects:
-      state  'applicable'  the code can be used on this cart
-             'missing'     Shopify knows no such code
-             'exists'      the code is there but cannot be used (used up,
-                           switched off, or not for this cart)
-             'failed'      no usable answer
-      inactive  true when Shopify says the code is switched off or expired
-      lines     how many kits made it into the cart. 0 means the kit is not
-                sold where this visitor is, so "cannot be used" proves nothing.
+    Resolves, never rejects, with the state of the code:
+      'applicable'  the code can be used on this cart
+      'missing'     Shopify knows no such code
+      'exists'      the code is there but cannot be used (used up, switched
+                    off, or not for this cart)
+      'failed'      no usable answer
   */
-  function ask(code, timeoutMs) {
+  function ask(code) {
     var controller = typeof AbortController === 'function' ? new AbortController() : null;
-    var timer = setTimeout(function () { if (controller) controller.abort(); }, timeoutMs);
-    var failed = { state: 'failed', inactive: false, lines: 0 };
+    var timer = setTimeout(function () { if (controller) controller.abort(); }, CHECK_TIMEOUT_MS);
     return fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -95,30 +138,28 @@
       .then(function (body) {
         clearTimeout(timer);
         var out = body && body.data && body.data.cartCreate;
-        if (!out || !out.cart) return failed;
-        var lines = Number(out.cart.totalQuantity) || 0;
+        if (!out || !out.cart) return 'failed';
         var entry = (out.cart.discountCodes || [])[0];
-        if (entry && entry.applicable === true) return { state: 'applicable', inactive: false, lines: lines };
+        if (entry && entry.applicable === true) return 'applicable';
         var warnings = (out.warnings || []).map(function (w) { return String(w.code || ''); });
-        if (warnings.indexOf('DISCOUNT_NOT_FOUND') !== -1) return { state: 'missing', inactive: false, lines: lines };
-        var refusals = warnings.filter(function (w) { return w.indexOf('DISCOUNT_') === 0; });
-        if (refusals.length) return { state: 'exists', inactive: refusals.indexOf('DISCOUNT_CURRENTLY_INACTIVE') !== -1, lines: lines };
+        if (warnings.indexOf('DISCOUNT_NOT_FOUND') !== -1) return 'missing';
+        if (warnings.some(function (w) { return w.indexOf('DISCOUNT_') === 0; })) return 'exists';
         // No word about the code at all. With a kit in the cart, "not
         // applicable" means the code is not there. Without one, nothing is known.
-        return lines ? { state: 'missing', inactive: false, lines: lines } : failed;
+        return Number(out.cart.totalQuantity) ? 'missing' : 'failed';
       })
       .catch(function () {
         clearTimeout(timer);
-        return failed;
+        return 'failed';
       });
   }
 
   /* ---- The record this browser keeps of a signature ---- */
 
-  function readRecord(invite) {
+  function readRecord(handle) {
     try {
       var record = JSON.parse(localStorage.getItem(KEY));
-      return record && record.invite === invite && record.code ? record : null;
+      return record && record.h === handle && record.receipt ? record : null;
     } catch (e) {
       return null;
     }
@@ -128,7 +169,15 @@
     try {
       localStorage.setItem(KEY, JSON.stringify(record));
     } catch (e) {
-      /* No storage (a private window, say): the code still arrives by email. */
+      /* No storage (a private window, say): the PDF still arrives by email. */
+    }
+  }
+
+  function clearRecord() {
+    try {
+      localStorage.removeItem(KEY);
+    } catch (e) {
+      /* Nothing to clear. */
     }
   }
 
@@ -136,7 +185,8 @@
 
   var VISIBLE = {
     private: ['state:private'],
-    success: ['state:success', 'part:agreement'],
+    signed: ['state:signed'],
+    done: ['state:done', 'part:agreement'],
     form: ['part:agreement', 'part:form']
   };
 
@@ -157,111 +207,91 @@
     line.hidden = !handle;
   }
 
-  function legacyCopy(text) {
-    var area = document.createElement('textarea');
-    area.value = text;
-    area.setAttribute('readonly', '');
-    area.className = 'fixed opacity-0';
-    document.body.appendChild(area);
-    area.select();
-    var ok = false;
-    try {
-      ok = document.execCommand('copy');
-    } catch (e) {
-      ok = false;
-    }
-    document.body.removeChild(area);
-    return ok;
+  // Brings a state card into view and tells a screen reader about it.
+  function bringUp(state) {
+    var panel = root.querySelector('[data-affiliate-state="' + state + '"]');
+    if (!panel) return;
+    if (panel.hasAttribute('tabindex')) panel.focus({ preventScroll: true });
+    panel.scrollIntoView({ block: 'center' });
   }
 
-  // In-app browsers do not all allow the clipboard API, so fall back.
-  function copy(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text).then(function () { return true; }, function () { return legacyCopy(text); });
-    }
-    return Promise.resolve(legacyCopy(text));
-  }
-
-  function showSuccess(record) {
-    var shareLink = root.getAttribute('data-share-base') + record.code;
-    setText('[data-affiliate-code]', record.code);
-    setText('[data-affiliate-link]', shareLink);
-    var team = root.querySelector('[data-affiliate-team]');
-    if (team) {
-      setText('[data-affiliate-team-code]', record.team_code || '');
-      team.hidden = !record.team_code;
-    }
-    all('[data-affiliate-copy]').forEach(function (button) {
-      button.onclick = function () {
-        var text = button.getAttribute('data-affiliate-copy') === 'link' ? 'https://' + shareLink : record.code;
-        copy(text).then(function (ok) {
-          if (!ok) return;
-          var label = button.querySelector('[data-affiliate-copy-label]');
-          if (!label) return;
-          if (!label.getAttribute('data-original')) label.setAttribute('data-original', label.textContent);
-          label.textContent = button.getAttribute('data-copied');
-          setTimeout(function () { label.textContent = label.getAttribute('data-original'); }, COPIED_MS);
-        });
-      };
-    });
-    show('success');
+  function showDone(record) {
+    setText('[data-affiliate-first-name]', record.first_name || '');
+    setText('[data-affiliate-email]', record.email || '');
+    setText('[data-affiliate-code]', record.code || '');
+    setText('[data-affiliate-receipt]', record.receipt || '');
+    show('done');
   }
 
   /* ---- Which state ---- */
 
   var params = new URLSearchParams(window.location.search);
-  var invite = String(params.get('i') || '').trim().toUpperCase();
-  var linkHandle = String(params.get('h') || '').trim().replace(/^@/, '').toLowerCase();
-  if (!HANDLE_RE.test(linkHandle)) linkHandle = '';
+  var handle = String(params.get('h') || '');
+  var signature = String(params.get('k') || '');
+  var linkOk = HANDLE_RE.test(handle) && SIGNATURE_RE.test(signature);
+  var formStarted = false;
+
+  function openForm() {
+    show('form');
+    if (formStarted) return;
+    formStarted = true;
+    startForm();
+  }
 
   /*
-    Preview only. On an unpublished theme, ?show=form, ?show=in or
-    ?show=private opens that state without asking Shopify, so every state can
-    be looked at without placing an order. The theme editor, which cannot take
-    a link, opens the form. The section only sets data-affiliate-show off the
-    live theme, so none of this reaches a creator.
+    Preview only. On an unpublished theme, ?show=form, ?show=done,
+    ?show=signed or ?show=private opens that state without asking the script,
+    so every state can be looked at without a link. The theme editor, which
+    cannot take a link, opens the form. The section only sets
+    data-affiliate-show off the live theme, so none of this reaches a creator.
   */
   var showMode = root.getAttribute('data-affiliate-show');
   var forced = showMode ? params.get('show') || (showMode === 'editor' ? 'form' : '') : '';
-  if (forced === 'private') {
-    show('private');
+  if (forced === 'private' || forced === 'signed') {
+    show(forced);
     return;
   }
-  if (forced === 'in') {
-    showInvitation(linkHandle);
-    showSuccess(readRecord(invite) || { code: 'SARA15', team_code: 'TEAMSARA' }); // the brief's own example name
+  if (forced === 'done') {
+    showInvitation(linkOk ? handle : '');
+    showDone({ first_name: 'Sara', email: 'sara@example.com', code: 'SARA15', receipt: 'AFF-261126-K7Q2' }); // sample values
     return;
   }
-  if (forced === 'form' && variantId && form) {
-    showInvitation(linkHandle);
-    show('form');
-    startForm();
-    return;
-  }
-
-  if (!INVITE_RE.test(invite) || !variantId || !form) {
-    show('private');
+  if (forced === 'form' && form) {
+    showInvitation(linkOk ? handle : '');
+    openForm();
     return;
   }
 
-  showInvitation(linkHandle);
-  ask(invite, PROBE_TIMEOUT_MS).then(function (answer) {
-    var usable = answer.state === 'applicable';
-    // No answer, or the kit could not even be put in the test cart: let the
-    // creator through. Checkout is the real gate.
-    var unsure = answer.state === 'failed' || (answer.state === 'exists' && !answer.inactive && !answer.lines);
-    if (usable || unsure) {
-      show('form');
-      startForm();
+  if (!linkOk || !form) {
+    show('private');
+    return;
+  }
+
+  showInvitation(handle);
+  var record = readRecord(handle);
+  // A reload after signing shows the thank-you state at once.
+  if (record) showDone(record);
+  callScript({ action: 'status', h: handle, k: signature }, STATUS_TIMEOUT_MS).then(function (answer) {
+    if (!answer || answer.ok !== true) {
+      // No answer in time: let the creator read and fill in. The script
+      // decides again when the form is sent.
+      if (!record) openForm();
       return;
     }
-    var record = readRecord(invite);
-    if (record) {
-      showSuccess(record);
-    } else {
+    if (answer.valid !== true) {
+      clearRecord();
       showInvitation('');
       show('private');
+      return;
     }
+    if (answer.signed === true) {
+      if (!record) show('signed');
+      return;
+    }
+    // Valid and not signed. A record left in this browser means the signup
+    // was removed from the sheet, so the link is open again.
+    if (record) clearRecord();
+    openForm();
   });
 
   /* ---- The form ---- */
@@ -270,10 +300,27 @@
     var el = function (id) { return form.querySelector('#' + id); };
     var codeName = el('affiliate-code-name');
     var coachInput = form.querySelector('[data-affiliate-coach]');
+    var firstInput = el('affiliate-first-name');
+    var lastInput = el('affiliate-last-name');
+    var emailInput = el('affiliate-email');
+    var prefix = form.querySelector('[data-affiliate-prefix]');
+    var prefixFace = form.querySelector('[data-affiliate-prefix-face]');
+    var phoneInput = el('affiliate-phone');
+    var countryInput = form.querySelector('[data-affiliate-country]');
+    var addressWrap = form.querySelector('[data-affiliate-address]');
+    var addressInput = el('affiliate-address');
+    var unitInput = el('affiliate-unit');
+    var nationalInput = el('affiliate-national-address');
+    var cityInput = el('affiliate-city');
+    var emirateInput = el('affiliate-emirate');
+    var postalInput = el('affiliate-postal-code');
     var handleInput = el('affiliate-instagram');
     var agreedInput = el('affiliate-agreed');
     var signatureInput = el('affiliate-signature');
     var button = form.querySelector('button[type="submit"]');
+    var buttonLabel = form.querySelector('[data-affiliate-submit-label]');
+    var buttonText = buttonLabel ? buttonLabel.textContent : '';
+    var formError = form.querySelector('[data-affiliate-form-error]');
     var preview = form.querySelector('[data-affiliate-preview]');
     var previewCode = form.querySelector('[data-affiliate-preview-code]');
     var previewTeam = form.querySelector('[data-affiliate-preview-team]');
@@ -286,8 +333,8 @@
     var checkTimer = null;
     var checkSeq = 0;
 
-    if (linkHandle) {
-      handleInput.value = linkHandle;
+    if (linkOk) {
+      handleInput.value = handle;
       handleInput.readOnly = true;
     }
 
@@ -302,6 +349,11 @@
         slot.textContent = message || '';
         slot.hidden = !message;
       }
+    }
+
+    function showFormError(message) {
+      formError.textContent = message || '';
+      formError.hidden = !message;
     }
 
     /* The code name, its preview and the live check. */
@@ -353,11 +405,15 @@
         setCheck(name, 'taken');
         return Promise.resolve(check);
       }
+      if (!variantId) {
+        setCheck(name, 'unknown');
+        return Promise.resolve(check);
+      }
       setCheck(name, 'checking');
-      return Promise.all([ask(name + '15', CHECK_TIMEOUT_MS), ask('TEAM' + name, CHECK_TIMEOUT_MS)]).then(function (answers) {
+      return Promise.all([ask(name + '15'), ask('TEAM' + name)]).then(function (answers) {
         if (seq !== checkSeq) return check; // a newer question is out; ignore this answer
-        var taken = answers.some(function (a) { return a.state === 'applicable' || a.state === 'exists'; });
-        var failed = answers.some(function (a) { return a.state === 'failed'; });
+        var taken = answers.some(function (a) { return a === 'applicable' || a === 'exists'; });
+        var failed = answers.some(function (a) { return a === 'failed'; });
         setCheck(name, taken ? 'taken' : failed ? 'unknown' : 'available');
         return check;
       });
@@ -384,7 +440,106 @@
     codeName.addEventListener('input', onCodeName);
     coachInput.addEventListener('change', renderPreview);
 
-    /* The other fields. Each rule returns '' or the message to show. */
+    /* Phone: a calling code and a number, sent as one value. */
+
+    var dial = {};
+    DIAL.split(' ').forEach(function (entry) { dial[entry.slice(0, 2)] = entry.slice(2); });
+    var prefixTouched = false;
+
+    (function fillPrefix() {
+      var names = null;
+      try {
+        names = new Intl.DisplayNames([lang], { type: 'region' });
+      } catch (e) {
+        names = null;
+      }
+      var rest = Object.keys(dial)
+        .filter(function (iso) { return iso !== 'AE' && iso !== 'SA'; })
+        .map(function (iso) {
+          var name = iso;
+          try {
+            name = (names && names.of(iso)) || iso;
+          } catch (e) {
+            name = iso;
+          }
+          return { iso: iso, name: name };
+        });
+      rest.sort(function (a, b) { return a.name.localeCompare(b.name, lang); });
+      rest.forEach(function (item) {
+        var option = document.createElement('option');
+        option.value = item.iso;
+        option.textContent = item.name + ' ' + LTR_START + '+' + dial[item.iso] + LTR_END;
+        prefix.appendChild(option);
+      });
+    })();
+
+    function showPrefix() {
+      prefixFace.textContent = '+' + dial[prefix.value];
+    }
+
+    // Strips spaces, dashes, a pasted country code and the first 0.
+    function tidyPhone() {
+      var raw = phoneInput.value.trim();
+      var code = dial[prefix.value];
+      var digits = raw.replace(/\D/g, '');
+      var international = raw.charAt(0) === '+';
+      if (!international && digits.indexOf('00') === 0) {
+        international = true;
+        digits = digits.slice(2);
+      }
+      if (international && digits.indexOf(code) === 0) {
+        digits = digits.slice(code.length);
+      } else if ((code === '971' || code === '966') && digits.length === 12 && digits.indexOf(code + '5') === 0) {
+        digits = digits.slice(3); // the code typed without a plus, in front of a Gulf mobile
+      }
+      digits = digits.replace(/^0+/, '');
+      phoneInput.value = digits;
+      return digits;
+    }
+
+    function phoneIsValid(digits) {
+      var code = dial[prefix.value];
+      return code === '971' || code === '966' ? GULF_MOBILE_RE.test(digits) : OTHER_PHONE_RE.test(digits);
+    }
+
+    prefix.addEventListener('change', function () {
+      prefixTouched = true;
+      showPrefix();
+      if (phoneInput.hasAttribute('aria-invalid')) fieldError(phoneInput, '');
+    });
+    phoneInput.addEventListener('blur', tidyPhone);
+
+    /* Address: the fields follow the country, as checkout does. */
+
+    function applyCountry() {
+      var iso = countryInput.value;
+      addressWrap.hidden = !iso;
+      addressInput.disabled = !iso;
+      cityInput.disabled = !iso;
+      all('[data-affiliate-for]', form).forEach(function (block) {
+        var on = block.getAttribute('data-affiliate-for') === iso;
+        block.hidden = !on;
+        all('input, select', block).forEach(function (input) {
+          input.disabled = !on;
+          if (!on) fieldError(input, '');
+        });
+      });
+      // The calling code follows the country until the creator picks one by hand.
+      if (iso && !prefixTouched) {
+        prefix.value = iso;
+        showPrefix();
+      }
+    }
+
+    countryInput.addEventListener('change', applyCountry);
+    nationalInput.addEventListener('input', function () {
+      var upper = nationalInput.value.toUpperCase();
+      if (upper !== nationalInput.value) nationalInput.value = upper;
+    });
+    applyCountry();
+    showPrefix();
+
+    /* The other rules. Each returns '' or the message to show. */
 
     // A word of a name has at least one letter, in any alphabet. Built at run
     // time so a browser without Unicode classes still loads the script; there
@@ -399,6 +554,14 @@
       return letter ? letter.test(word) : word.length > 0;
     }
 
+    function required(input) {
+      return tidy(input.value) ? '' : msg('required');
+    }
+
+    function nameRule(input) {
+      return function () { return hasLetter(tidy(input.value)) ? '' : msg('required'); };
+    }
+
     function cleanHandle() {
       return handleInput.value.trim().replace(/^@+/, '').toLowerCase();
     }
@@ -409,7 +572,27 @@
       if (clean !== handleInput.value) handleInput.value = clean;
     });
 
+    // In the order of the page, so the first field that fails gets the cursor.
     var rules = [
+      [firstInput, nameRule(firstInput)],
+      [lastInput, nameRule(lastInput)],
+      [emailInput, function () {
+        var value = emailInput.value.trim();
+        return required(emailInput) || (EMAIL_RE.test(value) && value.length <= 254 ? '' : msg('email'));
+      }],
+      [phoneInput, function () { return required(phoneInput) || (phoneIsValid(tidyPhone()) ? '' : msg('phone')); }],
+      [countryInput, function () { return countryInput.value ? '' : msg('required'); }],
+      [addressInput, function () { return required(addressInput); }],
+      [unitInput, function () { return required(unitInput); }],
+      [nationalInput, function () {
+        return required(nationalInput) || (NATIONAL_ADDRESS_RE.test(nationalInput.value.trim().toUpperCase()) ? '' : msg('national-address'));
+      }],
+      [cityInput, function () { return required(cityInput); }],
+      [emirateInput, function () { return emirateInput.value ? '' : msg('required'); }],
+      [postalInput, function () {
+        var value = postalInput.value.trim();
+        return !value || POSTAL_CODE_RE.test(value) ? '' : msg('postal-code');
+      }],
       [handleInput, function () {
         if (!cleanHandle()) return msg('required');
         return HANDLE_RE.test(cleanHandle()) ? '' : msg('handle');
@@ -434,9 +617,11 @@
         first = codeName;
       }
       rules.forEach(function (rule) {
+        var input = rule[0];
+        if (input.disabled) return;
         var message = rule[1]();
-        fieldError(rule[0], message);
-        if (message && !first) first = rule[0];
+        fieldError(input, message);
+        if (message && !first) first = input;
       });
       if (first) first.focus();
       return !first;
@@ -444,12 +629,13 @@
 
     rules.forEach(function (rule) {
       var input = rule[0];
-      input.addEventListener(input.type === 'checkbox' ? 'change' : 'input', function () {
+      var eventName = input.type === 'checkbox' || input.tagName === 'SELECT' ? 'change' : 'input';
+      input.addEventListener(eventName, function () {
         if (input.hasAttribute('aria-invalid')) fieldError(input, '');
       });
     });
 
-    /* Submit: one more name check, then on to checkout. */
+    /* Sending. */
 
     function setBusy(state) {
       busy = state;
@@ -460,29 +646,92 @@
       } else {
         button.removeAttribute('aria-busy');
       }
+      if (buttonLabel) buttonLabel.textContent = state ? msg('submit-busy') : buttonText;
     }
 
-    function checkoutUrl(name) {
-      var enc = encodeURIComponent;
-      var parts = [
-        'discount=' + enc(invite),
-        'attributes[affiliate_code]=' + enc(name + '15')
-      ];
-      if (coachInput.checked) parts.push('attributes[client_code]=' + enc('TEAM' + name));
-      parts.push('attributes[instagram]=' + enc(cleanHandle()));
-      parts.push('attributes[signed_by]=' + enc(tidy(signatureInput.value)));
-      parts.push('attributes[signed_at]=' + enc(new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')));
-      parts.push('attributes[agreement_version]=' + enc(root.getAttribute('data-agreement-version')));
-      if (root.getAttribute('data-locale') === 'ar') parts.push('locale=ar');
-      return root.getAttribute('data-cart-url') + '/' + variantId + ':1?' + parts.join('&');
+    function payloadFor(name) {
+      var iso = countryInput.value;
+      return {
+        action: 'sign',
+        h: handle,
+        k: signature,
+        agreement_version: root.getAttribute('data-agreement-version'),
+        code_name: name,
+        coach: coachInput.checked,
+        first_name: tidy(firstInput.value),
+        last_name: tidy(lastInput.value),
+        email: emailInput.value.trim(),
+        phone: '+' + dial[prefix.value] + phoneInput.value,
+        country: iso,
+        address1: tidy(addressInput.value),
+        address2: iso === 'SA' ? nationalInput.value.trim().toUpperCase() : tidy(unitInput.value),
+        city: tidy(cityInput.value),
+        province: iso === 'AE' ? emirateInput.value : '',
+        zip: iso === 'SA' ? postalInput.value.trim() : '',
+        signed_by: tidy(signatureInput.value),
+        locale: lang === 'ar' ? 'ar' : 'en'
+      };
+    }
+
+    // The script found a field wrong that the page let through: point at it.
+    function serverField(field, name) {
+      var iso = countryInput.value;
+      var map = {
+        first_name: [firstInput, msg('required')],
+        last_name: [lastInput, msg('required')],
+        email: [emailInput, msg('email')],
+        phone: [phoneInput, msg('phone')],
+        country: [countryInput, msg('required')],
+        address1: [addressInput, msg('required')],
+        address2: iso === 'SA' ? [nationalInput, msg('national-address')] : [unitInput, msg('required')],
+        city: [cityInput, msg('required')],
+        province: [emirateInput, msg('required')],
+        zip: [postalInput, msg('postal-code')],
+        signed_by: [signatureInput, msg('signature')]
+      };
+      if (field === 'code_name') {
+        setCheck(name, 'invalid');
+        codeName.focus();
+        return true;
+      }
+      if (!map[field]) return false;
+      fieldError(map[field][0], map[field][1]);
+      map[field][0].focus();
+      return true;
+    }
+
+    function onAnswer(answer, sent) {
+      setBusy(false);
+      if (answer && answer.ok === true && answer.receipt) {
+        var made = { h: handle, receipt: String(answer.receipt), first_name: sent.first_name, code: sent.code_name + '15', email: sent.email };
+        saveRecord(made);
+        showDone(made);
+        bringUp('done');
+        return;
+      }
+      var error = answer && answer.ok === false ? answer.error : '';
+      if (error === 'signed') {
+        show('signed');
+        bringUp('signed');
+      } else if (error === 'link') {
+        showFormError(msg('link'));
+      } else if (error === 'version') {
+        showFormError(msg('version'));
+      } else if (error === 'invalid' && serverField(answer.field, sent.code_name)) {
+        /* The field has the cursor and its message. */
+      } else {
+        // No answer in time, or anything else. What was typed stays.
+        showFormError(msg('send'));
+      }
     }
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       if (busy) return;
+      showFormError('');
       if (!validate()) return;
-      // A previewed form with no invite in the link has no checkout to open.
-      if (!INVITE_RE.test(invite)) return;
+      // A previewed form with no link in the address has nowhere to send.
+      if (!linkOk) return;
       var name = codeName.value;
       setBusy(true);
       // Asked again whatever the last answer was: the name may have gone since.
@@ -492,16 +741,9 @@
           codeName.focus();
           return;
         }
-        saveRecord({ invite: invite, code: name + '15', team_code: coachInput.checked ? 'TEAM' + name : '' });
-        // The same tab: in-app browsers do not all open new ones.
-        window.location.assign(checkoutUrl(name));
+        var payload = payloadFor(name);
+        callScript(payload, SEND_TIMEOUT_MS).then(function (answer) { onAnswer(answer, payload); });
       });
-    });
-
-    // Back from checkout with the browser's back button: the page can come
-    // back exactly as it was left, with the button still switched off.
-    window.addEventListener('pageshow', function (event) {
-      if (event.persisted) setBusy(false);
     });
   }
 })();

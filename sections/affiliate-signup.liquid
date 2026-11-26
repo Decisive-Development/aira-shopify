@@ -1,68 +1,62 @@
 {%- comment -%}
-	Affiliate signup (brief v4, 25 November 2026). Shopify only.
+	Affiliate signup (brief v6, 26 November 2026). No checkout, no order.
 
 	A creator opens their invite link, reads the agreement, picks a code name,
-	signs, and is sent to a free Shopify checkout for one kit. The only section
-	of templates/page.affiliate.json. Reached by link only (noindex in
+	gives their contact and delivery details, and signs. The page posts the
+	form to a small Google Apps Script in Tom's Google account (the section
+	setting script_url), which makes the signed PDF, emails it, files it on
+	Drive and adds a row to a sheet. Tom then reviews the signup and creates
+	the code and the kit order in Shopify himself. The only section of
+	templates/page.affiliate.json. Reached by link only (noindex in
 	meta-tags.liquid).
 
-	  /pages/affiliate?i=KIT-XXXXXXXX&h=<instagram handle>
+	  /pages/affiliate?h=<instagram handle>&k=<signature>
 
-	`i` is a one-use discount code for one free kit. The page asks the
-	Storefront API whether that code can still be used (assets/affiliate-signup.js)
-	and shows, in this order:
-	  1. `i` missing or malformed: the private-link state.
-	  2. The invite can be used: the agreement and the form.
-	  3. It cannot, and this browser signed with it before: the "you're in" state.
-	  4. It cannot, and there is no record: the private-link state.
-	  5. No answer within 4 seconds: the agreement and the form. Checkout is the
-	     real gate.
+	The script makes these links and checks them; the theme never sees the
+	secret. On load the page asks the script about the link
+	(assets/affiliate-signup.js) and shows, in this order:
+	  1. h or k missing or malformed: the private-link state.
+	  2. The script says the link is not valid: the private-link state.
+	  3. The script says this handle has signed: the "already signed" state
+	     (or the thank-you state, when this browser holds the record).
+	  4. The link is valid and unused: the agreement and the form.
+	  5. No answer within 8 seconds: the agreement and the form. The script
+	     decides again when the form is sent.
+	After a successful send the page shows the thank-you state.
 	The hero shows at once. Nothing shows below it until the state is known.
 	With JavaScript off the page shows the private-link state.
 
 	Previewing the states (never on the live theme: theme.role is "main" only
 	there, the same gate as the preview flags in layout/theme.liquid). On an
-	unpublished theme add ?show=form, ?show=in or ?show=private to the address
-	to open that state without an invite and without placing an order. The
-	theme editor opens the form.
+	unpublished theme add ?show=form, ?show=done, ?show=signed or
+	?show=private to the address to open that state without a link. The theme
+	editor opens the form.
 
-	On submit the script opens a cart permalink: one kit (the product setting),
-	the invite code, and six cart attributes that travel with the order. A
-	Shopify Flow workflow reads them, so the attribute names are a contract:
-	affiliate_code, client_code, instagram, signed_by, signed_at,
-	agreement_version. Do not rename them.
-
-	Nothing here posts to the theme or to any outside service. Checkout takes
-	the email, phone and address.
+	Nothing here creates anything in Shopify, and no personal detail goes into
+	a URL. The one call to Shopify is the name check: a throwaway Storefront
+	API cart that asks whether a discount code already exists.
 
 	Navy from header to footer, a white card around every block of text. The
-	agreement is English only (snippets/affiliate-agreement), so it sits in
-	dir="ltr" islands. Everything else is translated. Codes, handles and links
-	are Latin: dir="ltr".
+	agreement is English only (snippets/affiliate-agreement, generated from the
+	same file as the PDF), so it sits in dir="ltr" islands. Everything else is
+	translated. Codes, handles, emails and phone numbers are Latin: dir="ltr".
 
-	Instructions are easy to see (brief v4.1): three numbered steps in the
-	hero, an intro line in the code card and a "What happens next" list above
-	the button, all body size and dark. Small grey text is for field hints only.
+	Instructions are easy to see (brief v4.1): anything that tells the creator
+	what to do, or what happens next, is body size and dark. Steps are numbered
+	lists (snippets/numbered-steps). Small grey text is for field hints only.
 {%- endcomment -%}
 
 {%- liquid
 	assign card_class = 'rounded-3xl bg-bg text-main p-6 md:p-10'
 	assign heading_class = 'font-heading heading-weight text-2xl md:text-3xl text-title m-0'
+	assign subheading_class = 'font-heading heading-weight text-xl md:text-2xl text-title m-0'
 	assign field_class = 'flex flex-col gap-1.5'
 	assign label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-title'
-	assign input_class = 'rounded-xl border border-main/20 px-4 py-3 text-base text-main bg-bg focus:outline-none focus:border-main focus:ring-2 focus:ring-main/20 aria-invalid:border-highlight read-only:bg-bg-muted'
-	assign panel_label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-secondary/70 m-0'
-
-	comment
-		Brief v4.1: anything that tells the creator what to do, or what happens
-		next, is body size or larger and dark (text-title or text-main), never
-		grey. Steps are numbered lists (snippets/numbered-steps). Small grey
-		text is for field hints only.
-	endcomment
+	assign input_class = 'rounded-xl border border-main/20 px-4 py-3 text-base text-main bg-bg focus:outline-none focus:border-main focus:ring-2 focus:ring-main/20 aria-invalid:border-highlight'
 	assign instruction_class = 'text-base text-title'
-	assign subheading_class = 'font-heading heading-weight text-xl md:text-2xl text-title m-0'
 	assign hint_class = 'text-sm text-copy'
 	assign error_class = 'text-base font-semibold text-main'
+	assign panel_label_class = 'text-xs font-semibold uppercase ltr:tracking-widest text-secondary/70 m-0'
 
 	comment
 		Hero text: the section settings when filled, otherwise the locale
@@ -102,16 +96,14 @@
 	endcapture
 	assign next_steps = next_steps_joined | split: '%%'
 
-	capture success_steps_joined
-		echo 'sections.affiliate_signup.success_step_1' | t
+	capture done_steps_joined
+		echo 'sections.affiliate_signup.done_step_1' | t
 		echo '%%'
-		echo 'sections.affiliate_signup.success_step_2' | t
+		echo 'sections.affiliate_signup.done_step_2' | t
 		echo '%%'
-		echo 'sections.affiliate_signup.success_step_3' | t
-		echo '%%'
-		echo 'sections.affiliate_signup.success_step_4' | t
+		echo 'sections.affiliate_signup.done_step_3' | t
 	endcapture
-	assign success_steps = success_steps_joined | split: '%%'
+	assign done_steps = done_steps_joined | split: '%%'
 
 	comment
 		Each sentence keeps its placeholder in the locale file, so a translator
@@ -119,18 +111,18 @@
 	endcomment
 	assign handle_slot = '<span dir="ltr">@<span data-affiliate-handle></span></span>'
 	assign invitation = 'sections.affiliate_signup.invitation' | t: handle: '%handle%' | replace: '@%handle%', handle_slot | replace: '%handle%', handle_slot
-	assign success_code = 'sections.affiliate_signup.success_code' | t: code: '%code%' | replace: '%code%', '<strong class="block mt-2 font-heading heading-weight text-4xl md:text-5xl tracking-normal text-secondary break-all" dir="ltr" data-affiliate-code></strong>'
-	assign success_link = 'sections.affiliate_signup.success_link' | t: link: '%link%' | replace: '%link%', '<strong class="block mt-1 text-title break-all" dir="ltr" data-affiliate-link></strong>'
-	assign success_team = 'sections.affiliate_signup.success_team' | t: team_code: '%team%' | replace: '%team%', '<strong class="text-title" dir="ltr" data-affiliate-team-code></strong>'
-
-	assign share_base = shop.url | remove: 'https://' | remove: 'http://' | append: '/discount/'
+	assign done_heading = 'sections.affiliate_signup.done_heading' | t: first_name: '%name%' | replace: '%name%', '<span data-affiliate-first-name></span>'
+	assign done_line = 'sections.affiliate_signup.done_line' | t: email: '%email%' | replace: '%email%', '<strong class="inline-block max-w-full font-semibold break-words" dir="ltr" data-affiliate-email></strong>'
+	assign done_code = 'sections.affiliate_signup.done_code' | t: code: '%code%' | replace: '%code%', '<strong class="font-semibold" dir="ltr" data-affiliate-code></strong>'
+	assign done_reference = 'sections.affiliate_signup.done_reference' | t: receipt: '%receipt%' | replace: '%receipt%', '<span dir="ltr" data-affiliate-receipt></span>'
 
 	comment
-		The kit that goes to checkout: the product setting's first variant that
-		can be bought. No id is written into the theme.
+		The kit is only used by the name check: one unit in a throwaway cart, so
+		Shopify can say whether a code exists. No id is written into the theme.
 	endcomment
 	assign kit = section.settings.kit
 	assign kit_variant = kit.first_available_variant | default: kit.variants.first
+	assign country_iso = localization.country.iso_code
 -%}
 
 {%- comment -%}
@@ -158,24 +150,35 @@
 	<p class="{{ instruction_class }} m-0 mt-3">{{ 'sections.affiliate_signup.private_body' | t }}</p>
 {%- endcapture -%}
 
+{%- capture chevron -%}
+	<svg class="h-4 w-4 shrink-0 text-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+{%- endcapture -%}
+
 <div
 	class="bg-main text-secondary"
 	data-affiliate-signup
+	data-script-url="{{ section.settings.script_url | strip | escape }}"
 	data-variant-id="{{ kit_variant.id }}"
-	data-cart-url="{{ routes.cart_url }}"
-	data-country="{{ localization.country.iso_code }}"
+	data-country="{{ country_iso }}"
 	data-locale="{{ request.locale.iso_code }}"
 	data-agreement-version="{{ section.settings.agreement_version | escape }}"
-	data-share-base="{{ share_base | escape }}"
 	{% if request.design_mode %}data-affiliate-show="editor"{% elsif theme.role != 'main' %}data-affiliate-show="theme"{% endif %}
 	data-msg-required="{{ 'sections.affiliate_signup.error_required' | t | escape_once }}"
+	data-msg-email="{{ 'sections.affiliate_signup.error_email' | t | escape_once }}"
+	data-msg-phone="{{ 'sections.affiliate_signup.error_phone' | t | escape_once }}"
+	data-msg-national-address="{{ 'sections.affiliate_signup.error_national_address' | t | escape_once }}"
+	data-msg-postal-code="{{ 'sections.affiliate_signup.error_postal_code' | t | escape_once }}"
 	data-msg-handle="{{ 'sections.affiliate_signup.error_handle' | t | escape_once }}"
 	data-msg-signature="{{ 'sections.affiliate_signup.error_signature' | t | escape_once }}"
+	data-msg-link="{{ 'sections.affiliate_signup.error_link' | t | escape_once }}"
+	data-msg-version="{{ 'sections.affiliate_signup.error_version' | t | escape_once }}"
+	data-msg-send="{{ 'sections.affiliate_signup.error_send' | t | escape_once }}"
 	data-msg-code-checking="{{ 'sections.affiliate_signup.code_checking' | t | escape_once }}"
 	data-msg-code-available="{{ 'sections.affiliate_signup.code_available' | t: code: '%code%' | escape_once }}"
 	data-msg-code-taken="{{ 'sections.affiliate_signup.code_taken' | t: code: '%code%' | escape_once }}"
 	data-msg-code-invalid="{{ 'sections.affiliate_signup.code_invalid' | t | escape_once }}"
 	data-msg-code-unknown="{{ 'sections.affiliate_signup.code_unknown' | t | escape_once }}"
+	data-msg-submit-busy="{{ 'sections.affiliate_signup.submit_busy' | t | escape_once }}"
 >
 	{%- render 'page-hero',
 		image: section.settings.hero_image,
@@ -195,47 +198,25 @@
 
 		<div class="{{ card_class }} text-center" data-affiliate-state="private" hidden>{{ private_card }}</div>
 
-		{%- comment -%} "You're in": this browser signed with this invite, and the invite has been used. {%- endcomment -%}
-		<div class="{{ card_class }}" data-affiliate-state="success" hidden>
-			<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ 'sections.affiliate_signup.success_heading' | t }}</h2>
+		{%- comment -%} The link is opened again after signing, in a browser that holds no record of it. {%- endcomment -%}
+		<div class="{{ card_class }} text-center" data-affiliate-state="signed" hidden>
+			<h2 class="{{ heading_class }}">{{ 'sections.affiliate_signup.signed_heading' | t }}</h2>
+			<p class="{{ instruction_class }} m-0 mt-3">{{ 'sections.affiliate_signup.signed_body' | t }}</p>
+		</div>
 
-			<div class="mt-6 rounded-2xl bg-main p-6 md:p-8 text-center text-secondary">
-				<p class="{{ panel_label_class }}">{{ success_code }}</p>
-				<div class="mt-5">
-					{%- capture copy_code_label -%}<span aria-live="polite" data-affiliate-copy-label>{{ 'sections.affiliate_signup.copy_code' | t }}</span>{%- endcapture -%}
-					{%- capture copy_attributes -%}data-affiliate-copy="code" data-copied="{{ 'sections.affiliate_signup.copied' | t | escape_once }}"{%- endcapture -%}
-					{%- render 'cta-button',
-						label: copy_code_label,
-						element: 'button',
-						variant: 'outline',
-						surface: 'dark',
-						size: 'sm',
-						attributes: copy_attributes
-					-%}
-				</div>
-			</div>
+		{%- comment -%} Thank you: the form was sent and the script answered with a reference. The code is not live yet, so there is nothing to copy or share here. {%- endcomment -%}
+		{%- comment -%} Focus moves here for screen readers after a send; the whole card needs no ring. {%- endcomment -%}
+		<div class="{{ card_class }} focus:outline-none" data-affiliate-state="done" tabindex="-1" hidden>
+			<h2 class="font-heading heading-weight text-3xl md:text-4xl text-title m-0">{{ done_heading }}</h2>
+			<p class="{{ instruction_class }} m-0 mt-5">{{ done_line }}</p>
+			<p class="{{ instruction_class }} m-0 mt-3">{{ done_code }}</p>
 
-			<p class="{{ instruction_class }} m-0 mt-6">{{ 'sections.affiliate_signup.success_line' | t }}</p>
-
-			<div class="mt-6 flex flex-col items-start gap-3 rounded-2xl bg-bg-muted p-5">
-				<p class="{{ instruction_class }} m-0">{{ success_link }}</p>
-				{%- capture copy_link_label -%}<span aria-live="polite" data-affiliate-copy-label>{{ 'sections.affiliate_signup.copy_link' | t }}</span>{%- endcapture -%}
-				{%- capture copy_attributes -%}data-affiliate-copy="link" data-copied="{{ 'sections.affiliate_signup.copied' | t | escape_once }}"{%- endcapture -%}
-				{%- render 'cta-button',
-					label: copy_link_label,
-					element: 'button',
-					variant: 'outline',
-					size: 'sm',
-					attributes: copy_attributes
-				-%}
-			</div>
-
-			<p class="{{ instruction_class }} m-0 mt-6" data-affiliate-team hidden>{{ success_team }}</p>
-
-			<div class="mt-8 flex flex-col gap-4">
+			<div class="mt-8 flex flex-col gap-4 rounded-2xl bg-bg-muted p-5 md:p-6">
 				<h3 class="{{ subheading_class }}">{{ 'sections.affiliate_signup.next_heading' | t }}</h3>
-				{%- render 'numbered-steps', steps: success_steps -%}
+				{%- render 'numbered-steps', steps: done_steps -%}
 			</div>
+
+			<p class="{{ hint_class }} m-0 mt-6">{{ done_reference }}</p>
 		</div>
 
 		<div class="flex flex-col gap-4 md:gap-6" dir="ltr" lang="en" data-affiliate-part="agreement" hidden>
@@ -243,8 +224,9 @@
 		</div>
 
 		{%- comment -%}
-			The form never posts: the script turns it into a checkout link. So it
-			is a plain form, with no action and no Shopify form tag.
+			The form never posts by itself: the script sends it as JSON to the
+			Apps Script. So it is a plain form, with no action, no field names and
+			no Shopify form tag.
 		{%- endcomment -%}
 		<form id="affiliate-signup-form" class="flex flex-col gap-4 md:gap-6" novalidate data-affiliate-part="form" hidden>
 
@@ -279,13 +261,140 @@
 					<span data-affiliate-code-status-text></span>
 				</p>
 
+				{%- comment -%} The code is only a choice until Tom confirms the signup. {%- endcomment -%}
+				<p class="{{ instruction_class }} m-0">{{ 'sections.affiliate_signup.code_note' | t }}</p>
+
 				<label class="flex items-start gap-3 cursor-pointer">
 					<input type="checkbox" class="mt-1" data-affiliate-coach>
 					<span class="{{ instruction_class }}">{{ 'sections.affiliate_signup.coach' | t }}</span>
 				</label>
 			</div>
 
-			{%- comment -%} Card 2: Sign. The agreement's closing line sits at the top. {%- endcomment -%}
+			{%- comment -%} Card 2: Your details. They go on the agreement and on the kit order. {%- endcomment -%}
+			<div class="{{ card_class }} flex flex-col gap-5" role="group" aria-labelledby="affiliate-card-details">
+				<h2 id="affiliate-card-details" class="{{ heading_class }}">{{ 'sections.affiliate_signup.card_details' | t }}</h2>
+
+				<div class="grid gap-5 md:grid-cols-2">
+					<div class="{{ field_class }}">
+						<label for="affiliate-first-name" class="{{ label_class }}">{{ 'sections.affiliate_signup.first_name' | t }}</label>
+						<input type="text" id="affiliate-first-name" required maxlength="60" autocomplete="given-name" aria-describedby="affiliate-first-name-error" class="{{ input_class }}">
+						<span id="affiliate-first-name-error" class="{{ error_class }}" hidden></span>
+					</div>
+					<div class="{{ field_class }}">
+						<label for="affiliate-last-name" class="{{ label_class }}">{{ 'sections.affiliate_signup.last_name' | t }}</label>
+						<input type="text" id="affiliate-last-name" required maxlength="60" autocomplete="family-name" aria-describedby="affiliate-last-name-error" class="{{ input_class }}">
+						<span id="affiliate-last-name-error" class="{{ error_class }}" hidden></span>
+					</div>
+				</div>
+
+				<div class="{{ field_class }}">
+					<label for="affiliate-email" class="{{ label_class }}">{{ 'general.email' | t }}</label>
+					<input type="email" id="affiliate-email" required maxlength="254" autocomplete="email" dir="ltr" aria-describedby="affiliate-email-hint affiliate-email-error" class="{{ input_class }}">
+					<span id="affiliate-email-hint" class="{{ hint_class }}">{{ 'sections.affiliate_signup.email_hint' | t }}</span>
+					<span id="affiliate-email-error" class="{{ error_class }}" hidden></span>
+				</div>
+
+				<div class="{{ field_class }}">
+					<label for="affiliate-phone" class="{{ label_class }}">{{ 'sections.affiliate_signup.mobile' | t }}</label>
+					{%- comment -%}
+						The select covers its own closed face, invisibly: open, it lists
+						countries with their codes; closed, the face shows only the code,
+						so it stays narrow on phones. The script adds every other country.
+					{%- endcomment -%}
+					<div class="flex gap-2" dir="ltr">
+						<div class="relative flex shrink-0">
+							<select id="affiliate-phone-prefix" autocomplete="tel-country-code" aria-label="{{ 'sections.affiliate_signup.mobile_prefix' | t | escape }}" class="peer absolute inset-0 h-full w-full cursor-pointer opacity-0" data-affiliate-prefix>
+								<option value="AE">{{ 'sections.affiliate_signup.country_uae' | t }} &#8294;+971&#8297;</option>
+								<option value="SA">{{ 'sections.affiliate_signup.country_ksa' | t }} &#8294;+966&#8297;</option>
+							</select>
+							<span class="{{ input_class }} flex items-center gap-2 peer-focus:border-main peer-focus:ring-2 peer-focus:ring-main/20" aria-hidden="true">
+								<span data-affiliate-prefix-face>+971</span>
+								{{ chevron }}
+							</span>
+						</div>
+						<input type="tel" inputmode="tel" id="affiliate-phone" required maxlength="20" autocomplete="tel-national" aria-describedby="affiliate-phone-hint affiliate-phone-error" class="{{ input_class }} min-w-0 flex-1">
+					</div>
+					<span id="affiliate-phone-hint" class="{{ hint_class }}">{{ 'sections.affiliate_signup.mobile_hint' | t }}</span>
+					<span id="affiliate-phone-error" class="{{ error_class }}" hidden></span>
+				</div>
+			</div>
+
+			{%- comment -%}
+				Card 3: Where your kit goes. The fields mirror checkout per country
+				(read from the live checkout, 25 November 2026), so Tom can copy them
+				straight into the kit order. Fields of the country not chosen stay
+				disabled, so they do not validate and are not sent.
+			{%- endcomment -%}
+			<div class="{{ card_class }} flex flex-col gap-5" role="group" aria-labelledby="affiliate-card-address">
+				<h2 id="affiliate-card-address" class="{{ heading_class }}">{{ 'sections.affiliate_signup.card_address' | t }}</h2>
+
+				<div class="{{ field_class }}">
+					<label for="affiliate-country" class="{{ label_class }}">{{ 'sections.affiliate_signup.country' | t }}</label>
+					<select id="affiliate-country" required autocomplete="country" aria-describedby="affiliate-country-error" class="{{ input_class }}" data-affiliate-country>
+						<option value="">{{ 'sections.affiliate_signup.select_country' | t }}</option>
+						<option value="AE"{% if country_iso == 'AE' %} selected{% endif %}>{{ 'sections.affiliate_signup.country_uae' | t }}</option>
+						<option value="SA"{% if country_iso == 'SA' %} selected{% endif %}>{{ 'sections.affiliate_signup.country_ksa' | t }}</option>
+					</select>
+					<span id="affiliate-country-error" class="{{ error_class }}" hidden></span>
+				</div>
+
+				<div class="flex flex-col gap-5" data-affiliate-address hidden>
+					<div class="{{ field_class }}">
+						<label for="affiliate-address" class="{{ label_class }}">{{ 'sections.affiliate_signup.address' | t }}</label>
+						<input type="text" id="affiliate-address" required disabled maxlength="200" autocomplete="address-line1" aria-describedby="affiliate-address-hint affiliate-address-error" class="{{ input_class }}">
+						<span id="affiliate-address-hint" class="{{ hint_class }}">
+							<span data-affiliate-for="AE" hidden>{{ 'sections.affiliate_signup.address_hint_uae' | t }}</span>
+							<span data-affiliate-for="SA" hidden>{{ 'sections.affiliate_signup.address_hint_ksa' | t }}</span>
+						</span>
+						<span id="affiliate-address-error" class="{{ error_class }}" hidden></span>
+					</div>
+
+					<div class="{{ field_class }}" data-affiliate-for="AE" hidden>
+						<label for="affiliate-unit" class="{{ label_class }}">{{ 'sections.affiliate_signup.unit' | t }}</label>
+						<input type="text" id="affiliate-unit" required disabled maxlength="80" autocomplete="address-line2" aria-describedby="affiliate-unit-error" class="{{ input_class }}">
+						<span id="affiliate-unit-error" class="{{ error_class }}" hidden></span>
+					</div>
+
+					<div class="{{ field_class }}" data-affiliate-for="SA" hidden>
+						<label for="affiliate-national-address" class="{{ label_class }}">{{ 'sections.affiliate_signup.national_address' | t }}</label>
+						<input type="text" id="affiliate-national-address" required disabled maxlength="8" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" dir="ltr" aria-describedby="affiliate-national-address-hint affiliate-national-address-error" class="{{ input_class }} uppercase">
+						<span id="affiliate-national-address-hint" class="{{ hint_class }}">{{ 'sections.affiliate_signup.national_address_hint' | t }}</span>
+						<span id="affiliate-national-address-error" class="{{ error_class }}" hidden></span>
+					</div>
+
+					<div class="grid gap-5 md:grid-cols-2">
+						<div class="{{ field_class }}">
+							<label for="affiliate-city" class="{{ label_class }}">{{ 'sections.affiliate_signup.city' | t }}</label>
+							<input type="text" id="affiliate-city" required disabled maxlength="80" autocomplete="address-level2" aria-describedby="affiliate-city-error" class="{{ input_class }}">
+							<span id="affiliate-city-error" class="{{ error_class }}" hidden></span>
+						</div>
+
+						{%- comment -%} The values are Shopify's province codes, as checkout uses them. {%- endcomment -%}
+						<div class="{{ field_class }}" data-affiliate-for="AE" hidden>
+							<label for="affiliate-emirate" class="{{ label_class }}">{{ 'sections.affiliate_signup.emirate' | t }}</label>
+							<select id="affiliate-emirate" required disabled autocomplete="address-level1" aria-describedby="affiliate-emirate-error" class="{{ input_class }}">
+								<option value="">{{ 'sections.affiliate_signup.select_emirate' | t }}</option>
+								<option value="AZ">{{ 'sections.affiliate_signup.emirate_abu_dhabi' | t }}</option>
+								<option value="AJ">{{ 'sections.affiliate_signup.emirate_ajman' | t }}</option>
+								<option value="DU">{{ 'sections.affiliate_signup.emirate_dubai' | t }}</option>
+								<option value="FU">{{ 'sections.affiliate_signup.emirate_fujairah' | t }}</option>
+								<option value="RK">{{ 'sections.affiliate_signup.emirate_ras_al_khaimah' | t }}</option>
+								<option value="SH">{{ 'sections.affiliate_signup.emirate_sharjah' | t }}</option>
+								<option value="UQ">{{ 'sections.affiliate_signup.emirate_umm_al_quwain' | t }}</option>
+							</select>
+							<span id="affiliate-emirate-error" class="{{ error_class }}" hidden></span>
+						</div>
+
+						<div class="{{ field_class }}" data-affiliate-for="SA" hidden>
+							<label for="affiliate-postal-code" class="{{ label_class }}">{{ 'sections.affiliate_signup.postal_code' | t }} {{ 'general.optional' | t }}</label>
+							<input type="text" inputmode="numeric" id="affiliate-postal-code" disabled maxlength="5" autocomplete="postal-code" dir="ltr" aria-describedby="affiliate-postal-code-error" class="{{ input_class }}">
+							<span id="affiliate-postal-code-error" class="{{ error_class }}" hidden></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{%- comment -%} Card 4: Sign. The agreement's closing line sits at the top. {%- endcomment -%}
 			<div class="{{ card_class }} flex flex-col gap-5" role="group" aria-labelledby="affiliate-card-sign">
 				<h2 id="affiliate-card-sign" class="{{ heading_class }}">{{ 'sections.affiliate_signup.card_sign' | t }}</h2>
 
@@ -293,12 +402,12 @@
 					{%- render 'affiliate-agreement', part: 'closing' -%}
 				</div>
 
-				{%- comment -%} Prefilled and read-only when the link carries the handle; otherwise the creator types it. {%- endcomment -%}
+				{%- comment -%} From the link, so read-only. Only a previewed form with no link lets it be typed. {%- endcomment -%}
 				<div class="{{ field_class }}">
 					<label for="affiliate-instagram" class="{{ label_class }}">{{ 'sections.affiliate_signup.instagram' | t }}</label>
 					<div class="flex gap-2" dir="ltr">
 						<span class="flex shrink-0 items-center rounded-xl border border-main/20 bg-bg-muted px-4 py-3 text-base text-copy" aria-hidden="true">@</span>
-						<input type="text" id="affiliate-instagram" required maxlength="31" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-describedby="affiliate-instagram-error" class="{{ input_class }} min-w-0 flex-1">
+						<input type="text" id="affiliate-instagram" required maxlength="31" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" aria-describedby="affiliate-instagram-error" class="{{ input_class }} min-w-0 flex-1 read-only:bg-bg-muted">
 					</div>
 					<span id="affiliate-instagram-error" class="{{ error_class }}" hidden></span>
 				</div>
@@ -325,8 +434,10 @@
 					{%- render 'numbered-steps', steps: next_steps -%}
 				</div>
 
+				<p class="rounded-xl bg-highlight/10 p-5 {{ error_class }} m-0" role="alert" data-affiliate-form-error hidden></p>
+
 				<div>
-					{%- assign submit_label = 'sections.affiliate_signup.submit' | t -%}
+					{%- capture submit_label -%}<span data-affiliate-submit-label>{{ 'sections.affiliate_signup.submit' | t }}</span>{%- endcapture -%}
 					{%- render 'cta-button',
 						label: submit_label,
 						element: 'button',
@@ -375,17 +486,23 @@
 			"info": "The short line under the three hero steps. Leave empty to use the built-in wording. The steps themselves are fixed wording."
 		},
 		{
+			"type": "text",
+			"id": "script_url",
+			"label": "Signup script address",
+			"info": "The web app address of the Google Apps Script that receives the signed form (it ends in /exec). The sheet shows it after Affiliates > Set up. Without it the form cannot be sent."
+		},
+		{
 			"type": "product",
 			"id": "kit",
-			"label": "Free kit",
-			"info": "The product the signed creator is sent to checkout with, one unit. The invite code makes it free."
+			"label": "Kit for the name check",
+			"info": "Used only to ask Shopify whether a code name is already taken. Nothing is added to a cart or ordered."
 		},
 		{
 			"type": "text",
 			"id": "agreement_version",
 			"label": "Agreement version",
 			"default": "2.0",
-			"info": "Travels with every signed order. Change it only when the agreement wording and its PDF change."
+			"info": "Sent with every signature. It must be the version the script holds, so change it only together with the script."
 		}
 	],
 	"presets": [
