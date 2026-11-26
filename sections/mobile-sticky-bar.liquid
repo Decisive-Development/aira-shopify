@@ -3,9 +3,22 @@
   Slides in after user scrolls past 80% of the hero.
   Hidden on desktop (lg:hidden), on product pages and on the cart page,
   where it would cover Checkout.
+  Also left out of the affiliate signup page (Tom, 26 November 2026): that
+  page has its own "Sign and get my kit" button for a free kit, and this bar
+  would send a creator to the paid kit page instead.
 {%- endcomment -%}
 
-{%- unless request.page_type == 'product' or request.page_type == 'cart' -%}
+{%- liquid
+	assign show_sticky_bar = true
+	if request.page_type == 'product' or request.page_type == 'cart'
+		assign show_sticky_bar = false
+	endif
+	if request.page_type == 'page' and template.suffix == 'affiliate'
+		assign show_sticky_bar = false
+	endif
+-%}
+
+{%- if show_sticky_bar -%}
 <div
 	class="fixed bottom-0 inset-x-0 z-40 px-4 pb-[5px] lg:hidden translate-y-full transition-transform duration-300 ease-out"
 	data-mobile-sticky-cta
@@ -48,7 +61,7 @@
 	check();
 })();
 </script>
-{%- endunless -%}
+{%- endif -%}
 
 {% schema %}
 {
