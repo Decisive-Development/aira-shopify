@@ -198,11 +198,14 @@
 
   /* ---- States ---- */
 
+  // 'intro' is the hero's three steps and the line under them. It is in the
+  // page from the start, so it shows while loading; after that only the form
+  // state keeps it (Tom, 26 November 2026).
   var VISIBLE = {
     private: ['state:private'],
     signed: ['state:signed'],
     done: ['state:done', 'part:agreement'],
-    form: ['part:agreement', 'part:form']
+    form: ['part:intro', 'part:agreement', 'part:form']
   };
 
   function show(state) {

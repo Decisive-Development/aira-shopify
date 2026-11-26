@@ -128,18 +128,23 @@
 {%- comment -%}
 	Under the hero heading, where a description would be: the three steps (side
 	by side on desktop, stacked on phones), one short line, and the invitation
-	line the script fills from the link.
+	line the script fills from the link. The steps and the line say what is
+	about to happen, so they show while the page loads and with the form, and
+	the script hides them once there is nothing left to do (thank you, already
+	signed, private). The invitation line stays.
 {%- endcomment -%}
 {%- capture hero_footnote -%}
-	<div class="mx-auto mt-6 w-fit max-w-full">
-		{%- render 'numbered-steps',
-			steps: hero_steps,
-			list_class: 'flex flex-col gap-2 text-start md:flex-row md:gap-8',
-			text_class: 'text-base md:text-lg text-secondary',
-			number_class: 'text-xl md:text-2xl'
-		-%}
+	<div data-affiliate-part="intro">
+		<div class="mx-auto mt-6 w-fit max-w-full">
+			{%- render 'numbered-steps',
+				steps: hero_steps,
+				list_class: 'flex flex-col gap-2 text-start md:flex-row md:gap-8',
+				text_class: 'text-base md:text-lg text-secondary',
+				number_class: 'text-xl md:text-2xl'
+			-%}
+		</div>
+		<p class="m-0 mt-4 text-base text-secondary/80">{{ hero_line }}</p>
 	</div>
-	<p class="m-0 mt-4 text-base text-secondary/80">{{ hero_line }}</p>
 	<p class="m-0 mt-5" data-affiliate-invitation hidden>
 		<span class="inline-block rounded-full border border-secondary/30 px-4 py-1.5 text-sm font-semibold text-secondary">{{ invitation }}</span>
 	</p>
